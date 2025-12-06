@@ -13,11 +13,38 @@ A professional, production-ready Windsurf IDE configuration optimized for:
 - **100+ repository management**
 - **Enterprise security** with command deny lists
 
+## Opening This Project in Windsurf IDE
+
+### Option 1: From Command Line
+```powershell
+# Navigate to project and open in Windsurf
+cd C:\Users\Admin\windsurf-vibe-setup
+windsurf .
+```
+
+### Option 2: From Windsurf IDE
+1. Open Windsurf IDE
+2. Go to **File > Open Folder**
+3. Navigate to `C:\Users\Admin\windsurf-vibe-setup`
+4. Click **Select Folder**
+
+### Option 3: From File Explorer
+1. Navigate to `C:\Users\Admin\windsurf-vibe-setup`
+2. Right-click in the folder
+3. Select **Open with Windsurf** (if available)
+
 ## Quick Start
 
+### Clone from GitHub
 ```bash
 git clone https://github.com/Ghenghis/windsurf-vibe-setup.git
 cd windsurf-vibe-setup
+npm install
+```
+
+### Local Development (Already Cloned)
+```powershell
+cd C:\Users\Admin\windsurf-vibe-setup
 npm install
 ```
 
