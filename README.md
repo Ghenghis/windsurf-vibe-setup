@@ -59,9 +59,23 @@ npm install
 ## Documentation
 
 - [Configuration Guide](Windsurf-IDE-configuration-guide.md)
+- [Example Configurations](examples/README.md)
 - [Test Suite](docs/testing/README.md)
 - [Contributing](CONTRIBUTING.md)
 - [Security Policy](SECURITY.md)
+
+## Quick Apply
+
+```powershell
+# Copy sample settings to Windsurf
+Copy-Item .\settings.json "$env:APPDATA\Windsurf\User\settings.json"
+
+# Copy global rules
+Copy-Item .\examples\global_rules.md "$env:USERPROFILE\.codeium\windsurf\memories\"
+
+# Copy MCP configuration (edit first!)
+Copy-Item .\examples\mcp_config.json "$env:USERPROFILE\.codeium\windsurf\"
+```
 
 ## License
 

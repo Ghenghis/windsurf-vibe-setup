@@ -1,0 +1,295 @@
+{
+  // ============================================================================
+  // WINDSURF VIBE SETUP - Enterprise Configuration
+  // ============================================================================
+  // Optimized for multi-language development, AI/ML workflows, and security
+  // Copy to: %APPDATA%\Windsurf\User\settings.json
+  // ============================================================================
+
+  // ---------------------------------------------------------------------------
+  // WINDSURF AI ASSISTANT SETTINGS
+  // ---------------------------------------------------------------------------
+  "windsurf.enableAutocomplete": true,
+  "windsurf.enableSupercomplete": true,
+  "windsurf.enableTabToJump": true,
+  "windsurf.autocompleteSpeed": "fast",
+  "windsurf.autoExecutionPolicy": "auto",
+  "windsurf.openRecentConversation": true,
+  "windsurf.explainAndFixInCurrentConversation": true,
+  "windsurf.rememberLastModelSelection": true,
+  "windsurf.cascadeGitignoreAccess": false,
+  "windsurf.useClipboardAsContext": true,
+
+  // ---------------------------------------------------------------------------
+  // SECURITY - COMMAND DENY LIST
+  // ---------------------------------------------------------------------------
+  // These commands are blocked from Cascade execution
+  "windsurf.cascadeCommandsDenyList": [
+    "rm -rf /",
+    "rm -rf ~",
+    "rm -rf *",
+    "sudo rm",
+    "del /s /q",
+    "format",
+    "DROP TABLE",
+    "DROP DATABASE",
+    "TRUNCATE",
+    "DELETE FROM",
+    "shutdown",
+    "reboot",
+    "mkfs",
+    "dd if=",
+    ":(){:|:&};:",
+    "chmod -R 777",
+    "curl | bash",
+    "wget | bash"
+  ],
+
+  // ---------------------------------------------------------------------------
+  // SECURITY - SAFE COMMAND ALLOW LIST
+  // ---------------------------------------------------------------------------
+  // These commands can be auto-executed by Cascade
+  "windsurf.cascadeCommandsAllowList": [
+    "git",
+    "npm",
+    "yarn",
+    "pnpm",
+    "pip",
+    "python",
+    "node",
+    "docker",
+    "docker-compose",
+    "pytest",
+    "make",
+    "cargo",
+    "dotnet",
+    "go",
+    "rustc"
+  ],
+
+  // ---------------------------------------------------------------------------
+  // MARKETPLACE SETTINGS
+  // ---------------------------------------------------------------------------
+  "windsurf.marketplaceExtensionGalleryServiceURL": "https://marketplace.visualstudio.com/_apis/public/gallery",
+  "windsurf.marketplaceGalleryItemURL": "https://marketplace.visualstudio.com/items",
+
+  // ---------------------------------------------------------------------------
+  // PYTHON CONFIGURATION
+  // ---------------------------------------------------------------------------
+  "python.defaultInterpreterPath": "${workspaceFolder}/.venv/Scripts/python.exe",
+  "python.terminal.activateEnvironment": true,
+  "python.analysis.typeCheckingMode": "basic",
+  "python.analysis.autoImportCompletions": true,
+  "python.analysis.extraPaths": [
+    "${workspaceFolder}/src",
+    "${workspaceFolder}/lib"
+  ],
+  "[python]": {
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "ms-python.black-formatter",
+    "editor.codeActionsOnSave": {
+      "source.organizeImports": "explicit"
+    }
+  },
+
+  // ---------------------------------------------------------------------------
+  // JAVASCRIPT/TYPESCRIPT CONFIGURATION
+  // ---------------------------------------------------------------------------
+  "typescript.preferences.importModuleSpecifier": "relative",
+  "typescript.updateImportsOnFileMove.enabled": "always",
+  "javascript.updateImportsOnFileMove.enabled": "always",
+  "[javascript]": {
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[typescript]": {
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[typescriptreact]": {
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+
+  // ---------------------------------------------------------------------------
+  // POWERSHELL CONFIGURATION
+  // ---------------------------------------------------------------------------
+  "powershell.codeFormatting.preset": "OTBS",
+  "powershell.scriptAnalysis.enable": true,
+  "[powershell]": {
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "ms-vscode.powershell"
+  },
+
+  // ---------------------------------------------------------------------------
+  // DOCKER CONFIGURATION
+  // ---------------------------------------------------------------------------
+  "docker.showStartPage": false,
+  "docker.containers.sortBy": "CreatedTime",
+
+  // ---------------------------------------------------------------------------
+  // GIT CONFIGURATION
+  // ---------------------------------------------------------------------------
+  "git.enableSmartCommit": true,
+  "git.confirmSync": false,
+  "git.autofetch": true,
+  "git.fetchOnPull": true,
+  "git.pruneOnFetch": true,
+
+  // ---------------------------------------------------------------------------
+  // FILE WATCHER EXCLUSIONS (Performance)
+  // ---------------------------------------------------------------------------
+  // Exclude large directories from file watching to improve performance
+  "files.watcherExclude": {
+    "**/data/**": true,
+    "**/datasets/**": true,
+    "**/checkpoints/**": true,
+    "**/models/**": true,
+    "**/.venv/**": true,
+    "**/venv/**": true,
+    "**/wandb/**": true,
+    "**/logs/**": true,
+    "**/__pycache__/**": true,
+    "**/node_modules/**": true,
+    "**/runs/**": true,
+    "**/weights/**": true,
+    "**/outputs/**": true,
+    "**/mlruns/**": true,
+    "**/.git/objects/**": true,
+    "**/.git/subtree-cache/**": true
+  },
+
+  // ---------------------------------------------------------------------------
+  // SEARCH EXCLUSIONS (Performance + Security)
+  // ---------------------------------------------------------------------------
+  "search.exclude": {
+    "**/data": true,
+    "**/datasets": true,
+    "**/checkpoints": true,
+    "**/*.safetensors": true,
+    "**/*.ckpt": true,
+    "**/*.pt": true,
+    "**/*.pth": true,
+    "**/*.bin": true,
+    "**/*.h5": true,
+    "**/node_modules": true,
+    "**/.venv": true,
+    "**/venv": true,
+    "**/__pycache__": true,
+    "**/.env": true,
+    "**/.env.*": true,
+    "**/secrets/**": true,
+    "**/*.pem": true,
+    "**/*.key": true
+  },
+
+  // ---------------------------------------------------------------------------
+  // FILE EXCLUSIONS (Hide from Explorer)
+  // ---------------------------------------------------------------------------
+  "files.exclude": {
+    "**/__pycache__": true,
+    "**/.ipynb_checkpoints": true,
+    "**/*.pyc": true,
+    "**/.pytest_cache": true,
+    "**/.mypy_cache": true,
+    "**/Thumbs.db": true,
+    "**/.DS_Store": true
+  },
+
+  // ---------------------------------------------------------------------------
+  // EDITOR SETTINGS
+  // ---------------------------------------------------------------------------
+  "editor.formatOnSave": true,
+  "editor.formatOnPaste": false,
+  "editor.largeFileOptimizations": true,
+  "editor.bracketPairColorization.enabled": true,
+  "editor.guides.bracketPairs": true,
+  "editor.minimap.enabled": true,
+  "editor.minimap.maxColumn": 100,
+  "editor.wordWrap": "off",
+  "editor.tabSize": 2,
+  "editor.insertSpaces": true,
+  "editor.renderWhitespace": "selection",
+  "editor.suggestSelection": "first",
+  "editor.quickSuggestions": {
+    "other": "on",
+    "comments": "off",
+    "strings": "on"
+  },
+
+  // ---------------------------------------------------------------------------
+  // TERMINAL SETTINGS
+  // ---------------------------------------------------------------------------
+  "terminal.integrated.defaultProfile.windows": "PowerShell",
+  "terminal.integrated.env.windows": {
+    "CUDA_VISIBLE_DEVICES": "0",
+    "PYTORCH_CUDA_ALLOC_CONF": "max_split_size_mb:128"
+  },
+
+  // ---------------------------------------------------------------------------
+  // PERFORMANCE SETTINGS
+  // ---------------------------------------------------------------------------
+  "files.maxMemoryForLargeFilesMB": 4096,
+  "editor.maxTokenizationLineLength": 20000,
+
+  // ---------------------------------------------------------------------------
+  // JSON CONFIGURATION
+  // ---------------------------------------------------------------------------
+  "[json]": {
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[jsonc]": {
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+
+  // ---------------------------------------------------------------------------
+  // MARKDOWN CONFIGURATION
+  // ---------------------------------------------------------------------------
+  "[markdown]": {
+    "editor.wordWrap": "on",
+    "editor.quickSuggestions": {
+      "other": "on",
+      "comments": "off",
+      "strings": "on"
+    }
+  },
+
+  // ---------------------------------------------------------------------------
+  // TODO TREE EXTENSION
+  // ---------------------------------------------------------------------------
+  "todo-tree.general.tags": [
+    "BUG",
+    "HACK",
+    "FIXME",
+    "TODO",
+    "XXX",
+    "NOTE",
+    "OPTIMIZE",
+    "REVIEW"
+  ],
+  "todo-tree.highlights.defaultHighlight": {
+    "icon": "alert",
+    "type": "text",
+    "foreground": "#FF8C00",
+    "background": "#1e1e1e",
+    "opacity": 50,
+    "iconColour": "#FF8C00"
+  },
+
+  // ---------------------------------------------------------------------------
+  // ERROR LENS EXTENSION
+  // ---------------------------------------------------------------------------
+  "errorLens.enabledDiagnosticLevels": [
+    "error",
+    "warning"
+  ],
+
+  // ---------------------------------------------------------------------------
+  // WORKBENCH SETTINGS
+  // ---------------------------------------------------------------------------
+  "workbench.startupEditor": "none",
+  "workbench.editor.enablePreview": true,
+  "workbench.editor.highlightModifiedTabs": true
+}

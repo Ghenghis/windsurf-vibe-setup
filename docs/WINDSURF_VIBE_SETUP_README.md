@@ -113,25 +113,33 @@ Copy `settings.json` contents to your Windsurf settings:
 windsurf-vibe-setup/
 ├── .github/
 │   ├── workflows/
-│   │   └── ci.yml              # CI/CD pipeline
-│   ├── ISSUE_TEMPLATE/         # Issue templates
-│   ├── CODEOWNERS              # Code ownership
+│   │   └── ci.yml                    # CI/CD pipeline
+│   ├── ISSUE_TEMPLATE/               # Issue templates
+│   ├── CODEOWNERS                    # Code ownership
 │   └── PULL_REQUEST_TEMPLATE.md
 ├── docs/
+│   ├── WINDSURF_VIBE_SETUP_README.md # Extended README
 │   └── testing/
 │       ├── WINDSURF_CONFIGURATION_VALIDATION_PLAN.md
 │       └── README.md
+├── examples/
+│   ├── global_rules.md               # AI behavior rules template
+│   ├── mcp_config.json               # MCP server config template
+│   ├── windsurf-vibe.code-workspace  # Multi-project workspace
+│   └── README.md
 ├── scripts/
 │   ├── testing/
 │   │   └── Run-WindsurfBenchmark.ps1
-│   └── validate-json.js
-├── settings.json               # Main configuration
-├── .eslintrc.json             # ESLint config
-├── .markdownlint.json         # Markdown lint config
-├── package.json               # Node.js dependencies
-├── CONTRIBUTING.md            # Contribution guide
-├── SECURITY.md                # Security policy
-└── README.md                  # This file
+│   ├── validate-json.js
+│   └── scan-secrets.js               # Automated secret scanning
+├── settings.json                     # Main Windsurf configuration
+├── requirements.txt                  # Python dependencies
+├── .eslintrc.json                    # ESLint config
+├── .markdownlint.json                # Markdown lint config
+├── package.json                      # Node.js dependencies
+├── CONTRIBUTING.md                   # Contribution guide
+├── SECURITY.md                       # Security policy
+└── README.md                         # Main README
 ```
 
 ## Benchmark Results

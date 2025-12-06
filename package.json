@@ -31,7 +31,8 @@
     "validate:yaml": "yaml-lint .github/**/*.yml",
     "benchmark": "pwsh scripts/testing/Run-WindsurfBenchmark.ps1",
     "benchmark:html": "pwsh scripts/testing/Run-WindsurfBenchmark.ps1 -ExportHtml",
-    "test": "npm run lint && npm run validate:json",
+    "scan:secrets": "node scripts/scan-secrets.js",
+    "test": "npm run lint && npm run validate:json && npm run scan:secrets",
     "prepare": "husky install || true"
   },
   "devDependencies": {
