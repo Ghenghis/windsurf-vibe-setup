@@ -32,6 +32,11 @@
     "benchmark": "pwsh scripts/testing/Run-WindsurfBenchmark.ps1",
     "benchmark:html": "pwsh scripts/testing/Run-WindsurfBenchmark.ps1 -ExportHtml",
     "scan:secrets": "node scripts/scan-secrets.js",
+    "scan:deps": "node scripts/scan-dependencies.js",
+    "repair": "node scripts/auto-repair.js",
+    "repair:dry": "node scripts/auto-repair.js --dry-run",
+    "metrics": "node scripts/collect-metrics.js",
+    "security": "npm run scan:secrets && npm run scan:deps",
     "test": "npm run lint && npm run validate:json && npm run scan:secrets",
     "prepare": "husky install || true"
   },

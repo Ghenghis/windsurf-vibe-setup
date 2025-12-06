@@ -131,7 +131,10 @@ windsurf-vibe-setup/
 │   ├── testing/
 │   │   └── Run-WindsurfBenchmark.ps1
 │   ├── validate-json.js
-│   └── scan-secrets.js               # Automated secret scanning
+│   ├── scan-secrets.js               # Automated secret scanning
+│   ├── scan-dependencies.js          # Dependency vulnerability scanner
+│   ├── auto-repair.js                # Auto-fix common coding issues
+│   └── collect-metrics.js            # Code metrics collection
 ├── settings.json                     # Main Windsurf configuration
 ├── requirements.txt                  # Python dependencies
 ├── .eslintrc.json                    # ESLint config
