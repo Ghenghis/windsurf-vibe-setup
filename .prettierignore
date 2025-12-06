@@ -1,0 +1,46 @@
+# Dependencies
+node_modules/
+.venv/
+venv/
+
+# Build outputs
+dist/
+build/
+*.min.js
+*.min.css
+
+# ML/AI artifacts
+models/
+checkpoints/
+*.safetensors
+*.ckpt
+*.pt
+*.pth
+*.onnx
+*.bin
+
+# Generated files
+benchmark-results/
+*.generated.*
+coverage/
+
+# Data files
+data/
+output/
+loras/
+embeddings/
+vae/
+
+# Logs
+*.log
+logs/
+
+# IDE
+.windsurf/
+.vscode/
+
+# Docker volumes
+docker/*/data/
+
+# Backups
+backups/

@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Discussions
+    url: https://github.com/Ghenghis/windsurf-vibe-setup/discussions
+    about: Ask questions and discuss ideas in GitHub Discussions
+  - name: Documentation
+    url: https://github.com/Ghenghis/windsurf-vibe-setup/blob/main/docs/WINDSURF_VIBE_SETUP_README.md
+    about: Read the documentation before opening an issue
