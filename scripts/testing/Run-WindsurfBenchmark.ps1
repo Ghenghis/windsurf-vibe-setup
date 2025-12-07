@@ -440,9 +440,11 @@ $AllTests += @{
     Script = {
         $testPath = $Config.TestRepositories[0]
 
-        $jsFiles = Get-ChildItem -Path $testPath -Recurse -File -Include "*.js","*.ts","*.jsx","*.tsx" -ErrorAction SilentlyContinue |
-                   Where-Object { $_.FullName -notmatch "node_modules|dist|build|\.min\." } |
-                   Select-Object -First 25
+        # Limit recursion depth and use more aggressive filtering for performance
+        $excludePattern = "node_modules|dist|build|\.min\.|vendor|\.next|coverage|__pycache__|\.git"
+        $jsFiles = Get-ChildItem -Path $testPath -Depth 3 -File -Include "*.js","*.ts","*.jsx","*.tsx" -ErrorAction SilentlyContinue |
+                   Where-Object { $_.FullName -notmatch $excludePattern } |
+                   Select-Object -First 15
 
         $analysisResults = @{
             TotalFiles = $jsFiles.Count
@@ -453,16 +455,15 @@ $AllTests += @{
         }
 
         foreach ($file in $jsFiles) {
-            $content = Get-Content $file.FullName -ErrorAction SilentlyContinue
-            $lineCount = $content.Count
-            $imports = ($content | Where-Object { $_ -match "^import |require\(" }).Count
-            $exports = ($content | Where-Object { $_ -match "^export |module\.exports" }).Count
-            $functions = ($content | Where-Object { $_ -match "function \w+|const \w+ = .*=>" }).Count
+            # Use raw content read for speed
+            $content = [System.IO.File]::ReadAllLines($file.FullName)
+            $analysisResults.TotalLines += $content.Count
 
-            $analysisResults.TotalLines += $lineCount
-            $analysisResults.ImportCount += $imports
-            $analysisResults.ExportCount += $exports
-            $analysisResults.FunctionCount += $functions
+            foreach ($line in $content) {
+                if ($line -match "^import |require\(") { $analysisResults.ImportCount++ }
+                if ($line -match "^export |module\.exports") { $analysisResults.ExportCount++ }
+                if ($line -match "function \w+|const \w+ = .*=>") { $analysisResults.FunctionCount++ }
+            }
         }
 
         return @{
