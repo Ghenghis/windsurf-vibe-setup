@@ -39,8 +39,8 @@ This validation suite provides comprehensive testing for Windsurf IDE configurat
 ### Running the Benchmark
 
 ```powershell
-# Navigate to scripts directory
-cd c:\Users\Admin\civitai\scripts\testing
+# From project root, run via npm
+npm run benchmark
 
 # Run all tests (3 times each)
 .\Run-WindsurfBenchmark.ps1
@@ -63,17 +63,17 @@ cd c:\Users\Admin\civitai\scripts\testing
 | **FileSystem** | FS-001 to FS-003 | File watcher, search, and large file handling |
 | **Language** | LANG-001 to LANG-003 | Language server performance (Python, JS/TS, PowerShell) |
 | **Security** | SEC-001 to SEC-002 | Command deny list and exclusion security |
-| **Extension** | EXT-001 to EXT-002 | Extension functionality (Todo Tree, GitLens) |
+| **Extension** | EXT-001 to EXT-004 | Extension functionality (Todo, Git, JSON, Markdown) |
 
 ## Performance Thresholds
 
 | Classification | Response Time | Indicator |
 |---------------|---------------|-----------|
 | 🟢 Optimal | < 100ms | No action required |
-| 🟡 Acceptable | 100-300ms | Monitor for degradation |
-| 🟠 Degraded | 300-1000ms | Investigation recommended |
-| 🔴 Critical | 1000-3000ms | Immediate action required |
-| ⛔ Failed | > 3000ms | Blocking issue |
+| 🟡 Acceptable | 100-500ms | Monitor for degradation |
+| 🟠 Degraded | 500-2000ms | Investigation recommended |
+| 🔴 Critical | 2000-5000ms | Immediate action required |
+| ⛔ Failed | > 10000ms | Blocking issue |
 
 ## Output Files
 

@@ -654,6 +654,46 @@ $AllTests += @{
         return $result
     }
 }
+
+$AllTests += @{
+    TestId = "EXT-003"
+    TestName = "JSON Config Validation"
+    Category = "Extension"
+    Script = {
+        $testPath = $Config.TestRepositories[0]
+        $jsonFiles = Get-ChildItem -Path $testPath -Depth 2 -File -Filter "*.json" -ErrorAction SilentlyContinue |
+                     Where-Object { $_.FullName -notmatch "node_modules|package-lock" -and $_.Length -lt 20KB } |
+                     Select-Object -First 10
+
+        $valid = 0; $invalid = 0
+        foreach ($file in $jsonFiles) {
+            try {
+                [void]([System.IO.File]::ReadAllText($file.FullName) | ConvertFrom-Json)
+                $valid++
+            } catch { $invalid++ }
+        }
+        return @{ FilesChecked = $jsonFiles.Count; Valid = $valid; Invalid = $invalid }
+    }
+}
+
+$AllTests += @{
+    TestId = "EXT-004"
+    TestName = "Markdown Documentation Scan"
+    Category = "Extension"
+    Script = {
+        $testPath = $Config.TestRepositories[0]
+        $mdFiles = Get-ChildItem -Path $testPath -Depth 2 -File -Filter "*.md" -ErrorAction SilentlyContinue |
+                   Where-Object { $_.Length -lt 50KB } | Select-Object -First 10
+
+        $totalLines = 0; $totalHeadings = 0
+        foreach ($file in $mdFiles) {
+            $content = [System.IO.File]::ReadAllText($file.FullName)
+            $totalLines += ($content.Split("`n")).Count
+            $totalHeadings += ([regex]::Matches($content, "(?m)^#{1,6}\s")).Count
+        }
+        return @{ FilesScanned = $mdFiles.Count; TotalLines = $totalLines; Headings = $totalHeadings }
+    }
+}
 #endregion
 
 #region Editor Tests
