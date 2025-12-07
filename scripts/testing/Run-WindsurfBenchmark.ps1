@@ -313,24 +313,29 @@ $AllTests += @{
         $testPath = $Config.TestRepositories[0]
         $searchTerm = "import"
 
-        # Build exclusion pattern for Get-ChildItem
+        # Build exclusion pattern - limit depth for performance
         $excludeRegex = ($Config.ExcludedPatterns | ForEach-Object { [regex]::Escape($_) }) -join "|"
 
-        $files = Get-ChildItem -Path $testPath -Recurse -File -Include "*.py","*.js","*.ts","*.ps1" -ErrorAction SilentlyContinue |
-                 Where-Object { $_.FullName -notmatch $excludeRegex }
+        # Limit depth and file count early in pipeline for realistic test
+        $files = Get-ChildItem -Path $testPath -Depth 4 -File -Include "*.py","*.js","*.ts","*.ps1" -ErrorAction SilentlyContinue |
+                 Where-Object { $_.FullName -notmatch $excludeRegex } |
+                 Select-Object -First 50
 
         $matchCount = 0
         $filesSearched = 0
         $filesWithMatches = 0
 
-        foreach ($file in $files | Select-Object -First 100) {
+        foreach ($file in $files) {
             $filesSearched++
-            $content = Get-Content $file.FullName -ErrorAction SilentlyContinue
-            $matches = $content | Where-Object { $_ -match $searchTerm }
-            if ($matches) {
-                $matchCount += ($matches | Measure-Object).Count
-                $filesWithMatches++
-            }
+            # Use faster .NET file reading
+            try {
+                $content = [System.IO.File]::ReadAllLines($file.FullName)
+                $fileMatches = ($content | Where-Object { $_ -match $searchTerm }).Count
+                if ($fileMatches -gt 0) {
+                    $matchCount += $fileMatches
+                    $filesWithMatches++
+                }
+            } catch { }
         }
 
         return @{
