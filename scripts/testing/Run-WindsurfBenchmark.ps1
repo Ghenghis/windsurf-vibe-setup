@@ -61,10 +61,11 @@ $Config = @{
     )
     SettingsPath = "$env:APPDATA\Windsurf\User\settings.json"
     Thresholds = @{
-        Optimal = 100
-        Acceptable = 300
-        Degraded = 1000
-        Critical = 3000
+        Optimal = 100      # Under 100ms - excellent performance
+        Acceptable = 500   # Under 500ms - normal operation
+        Degraded = 2000    # Under 2s - needs attention
+        Critical = 5000    # Under 5s - investigate
+        Failed = 10000     # Over 10s - action required
     }
     ExcludedPatterns = @(
         "node_modules",
