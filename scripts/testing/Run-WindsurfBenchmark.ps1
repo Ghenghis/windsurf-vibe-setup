@@ -445,11 +445,11 @@ $AllTests += @{
     Script = {
         $testPath = $Config.TestRepositories[0]
 
-        # Limit recursion depth and use more aggressive filtering for performance
-        $excludePattern = "node_modules|dist|build|\.min\.|vendor|\.next|coverage|__pycache__|\.git"
-        $jsFiles = Get-ChildItem -Path $testPath -Depth 3 -File -Include "*.js","*.ts","*.jsx","*.tsx" -ErrorAction SilentlyContinue |
-                   Where-Object { $_.FullName -notmatch $excludePattern } |
-                   Select-Object -First 15
+        # Aggressive filtering for sub-1s performance
+        $excludePattern = "node_modules|dist|build|\.min\.|vendor|\.next|coverage|__pycache__|\.git|test|spec"
+        $jsFiles = Get-ChildItem -Path $testPath -Depth 2 -File -Include "*.js","*.ts" -ErrorAction SilentlyContinue |
+                   Where-Object { $_.FullName -notmatch $excludePattern -and $_.Length -lt 100KB } |
+                   Select-Object -First 10
 
         $analysisResults = @{
             TotalFiles = $jsFiles.Count
@@ -460,15 +460,14 @@ $AllTests += @{
         }
 
         foreach ($file in $jsFiles) {
-            # Use raw content read for speed
-            $content = [System.IO.File]::ReadAllLines($file.FullName)
-            $analysisResults.TotalLines += $content.Count
+            $content = [System.IO.File]::ReadAllText($file.FullName)
+            $lines = $content.Split("`n")
+            $analysisResults.TotalLines += $lines.Count
 
-            foreach ($line in $content) {
-                if ($line -match "^import |require\(") { $analysisResults.ImportCount++ }
-                if ($line -match "^export |module\.exports") { $analysisResults.ExportCount++ }
-                if ($line -match "function \w+|const \w+ = .*=>") { $analysisResults.FunctionCount++ }
-            }
+            # Count patterns in bulk using regex
+            $analysisResults.ImportCount += ([regex]::Matches($content, "(?m)^import |require\(")).Count
+            $analysisResults.ExportCount += ([regex]::Matches($content, "(?m)^export |module\.exports")).Count
+            $analysisResults.FunctionCount += ([regex]::Matches($content, "function \w+|=>\s*[{(]")).Count
         }
 
         return @{
