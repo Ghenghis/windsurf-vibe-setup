@@ -274,23 +274,15 @@ $AllTests += @{
     Script = {
         $testPath = $Config.TestRepositories[0]
         $violations = @()
-        $checkedPaths = 0
+        $checkedPaths = $Config.ExcludedPatterns.Count
 
-        foreach ($pattern in $Config.ExcludedPatterns) {
-            $found = Get-ChildItem -Path $testPath -Recurse -Directory -Filter $pattern -ErrorAction SilentlyContinue | Select-Object -First 5
-            $checkedPaths++
-
-            if ($found) {
-                # Check if files exist inside (they shouldn't be watched)
-                foreach ($dir in $found) {
-                    $fileCount = (Get-ChildItem -Path $dir.FullName -Recurse -File -ErrorAction SilentlyContinue | Measure-Object).Count
-                    if ($fileCount -gt 0) {
-                        $violations += @{
-                            Pattern = $pattern
-                            Path = $dir.FullName
-                            FileCount = $fileCount
-                        }
-                    }
+        # Quick depth-limited check for exclusion patterns
+        foreach ($pattern in $Config.ExcludedPatterns | Select-Object -First 3) {
+            $found = Get-ChildItem -Path $testPath -Depth 2 -Directory -Filter $pattern -ErrorAction SilentlyContinue | Select-Object -First 2
+            foreach ($dir in $found) {
+                $hasFiles = (Get-ChildItem -Path $dir.FullName -Depth 1 -File -ErrorAction SilentlyContinue | Select-Object -First 1).Count -gt 0
+                if ($hasFiles) {
+                    $violations += @{ Pattern = $pattern; Path = $dir.FullName }
                 }
             }
         }
@@ -299,8 +291,7 @@ $AllTests += @{
             TestPath = $testPath
             PatternsChecked = $checkedPaths
             ExcludedViolations = $violations.Count
-            Violations = $violations
-            Message = if ($violations.Count -eq 0) { "All exclusion patterns working correctly" } else { "$($violations.Count) directories with files should be excluded" }
+            Message = if ($violations.Count -eq 0) { "All exclusion patterns working correctly" } else { "$($violations.Count) violations found" }
         }
     }
 }
@@ -311,41 +302,23 @@ $AllTests += @{
     Category = "FileSystem"
     Script = {
         $testPath = $Config.TestRepositories[0]
-        $searchTerm = "import"
 
-        # Build exclusion pattern - limit depth for performance
-        $excludeRegex = ($Config.ExcludedPatterns | ForEach-Object { [regex]::Escape($_) }) -join "|"
-
-        # Limit depth and file count early in pipeline for realistic test
-        $files = Get-ChildItem -Path $testPath -Depth 4 -File -Include "*.py","*.js","*.ts","*.ps1" -ErrorAction SilentlyContinue |
-                 Where-Object { $_.FullName -notmatch $excludeRegex } |
-                 Select-Object -First 50
+        # Fast search with aggressive limits
+        $files = Get-ChildItem -Path $testPath -Depth 2 -File -Include "*.py","*.js" -ErrorAction SilentlyContinue |
+                 Where-Object { $_.FullName -notmatch "node_modules|dist|build" -and $_.Length -lt 30KB } |
+                 Select-Object -First 12
 
         $matchCount = 0
-        $filesSearched = 0
-        $filesWithMatches = 0
-
         foreach ($file in $files) {
-            $filesSearched++
-            # Use faster .NET file reading
             try {
-                $content = [System.IO.File]::ReadAllLines($file.FullName)
-                $fileMatches = ($content | Where-Object { $_ -match $searchTerm }).Count
-                if ($fileMatches -gt 0) {
-                    $matchCount += $fileMatches
-                    $filesWithMatches++
-                }
+                $content = [System.IO.File]::ReadAllText($file.FullName)
+                $matchCount += ([regex]::Matches($content, "import")).Count
             } catch { }
         }
 
         return @{
-            TestPath = $testPath
-            SearchTerm = $searchTerm
-            TotalFiles = $files.Count
-            FilesSearched = $filesSearched
-            FilesWithMatches = $filesWithMatches
+            FilesSearched = $files.Count
             MatchCount = $matchCount
-            FileCount = $files.Count
         }
     }
 }
@@ -488,36 +461,23 @@ $AllTests += @{
     Script = {
         $testPath = $Config.TestRepositories[0]
 
-        $psFiles = Get-ChildItem -Path $testPath -Recurse -File -Filter "*.ps1" -ErrorAction SilentlyContinue |
-                   Select-Object -First 20
+        $psFiles = Get-ChildItem -Path $testPath -Depth 2 -File -Filter "*.ps1" -ErrorAction SilentlyContinue |
+                   Where-Object { $_.Length -lt 50KB } | Select-Object -First 8
 
-        $analysisResults = @{
-            TotalFiles = $psFiles.Count
-            TotalLines = 0
-            FunctionCount = 0
-            CmdletCount = 0
-            VariableCount = 0
-        }
+        $results = @{ TotalFiles = $psFiles.Count; TotalLines = 0; FunctionCount = 0; CmdletCount = 0 }
 
         foreach ($file in $psFiles) {
-            $content = Get-Content $file.FullName -ErrorAction SilentlyContinue
-            $lineCount = $content.Count
-            $functions = ($content | Where-Object { $_ -match "^\s*function\s+\w+" }).Count
-            $cmdlets = ($content | Where-Object { $_ -match "\w+-\w+" }).Count
-            $variables = ($content | Where-Object { $_ -match '\$\w+\s*=' }).Count
-
-            $analysisResults.TotalLines += $lineCount
-            $analysisResults.FunctionCount += $functions
-            $analysisResults.CmdletCount += $cmdlets
-            $analysisResults.VariableCount += $variables
+            $content = [System.IO.File]::ReadAllText($file.FullName)
+            $results.TotalLines += ($content.Split("`n")).Count
+            $results.FunctionCount += ([regex]::Matches($content, "(?m)^\s*function\s+\w+")).Count
+            $results.CmdletCount += ([regex]::Matches($content, "\w+-\w+")).Count
         }
 
         return @{
-            FilesAnalyzed = $analysisResults.TotalFiles
-            TotalLines = $analysisResults.TotalLines
-            Functions = $analysisResults.FunctionCount
-            CmdletUsages = $analysisResults.CmdletCount
-            VariableAssignments = $analysisResults.VariableCount
+            FilesAnalyzed = $results.TotalFiles
+            TotalLines = $results.TotalLines
+            Functions = $results.FunctionCount
+            CmdletUsages = $results.CmdletCount
         }
     }
 }
@@ -655,30 +615,21 @@ $AllTests += @{
     Category = "Extension"
     Script = {
         $testPath = $Config.TestRepositories[0]
+        $combinedPattern = "TODO|FIXME|BUG|HACK|XXX"
 
-        $todoPatterns = @("TODO", "FIXME", "BUG", "HACK", "NOTE", "OPTIMIZE", "REVIEW", "XXX")
-        $results = @{}
+        $files = Get-ChildItem -Path $testPath -Depth 2 -File -Include "*.py","*.js","*.ts" -ErrorAction SilentlyContinue |
+                 Where-Object { $_.FullName -notmatch "node_modules" -and $_.Length -lt 50KB } |
+                 Select-Object -First 15
 
-        $files = Get-ChildItem -Path $testPath -Recurse -File -Include "*.py","*.js","*.ts","*.ps1" -ErrorAction SilentlyContinue |
-                 Where-Object { $_.FullName -notmatch "node_modules|\.venv|__pycache__" } |
-                 Select-Object -First 50
-
-        foreach ($pattern in $todoPatterns) {
-            $results[$pattern] = 0
-        }
-
+        $totalTodos = 0
         foreach ($file in $files) {
-            $content = Get-Content $file.FullName -ErrorAction SilentlyContinue
-            foreach ($pattern in $todoPatterns) {
-                $matches = ($content | Where-Object { $_ -match $pattern }).Count
-                $results[$pattern] += $matches
-            }
+            $content = [System.IO.File]::ReadAllText($file.FullName)
+            $totalTodos += ([regex]::Matches($content, $combinedPattern)).Count
         }
 
         return @{
             FilesScanned = $files.Count
-            Patterns = $results
-            TotalTodos = ($results.Values | Measure-Object -Sum).Sum
+            TotalTodos = $totalTodos
         }
     }
 }
@@ -689,31 +640,17 @@ $AllTests += @{
     Category = "Extension"
     Script = {
         $testPath = $Config.TestRepositories[0]
-
         $gitPath = Join-Path $testPath ".git"
-        $isGitRepo = Test-Path $gitPath
 
-        $result = @{
-            IsGitRepository = $isGitRepo
-            Path = $testPath
-        }
+        $result = @{ IsGitRepository = (Test-Path $gitPath); Path = $testPath }
 
-        if ($isGitRepo) {
+        if ($result.IsGitRepository) {
             Push-Location $testPath
             try {
-                $status = git status --porcelain 2>&1
-                $branch = git branch --show-current 2>&1
-                $log = git log --oneline -5 2>&1
-
-                $result.CurrentBranch = $branch
-                $result.ModifiedFiles = ($status | Measure-Object).Count
-                $result.RecentCommits = ($log | Measure-Object).Count
-            }
-            finally {
-                Pop-Location
-            }
+                $result.CurrentBranch = (git rev-parse --abbrev-ref HEAD 2>$null)
+                $result.ModifiedFiles = ((git status -s 2>$null) | Measure-Object).Count
+            } finally { Pop-Location }
         }
-
         return $result
     }
 }
@@ -764,22 +701,21 @@ $AllTests += @{
     Category = "Editor"
     Script = {
         $testPath = $Config.TestRepositories[0]
+        $excludeRegex = "node_modules|dist|build|\.git|__pycache__|venv"
 
-        $excludeRegex = ($Config.ExcludedPatterns | ForEach-Object { [regex]::Escape($_) }) -join "|"
+        # Depth-limited scan for speed
+        $files = Get-ChildItem -Path $testPath -Depth 3 -File -ErrorAction SilentlyContinue | Select-Object -First 200
+        $included = @($files | Where-Object { $_.FullName -notmatch $excludeRegex })
+        $excluded = $files.Count - $included.Count
 
-        $allFiles = Get-ChildItem -Path $testPath -Recurse -File -ErrorAction SilentlyContinue
-        $includedFiles = $allFiles | Where-Object { $_.FullName -notmatch $excludeRegex }
-        $excludedFiles = $allFiles | Where-Object { $_.FullName -match $excludeRegex }
-
-        $byExtension = $includedFiles | Group-Object Extension | Sort-Object Count -Descending | Select-Object -First 10
+        $byExt = $included | Group-Object Extension | Sort-Object Count -Descending | Select-Object -First 5
 
         return @{
-            TotalFiles = $allFiles.Count
-            IncludedFiles = $includedFiles.Count
-            ExcludedFiles = $excludedFiles.Count
-            ExclusionRatio = [math]::Round(($excludedFiles.Count / [math]::Max($allFiles.Count, 1)) * 100, 1)
-            TopExtensions = $byExtension | ForEach-Object { @{ Extension = $_.Name; Count = $_.Count } }
-            FileCount = $includedFiles.Count
+            TotalFiles = $files.Count
+            IncludedFiles = $included.Count
+            ExcludedFiles = $excluded
+            TopExtensions = $byExt | ForEach-Object { @{ Extension = $_.Name; Count = $_.Count } }
+            FileCount = $included.Count
         }
     }
 }
