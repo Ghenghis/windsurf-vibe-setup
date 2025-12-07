@@ -110,7 +110,7 @@ Sensitive files are excluded from indexing:
 
 - [x] Automated secret scanning (`npm run scan:secrets`)
 - [x] Dependency vulnerability alerts (`npm run scan:deps`)
-- [ ] Security audit logging
+- [x] Security audit logging (`npm run audit:security`)
 
 ## Acknowledgments
 
