@@ -48,7 +48,7 @@ const colors = {
 function analyzeFile(filePath, ext) {
   const content = fs.readFileSync(filePath, 'utf8');
   const lines = content.split('\n');
-  
+
   const metrics = {
     path: filePath,
     extension: ext,
@@ -79,10 +79,14 @@ function analyzeFile(filePath, ext) {
 
     // Block comments
     if (ext === 'js' || ext === 'ts' || ext === 'jsx' || ext === 'tsx') {
-      if (trimmed.startsWith('/*')) inBlockComment = true;
+      if (trimmed.startsWith('/*')) {
+        inBlockComment = true;
+      }
       if (inBlockComment) {
         metrics.commentLines++;
-        if (trimmed.includes('*/')) inBlockComment = false;
+        if (trimmed.includes('*/')) {
+          inBlockComment = false;
+        }
         continue;
       }
       if (trimmed.startsWith('//')) {
@@ -108,10 +112,14 @@ function analyzeFile(filePath, ext) {
         metrics.commentLines++;
         continue;
       }
-      if (trimmed.startsWith('<#')) inBlockComment = true;
+      if (trimmed.startsWith('<#')) {
+        inBlockComment = true;
+      }
       if (inBlockComment) {
         metrics.commentLines++;
-        if (trimmed.includes('#>')) inBlockComment = false;
+        if (trimmed.includes('#>')) {
+          inBlockComment = false;
+        }
         continue;
       }
     }
@@ -170,10 +178,10 @@ function analyzeFile(filePath, ext) {
 function findFiles(dir, files = []) {
   try {
     const entries = fs.readdirSync(dir, { withFileTypes: true });
-    
+
     for (const entry of entries) {
       const fullPath = path.join(dir, entry.name);
-      
+
       if (entry.isDirectory()) {
         if (!CONFIG.excludeDirs.includes(entry.name)) {
           findFiles(fullPath, files);
@@ -188,7 +196,7 @@ function findFiles(dir, files = []) {
   } catch (error) {
     // Skip directories we can't read
   }
-  
+
   return files;
 }
 
@@ -309,8 +317,12 @@ function generateReport(aggregated, fileMetrics) {
  * Format bytes to human readable
  */
 function formatBytes(bytes) {
-  if (bytes < 1024) return bytes + ' B';
-  if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+  if (bytes < 1024) {
+    return bytes + ' B';
+  }
+  if (bytes < 1024 * 1024) {
+    return (bytes / 1024).toFixed(1) + ' KB';
+  }
   return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
 }
 
@@ -380,7 +392,7 @@ function main() {
   const avgComplexity = (aggregated.totals.complexity / Math.max(aggregated.totals.files, 1)).toFixed(1);
 
   console.log(`${colors.bold}Quality Indicators:${colors.reset}`);
-  console.log(`  ${colors.cyan}Comment Ratio:${colors.reset} ${commentRatio}%` + 
+  console.log(`  ${colors.cyan}Comment Ratio:${colors.reset} ${commentRatio}%` +
     (parseFloat(commentRatio) < 10 ? ` ${colors.yellow}(consider adding more comments)${colors.reset}` : ''));
   console.log(`  ${colors.cyan}Avg Complexity/File:${colors.reset} ${avgComplexity}` +
     (parseFloat(avgComplexity) > 20 ? ` ${colors.yellow}(consider refactoring)${colors.reset}` : ''));

@@ -33,7 +33,7 @@ const colors = {
  */
 function runNpmAudit() {
   console.log(`${colors.cyan}[NPM]${colors.reset} Running npm audit...`);
-  
+
   const packageJsonPath = path.join(CONFIG.rootDir, 'package.json');
   if (!fs.existsSync(packageJsonPath)) {
     console.log(`${colors.gray}  No package.json found, skipping npm audit${colors.reset}`);
@@ -59,7 +59,7 @@ function runNpmAudit() {
 
     const vulnerabilities = [];
     const metadata = auditData.metadata || {};
-    
+
     // Process vulnerabilities from npm audit v2 format
     if (auditData.vulnerabilities) {
       for (const [pkgName, vuln] of Object.entries(auditData.vulnerabilities)) {
@@ -175,7 +175,7 @@ function runPipAudit() {
  */
 function checkOutdatedPackages() {
   console.log(`${colors.cyan}[NPM]${colors.reset} Checking for outdated packages...`);
-  
+
   try {
     const result = spawnSync('npm', ['outdated', '--json'], {
       cwd: CONFIG.rootDir,
@@ -239,14 +239,14 @@ function generateReport(npmResults, pipResults, outdated) {
       summary: pipResults.summary
     },
     outdated: outdated,
-    totalVulnerabilities: 
-      (npmResults.summary?.total || 0) + 
+    totalVulnerabilities:
+      (npmResults.summary?.total || 0) +
       (pipResults.summary?.total || 0)
   };
 
   const reportPath = path.join(CONFIG.outputDir, `dependency-scan-${Date.now()}.json`);
   fs.writeFileSync(reportPath, JSON.stringify(report, null, 2));
-  
+
   return reportPath;
 }
 
@@ -262,10 +262,10 @@ function main() {
   // Run scans
   const npmResults = runNpmAudit();
   console.log('');
-  
+
   const pipResults = CONFIG.pipCheckEnabled ? runPipAudit() : { vulnerabilities: [], summary: null };
   console.log('');
-  
+
   const outdated = checkOutdatedPackages();
   console.log('');
 
@@ -286,8 +286,12 @@ function main() {
     if (npmResults.vulnerabilities.length > 0) {
       for (const vuln of npmResults.vulnerabilities.slice(0, 10)) {
         console.log(`  ${formatSeverity(vuln.severity)} ${vuln.package}`);
-        if (vuln.via) console.log(`    ${colors.gray}Via: ${vuln.via}${colors.reset}`);
-        if (vuln.fixAvailable) console.log(`    ${colors.green}Fix available${colors.reset}`);
+        if (vuln.via) {
+          console.log(`    ${colors.gray}Via: ${vuln.via}${colors.reset}`);
+        }
+        if (vuln.fixAvailable) {
+          console.log(`    ${colors.green}Fix available${colors.reset}`);
+        }
       }
       if (npmResults.vulnerabilities.length > 10) {
         console.log(`  ${colors.gray}...and ${npmResults.vulnerabilities.length - 10} more${colors.reset}`);
@@ -328,7 +332,7 @@ function main() {
 
   // Summary
   const totalVulns = (npmResults.summary?.total || 0) + (pipResults.summary?.total || 0);
-  const criticalHigh = 
+  const criticalHigh =
     (npmResults.summary?.critical || 0) + (npmResults.summary?.high || 0) +
     (pipResults.summary?.critical || 0) + (pipResults.summary?.high || 0);
 

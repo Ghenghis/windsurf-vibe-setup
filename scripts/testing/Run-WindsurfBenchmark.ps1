@@ -84,7 +84,7 @@ function Write-TestHeader {
     
     Write-Host ""
     Write-Host "═══════════════════════════════════════════════════════════════" -ForegroundColor Cyan
-    Write-Host "  $TestId: $TestName" -ForegroundColor White
+    Write-Host "  ${TestId}: ${TestName}" -ForegroundColor White
     Write-Host "═══════════════════════════════════════════════════════════════" -ForegroundColor Cyan
 }
 

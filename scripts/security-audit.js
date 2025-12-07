@@ -3,7 +3,7 @@
  * Security Audit Logging System
  * Tracks and logs all security-related events and actions
  * Implements "Security audit logging" from SECURITY.md
- * 
+ *
  * FULLY AUTOMATED - No user prompts required
  */
 
@@ -70,12 +70,16 @@ function ensureLogDir() {
  */
 function rotateLogsIfNeeded() {
   const logPath = path.join(CONFIG.logDir, CONFIG.logFile);
-  
-  if (!fs.existsSync(logPath)) return;
-  
+
+  if (!fs.existsSync(logPath)) {
+    return;
+  }
+
   const stats = fs.statSync(logPath);
-  if (stats.size < CONFIG.maxLogSize) return;
-  
+  if (stats.size < CONFIG.maxLogSize) {
+    return;
+  }
+
   // Rotate logs
   for (let i = CONFIG.maxLogFiles - 1; i >= 1; i--) {
     const oldPath = path.join(CONFIG.logDir, `${CONFIG.logFile}.${i}`);
@@ -88,7 +92,7 @@ function rotateLogsIfNeeded() {
       }
     }
   }
-  
+
   fs.renameSync(logPath, path.join(CONFIG.logDir, `${CONFIG.logFile}.1`));
 }
 
@@ -118,10 +122,10 @@ function createAuditEntry(eventType, severity, message, details = {}) {
 function writeAuditLog(entry) {
   ensureLogDir();
   rotateLogsIfNeeded();
-  
+
   const logPath = path.join(CONFIG.logDir, CONFIG.logFile);
   const logLine = JSON.stringify(entry) + '\n';
-  
+
   fs.appendFileSync(logPath, logLine);
 }
 
@@ -140,12 +144,12 @@ function auditFilePermissions() {
   ];
 
   const files = findSensitiveFiles(CONFIG.rootDir, sensitivePatterns);
-  
+
   for (const file of files) {
     try {
       const stats = fs.statSync(file.path);
       const mode = (stats.mode & parseInt('777', 8)).toString(8);
-      
+
       // Check if file is world-readable
       if (stats.mode & parseInt('004', 8)) {
         events.push(createAuditEntry(
@@ -176,13 +180,15 @@ function auditFilePermissions() {
 function findSensitiveFiles(dir, patterns, files = []) {
   try {
     const entries = fs.readdirSync(dir, { withFileTypes: true });
-    
+
     for (const entry of entries) {
-      if (entry.name === 'node_modules' || entry.name === '.git') continue;
-      
+      if (entry.name === 'node_modules' || entry.name === '.git') {
+        continue;
+      }
+
       const fullPath = path.join(dir, entry.name);
       const relativePath = path.relative(CONFIG.rootDir, fullPath);
-      
+
       if (entry.isDirectory()) {
         findSensitiveFiles(fullPath, patterns, files);
       } else {
@@ -197,7 +203,7 @@ function findSensitiveFiles(dir, patterns, files = []) {
   } catch (error) {
     // Skip directories we can't read
   }
-  
+
   return files;
 }
 
@@ -214,21 +220,21 @@ function matchPattern(str, pattern) {
  */
 function auditGitConfig() {
   const events = [];
-  
+
   // Check .gitignore for sensitive patterns
   const gitignorePath = path.join(CONFIG.rootDir, '.gitignore');
   const requiredPatterns = ['.env', '*.pem', '*.key', 'secrets/', 'credentials'];
-  
+
   if (fs.existsSync(gitignorePath)) {
     const content = fs.readFileSync(gitignorePath, 'utf8');
     const missingPatterns = [];
-    
+
     for (const pattern of requiredPatterns) {
       if (!content.includes(pattern)) {
         missingPatterns.push(pattern);
       }
     }
-    
+
     if (missingPatterns.length > 0) {
       events.push(createAuditEntry(
         EVENT_TYPES.GIT_OPERATION,
@@ -262,7 +268,7 @@ function auditGitConfig() {
 function auditPackageJson() {
   const events = [];
   const packagePath = path.join(CONFIG.rootDir, 'package.json');
-  
+
   if (!fs.existsSync(packagePath)) {
     events.push(createAuditEntry(
       EVENT_TYPES.CONFIG_CHANGE,
@@ -275,7 +281,7 @@ function auditPackageJson() {
 
   const pkg = JSON.parse(fs.readFileSync(packagePath, 'utf8'));
   const scripts = pkg.scripts || {};
-  
+
   const securityScripts = {
     'scan:secrets': 'Secret scanning',
     'scan:deps': 'Dependency vulnerability scanning',
@@ -324,20 +330,20 @@ function auditConfigFiles() {
   // Find and check config files
   for (const configPattern of configFiles) {
     const files = findConfigFiles(CONFIG.rootDir, configPattern);
-    
+
     for (const filePath of files) {
       try {
         const content = fs.readFileSync(filePath, 'utf8');
         const relativePath = path.relative(CONFIG.rootDir, filePath);
-        
+
         for (const sp of secretPatterns) {
           const matches = content.match(sp.pattern);
           if (matches) {
             // Check if it's a placeholder
-            const isPlaceholder = matches.every(m => 
+            const isPlaceholder = matches.every(m =>
               /\${|\$\(|placeholder|example|your[_-]?|xxx/i.test(m)
             );
-            
+
             if (!isPlaceholder) {
               events.push(createAuditEntry(
                 EVENT_TYPES.SECRET_DETECTED,
@@ -374,11 +380,13 @@ function findConfigFiles(dir, pattern, files = []) {
   const fileName = parts.pop();
   const subDir = parts.length > 0 ? path.join(dir, ...parts) : dir;
 
-  if (!fs.existsSync(subDir)) return files;
+  if (!fs.existsSync(subDir)) {
+    return files;
+  }
 
   try {
     const entries = fs.readdirSync(subDir, { withFileTypes: true });
-    
+
     for (const entry of entries) {
       if (entry.isFile() && matchPattern(entry.name, fileName)) {
         files.push(path.join(subDir, entry.name));
@@ -480,9 +488,9 @@ function main() {
     console.log('');
 
     // Show warnings and above
-    const important = allEvents.filter(e => 
-      e.severity === SEVERITY.CRITICAL || 
-      e.severity === SEVERITY.ERROR || 
+    const important = allEvents.filter(e =>
+      e.severity === SEVERITY.CRITICAL ||
+      e.severity === SEVERITY.ERROR ||
       e.severity === SEVERITY.WARNING
     );
 

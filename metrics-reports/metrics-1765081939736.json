@@ -1,0 +1,244 @@
+{
+  "timestamp": "2025-12-07T04:32:19.735Z",
+  "summary": {
+    "files": 30,
+    "bytes": 317981,
+    "totalLines": 10123,
+    "codeLines": 7910,
+    "blankLines": 1154,
+    "commentLines": 1059,
+    "complexity": 202,
+    "todos": 48,
+    "functions": 42,
+    "classes": 0,
+    "imports": 18
+  },
+  "byLanguage": {
+    "json": {
+      "language": "JSON",
+      "files": 9,
+      "bytes": 116712,
+      "totalLines": 3460,
+      "codeLines": 3432,
+      "blankLines": 28,
+      "commentLines": 0,
+      "complexity": 0,
+      "todos": 8,
+      "functions": 0,
+      "classes": 0,
+      "imports": 0,
+      "avgLineLength": 0,
+      "maxLineLength": 230
+    },
+    "yml": {
+      "language": "YAML",
+      "files": 4,
+      "bytes": 20226,
+      "totalLines": 591,
+      "codeLines": 511,
+      "blankLines": 80,
+      "commentLines": 0,
+      "complexity": 0,
+      "todos": 13,
+      "functions": 0,
+      "classes": 0,
+      "imports": 0,
+      "avgLineLength": 0,
+      "maxLineLength": 152
+    },
+    "md": {
+      "language": "Markdown",
+      "files": 10,
+      "bytes": 83069,
+      "totalLines": 2980,
+      "codeLines": 2319,
+      "blankLines": 661,
+      "commentLines": 0,
+      "complexity": 0,
+      "todos": 24,
+      "functions": 0,
+      "classes": 0,
+      "imports": 0,
+      "avgLineLength": 0,
+      "maxLineLength": 583
+    },
+    "js": {
+      "language": "JavaScript",
+      "files": 6,
+      "bytes": 61651,
+      "totalLines": 2150,
+      "codeLines": 1648,
+      "blankLines": 249,
+      "commentLines": 253,
+      "complexity": 202,
+      "todos": 3,
+      "functions": 42,
+      "classes": 0,
+      "imports": 18,
+      "avgLineLength": 0,
+      "maxLineLength": 143
+    },
+    "ps1": {
+      "language": "PowerShell",
+      "files": 1,
+      "bytes": 36323,
+      "totalLines": 942,
+      "codeLines": 0,
+      "blankLines": 136,
+      "commentLines": 806,
+      "complexity": 0,
+      "todos": 0,
+      "functions": 0,
+      "classes": 0,
+      "imports": 0,
+      "avgLineLength": 0,
+      "maxLineLength": 191
+    }
+  },
+  "largestFiles": [
+    {
+      "path": "package-lock.json",
+      "codeLines": 2588,
+      "complexity": 0
+    },
+    {
+      "path": "docs\\testing\\WINDSURF_CONFIGURATION_VALIDATION_PLAN.md",
+      "codeLines": 904,
+      "complexity": 0
+    },
+    {
+      "path": "Windsurf-IDE-configuration-guide.md",
+      "codeLines": 488,
+      "complexity": 0
+    },
+    {
+      "path": "scripts\\security-audit.js",
+      "codeLines": 380,
+      "complexity": 54
+    },
+    {
+      "path": "scripts\\collect-metrics.js",
+      "codeLines": 320,
+      "complexity": 44
+    },
+    {
+      "path": ".github\\workflows\\ci.yml",
+      "codeLines": 307,
+      "complexity": 0
+    },
+    {
+      "path": "scripts\\auto-repair.js",
+      "codeLines": 290,
+      "complexity": 29
+    },
+    {
+      "path": "scripts\\scan-secrets.js",
+      "codeLines": 277,
+      "complexity": 25
+    },
+    {
+      "path": "settings.json",
+      "codeLines": 275,
+      "complexity": 0
+    },
+    {
+      "path": "scripts\\scan-dependencies.js",
+      "codeLines": 267,
+      "complexity": 36
+    }
+  ],
+  "mostComplex": [
+    {
+      "path": "scripts\\security-audit.js",
+      "complexity": 54,
+      "codeLines": 380
+    },
+    {
+      "path": "scripts\\collect-metrics.js",
+      "complexity": 44,
+      "codeLines": 320
+    },
+    {
+      "path": "scripts\\scan-dependencies.js",
+      "complexity": 36,
+      "codeLines": 267
+    },
+    {
+      "path": "scripts\\auto-repair.js",
+      "complexity": 29,
+      "codeLines": 290
+    },
+    {
+      "path": "scripts\\scan-secrets.js",
+      "complexity": 25,
+      "codeLines": 277
+    },
+    {
+      "path": "scripts\\validate-json.js",
+      "complexity": 14,
+      "codeLines": 114
+    },
+    {
+      "path": "package-lock.json",
+      "complexity": 0,
+      "codeLines": 2588
+    },
+    {
+      "path": "docs\\testing\\WINDSURF_CONFIGURATION_VALIDATION_PLAN.md",
+      "complexity": 0,
+      "codeLines": 904
+    },
+    {
+      "path": "Windsurf-IDE-configuration-guide.md",
+      "complexity": 0,
+      "codeLines": 488
+    },
+    {
+      "path": ".github\\workflows\\ci.yml",
+      "complexity": 0,
+      "codeLines": 307
+    }
+  ],
+  "todoHotspots": [
+    {
+      "path": "docs\\testing\\WINDSURF_CONFIGURATION_VALIDATION_PLAN.md",
+      "todos": 15
+    },
+    {
+      "path": ".github\\ISSUE_TEMPLATE\\bug_report.yml",
+      "todos": 13
+    },
+    {
+      "path": "settings.json",
+      "todos": 8
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "todos": 4
+    },
+    {
+      "path": "docs\\testing\\README.md",
+      "todos": 3
+    },
+    {
+      "path": "scripts\\security-audit.js",
+      "todos": 1
+    },
+    {
+      "path": "scripts\\collect-metrics.js",
+      "todos": 1
+    },
+    {
+      "path": "scripts\\scan-secrets.js",
+      "todos": 1
+    },
+    {
+      "path": "Windsurf-IDE-configuration-guide.md",
+      "todos": 1
+    },
+    {
+      "path": ".github\\PULL_REQUEST_TEMPLATE.md",
+      "todos": 1
+    }
+  ]
+}

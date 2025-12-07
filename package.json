@@ -39,15 +39,15 @@
     "audit:security": "node scripts/security-audit.js",
     "security": "npm run scan:secrets && npm run scan:deps && npm run audit:security",
     "test": "npm run lint && npm run validate:json && npm run scan:secrets",
-    "prepare": "husky install"
+    "prepare": "node -e \"try{require('husky').install()}catch(e){}\""
   },
   "devDependencies": {
-    "eslint": "^8.57.0",
-    "prettier": "^3.2.5",
-    "yaml-lint": "^1.7.0",
+    "eslint": "^8.56.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^15.5.2",
     "markdownlint-cli2": "^0.12.1",
-    "husky": "^9.0.11",
-    "lint-staged": "^15.2.2"
+    "prettier": "^3.7.4",
+    "yaml-lint": "^1.7.0"
   },
   "lint-staged": {
     "*.{js,ts}": [

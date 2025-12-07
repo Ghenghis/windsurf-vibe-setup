@@ -134,7 +134,7 @@ const FALSE_POSITIVES = [
   /example|sample|test|placeholder|your[_-]?/i,
   /xxx+|yyy+|zzz+/i,       // Placeholder values
   /1234567890/,            // Example numbers
-  /<[^>]+>/,               // Placeholder tags
+  /<[^>]+>/               // Placeholder tags
 ];
 
 // Color codes for terminal output
@@ -154,18 +154,18 @@ const colors = {
 function findFiles(dir, files = []) {
   try {
     const entries = fs.readdirSync(dir, { withFileTypes: true });
-    
+
     for (const entry of entries) {
       const fullPath = path.join(dir, entry.name);
-      
+
       if (entry.isDirectory()) {
         if (!CONFIG.excludeDirs.includes(entry.name)) {
           findFiles(fullPath, files);
         }
       } else if (entry.isFile()) {
         const ext = path.extname(entry.name).toLowerCase();
-        
-        if (CONFIG.extensions.includes(ext) && 
+
+        if (CONFIG.extensions.includes(ext) &&
             !CONFIG.excludeFiles.includes(entry.name)) {
           try {
             const stats = fs.statSync(fullPath);
@@ -181,7 +181,7 @@ function findFiles(dir, files = []) {
   } catch (error) {
     console.error(`Error reading directory ${dir}: ${error.message}`);
   }
-  
+
   return files;
 }
 
@@ -202,31 +202,31 @@ function isFalsePositive(match, lineContent) {
  */
 function scanFile(filePath) {
   const findings = [];
-  
+
   try {
     const content = fs.readFileSync(filePath, 'utf8');
     const lines = content.split('\n');
-    
+
     for (const secretPattern of SECRET_PATTERNS) {
       let match;
       const regex = new RegExp(secretPattern.pattern.source, secretPattern.pattern.flags);
-      
+
       while ((match = regex.exec(content)) !== null) {
         // Find line number
         const beforeMatch = content.substring(0, match.index);
         const lineNumber = beforeMatch.split('\n').length;
         const lineContent = lines[lineNumber - 1] || '';
-        
+
         // Check for false positives
         if (isFalsePositive(match[0], lineContent)) {
           continue;
         }
-        
+
         // Check context requirement
         if (secretPattern.context && !secretPattern.context.test(lineContent)) {
           continue;
         }
-        
+
         findings.push({
           type: secretPattern.name,
           severity: secretPattern.severity,
@@ -240,7 +240,7 @@ function scanFile(filePath) {
   } catch (error) {
     console.error(`Error scanning ${filePath}: ${error.message}`);
   }
-  
+
   return findings;
 }
 
@@ -280,7 +280,7 @@ function generateReport(findings, outputPath) {
       file: path.relative(CONFIG.rootDir, f.file)
     }))
   };
-  
+
   fs.writeFileSync(outputPath, JSON.stringify(report, null, 2));
   return report;
 }
@@ -293,35 +293,35 @@ function main() {
   console.log('='.repeat(50));
   console.log(`Scanning: ${CONFIG.rootDir}`);
   console.log('');
-  
+
   // Find all files
   const files = findFiles(CONFIG.rootDir);
   console.log(`Found ${files.length} files to scan`);
   console.log('');
-  
+
   // Scan files
   const allFindings = [];
   let scannedCount = 0;
-  
+
   for (const file of files) {
     const findings = scanFile(file);
     allFindings.push(...findings);
     scannedCount++;
-    
+
     // Progress indicator
     if (scannedCount % 50 === 0) {
       process.stdout.write(`Scanned ${scannedCount}/${files.length} files\r`);
     }
   }
-  
+
   console.log(`Scanned ${scannedCount} files                    `);
   console.log('');
-  
+
   // Display findings
   if (allFindings.length > 0) {
     console.log(`${colors.red}${colors.bold}⚠ Found ${allFindings.length} potential secret(s)${colors.reset}`);
     console.log('');
-    
+
     for (const finding of allFindings) {
       const relativePath = path.relative(CONFIG.rootDir, finding.file);
       console.log(`${formatSeverity(finding.severity)} ${finding.type}`);
@@ -329,13 +329,13 @@ function main() {
       console.log(`  ${colors.gray}Match: ${finding.match}${colors.reset}`);
       console.log('');
     }
-    
+
     // Generate report
     const reportPath = path.join(CONFIG.rootDir, 'secret-scan-report.json');
     generateReport(allFindings, reportPath);
     console.log(`Report saved to: ${reportPath}`);
     console.log('');
-    
+
     // Exit with error code
     process.exit(1);
   } else {

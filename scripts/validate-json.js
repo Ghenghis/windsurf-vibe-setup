@@ -30,16 +30,47 @@ const colors = {
  * @returns {string} - JSON content without comments
  */
 function stripJsonComments(content) {
-  // Remove single-line comments
-  let result = content.replace(/\/\/.*$/gm, '');
-  
-  // Remove multi-line comments
-  result = result.replace(/\/\*[\s\S]*?\*\//g, '');
-  
+  // Normalize line endings to LF
+  const result = content.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+
+  // Remove comments while respecting strings (state machine approach)
+  let output = '';
+  let i = 0;
+  while (i < result.length) {
+    // Handle strings - copy them verbatim
+    if (result[i] === '"') {
+      output += result[i++];
+      while (i < result.length && result[i] !== '"') {
+        if (result[i] === '\\' && i + 1 < result.length) {
+          output += result[i++]; // escape char
+        }
+        output += result[i++];
+      }
+      if (i < result.length) {
+        output += result[i++];
+      } // closing quote
+    } else if (result[i] === '/' && result[i + 1] === '/') {
+      // Handle single-line comments
+      while (i < result.length && result[i] !== '\n') {
+        i++;
+      }
+    } else if (result[i] === '/' && result[i + 1] === '*') {
+      // Handle multi-line comments
+      i += 2;
+      while (i < result.length && !(result[i] === '*' && result[i + 1] === '/')) {
+        i++;
+      }
+      i += 2;
+    } else {
+      // Copy everything else
+      output += result[i++];
+    }
+  }
+
   // Remove trailing commas before closing brackets
-  result = result.replace(/,(\s*[}\]])/g, '$1');
-  
-  return result;
+  output = output.replace(/,(\s*[}\]])/g, '$1');
+
+  return output;
 }
 
 /**
@@ -49,13 +80,13 @@ function stripJsonComments(content) {
  */
 function findJsonFiles(dir) {
   const files = [];
-  
+
   try {
     const entries = fs.readdirSync(dir, { withFileTypes: true });
-    
+
     for (const entry of entries) {
       const fullPath = path.join(dir, entry.name);
-      
+
       if (entry.isDirectory()) {
         if (!CONFIG.excludeDirs.includes(entry.name)) {
           files.push(...findJsonFiles(fullPath));
@@ -70,7 +101,7 @@ function findJsonFiles(dir) {
   } catch (error) {
     console.error(`Error reading directory ${dir}: ${error.message}`);
   }
-  
+
   return files;
 }
 
@@ -87,21 +118,21 @@ function validateJsonFile(filePath) {
     lineCount: 0,
     size: 0
   };
-  
+
   try {
     const content = fs.readFileSync(filePath, 'utf8');
     result.size = content.length;
     result.lineCount = content.split('\n').length;
-    
+
     // Strip comments for JSONC files
     const jsonContent = stripJsonComments(content);
-    
+
     // Attempt to parse
     JSON.parse(jsonContent);
     result.valid = true;
   } catch (error) {
     result.error = error.message;
-    
+
     // Try to extract line number from error
     const lineMatch = error.message.match(/position (\d+)/);
     if (lineMatch) {
@@ -111,7 +142,7 @@ function validateJsonFile(filePath) {
       result.errorLine = beforeError.split('\n').length;
     }
   }
-  
+
   return result;
 }
 
@@ -123,20 +154,20 @@ function main() {
   console.log('='.repeat(50));
   console.log(`Scanning: ${CONFIG.rootDir}`);
   console.log('');
-  
+
   const files = findJsonFiles(CONFIG.rootDir);
   console.log(`Found ${files.length} JSON files to validate`);
   console.log('');
-  
+
   const results = {
     valid: [],
     invalid: []
   };
-  
+
   for (const file of files) {
     const result = validateJsonFile(file);
     const relativePath = path.relative(CONFIG.rootDir, file);
-    
+
     if (result.valid) {
       results.valid.push(result);
       console.log(`${colors.green}[OK]${colors.reset} ${relativePath}`);
@@ -149,7 +180,7 @@ function main() {
       }
     }
   }
-  
+
   // Summary
   console.log('');
   console.log('='.repeat(50));
@@ -157,7 +188,7 @@ function main() {
   console.log(`  ${colors.green}Valid: ${results.valid.length}${colors.reset}`);
   console.log(`  ${colors.red}Invalid: ${results.invalid.length}${colors.reset}`);
   console.log(`  Total: ${files.length}`);
-  
+
   // Exit with error code if any files are invalid
   if (results.invalid.length > 0) {
     console.log('');

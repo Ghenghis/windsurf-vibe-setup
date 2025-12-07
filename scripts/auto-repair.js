@@ -185,10 +185,10 @@ const REPAIR_RULES = {
 function findFiles(dir, files = []) {
   try {
     const entries = fs.readdirSync(dir, { withFileTypes: true });
-    
+
     for (const entry of entries) {
       const fullPath = path.join(dir, entry.name);
-      
+
       if (entry.isDirectory()) {
         if (!CONFIG.excludeDirs.includes(entry.name)) {
           findFiles(fullPath, files);
@@ -205,7 +205,7 @@ function findFiles(dir, files = []) {
       console.error(`Error reading directory ${dir}: ${error.message}`);
     }
   }
-  
+
   return files;
 }
 
@@ -216,7 +216,7 @@ function repairFile(file) {
   const { path: filePath, ext } = file;
   const rules = REPAIR_RULES[ext] || [];
   const relativePath = path.relative(CONFIG.rootDir, filePath);
-  
+
   let content;
   try {
     content = fs.readFileSync(filePath, 'utf8');
@@ -224,25 +224,25 @@ function repairFile(file) {
     stats.errors++;
     return [];
   }
-  
+
   stats.filesScanned++;
-  
+
   const issues = [];
   let modifiedContent = content;
   let hasChanges = false;
-  
+
   for (const rule of rules) {
     // Check skip condition
     if (rule.skipIf && rule.skipIf.test(filePath)) {
       continue;
     }
-    
+
     // Find matches
     const matches = content.match(rule.pattern);
     if (matches && matches.length > 0) {
       const issueCount = matches.length;
       stats.issuesFound += issueCount;
-      
+
       issues.push({
         file: relativePath,
         rule: rule.name,
@@ -250,7 +250,7 @@ function repairFile(file) {
         count: issueCount,
         autoFix: rule.autoFix
       });
-      
+
       // Apply fix if autoFix is enabled
       if (rule.autoFix && !CONFIG.dryRun) {
         modifiedContent = modifiedContent.replace(rule.pattern, rule.replacement);
@@ -259,7 +259,7 @@ function repairFile(file) {
       }
     }
   }
-  
+
   // Write changes back
   if (hasChanges && modifiedContent !== content) {
     try {
@@ -269,7 +269,7 @@ function repairFile(file) {
       console.error(`${colors.red}Error writing ${relativePath}: ${error.message}${colors.reset}`);
     }
   }
-  
+
   return issues;
 }
 
@@ -330,7 +330,7 @@ function main() {
     for (const [file, issues] of Object.entries(byFile)) {
       console.log(`${colors.cyan}${file}${colors.reset}`);
       for (const issue of issues) {
-        const fixStatus = issue.autoFix 
+        const fixStatus = issue.autoFix
           ? (CONFIG.dryRun ? `${colors.yellow}[would fix]${colors.reset}` : `${colors.green}[fixed]${colors.reset}`)
           : `${colors.gray}[manual]${colors.reset}`;
         console.log(`  ${formatSeverity(issue.severity)} ${issue.rule} (${issue.count}x) ${fixStatus}`);
