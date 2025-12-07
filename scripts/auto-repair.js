@@ -52,13 +52,8 @@ const REPAIR_RULES = {
       skipIf: /test|spec|debug/i,
       autoFix: false // Requires confirmation
     },
-    {
-      name: 'Fix missing semicolons',
-      pattern: /^((?!\/\/|\/\*|\*|import|export|if|else|for|while|function|class|const|let|var|return|throw|try|catch|finally|switch|case|default|break|continue|do|{|}|\[|\]|\(|\)|,|\.|;|:|\?|!|&|\||<|>|=|\+|-|\*|\/|%|~|\^|`|'|"|@|#|\$|\\).+[^;,{\s])$/gm,
-      replacement: '$1;',
-      severity: 'low',
-      autoFix: true
-    },
+    // Note: Semicolon insertion disabled - requires AST parsing for accuracy
+    // Use ESLint with --fix for proper semicolon handling
     {
       name: 'Convert var to const/let',
       pattern: /\bvar\s+(\w+)\s*=/g,

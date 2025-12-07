@@ -24,18 +24,18 @@ Related to #
 ### Changes Made
 <!-- List the specific changes made in this PR -->
 
-- 
-- 
-- 
+-
+-
+-
 
 ### Testing Performed
 <!-- Describe the testing you've done -->
 
 #### Test Environment
-- **OS**: 
-- **Windsurf Version**: 
-- **Node.js Version**: 
-- **PowerShell Version**: 
+- **OS**:
+- **Windsurf Version**:
+- **Node.js Version**:
+- **PowerShell Version**:
 
 #### Tests Run
 - [ ] Ran benchmark suite (`Run-WindsurfBenchmark.ps1`)

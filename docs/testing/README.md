@@ -149,7 +149,7 @@ $AllTests += @{
     Script = {
         # Your test logic here
         # Must return a hashtable with results
-        
+
         return @{
             MetricName = $value
             Status = "Pass"
@@ -188,12 +188,12 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Run Benchmark
         shell: pwsh
         run: |
           .\scripts\testing\Run-WindsurfBenchmark.ps1 -OutputPath "./reports" -ExportHtml
-          
+
       - name: Upload Report
         uses: actions/upload-artifact@v4
         with:
@@ -235,5 +235,5 @@ MIT License - See [LICENSE](../../LICENSE) for details.
 
 ---
 
-**Documentation:** [WINDSURF_CONFIGURATION_VALIDATION_PLAN.md](WINDSURF_CONFIGURATION_VALIDATION_PLAN.md)  
+**Documentation:** [WINDSURF_CONFIGURATION_VALIDATION_PLAN.md](WINDSURF_CONFIGURATION_VALIDATION_PLAN.md)
 **Script:** [Run-WindsurfBenchmark.ps1](../../scripts/testing/Run-WindsurfBenchmark.ps1)

@@ -30,7 +30,7 @@ This master configuration addresses multi-language development, performance opti
   "windsurf.useClipboardAsContext": true,
   "windsurf.marketplaceExtensionGalleryServiceURL": "https://marketplace.visualstudio.com/_apis/public/gallery",
   "windsurf.marketplaceGalleryItemURL": "https://marketplace.visualstudio.com/items",
-  
+
   "python.defaultInterpreterPath": "${workspaceFolder}/.venv/bin/python",
   "python.terminal.activateEnvironment": true,
   "python.analysis.typeCheckingMode": "basic",
@@ -38,28 +38,28 @@ This master configuration addresses multi-language development, performance opti
   "python.linting.enabled": true,
   "python.linting.pylintEnabled": true,
   "python.analysis.extraPaths": ["${workspaceFolder}/src", "${workspaceFolder}/ultralytics"],
-  
+
   "java.configuration.runtimes": [
     { "name": "JavaSE-17", "path": "/usr/lib/jvm/java-17-openjdk" }
   ],
-  
+
   "typescript.preferences.importModuleSpecifier": "relative",
   "javascript.updateImportsOnFileMove.enabled": "always",
-  
+
   "docker.host": "unix:///var/run/docker.sock",
   "docker.showStartPage": false,
   "docker.containers.sortBy": "CreatedTime",
-  
+
   "terminal.integrated.env.linux": {
     "CUDA_VISIBLE_DEVICES": "0",
     "PYTORCH_CUDA_ALLOC_CONF": "max_split_size_mb:128"
   },
-  
+
   "git.enableSmartCommit": true,
   "git.confirmSync": false,
   "git.autofetch": true,
   "git.fetchOnPull": true,
-  
+
   "files.watcherExclude": {
     "**/data/**": true,
     "**/datasets/**": true,
@@ -85,7 +85,7 @@ This master configuration addresses multi-language development, performance opti
     "**/__pycache__": true,
     "**/.ipynb_checkpoints": true
   },
-  
+
   "editor.formatOnSave": true,
   "editor.largeFileOptimizations": true
 }

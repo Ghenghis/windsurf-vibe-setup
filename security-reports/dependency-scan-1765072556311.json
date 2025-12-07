@@ -1,0 +1,26 @@
+{
+  "timestamp": "2025-12-07T01:55:56.311Z",
+  "npm": {
+    "vulnerabilities": [],
+    "summary": {
+      "total": 0,
+      "critical": 0,
+      "high": 0,
+      "moderate": 0,
+      "low": 0,
+      "info": 0
+    }
+  },
+  "pip": {
+    "vulnerabilities": [],
+    "summary": {
+      "total": 0,
+      "critical": 0,
+      "high": 0,
+      "moderate": 0,
+      "low": 0
+    }
+  },
+  "outdated": [],
+  "totalVulnerabilities": 0
+}

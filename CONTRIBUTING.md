@@ -157,7 +157,7 @@ function Get-BenchmarkResults { }
 param(
     [Parameter(Mandatory = $true)]
     [string]$ConfigPath,
-    
+
     [Parameter(Mandatory = $false)]
     [int]$TimeoutSeconds = 30
 )
@@ -204,10 +204,10 @@ function calculateMetrics(results) { }
 # Use type hints
 def calculate_average(values: list[float]) -> float:
     """Calculate the average of a list of values.
-    
+
     Args:
         values: List of numeric values
-        
+
     Returns:
         The arithmetic mean of the values
     """
@@ -244,10 +244,10 @@ fp = Path("./config.json")         # Bad
    ```powershell
    # PowerShell
    Invoke-ScriptAnalyzer -Path . -Recurse
-   
+
    # JavaScript
    npx eslint .
-   
+
    # Python
    python -m flake8 .
    python -m black --check .
