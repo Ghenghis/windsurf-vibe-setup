@@ -1,30 +1,30 @@
 <#
 .SYNOPSIS
     Windsurf IDE Configuration Validation Benchmark Suite
-    
+
 .DESCRIPTION
     Comprehensive benchmark script that tests all Windsurf configuration
     settings against real project files. No simulated or mocked data.
     Each test executes 3 times for consistency verification.
-    
+
 .PARAMETER OutputPath
     Directory for benchmark reports. Default: .\benchmark-results
-    
+
 .PARAMETER RunCount
     Number of times to execute each test. Default: 3
-    
+
 .PARAMETER TestCategory
     Specific category to test. Options: All, Editor, FileSystem, Language, AI, Extension, Security
-    
+
 .PARAMETER Verbose
     Enable detailed logging output
-    
+
 .EXAMPLE
     .\Run-WindsurfBenchmark.ps1 -OutputPath ".\reports" -RunCount 3
-    
+
 .EXAMPLE
     .\Run-WindsurfBenchmark.ps1 -TestCategory "Editor" -Verbose
-    
+
 .NOTES
     Version: 1.0.0
     Author: Configuration Validation Team
@@ -35,15 +35,15 @@
 param(
     [Parameter(Mandatory = $false)]
     [string]$OutputPath = ".\benchmark-results",
-    
+
     [Parameter(Mandatory = $false)]
     [ValidateRange(1, 10)]
     [int]$RunCount = 3,
-    
+
     [Parameter(Mandatory = $false)]
     [ValidateSet("All", "Editor", "FileSystem", "Language", "AI", "Extension", "Security")]
     [string]$TestCategory = "All",
-    
+
     [Parameter(Mandatory = $false)]
     [switch]$ExportHtml
 )
@@ -81,7 +81,7 @@ $Config = @{
 #region Helper Functions
 function Write-TestHeader {
     param([string]$TestId, [string]$TestName)
-    
+
     Write-Host ""
     Write-Host "═══════════════════════════════════════════════════════════════" -ForegroundColor Cyan
     Write-Host "  ${TestId}: ${TestName}" -ForegroundColor White
@@ -90,21 +90,21 @@ function Write-TestHeader {
 
 function Write-RunResult {
     param([int]$Run, [double]$Duration, [bool]$Success, [string]$Details = "")
-    
+
     $status = if ($Success) { "✓" } else { "✗" }
-    $color = if ($Success) { 
+    $color = if ($Success) {
         if ($Duration -lt $Config.Thresholds.Optimal) { "Green" }
         elseif ($Duration -lt $Config.Thresholds.Acceptable) { "Yellow" }
         elseif ($Duration -lt $Config.Thresholds.Degraded) { "DarkYellow" }
         else { "Red" }
     } else { "Red" }
-    
+
     Write-Host "  Run $Run : [$status] ${Duration}ms $Details" -ForegroundColor $color
 }
 
 function Get-TestStatus {
     param([double]$AverageDuration)
-    
+
     if ($AverageDuration -lt $Config.Thresholds.Optimal) { return "Optimal" }
     elseif ($AverageDuration -lt $Config.Thresholds.Acceptable) { return "Acceptable" }
     elseif ($AverageDuration -lt $Config.Thresholds.Degraded) { return "Degraded" }
@@ -114,9 +114,9 @@ function Get-TestStatus {
 
 function Get-DelayReason {
     param([string]$TestId, [double]$Duration, [hashtable]$Context)
-    
+
     $reasons = @()
-    
+
     # Analyze based on test type and duration
     if ($Duration -gt $Config.Thresholds.Degraded) {
         switch -Regex ($TestId) {
@@ -144,11 +144,11 @@ function Get-DelayReason {
             }
         }
     }
-    
+
     if ($reasons.Count -eq 0 -and $Duration -gt $Config.Thresholds.Acceptable) {
         $reasons += "Performance within acceptable range but could be optimized"
     }
-    
+
     return $reasons
 }
 
@@ -160,9 +160,9 @@ function Measure-TestExecution {
         [scriptblock]$TestScript,
         [int]$Runs = 3
     )
-    
+
     Write-TestHeader -TestId $TestId -TestName $TestName
-    
+
     $testResult = @{
         TestId = $TestId
         TestName = $TestName
@@ -172,10 +172,10 @@ function Measure-TestExecution {
         Status = "Unknown"
         DelayReasons = @()
     }
-    
+
     for ($i = 1; $i -le $Runs; $i++) {
         Write-Host "  Executing Run $i of $Runs..." -ForegroundColor Gray
-        
+
         $stopwatch = [System.Diagnostics.Stopwatch]::StartNew()
         $runData = @{
             Run = $i
@@ -185,35 +185,35 @@ function Measure-TestExecution {
             Error = $null
             MemoryBefore = [System.GC]::GetTotalMemory($false)
         }
-        
+
         try {
             $output = & $TestScript
             $stopwatch.Stop()
-            
+
             $runData.Success = $true
             $runData.Duration = $stopwatch.ElapsedMilliseconds
             $runData.Output = $output
             $runData.MemoryAfter = [System.GC]::GetTotalMemory($false)
             $runData.MemoryDelta = $runData.MemoryAfter - $runData.MemoryBefore
-            
+
             Write-RunResult -Run $i -Duration $runData.Duration -Success $true
         }
         catch {
             $stopwatch.Stop()
             $runData.Duration = $stopwatch.ElapsedMilliseconds
             $runData.Error = $_.Exception.Message
-            
+
             Write-RunResult -Run $i -Duration $runData.Duration -Success $false -Details $runData.Error
         }
-        
+
         $testResult.Runs += $runData
-        
+
         # Brief pause between runs to avoid resource contention
         if ($i -lt $Runs) {
             Start-Sleep -Milliseconds 500
         }
     }
-    
+
     # Calculate statistics
     $successfulRuns = $testResult.Runs | Where-Object { $_.Success }
     if ($successfulRuns.Count -gt 0) {
@@ -223,7 +223,7 @@ function Measure-TestExecution {
         $testResult.Max = ($durations | Measure-Object -Maximum).Maximum
         $testResult.Variance = [math]::Round(($testResult.Max - $testResult.Min), 2)
         $testResult.Status = Get-TestStatus -AverageDuration $testResult.Average
-        
+
         # Analyze delays
         $context = @{}
         if ($successfulRuns[0].Output -is [hashtable]) {
@@ -235,7 +235,7 @@ function Measure-TestExecution {
         $testResult.Status = "Error"
         $testResult.DelayReasons = @("All test runs failed - check test prerequisites")
     }
-    
+
     # Display summary
     Write-Host ""
     Write-Host "  ─────────────────────────────────────────────────────" -ForegroundColor DarkGray
@@ -249,14 +249,14 @@ function Measure-TestExecution {
     Write-Host "  Status: $($testResult.Status)" -ForegroundColor $statusColor
     Write-Host "  Average: $($testResult.Average)ms | Min: $($testResult.Min)ms | Max: $($testResult.Max)ms" -ForegroundColor White
     Write-Host "  Variance: $($testResult.Variance)ms" -ForegroundColor White
-    
+
     if ($testResult.DelayReasons.Count -gt 0) {
         Write-Host "  Delay Analysis:" -ForegroundColor Yellow
         foreach ($reason in $testResult.DelayReasons) {
             Write-Host "    → $reason" -ForegroundColor DarkYellow
         }
     }
-    
+
     return $testResult
 }
 #endregion
@@ -274,11 +274,11 @@ $AllTests += @{
         $testPath = $Config.TestRepositories[0]
         $violations = @()
         $checkedPaths = 0
-        
+
         foreach ($pattern in $Config.ExcludedPatterns) {
             $found = Get-ChildItem -Path $testPath -Recurse -Directory -Filter $pattern -ErrorAction SilentlyContinue | Select-Object -First 5
             $checkedPaths++
-            
+
             if ($found) {
                 # Check if files exist inside (they shouldn't be watched)
                 foreach ($dir in $found) {
@@ -293,7 +293,7 @@ $AllTests += @{
                 }
             }
         }
-        
+
         return @{
             TestPath = $testPath
             PatternsChecked = $checkedPaths
@@ -311,17 +311,17 @@ $AllTests += @{
     Script = {
         $testPath = $Config.TestRepositories[0]
         $searchTerm = "import"
-        
+
         # Build exclusion pattern for Get-ChildItem
         $excludeRegex = ($Config.ExcludedPatterns | ForEach-Object { [regex]::Escape($_) }) -join "|"
-        
+
         $files = Get-ChildItem -Path $testPath -Recurse -File -Include "*.py","*.js","*.ts","*.ps1" -ErrorAction SilentlyContinue |
                  Where-Object { $_.FullName -notmatch $excludeRegex }
-        
+
         $matchCount = 0
         $filesSearched = 0
         $filesWithMatches = 0
-        
+
         foreach ($file in $files | Select-Object -First 100) {
             $filesSearched++
             $content = Get-Content $file.FullName -ErrorAction SilentlyContinue
@@ -331,7 +331,7 @@ $AllTests += @{
                 $filesWithMatches++
             }
         }
-        
+
         return @{
             TestPath = $testPath
             SearchTerm = $searchTerm
@@ -350,7 +350,7 @@ $AllTests += @{
     Category = "FileSystem"
     Script = {
         $testPath = $Config.TestRepositories[0]
-        
+
         # Find large files that should trigger optimizations
         $largeFiles = Get-ChildItem -Path $testPath -Recurse -File -ErrorAction SilentlyContinue |
                       Where-Object { $_.Length -gt 1MB } |
@@ -363,10 +363,10 @@ $AllTests += @{
                               Extension = $_.Extension
                           }
                       }
-        
+
         $binaryExtensions = @(".safetensors", ".ckpt", ".pt", ".pth", ".bin", ".h5", ".onnx")
         $binaryFiles = $largeFiles | Where-Object { $binaryExtensions -contains $_.Extension }
-        
+
         return @{
             TestPath = $testPath
             LargeFilesFound = $largeFiles.Count
@@ -385,11 +385,11 @@ $AllTests += @{
     Category = "Language"
     Script = {
         $testPath = $Config.TestRepositories[0]
-        
+
         $pythonFiles = Get-ChildItem -Path $testPath -Recurse -File -Filter "*.py" -ErrorAction SilentlyContinue |
                        Where-Object { $_.FullName -notmatch "\.venv|__pycache__|node_modules" } |
                        Select-Object -First 25
-        
+
         $analysisResults = @{
             TotalFiles = $pythonFiles.Count
             TotalLines = 0
@@ -398,19 +398,19 @@ $AllTests += @{
             ClassCount = 0
             FileDetails = @()
         }
-        
+
         foreach ($file in $pythonFiles) {
             $content = Get-Content $file.FullName -ErrorAction SilentlyContinue
             $lineCount = $content.Count
             $imports = ($content | Where-Object { $_ -match "^import |^from .* import " }).Count
             $functions = ($content | Where-Object { $_ -match "^\s*def \w+\(" }).Count
             $classes = ($content | Where-Object { $_ -match "^\s*class \w+" }).Count
-            
+
             $analysisResults.TotalLines += $lineCount
             $analysisResults.ImportCount += $imports
             $analysisResults.FunctionCount += $functions
             $analysisResults.ClassCount += $classes
-            
+
             $analysisResults.FileDetails += @{
                 Name = $file.Name
                 Lines = $lineCount
@@ -419,7 +419,7 @@ $AllTests += @{
                 Classes = $classes
             }
         }
-        
+
         return @{
             FilesAnalyzed = $analysisResults.TotalFiles
             TotalLines = $analysisResults.TotalLines
@@ -438,11 +438,11 @@ $AllTests += @{
     Category = "Language"
     Script = {
         $testPath = $Config.TestRepositories[0]
-        
+
         $jsFiles = Get-ChildItem -Path $testPath -Recurse -File -Include "*.js","*.ts","*.jsx","*.tsx" -ErrorAction SilentlyContinue |
                    Where-Object { $_.FullName -notmatch "node_modules|dist|build|\.min\." } |
                    Select-Object -First 25
-        
+
         $analysisResults = @{
             TotalFiles = $jsFiles.Count
             TotalLines = 0
@@ -450,20 +450,20 @@ $AllTests += @{
             ExportCount = 0
             FunctionCount = 0
         }
-        
+
         foreach ($file in $jsFiles) {
             $content = Get-Content $file.FullName -ErrorAction SilentlyContinue
             $lineCount = $content.Count
             $imports = ($content | Where-Object { $_ -match "^import |require\(" }).Count
             $exports = ($content | Where-Object { $_ -match "^export |module\.exports" }).Count
             $functions = ($content | Where-Object { $_ -match "function \w+|const \w+ = .*=>" }).Count
-            
+
             $analysisResults.TotalLines += $lineCount
             $analysisResults.ImportCount += $imports
             $analysisResults.ExportCount += $exports
             $analysisResults.FunctionCount += $functions
         }
-        
+
         return @{
             FilesAnalyzed = $analysisResults.TotalFiles
             TotalLines = $analysisResults.TotalLines
@@ -481,10 +481,10 @@ $AllTests += @{
     Category = "Language"
     Script = {
         $testPath = $Config.TestRepositories[0]
-        
+
         $psFiles = Get-ChildItem -Path $testPath -Recurse -File -Filter "*.ps1" -ErrorAction SilentlyContinue |
                    Select-Object -First 20
-        
+
         $analysisResults = @{
             TotalFiles = $psFiles.Count
             TotalLines = 0
@@ -492,20 +492,20 @@ $AllTests += @{
             CmdletCount = 0
             VariableCount = 0
         }
-        
+
         foreach ($file in $psFiles) {
             $content = Get-Content $file.FullName -ErrorAction SilentlyContinue
             $lineCount = $content.Count
             $functions = ($content | Where-Object { $_ -match "^\s*function\s+\w+" }).Count
             $cmdlets = ($content | Where-Object { $_ -match "\w+-\w+" }).Count
             $variables = ($content | Where-Object { $_ -match '\$\w+\s*=' }).Count
-            
+
             $analysisResults.TotalLines += $lineCount
             $analysisResults.FunctionCount += $functions
             $analysisResults.CmdletCount += $cmdlets
             $analysisResults.VariableCount += $variables
         }
-        
+
         return @{
             FilesAnalyzed = $analysisResults.TotalFiles
             TotalLines = $analysisResults.TotalLines
@@ -524,19 +524,19 @@ $AllTests += @{
     Category = "Security"
     Script = {
         $settingsPath = $Config.SettingsPath
-        
+
         if (-not (Test-Path $settingsPath)) {
             return @{
                 Error = "Settings file not found at $settingsPath"
                 Status = "Failed"
             }
         }
-        
+
         # Read and parse settings (handle JSON with comments)
         $content = Get-Content $settingsPath -Raw
         # Remove single-line comments
         $content = $content -replace '//.*$', '' -replace '(?m)^\s*//.*$', ''
-        
+
         try {
             $settings = $content | ConvertFrom-Json
         }
@@ -546,7 +546,7 @@ $AllTests += @{
                 Status = "Failed"
             }
         }
-        
+
         $securityChecks = @{
             DenyListConfigured = $false
             DenyListCount = 0
@@ -555,7 +555,7 @@ $AllTests += @{
             DangerousCommandsBlocked = @()
             MissingBlocks = @()
         }
-        
+
         # Check deny list
         $denyList = $settings.'windsurf.cascadeCommandsDenyList'
         if ($denyList -and $denyList.Count -gt 0) {
@@ -563,14 +563,14 @@ $AllTests += @{
             $securityChecks.DenyListCount = $denyList.Count
             $securityChecks.DangerousCommandsBlocked = $denyList
         }
-        
+
         # Check allow list
         $allowList = $settings.'windsurf.cascadeCommandsAllowList'
         if ($allowList -and $allowList.Count -gt 0) {
             $securityChecks.AllowListConfigured = $true
             $securityChecks.AllowListCount = $allowList.Count
         }
-        
+
         # Check for essential blocks
         $essentialBlocks = @("rm -rf", "DROP TABLE", "format", "shutdown", "del /s")
         foreach ($block in $essentialBlocks) {
@@ -578,7 +578,7 @@ $AllTests += @{
                 $securityChecks.MissingBlocks += $block
             }
         }
-        
+
         return @{
             DenyListConfigured = $securityChecks.DenyListConfigured
             DenyListCount = $securityChecks.DenyListCount
@@ -596,18 +596,18 @@ $AllTests += @{
     Category = "Security"
     Script = {
         $settingsPath = $Config.SettingsPath
-        
+
         $content = Get-Content $settingsPath -Raw
         $content = $content -replace '//.*$', '' -replace '(?m)^\s*//.*$', ''
         $settings = $content | ConvertFrom-Json
-        
+
         $exclusionChecks = @{
             WatcherExcludes = @()
             SearchExcludes = @()
             FilesExcludes = @()
             SensitivePatternsCovered = $true
         }
-        
+
         # Sensitive patterns that should be excluded
         $sensitivePatterns = @(
             ".env",
@@ -616,22 +616,22 @@ $AllTests += @{
             "private_key",
             ".pem"
         )
-        
+
         $watcherExclude = $settings.'files.watcherExclude'
         if ($watcherExclude) {
             $exclusionChecks.WatcherExcludes = $watcherExclude.PSObject.Properties.Name
         }
-        
+
         $searchExclude = $settings.'search.exclude'
         if ($searchExclude) {
             $exclusionChecks.SearchExcludes = $searchExclude.PSObject.Properties.Name
         }
-        
+
         $filesExclude = $settings.'files.exclude'
         if ($filesExclude) {
             $exclusionChecks.FilesExcludes = $filesExclude.PSObject.Properties.Name
         }
-        
+
         return @{
             WatcherExcludeCount = $exclusionChecks.WatcherExcludes.Count
             SearchExcludeCount = $exclusionChecks.SearchExcludes.Count
@@ -649,18 +649,18 @@ $AllTests += @{
     Category = "Extension"
     Script = {
         $testPath = $Config.TestRepositories[0]
-        
+
         $todoPatterns = @("TODO", "FIXME", "BUG", "HACK", "NOTE", "OPTIMIZE", "REVIEW", "XXX")
         $results = @{}
-        
+
         $files = Get-ChildItem -Path $testPath -Recurse -File -Include "*.py","*.js","*.ts","*.ps1" -ErrorAction SilentlyContinue |
                  Where-Object { $_.FullName -notmatch "node_modules|\.venv|__pycache__" } |
                  Select-Object -First 50
-        
+
         foreach ($pattern in $todoPatterns) {
             $results[$pattern] = 0
         }
-        
+
         foreach ($file in $files) {
             $content = Get-Content $file.FullName -ErrorAction SilentlyContinue
             foreach ($pattern in $todoPatterns) {
@@ -668,7 +668,7 @@ $AllTests += @{
                 $results[$pattern] += $matches
             }
         }
-        
+
         return @{
             FilesScanned = $files.Count
             Patterns = $results
@@ -683,22 +683,22 @@ $AllTests += @{
     Category = "Extension"
     Script = {
         $testPath = $Config.TestRepositories[0]
-        
+
         $gitPath = Join-Path $testPath ".git"
         $isGitRepo = Test-Path $gitPath
-        
+
         $result = @{
             IsGitRepository = $isGitRepo
             Path = $testPath
         }
-        
+
         if ($isGitRepo) {
             Push-Location $testPath
             try {
                 $status = git status --porcelain 2>&1
                 $branch = git branch --show-current 2>&1
                 $log = git log --oneline -5 2>&1
-                
+
                 $result.CurrentBranch = $branch
                 $result.ModifiedFiles = ($status | Measure-Object).Count
                 $result.RecentCommits = ($log | Measure-Object).Count
@@ -707,7 +707,7 @@ $AllTests += @{
                 Pop-Location
             }
         }
-        
+
         return $result
     }
 }
@@ -720,7 +720,7 @@ $AllTests += @{
     Category = "Editor"
     Script = {
         $settingsPath = $Config.SettingsPath
-        
+
         $result = @{
             Path = $settingsPath
             Exists = Test-Path $settingsPath
@@ -728,15 +728,15 @@ $AllTests += @{
             LineCount = 0
             SizeKB = 0
         }
-        
+
         if ($result.Exists) {
             $content = Get-Content $settingsPath -Raw
             $result.SizeKB = [math]::Round($content.Length / 1KB, 2)
             $result.LineCount = (Get-Content $settingsPath).Count
-            
+
             # Remove comments for validation
             $jsonContent = $content -replace '//.*$', '' -replace '(?m)^\s*//.*$', ''
-            
+
             try {
                 $parsed = $jsonContent | ConvertFrom-Json
                 $result.Valid = $true
@@ -747,7 +747,7 @@ $AllTests += @{
                 $result.Error = $_.Exception.Message
             }
         }
-        
+
         return $result
     }
 }
@@ -758,15 +758,15 @@ $AllTests += @{
     Category = "Editor"
     Script = {
         $testPath = $Config.TestRepositories[0]
-        
+
         $excludeRegex = ($Config.ExcludedPatterns | ForEach-Object { [regex]::Escape($_) }) -join "|"
-        
+
         $allFiles = Get-ChildItem -Path $testPath -Recurse -File -ErrorAction SilentlyContinue
         $includedFiles = $allFiles | Where-Object { $_.FullName -notmatch $excludeRegex }
         $excludedFiles = $allFiles | Where-Object { $_.FullName -match $excludeRegex }
-        
+
         $byExtension = $includedFiles | Group-Object Extension | Sort-Object Count -Descending | Select-Object -First 10
-        
+
         return @{
             TotalFiles = $allFiles.Count
             IncludedFiles = $includedFiles.Count
@@ -837,7 +837,7 @@ Write-Host ""
 foreach ($test in $testsToRun) {
     $result = Measure-TestExecution -TestId $test.TestId -TestName $test.TestName -Category $test.Category -TestScript $test.Script -Runs $RunCount
     $benchmarkResults.Tests += $result
-    
+
     # Update summary
     $benchmarkResults.Summary.Total++
     switch ($result.Status) {
@@ -874,7 +874,7 @@ Write-Host "  JSON Report: $jsonReportPath" -ForegroundColor Green
 # Generate HTML report if requested
 if ($ExportHtml) {
     $htmlReportPath = Join-Path $OutputPath "benchmark-report-$(Get-Date -Format 'yyyyMMdd-HHmmss').html"
-    
+
     $htmlContent = @"
 <!DOCTYPE html>
 <html>
@@ -900,7 +900,7 @@ if ($ExportHtml) {
 <body>
     <h1>Windsurf IDE Configuration Benchmark Report</h1>
     <p>Generated: $($benchmarkResults.Metadata.Timestamp)</p>
-    
+
     <h2>Summary</h2>
     <div class="summary">
         <div class="summary-card"><h3>Total</h3><div class="value">$($benchmarkResults.Summary.Total)</div></div>
@@ -909,7 +909,7 @@ if ($ExportHtml) {
         <div class="summary-card"><h3>Degraded</h3><div class="value degraded">$($benchmarkResults.Summary.Degraded)</div></div>
         <div class="summary-card"><h3>Critical</h3><div class="value critical">$($benchmarkResults.Summary.Critical)</div></div>
     </div>
-    
+
     <h2>Test Results</h2>
     <table>
         <tr>
@@ -929,7 +929,7 @@ if ($ExportHtml) {
 </body>
 </html>
 "@
-    
+
     $htmlContent | Out-File $htmlReportPath -Encoding UTF8
     Write-Host "  HTML Report: $htmlReportPath" -ForegroundColor Green
 }

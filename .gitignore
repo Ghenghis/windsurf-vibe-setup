@@ -26,3 +26,13 @@ logs/
 .env
 .env.local
 .env*.local
+
+# Secrets & Credentials
+*.pem
+*.key
+*.p12
+*.pfx
+secrets/
+credentials/
+**/credentials*
+*.secret

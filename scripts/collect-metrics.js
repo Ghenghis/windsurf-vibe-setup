@@ -359,7 +359,7 @@ function main() {
   console.log(`${'Language'.padEnd(15)} ${'Files'.padStart(6)} ${'Code'.padStart(8)} ${'Comments'.padStart(8)} ${'Complexity'.padStart(10)}`);
   console.log('-'.repeat(60));
 
-  for (const [ext, data] of Object.entries(aggregated.byExtension).sort((a, b) => b[1].codeLines - a[1].codeLines)) {
+  for (const [, data] of Object.entries(aggregated.byExtension).sort((a, b) => b[1].codeLines - a[1].codeLines)) {
     console.log(
       `${colors.cyan}${data.language.padEnd(15)}${colors.reset}` +
       `${data.files.toString().padStart(6)} ` +
