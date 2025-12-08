@@ -1,0 +1,22 @@
+{
+  "name": "@windsurf-vibe/lmstudio-autopilot",
+  "version": "1.0.0",
+  "description": "Autopilot MCP Server for LM Studio - Zero-code task completion",
+  "main": "src/index.js",
+  "bin": {
+    "lmstudio-autopilot": "./src/index.js"
+  },
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node --watch src/index.js"
+  },
+  "keywords": ["mcp", "lmstudio", "autopilot", "ai", "local-llm"],
+  "author": "Windsurf Vibe Setup",
+  "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
