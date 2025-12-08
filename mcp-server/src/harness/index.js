@@ -21,10 +21,25 @@ async function initializeHarness(config = {}) {
   }
   
   console.log('🎯 Initializing Anthropic Harness System...');
+  console.log('💰 Using Claude SUBSCRIPTION ONLY - NO API KEYS ALLOWED!');
+  
+  // BLOCK any API key configuration
+  if (config.apiKey || config.anthropicApiKey || process.env.ANTHROPIC_API_KEY) {
+    throw new Error('❌ API KEYS NOT ALLOWED! Use Claude subscription only ($20/month)');
+  }
   
   // Configure harness
   if (config) {
     Object.assign(harness.config, config);
+  }
+  
+  // Setup Claude subscription
+  const { setupClaudeSubscription, getSubscriptionStatus } = require('./claude-subscription');
+  const status = getSubscriptionStatus();
+  
+  if (!status.hasToken) {
+    console.log('📝 Setting up Claude subscription token...');
+    await setupClaudeSubscription();
   }
   
   // Integrate with Hive Mind

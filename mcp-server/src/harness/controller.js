@@ -52,6 +52,45 @@ class AnthropicHarness extends EventEmitter {
   }
   
   // ═══════════════════════════════════════════════════════════════════════
+  // SUBSCRIPTION ENFORCEMENT (NO API KEYS ALLOWED!)
+  // ═══════════════════════════════════════════════════════════════════════
+  
+  async enforceSubscriptionOnly() {
+    // Block ALL API key usage - only allow Claude subscription
+    const blockedVars = [
+      'ANTHROPIC_API_KEY',
+      'OPENAI_API_KEY', 
+      'CLAUDE_API_KEY',
+      'API_KEY'
+    ];
+    
+    for (const varName of blockedVars) {
+      if (process.env[varName]) {
+        console.error(`❌ ERROR: API keys are NOT allowed!`);
+        console.error(`Found ${varName} in environment.`);
+        console.error(`This system ONLY uses Claude subscription ($20/month).`);
+        console.error(`Remove all API keys and use: claude setup-token`);
+        throw new Error('API keys blocked. Use Claude subscription only!');
+      }
+    }
+    
+    // Ensure Claude subscription token exists
+    if (!process.env.CLAUDE_TOKEN) {
+      console.log('\n⚠️ Claude subscription token not found!');
+      console.log('Setting up Claude subscription (Cole Medin method)...\n');
+      
+      const { setupClaudeSubscription } = require('./claude-subscription');
+      const token = await setupClaudeSubscription();
+      
+      if (!token && !process.env.CLAUDE_TOKEN) {
+        throw new Error('Claude subscription setup required. No API keys allowed!');
+      }
+    }
+    
+    console.log('✅ Using Claude subscription - NO API CHARGES!');
+  }
+  
+  // ═══════════════════════════════════════════════════════════════════════
   // INITIALIZATION
   // ═══════════════════════════════════════════════════════════════════════
   
@@ -60,7 +99,11 @@ class AnthropicHarness extends EventEmitter {
       throw new Error('Harness is disabled. Enable in config or set HARNESS_ENABLED=true');
     }
     
+    // ENFORCE: Only Claude subscription, NEVER API keys
+    await this.enforceSubscriptionOnly();
+    
     console.log('🎯 Initializing Anthropic Harness...');
+    console.log('💰 Using Claude SUBSCRIPTION ($20/month) - NO API CHARGES!');
     console.log(`   Max Sessions: ${this.config.maxSessions}`);
     console.log(`   Max Runtime: ${this.config.maxHoursRuntime} hours`);
     console.log(`   Target Pass Rate: ${this.config.targetTestPassRate * 100}%`);

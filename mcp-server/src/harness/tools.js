@@ -36,7 +36,7 @@ const harnessTools = [
   
   {
     name: 'harness_start',
-    description: 'Start a long-running autonomous development session (24-48 hours)',
+    description: 'Start a long-running autonomous development session (24-48 hours) using Claude SUBSCRIPTION only',
     inputSchema: {
       type: 'object',
       properties: {
