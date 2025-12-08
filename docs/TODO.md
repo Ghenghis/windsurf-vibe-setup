@@ -192,7 +192,7 @@ templates/workspace-rules/
 - [x] CODEOWNERS
 
 ### Missing (TODO) 🔴
-- [ ] setup-windows.ps1
+- [x] setup-windows.ps1 ✅ Created
 - [ ] setup-unix.sh
 - [ ] interactive-setup.js
 - [ ] test-installation.js
