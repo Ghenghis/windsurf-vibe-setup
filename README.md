@@ -1,12 +1,12 @@
 <div align="center">
 
-# 🏢 Windsurf & LM Studio Autopilot
+# 🚀 Windsurf & LM Studio Autopilot
 
-## v3.0.0 ENTERPRISE EDITION
+## v3.1.0 EXTENDED INTEGRATIONS
 
-[![Version](https://img.shields.io/badge/version-3.0.0-blue.svg)](https://github.com/Ghenghis/windsurf-vibe-setup/releases)
-[![Tools](https://img.shields.io/badge/tools-120+-success.svg)](#-complete-tool-reference-120-tools)
-[![Autopilot](https://img.shields.io/badge/autopilot-100%25_Technical-gold.svg)](#-capability-matrix)
+[![Version](https://img.shields.io/badge/version-3.1.0-blue.svg)](https://github.com/Ghenghis/windsurf-vibe-setup/releases)
+[![Tools](https://img.shields.io/badge/tools-156+-success.svg)](#-complete-tool-reference-156-tools)
+[![Autopilot](https://img.shields.io/badge/autopilot-100%25+_Technical-gold.svg)](#-capability-matrix)
 [![License](https://img.shields.io/badge/license-MIT-purple.svg)](LICENSE)
 [![Node](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen.svg)](https://nodejs.org/)
 [![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey.svg)](#-installation)
@@ -14,7 +14,7 @@
 
 ---
 
-### **100% TECHNICAL AUTOPILOT** • **120+ TOOLS** • **ENTERPRISE READY**
+### **100%+ TECHNICAL AUTOPILOT** • **156+ TOOLS** • **EXTENDED INTEGRATIONS**
 
 *The most comprehensive MCP (Model Context Protocol) server for AI-powered development.*
 *Works with both **Windsurf IDE** and **LM Studio**.*

@@ -1,6 +1,6 @@
-# LM Studio Autopilot MCP Server v3.0.0 - ENTERPRISE EDITION
+# LM Studio Autopilot MCP Server v3.1.0 - EXTENDED INTEGRATIONS
 
-> **120+ Tools** | **100% Technical Autopilot** | **Enterprise Ready**
+> **156+ Tools** | **100%+ Technical Autopilot** | **Extended Integrations**
 
 ## Overview
 

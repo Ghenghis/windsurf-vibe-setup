@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Windsurf Autopilot MCP Server v3.0.0 ENTERPRISE EDITION
+ * Windsurf Autopilot MCP Server v3.1.0 EXTENDED INTEGRATIONS
  * 
  * COMPLETE ZERO-CODE AUTOPILOT for vibe coders.
  * This server gives Windsurf AI FULL capability to:
@@ -20,9 +20,17 @@
  * - Multi-agent orchestration (v3.0)
  * - Custom AI model integration (v3.0)
  * - Cloud sync (v3.0)
+ * - Infrastructure as Code - Terraform/K8s (v3.1)
+ * - Advanced Testing - E2E/Visual/Load (v3.1)
+ * - Communications - Slack/Discord/Teams (v3.1)
+ * - Project Management - Jira/Linear/GitHub (v3.1)
+ * - Advanced Security - SAST/SBOM/Compliance (v3.1)
+ * - Dev Environment - Devcontainer/Codespaces (v3.1)
+ * - Publishing - npm/PyPI/Docker (v3.1)
+ * - Observability - Sentry/Prometheus/Grafana (v3.1)
  * 
  * The user NEVER needs to touch a terminal.
- * 120+ tools for 100% technical autopilot.
+ * 156+ tools for 100%+ technical autopilot.
  */
 
 const { Server } = require('@modelcontextprotocol/sdk/server/index.js');
@@ -59,6 +67,17 @@ const teamTools = require('./team-tools.js');
 const cloudTools = require('./cloud-tools.js');
 const modelTools = require('./model-tools.js');
 const agentTools = require('./agent-tools.js');
+const healthTools = require('./health-tools.js');
+
+// Import v3.1 tools
+const iacTools = require('./iac-tools.js');
+const testingTools = require('./testing-tools.js');
+const commsTools = require('./comms-tools.js');
+const pmTools = require('./pm-tools.js');
+const securityAdvancedTools = require('./security-advanced-tools.js');
+const devenvTools = require('./devenv-tools.js');
+const publishTools = require('./publish-tools.js');
+const observabilityTools = require('./observability-tools.js');
 
 // ==============================================================================
 // Configuration
@@ -1985,7 +2004,63 @@ await server.connect(transport);
   assign_task: async (args) => agentTools.assign_task.handler(args),
   agent_status: async (args) => agentTools.agent_status.handler(args || {}),
   agent_collaborate: async (args) => agentTools.agent_collaborate.handler(args),
-  list_agents: async () => agentTools.list_agents.handler()
+  list_agents: async () => agentTools.list_agents.handler(),
+
+  // Health Tools
+  autopilot_health: async (args) => healthTools.autopilot_health.handler(args || {}),
+  tool_stats: async () => healthTools.tool_stats.handler(),
+
+  // v3.1 Infrastructure as Code Tools
+  terraform_init: async (args) => iacTools.terraform_init.handler(args),
+  terraform_plan: async (args) => iacTools.terraform_plan.handler(args),
+  terraform_apply: async (args) => iacTools.terraform_apply.handler(args),
+  k8s_deploy: async (args) => iacTools.k8s_deploy.handler(args),
+  helm_install: async (args) => iacTools.helm_install.handler(args),
+
+  // v3.1 Advanced Testing Tools
+  run_e2e_tests: async (args) => testingTools.run_e2e_tests.handler(args),
+  visual_regression: async (args) => testingTools.visual_regression.handler(args),
+  load_test: async (args) => testingTools.load_test.handler(args),
+  contract_test: async (args) => testingTools.contract_test.handler(args),
+  mutation_test: async (args) => testingTools.mutation_test.handler(args),
+
+  // v3.1 Communications Tools
+  slack_notify: async (args) => commsTools.slack_notify.handler(args),
+  discord_notify: async (args) => commsTools.discord_notify.handler(args),
+  teams_notify: async (args) => commsTools.teams_notify.handler(args),
+  email_send: async (args) => commsTools.email_send.handler(args),
+  sms_send: async (args) => commsTools.sms_send.handler(args),
+
+  // v3.1 Project Management Tools
+  jira_create_issue: async (args) => pmTools.jira_create_issue.handler(args),
+  linear_create_task: async (args) => pmTools.linear_create_task.handler(args),
+  github_create_issue: async (args) => pmTools.github_create_issue.handler(args),
+  auto_changelog: async (args) => pmTools.auto_changelog.handler(args || {}),
+  create_release: async (args) => pmTools.create_release.handler(args),
+
+  // v3.1 Advanced Security Tools
+  sast_scan: async (args) => securityAdvancedTools.sast_scan.handler(args),
+  sbom_generate: async (args) => securityAdvancedTools.sbom_generate.handler(args),
+  dep_graph: async (args) => securityAdvancedTools.dep_graph.handler(args),
+  tech_debt_score: async (args) => securityAdvancedTools.tech_debt_score.handler(args),
+  compliance_check: async (args) => securityAdvancedTools.compliance_check.handler(args),
+
+  // v3.1 Dev Environment Tools
+  gen_devcontainer: async (args) => devenvTools.gen_devcontainer.handler(args),
+  gen_codespace: async (args) => devenvTools.gen_codespace.handler(args),
+  gen_gitpod: async (args) => devenvTools.gen_gitpod.handler(args),
+
+  // v3.1 Publishing Tools
+  npm_publish: async (args) => publishTools.npm_publish.handler(args),
+  pypi_publish: async (args) => publishTools.pypi_publish.handler(args),
+  docker_release: async (args) => publishTools.docker_release.handler(args),
+  github_package: async (args) => publishTools.github_package.handler(args),
+
+  // v3.1 Observability Tools
+  sentry_setup: async (args) => observabilityTools.sentry_setup.handler(args),
+  add_metrics: async (args) => observabilityTools.add_metrics.handler(args),
+  create_dashboard: async (args) => observabilityTools.create_dashboard.handler(args),
+  setup_alerts: async (args) => observabilityTools.setup_alerts.handler(args || {})
 };
 
 
@@ -1993,7 +2068,7 @@ await server.connect(transport);
 // MCP SERVER SETUP
 // ==============================================================================
 const server = new Server(
-  { name: 'windsurf-autopilot', version: '3.0.0' },
+  { name: 'windsurf-autopilot', version: '3.1.0' },
   { capabilities: { tools: {}, resources: {} } }
 );
 
@@ -3058,7 +3133,63 @@ const toolDefinitions = [
   { name: 'assign_task', description: 'Assign task to agent', inputSchema: { type: 'object', properties: { agentId: { type: 'string' }, task: { type: 'string' }, priority: { type: 'string' } }, required: ['agentId', 'task'] } },
   { name: 'agent_status', description: 'Check agent status', inputSchema: { type: 'object', properties: { agentId: { type: 'string' } } } },
   { name: 'agent_collaborate', description: 'Multi-agent collaboration', inputSchema: { type: 'object', properties: { task: { type: 'string' }, agents: { type: 'array' }, strategy: { type: 'string' } }, required: ['task'] } },
-  { name: 'list_agents', description: 'List all agents', inputSchema: { type: 'object', properties: {} } }
+  { name: 'list_agents', description: 'List all agents', inputSchema: { type: 'object', properties: {} } },
+  
+  // Health Tools
+  { name: 'autopilot_health', description: 'Run comprehensive health check on the autopilot system', inputSchema: { type: 'object', properties: { verbose: { type: 'boolean', description: 'Show detailed output' } } } },
+  { name: 'tool_stats', description: 'Get statistics about available tools and capabilities', inputSchema: { type: 'object', properties: {} } },
+
+  // v3.1 Infrastructure as Code Tools
+  { name: 'terraform_init', description: 'Initialize Terraform in project', inputSchema: { type: 'object', properties: { path: { type: 'string' }, backend: { type: 'object' }, providers: { type: 'array' } }, required: ['path'] } },
+  { name: 'terraform_plan', description: 'Preview Terraform changes', inputSchema: { type: 'object', properties: { path: { type: 'string' }, vars: { type: 'object' }, destroy: { type: 'boolean' } }, required: ['path'] } },
+  { name: 'terraform_apply', description: 'Apply Terraform changes', inputSchema: { type: 'object', properties: { path: { type: 'string' }, vars: { type: 'object' }, autoApprove: { type: 'boolean' } }, required: ['path'] } },
+  { name: 'k8s_deploy', description: 'Deploy to Kubernetes', inputSchema: { type: 'object', properties: { manifest: { type: 'string' }, namespace: { type: 'string' }, wait: { type: 'boolean' } }, required: ['manifest'] } },
+  { name: 'helm_install', description: 'Install Helm chart', inputSchema: { type: 'object', properties: { release: { type: 'string' }, chart: { type: 'string' }, namespace: { type: 'string' }, values: { type: 'object' } }, required: ['release', 'chart'] } },
+
+  // v3.1 Advanced Testing Tools
+  { name: 'run_e2e_tests', description: 'Run E2E tests with Playwright/Cypress', inputSchema: { type: 'object', properties: { framework: { type: 'string', enum: ['playwright', 'cypress'] }, spec: { type: 'string' }, browser: { type: 'string' } }, required: ['framework'] } },
+  { name: 'visual_regression', description: 'Screenshot comparison testing', inputSchema: { type: 'object', properties: { url: { type: 'string' }, name: { type: 'string' }, baseline: { type: 'string' } }, required: ['url', 'name'] } },
+  { name: 'load_test', description: 'Run load tests with k6/Artillery', inputSchema: { type: 'object', properties: { target: { type: 'string' }, vus: { type: 'number' }, duration: { type: 'string' } }, required: ['target'] } },
+  { name: 'contract_test', description: 'API contract testing', inputSchema: { type: 'object', properties: { provider: { type: 'string' }, pactFile: { type: 'string' }, openApiSpec: { type: 'string' } }, required: ['provider'] } },
+  { name: 'mutation_test', description: 'Run mutation testing with Stryker', inputSchema: { type: 'object', properties: { path: { type: 'string' }, files: { type: 'array' } }, required: ['path'] } },
+
+  // v3.1 Communications Tools
+  { name: 'slack_notify', description: 'Send Slack notification', inputSchema: { type: 'object', properties: { webhookUrl: { type: 'string' }, message: { type: 'string' }, blocks: { type: 'array' } }, required: ['message'] } },
+  { name: 'discord_notify', description: 'Send Discord notification', inputSchema: { type: 'object', properties: { webhookUrl: { type: 'string' }, content: { type: 'string' }, embeds: { type: 'array' } }, required: ['content'] } },
+  { name: 'teams_notify', description: 'Send MS Teams notification', inputSchema: { type: 'object', properties: { webhookUrl: { type: 'string' }, title: { type: 'string' }, text: { type: 'string' } }, required: ['text'] } },
+  { name: 'email_send', description: 'Send email via SMTP/SendGrid', inputSchema: { type: 'object', properties: { to: { type: 'string' }, subject: { type: 'string' }, body: { type: 'string' }, provider: { type: 'string' } }, required: ['to', 'subject', 'body'] } },
+  { name: 'sms_send', description: 'Send SMS via Twilio', inputSchema: { type: 'object', properties: { to: { type: 'string' }, message: { type: 'string' } }, required: ['to', 'message'] } },
+
+  // v3.1 Project Management Tools
+  { name: 'jira_create_issue', description: 'Create Jira issue', inputSchema: { type: 'object', properties: { project: { type: 'string' }, summary: { type: 'string' }, type: { type: 'string' }, description: { type: 'string' } }, required: ['project', 'summary'] } },
+  { name: 'linear_create_task', description: 'Create Linear task', inputSchema: { type: 'object', properties: { title: { type: 'string' }, team: { type: 'string' }, description: { type: 'string' } }, required: ['title'] } },
+  { name: 'github_create_issue', description: 'Create GitHub issue', inputSchema: { type: 'object', properties: { repo: { type: 'string' }, title: { type: 'string' }, body: { type: 'string' }, labels: { type: 'array' } }, required: ['repo', 'title'] } },
+  { name: 'auto_changelog', description: 'Generate changelog from commits', inputSchema: { type: 'object', properties: { path: { type: 'string' }, from: { type: 'string' }, to: { type: 'string' }, format: { type: 'string' } } } },
+  { name: 'create_release', description: 'Create GitHub release', inputSchema: { type: 'object', properties: { repo: { type: 'string' }, tag: { type: 'string' }, name: { type: 'string' }, notes: { type: 'string' } }, required: ['repo', 'tag'] } },
+
+  // v3.1 Advanced Security Tools
+  { name: 'sast_scan', description: 'Static Application Security Testing', inputSchema: { type: 'object', properties: { path: { type: 'string' }, tool: { type: 'string', enum: ['semgrep', 'codeql', 'eslint-security'] } }, required: ['path'] } },
+  { name: 'sbom_generate', description: 'Generate Software Bill of Materials', inputSchema: { type: 'object', properties: { path: { type: 'string' }, format: { type: 'string', enum: ['cyclonedx', 'spdx'] } }, required: ['path'] } },
+  { name: 'dep_graph', description: 'Generate dependency graph', inputSchema: { type: 'object', properties: { path: { type: 'string' }, format: { type: 'string', enum: ['json', 'dot', 'mermaid'] } }, required: ['path'] } },
+  { name: 'tech_debt_score', description: 'Calculate technical debt score', inputSchema: { type: 'object', properties: { path: { type: 'string' } }, required: ['path'] } },
+  { name: 'compliance_check', description: 'Check compliance (SOC2/GDPR/HIPAA)', inputSchema: { type: 'object', properties: { path: { type: 'string' }, framework: { type: 'string', enum: ['soc2', 'gdpr', 'hipaa', 'pci-dss'] } }, required: ['path', 'framework'] } },
+
+  // v3.1 Dev Environment Tools
+  { name: 'gen_devcontainer', description: 'Generate VS Code devcontainer', inputSchema: { type: 'object', properties: { path: { type: 'string' }, features: { type: 'array' }, services: { type: 'array' } }, required: ['path'] } },
+  { name: 'gen_codespace', description: 'Generate GitHub Codespaces config', inputSchema: { type: 'object', properties: { path: { type: 'string' }, machine: { type: 'string' }, prebuild: { type: 'boolean' } }, required: ['path'] } },
+  { name: 'gen_gitpod', description: 'Generate Gitpod configuration', inputSchema: { type: 'object', properties: { path: { type: 'string' }, tasks: { type: 'array' }, ports: { type: 'array' } }, required: ['path'] } },
+
+  // v3.1 Publishing Tools
+  { name: 'npm_publish', description: 'Publish to npm registry', inputSchema: { type: 'object', properties: { path: { type: 'string' }, tag: { type: 'string' }, bump: { type: 'string' } }, required: ['path'] } },
+  { name: 'pypi_publish', description: 'Publish to PyPI', inputSchema: { type: 'object', properties: { path: { type: 'string' }, repository: { type: 'string', enum: ['pypi', 'testpypi'] } }, required: ['path'] } },
+  { name: 'docker_release', description: 'Tag and push Docker release', inputSchema: { type: 'object', properties: { image: { type: 'string' }, tag: { type: 'string' }, platforms: { type: 'array' } }, required: ['image', 'tag'] } },
+  { name: 'github_package', description: 'Publish to GitHub Packages', inputSchema: { type: 'object', properties: { path: { type: 'string' }, type: { type: 'string', enum: ['npm', 'container'] }, repo: { type: 'string' } }, required: ['path', 'type', 'repo'] } },
+
+  // v3.1 Observability Tools
+  { name: 'sentry_setup', description: 'Configure Sentry error tracking', inputSchema: { type: 'object', properties: { path: { type: 'string' }, dsn: { type: 'string' }, framework: { type: 'string' } }, required: ['path'] } },
+  { name: 'add_metrics', description: 'Add Prometheus metrics', inputSchema: { type: 'object', properties: { path: { type: 'string' }, port: { type: 'number' }, metrics: { type: 'array' } }, required: ['path'] } },
+  { name: 'create_dashboard', description: 'Generate Grafana dashboard', inputSchema: { type: 'object', properties: { title: { type: 'string' }, panels: { type: 'array' }, output: { type: 'string' } }, required: ['title'] } },
+  { name: 'setup_alerts', description: 'Configure alerting rules', inputSchema: { type: 'object', properties: { output: { type: 'string' }, alerts: { type: 'array' } } } }
 ];
 
 // Register tools
@@ -3130,7 +3261,7 @@ server.setRequestHandler(ReadResourceRequestSchema, async (request) => {
 async function main() {
   const transport = new StdioServerTransport();
   await server.connect(transport);
-  console.error('🚀 Windsurf Autopilot v3.0.0 ENTERPRISE - 120+ Tools, 100% Technical Autopilot');
+  console.error('🚀 Windsurf Autopilot v3.1.0 EXTENDED INTEGRATIONS - 156+ Tools, 100%+ Technical Autopilot');
   console.error(`📂 Home: ${HOME}`);
   console.error(`💻 Platform: ${process.platform}`);
 }

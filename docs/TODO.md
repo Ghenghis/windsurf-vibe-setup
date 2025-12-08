@@ -4,9 +4,9 @@
 
 ---
 
-## 🎉 CURRENT: v3.0.0 ENTERPRISE EDITION (100% Complete)
+## 🎉 CURRENT: v3.1.0 EXTENDED INTEGRATIONS (100%+ Complete)
 
-The windsurf-autopilot MCP server is at v3.0.0 with **120+ tools** for comprehensive zero-code automation.
+The windsurf-autopilot MCP server is at v3.1.0 with **156+ tools** for comprehensive zero-code automation.
 
 **See**: [ROADMAP.md](../ROADMAP.md) and [ACTION_PLAN.md](../ACTION_PLAN.md) for full details.
 
@@ -23,7 +23,8 @@ The windsurf-autopilot MCP server is at v3.0.0 with **120+ tools** for comprehen
 | v2.4 | 71+ | 85% | ✅ Complete |
 | v2.5 | 80+ | 95% | ✅ Complete |
 | v2.6 | 95+ | 97% | ✅ Complete |
-| **v3.0** | **120+** | **100%** | **✅ Complete** |
+| v3.0 | 120+ | 100% | ✅ Complete |
+| **v3.1** | **156+** | **100%+** | **✅ Current** |
 
 ---
 
