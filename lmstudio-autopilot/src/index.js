@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * LM Studio Autopilot MCP Server v2.3
+ * LM Studio Autopilot MCP Server v2.4
  * 
  * COMPLETE ZERO-CODE AUTOPILOT for local LLM users.
  * This server gives LM Studio AI FULL capability to:
@@ -32,6 +32,7 @@ const { execSync, exec, spawn } = require('child_process');
 const additionalTools = require('./additional-tools.js');
 const advancedTools = require('./advanced-tools.js');
 const autopilotIntel = require('./autopilot-intelligence.js');
+const realtimeAI = require('./realtime-ai-engine.js');
 
 // ==============================================================================
 // Configuration
@@ -1697,6 +1698,61 @@ await server.connect(transport);
   
   clear_learning_data: async () => {
     return autopilotIntel.clearAllData();
+  },
+
+  // ===========================================================================
+  // NEW v2.4 TOOLS - Real-Time AI/ML Engine
+  // ===========================================================================
+  
+  // Real-Time Learning
+  ai_learn: async (args) => {
+    return await realtimeAI.learnFromInteraction(args);
+  },
+  
+  ai_status: async () => {
+    return realtimeAI.getAIEngineStatus();
+  },
+  
+  // Web Integration
+  search_stackoverflow: async ({ query, tags }) => {
+    return await realtimeAI.searchStackOverflow(query, tags || []);
+  },
+  
+  search_github: async ({ query, language }) => {
+    return await realtimeAI.searchGitHub(query, language || '');
+  },
+  
+  search_npm: async ({ query }) => {
+    return await realtimeAI.searchNPM(query);
+  },
+  
+  find_solution: async ({ error }) => {
+    return await realtimeAI.findSolutionForError(error);
+  },
+  
+  // Knowledge Graph
+  query_knowledge: async ({ query }) => {
+    return realtimeAI.queryKnowledgeGraph(query);
+  },
+  
+  // Similarity Search
+  find_similar: async ({ query, topK }) => {
+    return realtimeAI.findSimilar(query, topK || 5);
+  },
+  
+  // User Feedback
+  record_feedback: async ({ actionId, rating, comment }) => {
+    return realtimeAI.recordFeedback(actionId, rating, comment || '');
+  },
+  
+  // Proactive Suggestions
+  get_ai_suggestions: async (args) => {
+    return await realtimeAI.getProactiveSuggestions(args);
+  },
+  
+  // Auto Learning
+  auto_learn_web: async ({ topics }) => {
+    return await realtimeAI.autoLearnFromWeb(topics);
   }
 };
 
@@ -1705,7 +1761,7 @@ await server.connect(transport);
 // MCP SERVER SETUP
 // ==============================================================================
 const server = new Server(
-  { name: 'lmstudio-autopilot', version: '2.3.0' },
+  { name: 'lmstudio-autopilot', version: '2.4.0' },
   { capabilities: { tools: {}, resources: {} } }
 );
 
@@ -2527,6 +2583,134 @@ const toolDefinitions = [
     name: 'clear_learning_data',
     description: 'Clear all learned data and reset autopilot memory. Use with caution.',
     inputSchema: { type: 'object', properties: {} }
+  },
+  
+  // ═══════════════════════════════════════════════════════════════════════════
+  // v2.4 Tools - Real-Time AI/ML Engine
+  // ═══════════════════════════════════════════════════════════════════════════
+  {
+    name: 'ai_learn',
+    description: 'Process an interaction in real-time and learn immediately. The AI extracts patterns, entities, and updates its knowledge graph.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        action: { type: 'string', description: 'The action that was performed' },
+        params: { type: 'object', description: 'Parameters used' },
+        success: { type: 'boolean', description: 'Whether it succeeded' },
+        error: { type: 'string', description: 'Error message if failed' },
+        context: { type: 'object', description: 'Additional context' }
+      },
+      required: ['action']
+    }
+  },
+  {
+    name: 'ai_status',
+    description: 'Get comprehensive AI engine status - total interactions, concepts learned, knowledge graph size, and capabilities.',
+    inputSchema: { type: 'object', properties: {} }
+  },
+  {
+    name: 'search_stackoverflow',
+    description: 'Search Stack Overflow for solutions to coding problems. Results are cached and learned from.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        query: { type: 'string', description: 'Search query' },
+        tags: { type: 'array', items: { type: 'string' }, description: 'Filter by tags (e.g., ["javascript", "react"])' }
+      },
+      required: ['query']
+    }
+  },
+  {
+    name: 'search_github',
+    description: 'Search GitHub for code examples and repositories.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        query: { type: 'string', description: 'Search query' },
+        language: { type: 'string', description: 'Filter by programming language' }
+      },
+      required: ['query']
+    }
+  },
+  {
+    name: 'search_npm',
+    description: 'Search NPM registry for packages.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        query: { type: 'string', description: 'Package name or keyword' }
+      },
+      required: ['query']
+    }
+  },
+  {
+    name: 'find_solution',
+    description: 'Find solution for an error by searching local knowledge base and web. Uses AI to rank solutions by success rate.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        error: { type: 'string', description: 'Error message to find solution for' }
+      },
+      required: ['error']
+    }
+  },
+  {
+    name: 'query_knowledge',
+    description: 'Query the AI knowledge graph for concepts, relationships, and facts learned from interactions.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        query: { type: 'string', description: 'Search query for knowledge base' }
+      },
+      required: ['query']
+    }
+  },
+  {
+    name: 'find_similar',
+    description: 'Find similar past interactions using vector similarity search. Useful for finding relevant past solutions.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        query: { type: 'string', description: 'Query to find similar items for' },
+        topK: { type: 'number', description: 'Number of results (default: 5)' }
+      },
+      required: ['query']
+    }
+  },
+  {
+    name: 'record_feedback',
+    description: 'Record user feedback on an action. The AI uses this to improve future suggestions (reinforcement learning).',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        actionId: { type: 'string', description: 'ID of the action to rate' },
+        rating: { type: 'number', description: 'Rating 1-5 (1=bad, 5=excellent)' },
+        comment: { type: 'string', description: 'Optional feedback comment' }
+      },
+      required: ['actionId', 'rating']
+    }
+  },
+  {
+    name: 'get_ai_suggestions',
+    description: 'Get proactive AI suggestions based on current context, learned patterns, and web knowledge.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        projectPath: { type: 'string', description: 'Current project path' },
+        currentAction: { type: 'string', description: 'Action being performed' },
+        error: { type: 'string', description: 'Current error if any' }
+      }
+    }
+  },
+  {
+    name: 'auto_learn_web',
+    description: 'Automatically fetch and learn from web resources (Stack Overflow, GitHub) for specified topics.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        topics: { type: 'array', items: { type: 'string' }, description: 'Topics to learn about (e.g., ["react", "typescript"])' }
+      }
+    }
   }
 ];
 
@@ -2599,7 +2783,7 @@ server.setRequestHandler(ReadResourceRequestSchema, async (request) => {
 async function main() {
   const transport = new StdioServerTransport();
   await server.connect(transport);
-  console.error('🚀 LM Studio Autopilot MCP Server v2.3 running');
+  console.error('🚀 LM Studio Autopilot MCP Server v2.4 running');
   console.error(`📂 Home: ${HOME}`);
   console.error(`💻 Platform: ${process.platform}`);
 }
