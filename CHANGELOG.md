@@ -7,11 +7,54 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-## [4.0.0] - 2024-12-09 - FREE & LOCAL AI AUTOMATION 🤖
+## [4.0.0] - 2024-12-09 - MULTI-AGENT REVOLUTION 🤖
+
+### 🎯 Focus: 100+ AI Agents with Intelligent Orchestration
+
+**MAJOR RELEASE** - Multi-agent AI system with 100+ specialized agents for autonomous development.
+
+### 🤖 Added - Multi-Agent System (`mcp-server/src/ai-agents/`)
+- **100+ Specialized AI Agents** across 10 categories:
+  - Architecture (10): System, API, Database, Cloud, Security architects
+  - Coding (25): React, Vue, Node, Python, Go, Rust, Java, Mobile experts
+  - Testing (15): Unit, E2E, Performance, Security, Visual regression
+  - Security (12): SAST, DAST, Secrets, Compliance, Crypto experts
+  - DevOps (15): CI/CD, Docker, K8s, Terraform, Cloud providers
+  - Documentation (10): API, README, Architecture, Diagrams
+  - ML/Data (15): Data Engineering, MLOps, Vector DB, LLM Ops
+  - Performance (8): Frontend, Backend, Database optimization
+  - Quality (8): Code Review, Linting, Refactoring
+  - Orchestration (10): PM, Task Routing, Workflow management
+
+### 🎯 Added - Agent Orchestrator (`orchestrator.js`)
+- **Intelligent Task Routing**: Automatically selects best agents for tasks
+- **Multi-Agent Pipelines**: Coordinate multiple agents on complex tasks
+- **Agent Crews**: Pre-configured teams for full-stack, ML, API projects
+- **Real-time Status**: Track active agents and task progress
+
+### 🛠️ Added - Multi-Agent MCP Tools (`multi-agent-tools.js`)
+- `list_all_agents` - List all 100+ agents by category
+- `agent_status` - Get orchestrator status and statistics
+- `run_agent_task` - Execute task with intelligent agent selection
+- `create_agent_crew` - Create specialized team for project types
+- `call_architect` - Invoke System Architect for design decisions
+- `call_code_reviewer` - Invoke Code Reviewer for quality analysis
+- `call_security_auditor` - Invoke Security Auditor for vulnerability scan
+
+### 📊 Enhanced - README with Visual Documentation
+- Animated header with badges
+- Mermaid architecture diagrams
+- Comprehensive tool reference tables
+- Hardware recommendations
+- Capability matrix
+
+---
+
+## [4.0.0-alpha] - FREE & LOCAL AI AUTOMATION
 
 ### 🎯 Focus: Complete AI/ML Automation with Zero Cloud Dependencies
 
-**MAJOR RELEASE** - Full AI-powered orchestration, multi-agent systems, and self-hosted services.
+**ALPHA RELEASE** - Full AI-powered orchestration, multi-agent systems, and self-hosted services.
 
 ### 🤖 Added - AI Orchestrator (`free-local/scripts/ai-orchestrator.js`)
 - **Auto-provisioning**: Automatically starts required services based on task
