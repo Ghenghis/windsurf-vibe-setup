@@ -50,7 +50,13 @@
     "ai:run": "node free-local/scripts/ai-orchestrator.js run",
     "ai:provision": "node free-local/scripts/ai-orchestrator.js provision",
     "test": "npm run lint && npm run validate:json && npm run scan:secrets",
-    "prepare": "node -e \"try{require('husky').install()}catch(e){}\""
+    "prepare": "node -e \"try{require('husky').install()}catch(e){}\"",
+    "self-audit": "node self-audit.js",
+    "self-repair": "node self-audit.js --fix",
+    "update-docs": "node scripts/update-docs.js",
+    "count-tools": "node -e \"const fs=require('fs'); const c=fs.readFileSync('./mcp-server/src/index.js','utf8'); console.log('Tool handlers:',c.match(/async \\\\(args\\\\) =>/g).length)\"",
+    "optimize": "node scripts/optimize.js",
+    "self-enhance": "node scripts/self-enhance.js"
   },
   "devDependencies": {
     "eslint": "^8.56.0",
