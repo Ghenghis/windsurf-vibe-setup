@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Windsurf Autopilot MCP Server v2.4
+ * Windsurf Autopilot MCP Server v2.6
  * 
  * COMPLETE ZERO-CODE AUTOPILOT for vibe coders.
  * This server gives Windsurf AI FULL capability to:
@@ -10,6 +10,11 @@
  * - Run multi-step tasks autonomously
  * - Auto-fix issues without user intervention
  * - Make intelligent decisions when stuck
+ * - Persistent database storage (v2.6)
+ * - Semantic search with embeddings (v2.6)
+ * - Session context persistence (v2.6)
+ * - Error recovery and rollback (v2.6)
+ * - Plugin system for extensibility (v2.6)
  * 
  * The user NEVER needs to touch a terminal.
  */
@@ -34,6 +39,13 @@ const advancedTools = require('./advanced-tools.js');
 const autopilotIntel = require('./autopilot-intelligence.js');
 const realtimeAI = require('./realtime-ai-engine.js');
 const ultimateTools = require('./ultimate-tools.js');
+
+// Import v2.6 tools
+const databaseTools = require('./database-tools.js');
+const embeddingTools = require('./embedding-tools.js');
+const contextTools = require('./context-tools.js');
+const recoveryTools = require('./recovery-tools.js');
+const pluginTools = require('./plugin-tools.js');
 
 // ==============================================================================
 // Configuration
@@ -1886,7 +1898,42 @@ await server.connect(transport);
   switch_project: async (args) => ultimateTools.switchProject(args),
   list_projects: async () => ultimateTools.listProjects(),
   project_health: async (args) => ultimateTools.projectHealth(args),
-  cleanup_project: async (args) => ultimateTools.cleanupProject(args)
+  cleanup_project: async (args) => ultimateTools.cleanupProject(args),
+  
+  // ═══════════════════════════════════════════════════════════════════════════
+  // v2.6 DATA & PERSISTENCE TOOLS
+  // ═══════════════════════════════════════════════════════════════════════════
+  
+  // Database Tools
+  db_connect: async (args) => databaseTools.db_connect.handler(args),
+  db_schema: async (args) => databaseTools.db_schema.handler(args),
+  db_backup: async (args) => databaseTools.db_backup.handler(args),
+  db_restore: async (args) => databaseTools.db_restore.handler(args),
+  db_query_direct: async (args) => databaseTools.db_query_direct.handler(args),
+  
+  // Embedding Tools
+  embed_text: async (args) => embeddingTools.embed_text.handler(args),
+  semantic_search: async (args) => embeddingTools.semantic_search.handler(args),
+  index_project: async (args) => embeddingTools.index_project.handler(args),
+  
+  // Context Tools
+  save_context: async (args) => contextTools.save_context.handler(args),
+  load_context: async (args) => contextTools.load_context.handler(args),
+  clear_context: async (args) => contextTools.clear_context.handler(args),
+  get_context: async (args) => contextTools.get_context.handler(args),
+  list_contexts: async () => contextTools.list_contexts.handler({}),
+  
+  // Recovery Tools
+  create_checkpoint: async (args) => recoveryTools.create_checkpoint.handler(args),
+  rollback: async (args) => recoveryTools.rollback.handler(args),
+  auto_recover: async (args) => recoveryTools.auto_recover.handler(args),
+  list_checkpoints: async (args) => recoveryTools.list_checkpoints.handler(args || {}),
+  
+  // Plugin Tools
+  install_plugin: async (args) => pluginTools.install_plugin.handler(args),
+  list_plugins: async (args) => pluginTools.list_plugins.handler(args || {}),
+  uninstall_plugin: async (args) => pluginTools.uninstall_plugin.handler(args),
+  create_plugin: async (args) => pluginTools.create_plugin.handler(args)
 };
 
 
@@ -1894,7 +1941,7 @@ await server.connect(transport);
 // MCP SERVER SETUP
 // ==============================================================================
 const server = new Server(
-  { name: 'windsurf-autopilot', version: '2.5.0' },
+  { name: 'windsurf-autopilot', version: '2.6.0' },
   { capabilities: { tools: {}, resources: {} } }
 );
 
@@ -2885,7 +2932,42 @@ const toolDefinitions = [
   { name: 'switch_project', description: 'Switch project', inputSchema: { type: 'object', properties: { projectPath: { type: 'string' } }, required: ['projectPath'] } },
   { name: 'list_projects', description: 'List projects', inputSchema: { type: 'object', properties: {} } },
   { name: 'project_health', description: 'Project health', inputSchema: { type: 'object', properties: { projectPath: { type: 'string' } }, required: ['projectPath'] } },
-  { name: 'cleanup_project', description: 'Cleanup project', inputSchema: { type: 'object', properties: { projectPath: { type: 'string' } }, required: ['projectPath'] } }
+  { name: 'cleanup_project', description: 'Cleanup project', inputSchema: { type: 'object', properties: { projectPath: { type: 'string' } }, required: ['projectPath'] } },
+  
+  // ═══════════════════════════════════════════════════════════════════════════
+  // v2.6 DATA & PERSISTENCE TOOLS
+  // ═══════════════════════════════════════════════════════════════════════════
+  
+  // Database Tools
+  { name: 'db_connect', description: 'Connect to database (SQLite, PostgreSQL, MySQL)', inputSchema: { type: 'object', properties: { type: { type: 'string', enum: ['sqlite', 'postgres', 'mysql'] }, name: { type: 'string' }, host: { type: 'string' }, port: { type: 'number' }, user: { type: 'string' }, password: { type: 'string' } }, required: ['name'] } },
+  { name: 'db_schema', description: 'View/create/modify database schemas', inputSchema: { type: 'object', properties: { connectionId: { type: 'string' }, action: { type: 'string', enum: ['view', 'create', 'modify', 'drop'] }, table: { type: 'string' }, schema: { type: 'object' } }, required: ['connectionId', 'action'] } },
+  { name: 'db_backup', description: 'Backup database', inputSchema: { type: 'object', properties: { connectionId: { type: 'string' }, outputPath: { type: 'string' }, compress: { type: 'boolean' } }, required: ['connectionId'] } },
+  { name: 'db_restore', description: 'Restore database from backup', inputSchema: { type: 'object', properties: { connectionId: { type: 'string' }, backupPath: { type: 'string' }, confirm: { type: 'boolean' } }, required: ['connectionId', 'backupPath'] } },
+  { name: 'db_query_direct', description: 'Execute SQL query directly', inputSchema: { type: 'object', properties: { connectionId: { type: 'string' }, sql: { type: 'string' }, params: { type: 'array' } }, required: ['connectionId', 'sql'] } },
+  
+  // Embedding Tools
+  { name: 'embed_text', description: 'Generate vector embeddings from text', inputSchema: { type: 'object', properties: { text: { oneOf: [{ type: 'string' }, { type: 'array' }] }, model: { type: 'string' }, cache: { type: 'boolean' } }, required: ['text'] } },
+  { name: 'semantic_search', description: 'Search codebase using semantic similarity', inputSchema: { type: 'object', properties: { query: { type: 'string' }, projectPath: { type: 'string' }, topK: { type: 'number' }, threshold: { type: 'number' }, fileTypes: { type: 'array' } }, required: ['query', 'projectPath'] } },
+  { name: 'index_project', description: 'Index project for semantic search', inputSchema: { type: 'object', properties: { path: { type: 'string' }, fileTypes: { type: 'array' }, chunkSize: { type: 'number' }, incremental: { type: 'boolean' }, excludePatterns: { type: 'array' } }, required: ['path'] } },
+  
+  // Context Tools
+  { name: 'save_context', description: 'Save current session context', inputSchema: { type: 'object', properties: { name: { type: 'string' }, includeHistory: { type: 'boolean' }, includePreferences: { type: 'boolean' }, project: { type: 'object' }, message: { type: 'string' }, task: { type: 'object' }, preference: { type: 'object' } } } },
+  { name: 'load_context', description: 'Load previous session context', inputSchema: { type: 'object', properties: { name: { type: 'string' }, merge: { type: 'boolean' }, loadHistory: { type: 'boolean' }, loadPreferences: { type: 'boolean' } } } },
+  { name: 'clear_context', description: 'Clear session context data', inputSchema: { type: 'object', properties: { target: { type: 'string', enum: ['all', 'history', 'tasks', 'preferences', 'memory', 'file'] }, name: { type: 'string' }, confirm: { type: 'boolean' } } } },
+  { name: 'get_context', description: 'Get current session context', inputSchema: { type: 'object', properties: { section: { type: 'string', enum: ['all', 'session', 'project', 'conversation', 'preferences', 'memory'] } } } },
+  { name: 'list_contexts', description: 'List all saved context files', inputSchema: { type: 'object', properties: {} } },
+  
+  // Recovery Tools
+  { name: 'create_checkpoint', description: 'Create rollback checkpoint', inputSchema: { type: 'object', properties: { name: { type: 'string' }, projectPath: { type: 'string' }, includeGit: { type: 'boolean' }, files: { type: 'array' }, description: { type: 'string' } }, required: ['projectPath'] } },
+  { name: 'rollback', description: 'Rollback to checkpoint', inputSchema: { type: 'object', properties: { checkpointName: { type: 'string' }, restoreGit: { type: 'boolean' }, files: { type: 'array' }, confirm: { type: 'boolean' } }, required: ['checkpointName'] } },
+  { name: 'auto_recover', description: 'Auto-recover from error', inputSchema: { type: 'object', properties: { error: { type: 'string' }, projectPath: { type: 'string' }, dryRun: { type: 'boolean' }, maxRetries: { type: 'number' } }, required: ['error'] } },
+  { name: 'list_checkpoints', description: 'List all checkpoints', inputSchema: { type: 'object', properties: { projectPath: { type: 'string' } } } },
+  
+  // Plugin Tools
+  { name: 'install_plugin', description: 'Install autopilot plugin', inputSchema: { type: 'object', properties: { source: { type: 'string' }, name: { type: 'string' }, version: { type: 'string' }, force: { type: 'boolean' } }, required: ['source'] } },
+  { name: 'list_plugins', description: 'List installed plugins', inputSchema: { type: 'object', properties: { includeTools: { type: 'boolean' } } } },
+  { name: 'uninstall_plugin', description: 'Uninstall plugin', inputSchema: { type: 'object', properties: { name: { type: 'string' }, confirm: { type: 'boolean' } }, required: ['name'] } },
+  { name: 'create_plugin', description: 'Create plugin template', inputSchema: { type: 'object', properties: { name: { type: 'string' }, outputPath: { type: 'string' }, tools: { type: 'array' } }, required: ['name'] } }
 ];
 
 // Register tools
@@ -2957,7 +3039,7 @@ server.setRequestHandler(ReadResourceRequestSchema, async (request) => {
 async function main() {
   const transport = new StdioServerTransport();
   await server.connect(transport);
-  console.error('🚀 Windsurf Autopilot v2.5.0 ULTIMATE - 80+ Tools, 95% Autopilot');
+  console.error('🚀 Windsurf Autopilot v2.6.0 - 95+ Tools, 97% Autopilot (Data & Persistence)');
   console.error(`📂 Home: ${HOME}`);
   console.error(`💻 Platform: ${process.platform}`);
 }

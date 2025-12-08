@@ -7,6 +7,51 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [2.6.0] - 2024-12-08 - Data & Persistence
+
+### 🗄️ DATA & PERSISTENCE - 97% Autopilot Capability
+
+**21 NEW TOOLS** bringing total to **95+ tools** with **97% autopilot capability**.
+
+### Added - Database Tools (5 tools)
+- `db_connect` - Connect to SQLite, PostgreSQL, or MySQL databases
+- `db_schema` - View, create, and modify database schemas
+- `db_backup` - Create database backups with compression
+- `db_restore` - Restore databases from backups
+- `db_query_direct` - Execute SQL queries directly
+
+### Added - Vector Embeddings (3 tools)
+- `embed_text` - Generate vector embeddings from text using local models
+- `semantic_search` - Search codebase using semantic similarity
+- `index_project` - Index entire project for semantic search
+
+### Added - Context Persistence (5 tools)
+- `save_context` - Save current session context to disk
+- `load_context` - Load previous session context
+- `clear_context` - Clear session data
+- `get_context` - View current session context
+- `list_contexts` - List all saved context files
+
+### Added - Error Recovery (4 tools)
+- `create_checkpoint` - Create rollback checkpoint before changes
+- `rollback` - Rollback to previous checkpoint
+- `auto_recover` - Automatic error recovery using pattern matching
+- `list_checkpoints` - List all available checkpoints
+
+### Added - Plugin System (4 tools)
+- `install_plugin` - Install plugins from npm, GitHub, or local paths
+- `list_plugins` - List installed plugins and their tools
+- `uninstall_plugin` - Remove installed plugins
+- `create_plugin` - Create new plugin template
+
+### Technical
+- Local TF-IDF based embeddings (no external API required)
+- SQLite as default database (zero configuration)
+- Automatic context auto-save
+- Pattern-based error recovery for common issues
+
+---
+
 ## [2.5.0] - 2024-12-08 - ULTIMATE EDITION
 
 ### 🚀 ULTIMATE EDITION - 95% Autopilot Capability

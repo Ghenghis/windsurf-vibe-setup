@@ -1,13 +1,13 @@
-# Windsurf Autopilot Status - v2.5.0 ULTIMATE EDITION
+# Windsurf Autopilot Status - v2.6.0 Data & Persistence
 
 ## Current Status
 
 ```
 ╔═══════════════════════════════════════════════════════════════╗
-║  🚀 WINDSURF AUTOPILOT v2.5.0 - ULTIMATE EDITION             ║
+║  🚀 WINDSURF AUTOPILOT v2.6.0 - Data & Persistence           ║
 ╠═══════════════════════════════════════════════════════════════╣
-║  Tools:     80+                                               ║
-║  Autopilot: 95%                                               ║
+║  Tools:     95+                                               ║
+║  Autopilot: 97%                                               ║
 ║  Status:    OPERATIONAL                                       ║
 ╚═══════════════════════════════════════════════════════════════╝
 ```
@@ -31,6 +31,11 @@
 | Logs & Monitoring | 3 | ✅ Active |
 | Performance | 3 | ✅ Active |
 | Workspace | 4 | ✅ Active |
+| **Database (v2.6)** | **5** | ✅ Active |
+| **Embeddings (v2.6)** | **3** | ✅ Active |
+| **Context (v2.6)** | **5** | ✅ Active |
+| **Recovery (v2.6)** | **4** | ✅ Active |
+| **Plugins (v2.6)** | **4** | ✅ Active |
 
 ## Quick Commands
 
@@ -60,6 +65,32 @@
 - "List projects" → `list_projects`
 - "Cleanup project" → `cleanup_project`
 
+### Database (v2.6)
+- "Connect to SQLite" → `db_connect`
+- "View database schema" → `db_schema`
+- "Backup database" → `db_backup`
+- "Restore database" → `db_restore`
+
+### Embeddings (v2.6)
+- "Index my project" → `index_project`
+- "Semantic search" → `semantic_search`
+- "Embed text" → `embed_text`
+
+### Context (v2.6)
+- "Save my context" → `save_context`
+- "Load context" → `load_context`
+- "List contexts" → `list_contexts`
+
+### Recovery (v2.6)
+- "Create checkpoint" → `create_checkpoint`
+- "Rollback changes" → `rollback`
+- "Auto recover" → `auto_recover`
+
+### Plugins (v2.6)
+- "Install plugin" → `install_plugin`
+- "List plugins" → `list_plugins`
+- "Create plugin" → `create_plugin`
+
 ## Version History
 
 | Version | Date | Tools | Capability |
@@ -69,7 +100,8 @@
 | v2.2 | 2024-12-06 | 46+ | 75% |
 | v2.3 | 2024-12-07 | 55+ | 80% |
 | v2.4 | 2024-12-07 | 65+ | 85% |
-| **v2.5** | **2024-12-08** | **80+** | **95%** |
+| v2.5 | 2024-12-08 | 80+ | 95% |
+| **v2.6** | **2024-12-08** | **95+** | **97%** |
 
 ## Server Locations
 
