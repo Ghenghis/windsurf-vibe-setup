@@ -1,0 +1,22 @@
+{
+  "name": "@windsurf-vibe/autopilot-mcp",
+  "version": "1.0.0",
+  "description": "Autopilot MCP Server - Zero-code task completion for Windsurf",
+  "main": "src/index.js",
+  "bin": {
+    "windsurf-autopilot": "./src/index.js"
+  },
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node --watch src/index.js"
+  },
+  "keywords": ["mcp", "windsurf", "autopilot", "ai", "vibe-coding"],
+  "author": "Windsurf Vibe Setup",
+  "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

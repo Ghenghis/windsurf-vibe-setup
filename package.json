@@ -23,6 +23,10 @@
     "cascade"
   ],
   "scripts": {
+    "setup": "pwsh scripts/setup-windows.ps1",
+    "setup:unix": "bash scripts/setup-unix.sh",
+    "test:install": "node scripts/test-installation.js",
+    "autopilot": "node mcp-server/src/index.js",
     "lint": "eslint . --ext .js,.ts",
     "lint:fix": "eslint . --ext .js,.ts --fix",
     "format": "prettier --write \"**/*.{js,ts,json,md}\"",

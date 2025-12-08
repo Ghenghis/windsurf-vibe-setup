@@ -191,14 +191,31 @@ templates/workspace-rules/
 - [x] PR template
 - [x] CODEOWNERS
 
-### Missing (TODO) 🔴
-- [x] setup-windows.ps1 ✅ Created
-- [ ] setup-unix.sh
-- [ ] interactive-setup.js
-- [ ] test-installation.js
-- [ ] config-wizard.js
-- [ ] Workspace rules templates
-- [ ] Example projects
+### Setup Scripts ✅
+- [x] setup-windows.ps1 ✅ Complete Windows installer
+- [x] setup-unix.sh ✅ macOS/Linux installer
+- [x] test-installation.js ✅ Validates installation
+
+### Autopilot MCP Server ✅
+- [x] mcp-server/ ✅ Custom autopilot MCP server
+- [x] diagnose_environment tool
+- [x] auto_fix tool
+- [x] complete_setup tool
+- [x] create_project tool
+- [x] guide_task tool
+
+### Templates ✅
+- [x] Workspace rules templates (5 templates)
+  - react-app.md
+  - python-api.md
+  - ml-project.md
+  - mcp-server.md
+  - docker-project.md
+
+### Remaining (Nice to Have)
+- [ ] config-wizard.js (interactive wizard)
+- [ ] Example projects (sample codebases)
+- [ ] Video tutorials
 
 ---
 
