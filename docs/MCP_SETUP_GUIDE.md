@@ -4,10 +4,21 @@
 
 ---
 
+## 🚀 Zero-Code Option
+
+**Don't want to configure anything?** Just tell Windsurf:
+
+> "Set up MCP servers for me"
+
+The **Autopilot MCP Server** will install everything automatically!
+
+---
+
 ## What Are MCP Servers?
 
 **MCP (Model Context Protocol)** servers extend your AI assistant's capabilities. Think of them as "plugins" that let Cascade AI:
 
+- 🤖 **Autopilot** — Zero-code setup and self-repair (our custom server!)
 - 🔗 Connect to GitHub and manage repositories
 - 📁 Access and modify files on your computer
 - 🐳 Control Docker containers
@@ -43,6 +54,20 @@ Close and reopen Windsurf for MCP servers to load.
 ---
 
 ## Available MCP Servers
+
+### 🤖 Autopilot Server (Our Custom Server!)
+
+| Server | Purpose | API Key Needed? |
+|--------|---------|-----------------|
+| **windsurf-autopilot** | Zero-code setup, diagnosis, repair, project creation | No |
+
+**Tools provided:**
+- `get_status` — Check system readiness
+- `diagnose_environment` — Find issues automatically
+- `auto_fix` — Repair problems without commands
+- `complete_setup` — Full automatic installation
+- `create_project` — Create React/Python/Node projects
+- `guide_task` — Step-by-step assistance
 
 ### Essential Servers (Recommended)
 
