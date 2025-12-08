@@ -4,6 +4,26 @@
 
 ---
 
+## 🚀 Zero-Code Option (Easiest!)
+
+**Already have this project open in Windsurf?** Just say:
+
+> "Set everything up for me"
+
+The Autopilot MCP server will:
+1. Install all configurations automatically
+2. Set up AI rules
+3. Configure MCP servers
+4. Tell you when it's done
+
+**That's it!** No commands needed. Skip to [What's Next](#whats-next) after Windsurf finishes.
+
+---
+
+## Manual Setup (If Needed)
+
+If the autopilot isn't available yet, follow these steps:
+
 ## What Is This?
 
 This project gives you a **pre-configured setup for Windsurf IDE** - the AI-powered code editor. Think of it as installing a "power-up pack" that makes the AI assistant smarter, safer, and better at helping you code.

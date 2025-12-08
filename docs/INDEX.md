@@ -4,13 +4,25 @@
 
 ---
 
+## 🚀 Zero-Code Users: Just Talk to Windsurf!
+
+**You don't need to read any docs.** Just open Windsurf and say:
+- "Set everything up for me"
+- "What's wrong with my setup?"
+- "Create a new website project"
+
+The **Autopilot MCP Server** handles everything automatically.
+
+---
+
 ## Quick Navigation
 
 | I want to... | Read this |
 |--------------|-----------|
 | **Get started quickly** | [QUICKSTART.md](QUICKSTART.md) |
+| **Zero-code setup** | Just tell Windsurf "set up everything" |
 | **Understand how it works** | [ARCHITECTURE.md](ARCHITECTURE.md) |
-| **Fix a problem** | [TROUBLESHOOTING.md](TROUBLESHOOTING.md) |
+| **Fix a problem** | [TROUBLESHOOTING.md](TROUBLESHOOTING.md) or ask Windsurf |
 | **Set up MCP servers** | [MCP_SETUP_GUIDE.md](MCP_SETUP_GUIDE.md) |
 | **Learn daily workflow** | [WORKFLOW.md](WORKFLOW.md) |
 | **Use the scripts** | [SCRIPTS_REFERENCE.md](SCRIPTS_REFERENCE.md) |
@@ -94,6 +106,10 @@ windsurf-vibe-setup/
 ├── 📄 CONTRIBUTING.md         ← How to contribute
 ├── 📄 SECURITY.md             ← Security policy
 │
+├── 📁 mcp-server/             ← 🤖 AUTOPILOT MCP SERVER
+│   ├── src/index.js           ← Zero-code automation
+│   └── README.md              ← Autopilot docs
+│
 ├── 📁 docs/                   ← You are here
 │   ├── INDEX.md               ← This file
 │   ├── QUICKSTART.md          ← Start here
@@ -102,7 +118,10 @@ windsurf-vibe-setup/
 │   ├── SCRIPTS_REFERENCE.md   ← Scripts docs
 │   ├── MCP_SETUP_GUIDE.md     ← MCP setup
 │   ├── WORKFLOW.md            ← Daily usage
-│   └── TODO.md                ← What's missing
+│   └── TODO.md                ← Project status
+│
+├── 📁 templates/              ← Workspace rules templates
+│   └── workspace-rules/       ← React, Python, ML, etc.
 │
 ├── 📁 examples/               ← Templates to copy
 │   ├── global_rules.md        ← AI behavior
@@ -111,8 +130,8 @@ windsurf-vibe-setup/
 │
 └── 📁 scripts/                ← Automation tools
     ├── setup-windows.ps1      ← Windows installer
-    ├── validate-json.js       ← JSON checker
-    ├── scan-secrets.js        ← Secret finder
+    ├── setup-unix.sh          ← macOS/Linux installer
+    ├── test-installation.js   ← Validates setup
     └── ...                    ← More scripts
 ```
 
