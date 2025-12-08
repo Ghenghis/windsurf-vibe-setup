@@ -1,6 +1,6 @@
 # Windsurf Vibe Setup
 
-> Enterprise-grade Windsurf IDE configuration for vibe coding excellence
+> **Zero-code AI autopilot for Windsurf IDE** — Just describe what you want, AI does the rest
 
 [![CI Pipeline](https://github.com/Ghenghis/windsurf-vibe-setup/actions/workflows/ci.yml/badge.svg)](https://github.com/Ghenghis/windsurf-vibe-setup/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
@@ -8,9 +8,25 @@
 
 ---
 
+## 🚀 For Non-Coders: Just Talk to Windsurf
+
+**No commands. No code. No configuration.**
+
+With the **Autopilot MCP Server**, just tell Windsurf what you want:
+
+| You Say | Windsurf Does |
+|---------|---------------|
+| "Set everything up for me" | Installs all configs automatically |
+| "Something's broken" | Diagnoses and fixes issues |
+| "Create a new website" | Creates a full project structure |
+| "What can you do?" | Shows available capabilities |
+
+---
+
 ## Overview
 
 A professional, production-ready Windsurf IDE configuration optimized for:
+- **Zero-code experience** — Autopilot MCP server handles everything
 - **Multi-language development** (Python, JavaScript, TypeScript, PowerShell)
 - **AI/ML workflows** with GPU acceleration
 - **100+ repository management**
@@ -18,6 +34,13 @@ A professional, production-ready Windsurf IDE configuration optimized for:
 - **Maximum productivity** with vibe coding principles
 
 ## Features
+
+### 🤖 Autopilot MCP Server (NEW)
+- **Zero-code setup** — AI installs everything automatically
+- **Auto-diagnosis** — Finds and reports issues
+- **Self-healing** — Fixes problems without user input
+- **Project creation** — Creates React, Next.js, Python, Node projects
+- **Guided assistance** — Explains what it will do before acting
 
 ### Security
 - Command execution deny list (blocks dangerous commands)
