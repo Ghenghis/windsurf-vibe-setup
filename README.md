@@ -6,7 +6,7 @@
 <!-- BADGES ROW 1 -->
 <p>
 <img src="https://img.shields.io/badge/version-4.3.0-blue?style=for-the-badge&logo=semantic-release" alt="Version"/>
-<img src="https://img.shields.io/badge/tools-465+-success?style=for-the-badge&logo=tools" alt="Tools"/>
+<img src="https://img.shields.io/badge/tools-350+-success?style=for-the-badge&logo=tools" alt="Tools"/>
 <img src="https://img.shields.io/badge/agents-120+-purple?style=for-the-badge&logo=robot" alt="Agents"/>
 <img src="https://img.shields.io/badge/swarm-hive_mind-gold?style=for-the-badge&logo=hive" alt="Swarm"/>
 </p>
@@ -31,7 +31,7 @@
 
 ---
 
-### 🎯 **100+ AI AGENTS** • **300+ TOOLS** • **100% LOCAL & FREE** • **ZERO CODING REQUIRED**
+### 🎯 **120+ AI AGENTS** • **350+ TOOLS** • **100% LOCAL & FREE** • **ZERO CODING REQUIRED**
 
 *Transform any AI assistant into an autonomous development powerhouse.*
 
@@ -47,7 +47,7 @@
 
 ## 🌟 What is Windsurf Vibe Setup?
 
-**Windsurf Vibe Setup** is the most comprehensive MCP (Model Context Protocol) server ever built. It transforms AI assistants into fully autonomous development partners with **100+ specialized AI agents** and **300+ tools** that can:
+**Windsurf Vibe Setup** is the most comprehensive MCP (Model Context Protocol) server ever built. It transforms AI assistants into fully autonomous development partners with **120+ specialized AI agents** and **350+ tools** that can:
 
 <div align="center">
 
@@ -354,7 +354,7 @@ ollama pull llama3.1:70b         # Meta's best, tool-calling native
 
 ---
 
-## 🛠️ Complete Tool Reference (300+ Tools)
+## 🛠️ Complete Tool Reference (350+ Tools)
 
 <details>
 <summary><b>🤖 Multi-Agent Tools (NEW in v4.0)</b></summary>
