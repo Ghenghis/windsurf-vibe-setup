@@ -1,12 +1,12 @@
 <div align="center">
 
-# 🚀 Windsurf & LM Studio Autopilot
+# 🏢 Windsurf & LM Studio Autopilot
 
-## v2.5.0 ULTIMATE EDITION
+## v3.0.0 ENTERPRISE EDITION
 
-[![Version](https://img.shields.io/badge/version-2.5.0-blue.svg)](https://github.com/Ghenghis/windsurf-vibe-setup/releases)
-[![Tools](https://img.shields.io/badge/tools-80+-success.svg)](#-complete-tool-reference-80-tools)
-[![Autopilot](https://img.shields.io/badge/autopilot-95%25-gold.svg)](#-capability-matrix)
+[![Version](https://img.shields.io/badge/version-3.0.0-blue.svg)](https://github.com/Ghenghis/windsurf-vibe-setup/releases)
+[![Tools](https://img.shields.io/badge/tools-120+-success.svg)](#-complete-tool-reference-120-tools)
+[![Autopilot](https://img.shields.io/badge/autopilot-100%25_Technical-gold.svg)](#-capability-matrix)
 [![License](https://img.shields.io/badge/license-MIT-purple.svg)](LICENSE)
 [![Node](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen.svg)](https://nodejs.org/)
 [![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey.svg)](#-installation)
@@ -14,14 +14,14 @@
 
 ---
 
-### **95% AUTOPILOT CAPABILITY** • **80+ TOOLS** • **ZERO-CODE DEVELOPMENT**
+### **100% TECHNICAL AUTOPILOT** • **120+ TOOLS** • **ENTERPRISE READY**
 
 *The most comprehensive MCP (Model Context Protocol) server for AI-powered development.*
 *Works with both **Windsurf IDE** and **LM Studio**.*
 
 [Quick Start](#-quick-start) •
 [Installation](#-installation) •
-[Tools Reference](#-complete-tool-reference-80-tools) •
+[Tools Reference](#-complete-tool-reference-120-tools) •
 [Documentation](#-documentation) •
 [Contributing](#-contributing)
 
@@ -38,7 +38,7 @@
   - [Windsurf IDE Setup](#windsurf-ide-setup)
   - [LM Studio Setup](#lm-studio-setup)
 - [Capability Matrix](#-capability-matrix)
-- [Complete Tool Reference](#-complete-tool-reference-80-tools)
+- [Complete Tool Reference](#-complete-tool-reference-120-tools)
 - [Architecture](#-architecture)
 - [AI/ML Features](#-aiml-features)
 - [Configuration](#-configuration)
@@ -283,9 +283,139 @@ The autopilot tools will be available to your local LLM.
 
 ---
 
-## 🛠 Complete Tool Reference (80+ Tools)
+## 🛠 Complete Tool Reference (120+ Tools)
 
-### v2.5 ULTIMATE EDITION - 40 New Tools
+### v3.0 ENTERPRISE EDITION - 25 New Tools
+
+<details>
+<summary><b>🔄 Workflow Automation (5 tools)</b></summary>
+
+| Tool | Description | Example Command |
+|------|-------------|-----------------|
+| `create_workflow` | Create multi-step automation workflows | "Create a deploy workflow" |
+| `run_workflow` | Execute saved workflows | "Run my deploy workflow" |
+| `edit_workflow` | Modify existing workflows | "Edit workflow to add tests" |
+| `share_workflow` | Export/import workflows | "Export workflow as JSON" |
+| `workflow_templates` | Pre-built workflow templates | "List workflow templates" |
+
+</details>
+
+<details>
+<summary><b>👥 Team Collaboration (6 tools)</b></summary>
+
+| Tool | Description | Example Command |
+|------|-------------|-----------------|
+| `create_team` | Create team workspace | "Create team called Backend" |
+| `invite_member` | Invite team members | "Invite john@example.com" |
+| `share_settings` | Share configurations | "Share my ESLint config" |
+| `team_templates` | Shared project templates | "List team templates" |
+| `activity_log` | Team activity history | "Show team activity" |
+| `list_teams` | List all teams | "List my teams" |
+
+</details>
+
+<details>
+<summary><b>☁️ Cloud Sync (4 tools)</b></summary>
+
+| Tool | Description | Example Command |
+|------|-------------|-----------------|
+| `cloud_login` | Authenticate with cloud | "Login to cloud" |
+| `sync_settings` | Sync settings to cloud | "Sync my settings" |
+| `sync_templates` | Sync templates | "Sync templates to cloud" |
+| `sync_history` | Sync interaction history | "Backup history to cloud" |
+
+</details>
+
+<details>
+<summary><b>🤖 AI Models (5 tools)</b></summary>
+
+| Tool | Description | Example Command |
+|------|-------------|-----------------|
+| `add_model` | Add custom AI model | "Add Ollama model llama3" |
+| `switch_model` | Switch AI models | "Switch to GPT-4" |
+| `model_benchmark` | Benchmark performance | "Benchmark all models" |
+| `fine_tune` | Fine-tune on project | "Fine-tune on my codebase" |
+| `list_models` | List configured models | "List my models" |
+
+</details>
+
+<details>
+<summary><b>🕵️ Multi-Agent (5 tools)</b></summary>
+
+| Tool | Description | Example Command |
+|------|-------------|-----------------|
+| `create_agent` | Create specialized agent | "Create a code review agent" |
+| `assign_task` | Assign task to agent | "Assign testing to test agent" |
+| `agent_status` | Check agent status | "Show agent status" |
+| `agent_collaborate` | Multi-agent collaboration | "Collaborate on this feature" |
+| `list_agents` | List all agents | "List my agents" |
+
+</details>
+
+### v2.6 Data & Persistence - 21 New Tools
+
+<details>
+<summary><b>🗄️ Database (5 tools)</b></summary>
+
+| Tool | Description | Example Command |
+|------|-------------|-----------------|
+| `db_connect` | Connect to database | "Connect to SQLite db" |
+| `db_schema` | View/modify schema | "Show database schema" |
+| `db_backup` | Backup database | "Backup my database" |
+| `db_restore` | Restore from backup | "Restore database" |
+| `db_query_direct` | Execute SQL | "Run SELECT * FROM users" |
+
+</details>
+
+<details>
+<summary><b>🔍 Semantic Search (3 tools)</b></summary>
+
+| Tool | Description | Example Command |
+|------|-------------|-----------------|
+| `embed_text` | Generate embeddings | "Embed this text" |
+| `semantic_search` | Search by meaning | "Find code related to auth" |
+| `index_project` | Index for search | "Index this project" |
+
+</details>
+
+<details>
+<summary><b>💾 Context Persistence (5 tools)</b></summary>
+
+| Tool | Description | Example Command |
+|------|-------------|-----------------|
+| `save_context` | Save session context | "Save my context" |
+| `load_context` | Load previous context | "Load yesterday's context" |
+| `clear_context` | Clear context data | "Clear my history" |
+| `get_context` | View current context | "Show my context" |
+| `list_contexts` | List saved contexts | "List saved contexts" |
+
+</details>
+
+<details>
+<summary><b>🔙 Error Recovery (4 tools)</b></summary>
+
+| Tool | Description | Example Command |
+|------|-------------|-----------------|
+| `create_checkpoint` | Create rollback point | "Create checkpoint" |
+| `rollback` | Rollback to checkpoint | "Rollback to last checkpoint" |
+| `auto_recover` | Auto-fix errors | "Auto recover from this error" |
+| `list_checkpoints` | List checkpoints | "List my checkpoints" |
+
+</details>
+
+<details>
+<summary><b>🔌 Plugin System (4 tools)</b></summary>
+
+| Tool | Description | Example Command |
+|------|-------------|-----------------|
+| `install_plugin` | Install plugin | "Install eslint-plugin" |
+| `list_plugins` | List plugins | "List installed plugins" |
+| `uninstall_plugin` | Remove plugin | "Uninstall plugin" |
+| `create_plugin` | Create plugin template | "Create new plugin" |
+
+</details>
+
+### v2.5 ULTIMATE EDITION - 40 Tools
 
 <details>
 <summary><b>☁️ Cloud Deployment (4 tools)</b></summary>
@@ -786,23 +916,33 @@ All learning data is stored locally:
 | v2.2 | 2024-12-06 | 52+ | 75% | AI decision engine, database |
 | v2.3 | 2024-12-07 | 60+ | 80% | Autopilot intelligence, learning |
 | v2.4 | 2024-12-07 | 71+ | 85% | Web integration, knowledge graph |
-| **v2.5** | **2024-12-08** | **80+** | **95%** | **ULTIMATE: Cloud, CI/CD, Security** |
+| v2.5 | 2024-12-08 | 80+ | 95% | ULTIMATE: Cloud, CI/CD, Security |
+| v2.6 | 2024-12-08 | 95+ | 97% | Data & Persistence Layer |
+| **v3.0** | **2024-12-08** | **120+** | **100%** | **ENTERPRISE: Workflows, Teams, Agents** |
 
 ---
 
 ## 🗺 Roadmap
 
-### v2.6 (Planned)
-- [ ] SQLite/PostgreSQL integration for data storage
-- [ ] True vector embeddings with local models
-- [ ] Plugin system for custom tools
-- [ ] Multi-language support improvements
+### ✅ v2.6 (Complete)
+- [x] SQLite/PostgreSQL/MySQL database integration
+- [x] Vector embeddings with local TF-IDF
+- [x] Plugin system for custom tools
+- [x] Context persistence across sessions
+- [x] Error recovery with checkpoints
 
-### v3.0 (Future)
-- [ ] Visual workflow builder
-- [ ] Team collaboration features
-- [ ] Cloud sync for settings
-- [ ] Custom AI model integration
+### ✅ v3.0 (Complete)
+- [x] Visual workflow builder
+- [x] Team collaboration features
+- [x] Cloud sync for settings
+- [x] Custom AI model integration
+- [x] Multi-agent orchestration
+
+### v3.1 (Future)
+- [ ] IDE extensions (VS Code, JetBrains)
+- [ ] Real-time collaboration
+- [ ] Advanced analytics dashboard
+- [ ] Enterprise SSO integration
 
 ---
 
