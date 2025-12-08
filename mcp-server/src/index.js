@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Windsurf Autopilot MCP Server v2.6
+ * Windsurf Autopilot MCP Server v3.0.0 ENTERPRISE EDITION
  * 
  * COMPLETE ZERO-CODE AUTOPILOT for vibe coders.
  * This server gives Windsurf AI FULL capability to:
@@ -10,13 +10,19 @@
  * - Run multi-step tasks autonomously
  * - Auto-fix issues without user intervention
  * - Make intelligent decisions when stuck
- * - Persistent database storage (v2.6)
- * - Semantic search with embeddings (v2.6)
- * - Session context persistence (v2.6)
- * - Error recovery and rollback (v2.6)
- * - Plugin system for extensibility (v2.6)
+ * - Persistent database storage
+ * - Semantic search with embeddings
+ * - Session context persistence
+ * - Error recovery and rollback
+ * - Plugin system for extensibility
+ * - Workflow automation (v3.0)
+ * - Team collaboration (v3.0)
+ * - Multi-agent orchestration (v3.0)
+ * - Custom AI model integration (v3.0)
+ * - Cloud sync (v3.0)
  * 
  * The user NEVER needs to touch a terminal.
+ * 120+ tools for 100% technical autopilot.
  */
 
 const { Server } = require('@modelcontextprotocol/sdk/server/index.js');
@@ -53,6 +59,7 @@ const teamTools = require('./team-tools.js');
 const cloudTools = require('./cloud-tools.js');
 const modelTools = require('./model-tools.js');
 const agentTools = require('./agent-tools.js');
+const healthTools = require('./health-tools.js');
 
 // ==============================================================================
 // Configuration
@@ -1979,7 +1986,11 @@ await server.connect(transport);
   assign_task: async (args) => agentTools.assign_task.handler(args),
   agent_status: async (args) => agentTools.agent_status.handler(args || {}),
   agent_collaborate: async (args) => agentTools.agent_collaborate.handler(args),
-  list_agents: async () => agentTools.list_agents.handler()
+  list_agents: async () => agentTools.list_agents.handler(),
+
+  // Health Tools
+  autopilot_health: async (args) => healthTools.autopilot_health.handler(args || {}),
+  tool_stats: async () => healthTools.tool_stats.handler()
 };
 
 
@@ -3052,7 +3063,11 @@ const toolDefinitions = [
   { name: 'assign_task', description: 'Assign task to agent', inputSchema: { type: 'object', properties: { agentId: { type: 'string' }, task: { type: 'string' }, priority: { type: 'string' } }, required: ['agentId', 'task'] } },
   { name: 'agent_status', description: 'Check agent status', inputSchema: { type: 'object', properties: { agentId: { type: 'string' } } } },
   { name: 'agent_collaborate', description: 'Multi-agent collaboration', inputSchema: { type: 'object', properties: { task: { type: 'string' }, agents: { type: 'array' }, strategy: { type: 'string' } }, required: ['task'] } },
-  { name: 'list_agents', description: 'List all agents', inputSchema: { type: 'object', properties: {} } }
+  { name: 'list_agents', description: 'List all agents', inputSchema: { type: 'object', properties: {} } },
+  
+  // Health Tools
+  { name: 'autopilot_health', description: 'Run comprehensive health check on the autopilot system', inputSchema: { type: 'object', properties: { verbose: { type: 'boolean', description: 'Show detailed output' } } } },
+  { name: 'tool_stats', description: 'Get statistics about available tools and capabilities', inputSchema: { type: 'object', properties: {} } }
 ];
 
 // Register tools

@@ -1,6 +1,6 @@
 # LM Studio Autopilot MCP Server v3.0.0 - ENTERPRISE EDITION
 
-> **120+ Tools** | **100% Technical Autopilot** | **Zero-Code Development**
+> **120+ Tools** | **100% Technical Autopilot** | **Enterprise Ready**
 
 ## Overview
 
@@ -22,67 +22,63 @@ Configure LM Studio to use this MCP server:
   "mcpServers": {
     "lmstudio-autopilot": {
       "command": "node",
-      "args": ["C:\\Users\\YOUR_USERNAME\\windsurf-vibe-setup\\lmstudio-autopilot\\src\\index.js"]
+      "args": ["/path/to/windsurf-vibe-setup/lmstudio-autopilot/src/index.js"]
     }
   }
 }
 ```
 
-## Files
+## Source Files
 
-| File | Description |
-|------|-------------|
-| `src/index.js` | Main MCP server (v3.0.0) |
-| `src/additional-tools.js` | v2.1 intelligence tools |
-| `src/advanced-tools.js` | v2.2 AI decision engine |
-| `src/autopilot-intelligence.js` | v2.3 learning engine |
-| `src/realtime-ai-engine.js` | v2.4 web integration |
-| `src/ultimate-tools.js` | v2.5 ULTIMATE tools (40) |
-| `src/database-tools.js` | v2.6 database integration |
-| `src/embedding-tools.js` | v2.6 semantic search |
-| `src/context-tools.js` | v2.6 context persistence |
-| `src/recovery-tools.js` | v2.6 error recovery |
-| `src/plugin-tools.js` | v2.6 plugin system |
-| `src/workflow-tools.js` | v3.0 workflow automation |
-| `src/team-tools.js` | v3.0 team collaboration |
-| `src/cloud-tools.js` | v3.0 cloud sync |
-| `src/model-tools.js` | v3.0 AI model management |
-| `src/agent-tools.js` | v3.0 multi-agent orchestration |
+| File | Description | Tools |
+|------|-------------|-------|
+| `index.js` | Main MCP server | Core |
+| `additional-tools.js` | v2.1 intelligence | 16 |
+| `advanced-tools.js` | v2.2 AI decisions | 16 |
+| `autopilot-intelligence.js` | v2.3 learning | 8 |
+| `realtime-ai-engine.js` | v2.4 web/AI | 11 |
+| `ultimate-tools.js` | v2.5 cloud/CI | 40 |
+| `database-tools.js` | v2.6 database | 5 |
+| `embedding-tools.js` | v2.6 vectors | 3 |
+| `context-tools.js` | v2.6 context | 5 |
+| `recovery-tools.js` | v2.6 recovery | 4 |
+| `plugin-tools.js` | v2.6 plugins | 4 |
+| `workflow-tools.js` | v3.0 workflows | 5 |
+| `team-tools.js` | v3.0 teams | 6 |
+| `cloud-tools.js` | v3.0 cloud sync | 4 |
+| `model-tools.js` | v3.0 AI models | 5 |
+| `agent-tools.js` | v3.0 multi-agent | 5 |
 
 ## Tool Categories (120+)
 
-### v3.0 NEW Tools (25)
-- 🔄 Workflows: `create_workflow`, `run_workflow`, `edit_workflow`, `share_workflow`, `workflow_templates`
-- 👥 Teams: `create_team`, `invite_member`, `share_settings`, `team_templates`, `activity_log`, `list_teams`
-- ☁️ Cloud: `cloud_login`, `sync_settings`, `sync_templates`, `sync_history`
-- 🤖 Models: `add_model`, `switch_model`, `model_benchmark`, `fine_tune`, `list_models`
-- 🕵️ Agents: `create_agent`, `assign_task`, `agent_status`, `agent_collaborate`, `list_agents`
+### v3.0 Enterprise (25 tools)
+- 🔄 Workflows: create, run, edit, share, templates
+- 👥 Teams: create, invite, share, templates, activity, list
+- ☁️ Cloud: login, sync_settings, sync_templates, sync_history
+- 🤖 Models: add, switch, benchmark, fine_tune, list
+- 🕵️ Agents: create, assign, status, collaborate, list
 
-### v2.6 NEW Tools (21)
-- 🗄️ Database: `db_connect`, `db_schema`, `db_backup`, `db_restore`, `db_query_direct`
-- 🔍 Search: `embed_text`, `semantic_search`, `index_project`
-- 💾 Context: `save_context`, `load_context`, `clear_context`, `get_context`, `list_contexts`
-- 🔙 Recovery: `create_checkpoint`, `rollback`, `auto_recover`, `list_checkpoints`
-- 🔌 Plugins: `install_plugin`, `list_plugins`, `uninstall_plugin`, `create_plugin`
+### v2.6 Data (21 tools)
+- 🗄️ Database: connect, schema, backup, restore, query
+- 🔍 Embeddings: embed, search, index
+- 💾 Context: save, load, clear, get, list
+- 🔙 Recovery: checkpoint, rollback, auto_recover, list
+- 🔌 Plugins: install, list, uninstall, create
 
-### v2.5 Tools (40)
-- ☁️ Cloud Deployment: `deploy_vercel`, `deploy_netlify`, `deploy_railway`, `deploy_docker_hub`
-- 🔄 CI/CD: `setup_github_actions`, `setup_gitlab_ci`, `run_pipeline`, `check_pipeline_status`
-- 🔧 Code Ops: `refactor_code`, `generate_docs`, `code_review`, `find_dead_code`, `analyze_complexity`
-- 🔒 Security: `security_audit`, `update_dependencies`, `check_licenses`, `scan_secrets`
-- 🌐 API: `test_api`, `mock_server`, `generate_api_docs`
-- 📁 Templates: `save_template`, `list_templates`, `use_template`
-- 🔔 Notifications: `notify`, `send_webhook`, `schedule_task`
-- 📄 Files: `file_diff`, `file_merge`, `bulk_rename`, `find_replace_all`
-- 📊 Logs: `analyze_logs`, `tail_logs`, `search_logs`
-- ⚡ Performance: `benchmark_project`, `profile_app`, `analyze_bundle`
-- 🏢 Workspace: `switch_project`, `list_projects`, `project_health`, `cleanup_project`
+### v2.5 Ultimate (40 tools)
+- ☁️ Deploy: vercel, netlify, railway, docker_hub
+- 🔄 CI/CD: github_actions, gitlab_ci, run, status
+- 🔧 Code: refactor, docs, review, dead_code, complexity
+- 🔒 Security: audit, dependencies, licenses, secrets
+- And 24 more...
 
-### Previous Tools (v2.0-v2.4)
-- Commands, Files, Git, Packages, Projects, Tasks, Environment
-- Error handling, HTTP, Code quality, Testing, Process, Docker
-- AI decision, Code generation, Database, Backup, Progress
-- Learning, Web search, Knowledge graph, Feedback
+## Data Storage Locations
+
+| OS | Path |
+|-----|------|
+| Windows | `%APPDATA%\WindsurfAutopilot\` |
+| macOS | `~/.windsurf-autopilot/` |
+| Linux | `~/.windsurf-autopilot/` |
 
 ## Sync with Windsurf
 
@@ -90,7 +86,7 @@ Both servers share the same codebase. To sync:
 
 ```powershell
 # Copy from mcp-server to lmstudio-autopilot
-Copy-Item -Path "mcp-server\src\*" -Destination "lmstudio-autopilot\src\" -Force
+Copy-Item -Path "mcp-server\src\*" -Destination "lmstudio-autopilot\src\" -Force -Recurse
 ```
 
 ## Testing
@@ -103,8 +99,17 @@ node --check src/index.js
 node src/index.js
 ```
 
+## v3.1 Roadmap
+
+Planned additions:
+- Infrastructure as Code (Terraform, K8s)
+- Advanced Testing (E2E, Visual, Load)
+- Communications (Slack, Discord, Teams)
+- Project Management (Jira, Linear)
+- And more...
+
 ## Version
 
-- **Version**: 2.5.0 ULTIMATE EDITION
-- **Tools**: 80+
-- **Autopilot**: 95%
+- **Version**: 3.0.0 ENTERPRISE EDITION
+- **Tools**: 120+
+- **Autopilot**: 100% Technical
