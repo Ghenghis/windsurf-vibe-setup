@@ -33,6 +33,7 @@ const additionalTools = require('./additional-tools.js');
 const advancedTools = require('./advanced-tools.js');
 const autopilotIntel = require('./autopilot-intelligence.js');
 const realtimeAI = require('./realtime-ai-engine.js');
+const ultimateTools = require('./ultimate-tools.js');
 
 // ==============================================================================
 // Configuration
@@ -1819,7 +1820,73 @@ await server.connect(transport);
   // Auto Learning
   auto_learn_web: async ({ topics }) => {
     return await realtimeAI.autoLearnFromWeb(topics);
-  }
+  },
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // v2.5 ULTIMATE TOOLS - 40 NEW TOOLS FOR 95%+ AUTOPILOT
+  // ═══════════════════════════════════════════════════════════════════════════
+  
+  // Cloud Deployment
+  deploy_vercel: async (args) => ultimateTools.deployVercel(args),
+  deploy_netlify: async (args) => ultimateTools.deployNetlify(args),
+  deploy_railway: async (args) => ultimateTools.deployRailway(args),
+  deploy_docker_hub: async (args) => ultimateTools.deployDockerHub(args),
+  
+  // CI/CD
+  setup_github_actions: async (args) => ultimateTools.setupGitHubActions(args),
+  setup_gitlab_ci: async (args) => ultimateTools.setupGitLabCI(args),
+  run_pipeline: async (args) => ultimateTools.runPipeline(args),
+  check_pipeline_status: async (args) => ultimateTools.checkPipelineStatus(args),
+  
+  // Code Operations
+  refactor_code: async (args) => ultimateTools.refactorCode(args),
+  generate_docs: async (args) => ultimateTools.generateDocs(args),
+  code_review: async (args) => ultimateTools.codeReview(args),
+  find_dead_code: async (args) => ultimateTools.findDeadCode(args),
+  analyze_complexity: async (args) => ultimateTools.analyzeComplexity(args),
+  
+  // Security
+  security_audit: async (args) => ultimateTools.securityAudit(args),
+  update_dependencies: async (args) => ultimateTools.updateDependencies(args),
+  check_licenses: async (args) => ultimateTools.checkLicenses(args),
+  scan_secrets: async (args) => ultimateTools.scanSecrets(args),
+  
+  // API Testing
+  test_api: async (args) => ultimateTools.testApi(args),
+  mock_server: async (args) => ultimateTools.mockServer(args),
+  generate_api_docs: async (args) => ultimateTools.generateApiDocs(args),
+  
+  // Templates
+  save_template: async (args) => ultimateTools.saveTemplate(args),
+  list_templates: async () => ultimateTools.listTemplates(),
+  use_template: async (args) => ultimateTools.useTemplate(args),
+  
+  // Notifications
+  notify: async (args) => ultimateTools.notify(args),
+  send_webhook: async (args) => ultimateTools.sendWebhook(args),
+  schedule_task: async (args) => ultimateTools.scheduleTask(args),
+  
+  // File Operations
+  file_diff: async (args) => ultimateTools.fileDiff(args),
+  file_merge: async (args) => ultimateTools.fileMerge(args),
+  bulk_rename: async (args) => ultimateTools.bulkRename(args),
+  find_replace_all: async (args) => ultimateTools.findReplaceAll(args),
+  
+  // Logs
+  analyze_logs: async (args) => ultimateTools.analyzeLogs(args),
+  tail_logs: async (args) => ultimateTools.tailLogs(args),
+  search_logs: async (args) => ultimateTools.searchLogs(args),
+  
+  // Performance
+  benchmark_project: async (args) => ultimateTools.benchmarkProject(args),
+  profile_app: async (args) => ultimateTools.profileApp(args),
+  analyze_bundle: async (args) => ultimateTools.analyzeBundle(args),
+  
+  // Workspace
+  switch_project: async (args) => ultimateTools.switchProject(args),
+  list_projects: async () => ultimateTools.listProjects(),
+  project_health: async (args) => ultimateTools.projectHealth(args),
+  cleanup_project: async (args) => ultimateTools.cleanupProject(args)
 };
 
 
@@ -1827,7 +1894,7 @@ await server.connect(transport);
 // MCP SERVER SETUP
 // ==============================================================================
 const server = new Server(
-  { name: 'windsurf-autopilot', version: '2.4.0' },
+  { name: 'windsurf-autopilot', version: '2.5.0' },
   { capabilities: { tools: {}, resources: {} } }
 );
 
@@ -2777,7 +2844,48 @@ const toolDefinitions = [
         topics: { type: 'array', items: { type: 'string' }, description: 'Topics to learn about (e.g., ["react", "typescript"])' }
       }
     }
-  }
+  },
+  // v2.5 ULTIMATE TOOLS
+  { name: 'deploy_vercel', description: 'Deploy to Vercel', inputSchema: { type: 'object', properties: { projectPath: { type: 'string' }, token: { type: 'string' }, prod: { type: 'boolean' } }, required: ['projectPath'] } },
+  { name: 'deploy_netlify', description: 'Deploy to Netlify', inputSchema: { type: 'object', properties: { projectPath: { type: 'string' }, token: { type: 'string' }, prod: { type: 'boolean' } }, required: ['projectPath'] } },
+  { name: 'deploy_railway', description: 'Deploy to Railway', inputSchema: { type: 'object', properties: { projectPath: { type: 'string' }, token: { type: 'string' } }, required: ['projectPath'] } },
+  { name: 'deploy_docker_hub', description: 'Push to Docker Hub', inputSchema: { type: 'object', properties: { imageName: { type: 'string' }, tag: { type: 'string' } }, required: ['imageName'] } },
+  { name: 'setup_github_actions', description: 'Create GitHub Actions CI', inputSchema: { type: 'object', properties: { projectPath: { type: 'string' }, type: { type: 'string' } }, required: ['projectPath'] } },
+  { name: 'setup_gitlab_ci', description: 'Create GitLab CI', inputSchema: { type: 'object', properties: { projectPath: { type: 'string' } }, required: ['projectPath'] } },
+  { name: 'run_pipeline', description: 'Trigger CI/CD pipeline', inputSchema: { type: 'object', properties: { projectPath: { type: 'string' } }, required: ['projectPath'] } },
+  { name: 'check_pipeline_status', description: 'Check pipeline status', inputSchema: { type: 'object', properties: { projectPath: { type: 'string' } } } },
+  { name: 'refactor_code', description: 'Auto-refactor code', inputSchema: { type: 'object', properties: { operation: { type: 'string' } }, required: ['operation'] } },
+  { name: 'generate_docs', description: 'Generate documentation', inputSchema: { type: 'object', properties: { projectPath: { type: 'string' } }, required: ['projectPath'] } },
+  { name: 'code_review', description: 'Automated code review', inputSchema: { type: 'object', properties: { projectPath: { type: 'string' } }, required: ['projectPath'] } },
+  { name: 'find_dead_code', description: 'Find unused code', inputSchema: { type: 'object', properties: { projectPath: { type: 'string' } }, required: ['projectPath'] } },
+  { name: 'analyze_complexity', description: 'Code complexity analysis', inputSchema: { type: 'object', properties: { projectPath: { type: 'string' } }, required: ['projectPath'] } },
+  { name: 'security_audit', description: 'Full security audit', inputSchema: { type: 'object', properties: { projectPath: { type: 'string' } }, required: ['projectPath'] } },
+  { name: 'update_dependencies', description: 'Update deps safely', inputSchema: { type: 'object', properties: { projectPath: { type: 'string' }, mode: { type: 'string' } }, required: ['projectPath'] } },
+  { name: 'check_licenses', description: 'License compliance', inputSchema: { type: 'object', properties: { projectPath: { type: 'string' } }, required: ['projectPath'] } },
+  { name: 'scan_secrets', description: 'Scan for secrets', inputSchema: { type: 'object', properties: { projectPath: { type: 'string' } }, required: ['projectPath'] } },
+  { name: 'test_api', description: 'API endpoint testing', inputSchema: { type: 'object', properties: { baseUrl: { type: 'string' } }, required: ['baseUrl'] } },
+  { name: 'mock_server', description: 'Start mock server', inputSchema: { type: 'object', properties: { port: { type: 'number' } } } },
+  { name: 'generate_api_docs', description: 'Generate OpenAPI docs', inputSchema: { type: 'object', properties: { projectPath: { type: 'string' } }, required: ['projectPath'] } },
+  { name: 'save_template', description: 'Save as template', inputSchema: { type: 'object', properties: { projectPath: { type: 'string' }, templateName: { type: 'string' } }, required: ['projectPath', 'templateName'] } },
+  { name: 'list_templates', description: 'List templates', inputSchema: { type: 'object', properties: {} } },
+  { name: 'use_template', description: 'Use template', inputSchema: { type: 'object', properties: { templateName: { type: 'string' } }, required: ['templateName'] } },
+  { name: 'notify', description: 'Desktop notification', inputSchema: { type: 'object', properties: { title: { type: 'string' }, message: { type: 'string' } }, required: ['title', 'message'] } },
+  { name: 'send_webhook', description: 'Send webhook', inputSchema: { type: 'object', properties: { url: { type: 'string' } }, required: ['url'] } },
+  { name: 'schedule_task', description: 'Schedule task', inputSchema: { type: 'object', properties: { taskName: { type: 'string' }, command: { type: 'string' } }, required: ['taskName', 'command'] } },
+  { name: 'file_diff', description: 'Compare files', inputSchema: { type: 'object', properties: { file1: { type: 'string' }, file2: { type: 'string' } }, required: ['file1', 'file2'] } },
+  { name: 'file_merge', description: 'Git merge', inputSchema: { type: 'object', properties: { projectPath: { type: 'string' }, source: { type: 'string' } }, required: ['projectPath', 'source'] } },
+  { name: 'bulk_rename', description: 'Bulk rename', inputSchema: { type: 'object', properties: { projectPath: { type: 'string' }, pattern: { type: 'string' }, replacement: { type: 'string' } }, required: ['projectPath', 'pattern', 'replacement'] } },
+  { name: 'find_replace_all', description: 'Find/replace all', inputSchema: { type: 'object', properties: { projectPath: { type: 'string' }, find: { type: 'string' }, replace: { type: 'string' } }, required: ['projectPath', 'find', 'replace'] } },
+  { name: 'analyze_logs', description: 'Analyze logs', inputSchema: { type: 'object', properties: { logPath: { type: 'string' } }, required: ['logPath'] } },
+  { name: 'tail_logs', description: 'Tail logs', inputSchema: { type: 'object', properties: { logPath: { type: 'string' } }, required: ['logPath'] } },
+  { name: 'search_logs', description: 'Search logs', inputSchema: { type: 'object', properties: { logDir: { type: 'string' }, pattern: { type: 'string' } }, required: ['logDir', 'pattern'] } },
+  { name: 'benchmark_project', description: 'Run benchmarks', inputSchema: { type: 'object', properties: { projectPath: { type: 'string' } }, required: ['projectPath'] } },
+  { name: 'profile_app', description: 'Profile app', inputSchema: { type: 'object', properties: { projectPath: { type: 'string' } }, required: ['projectPath'] } },
+  { name: 'analyze_bundle', description: 'Analyze bundle', inputSchema: { type: 'object', properties: { projectPath: { type: 'string' } }, required: ['projectPath'] } },
+  { name: 'switch_project', description: 'Switch project', inputSchema: { type: 'object', properties: { projectPath: { type: 'string' } }, required: ['projectPath'] } },
+  { name: 'list_projects', description: 'List projects', inputSchema: { type: 'object', properties: {} } },
+  { name: 'project_health', description: 'Project health', inputSchema: { type: 'object', properties: { projectPath: { type: 'string' } }, required: ['projectPath'] } },
+  { name: 'cleanup_project', description: 'Cleanup project', inputSchema: { type: 'object', properties: { projectPath: { type: 'string' } }, required: ['projectPath'] } }
 ];
 
 // Register tools
@@ -2849,7 +2957,7 @@ server.setRequestHandler(ReadResourceRequestSchema, async (request) => {
 async function main() {
   const transport = new StdioServerTransport();
   await server.connect(transport);
-  console.error('🚀 Windsurf Autopilot MCP Server v2.4 running');
+  console.error('🚀 Windsurf Autopilot v2.5.0 ULTIMATE - 80+ Tools, 95% Autopilot');
   console.error(`📂 Home: ${HOME}`);
   console.error(`💻 Platform: ${process.platform}`);
 }

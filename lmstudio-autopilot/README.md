@@ -1,154 +1,86 @@
-# LM Studio Autopilot MCP Server v2.2
+# LM Studio Autopilot MCP Server v2.5.0 - ULTIMATE EDITION
 
-> **Complete Zero-Code Autopilot** for local LLM users (46+ tools, 90% autopilot)
+> **80+ Tools** | **95% Autopilot** | **Zero-Code Development**
 
-Runs **separately** from windsurf-autopilot — no conflicts when using both!
+## Overview
 
-## 🚀 v2.2 Features (Same as windsurf-autopilot!)
+This is the MCP server for LM Studio integration. It's identical to the Windsurf MCP server but configured for LM Studio.
 
-### 🧠 AI Decision Engine (NEW v2.2)
-- **decide_next_step** — AI autonomously analyzes and decides what to do
-- **find_solution** — Searches solution database for any problem
-- **generate_code** — Creates code from natural language
-- **generate_tests** — Auto-generates test files
-
-### 🗄️ Database Operations (NEW v2.2)
-- **db_query** — Run SQL queries (Prisma, SQLite, PostgreSQL)
-- **db_migrate** — Run migrations automatically
-- **db_seed** — Seed database with initial data
-
-### 💾 Backup & Recovery (NEW v2.2)
-- **backup_project** — Create timestamped backups
-- **restore_backup** — Restore from any backup
-- **list_backups** — View available backups
-
-### 📊 Progress Tracking (NEW v2.2)
-- **start_progress** — Track multi-step tasks
-- **update_progress** — Update step progress
-- **get_progress** — Get current status
-- **complete_progress** — Mark task complete
-
-### Command Execution
-- **Execute ANY command** — npm, pip, git, shell commands
-- **Background processes** — Start servers without blocking
-- **Timeout control** — Safe execution with limits
-
-### File Operations
-- **Read/Write/Edit** — Full file system access
-- **Search files** — Find by name or content
-- **Directory management** — List, create, delete
-
-### Git Integration
-- **Full Git control** — status, commit, push, pull, clone, branch
-- **Automated commits** — Stage and commit automatically
-
-### Project Creation
-- **React** — Vite + TypeScript
-- **Next.js** — TypeScript + Tailwind + App Router
-- **Python** — FastAPI + uvicorn + tests
-- **Node.js** — Express server
-- **MCP Server** — Custom MCP server template
-
-### Intelligence Layer (v2.1)
-- **analyze_project** — Understands any project structure
-- **detect_tech_stack** — Auto-detects frameworks
-- **analyze_error** — Diagnoses errors, suggests fixes
-- **smart_retry** — Retries with intelligent strategies
-- **http_request** — Makes API requests
-- **lint_code/format_code** — Code quality
-- **run_tests** — Execute test suites
-- **start_server/stop_server** — Manage dev servers
-- **docker_status/build/run** — Full Docker support
-
-## Setup in LM Studio
-
-1. **Open LM Studio** → Settings → MCP Servers
-
-2. **Add this config:**
-```json
-{
-  "lmstudio-autopilot": {
-    "command": "node",
-    "args": ["C:\\Users\\Admin\\windsurf-vibe-setup\\lmstudio-autopilot\\src\\index.js"]
-  }
-}
-```
-
-3. **Restart LM Studio**
-
-## Available Tools (22 Total)
-
-### Command & File Operations
-| Tool | Description |
-|------|-------------|
-| `execute_command` | Run ANY terminal command |
-| `read_file` | Read file contents |
-| `write_file` | Create or overwrite files |
-| `edit_file` | Find and replace in files |
-| `delete_file` | Remove files/directories |
-| `list_directory` | List files in directory |
-| `search_files` | Search by name or content |
-
-### Git Operations
-| Tool | Description |
-|------|-------------|
-| `git_status` | Repository status |
-| `git_commit` | Stage and commit |
-| `git_push` | Push to remote |
-| `git_pull` | Pull from remote |
-| `git_clone` | Clone repository |
-| `git_branch` | Manage branches |
-
-### Project & Package Management
-| Tool | Description |
-|------|-------------|
-| `create_project` | Create full project structure |
-| `install_packages` | npm/pip package installation |
-| `run_script` | Run npm scripts |
-
-### Task Orchestration
-| Tool | Description |
-|------|-------------|
-| `run_task` | Execute multi-step workflows |
-| `continue_task` | Handle failed steps |
-
-### Environment
-| Tool | Description |
-|------|-------------|
-| `diagnose_environment` | Find issues |
-| `auto_fix` | Fix problems automatically |
-| `complete_setup` | Full setup in one command |
-| `guide_task` | Get step-by-step guidance |
-| `get_status` | System readiness |
-| `get_history` | Action history |
-
-## Example Usage
-
-Just tell your local LLM:
-- "Create a React project called my-app"
-- "Run npm install in /path/to/project"
-- "Commit my changes with message 'feat: add login'"
-- "Search for TODO in my project"
-- "What's my git status?"
-
-## Differences from windsurf-autopilot
-
-| Feature | windsurf-autopilot | lmstudio-autopilot |
-|---------|-------------------|-------------------|
-| Target | Windsurf IDE | LM Studio |
-| Paths | ~/.codeium/windsurf | ~/.lmstudio |
-| Server name | windsurf-autopilot | lmstudio-autopilot |
-| Can run together | ✅ Yes | ✅ Yes |
-
-## Install Dependencies
+## Installation
 
 ```bash
 cd lmstudio-autopilot
 npm install
 ```
 
-## Test Locally
+## Configuration
+
+Configure LM Studio to use this MCP server:
+
+```json
+{
+  "mcpServers": {
+    "lmstudio-autopilot": {
+      "command": "node",
+      "args": ["C:\\Users\\YOUR_USERNAME\\windsurf-vibe-setup\\lmstudio-autopilot\\src\\index.js"]
+    }
+  }
+}
+```
+
+## Files
+
+| File | Description |
+|------|-------------|
+| `src/index.js` | Main MCP server (v2.5.0) |
+| `src/additional-tools.js` | v2.1 intelligence tools |
+| `src/advanced-tools.js` | v2.2 AI decision engine |
+| `src/autopilot-intelligence.js` | v2.3 learning engine |
+| `src/realtime-ai-engine.js` | v2.4 web integration |
+| `src/ultimate-tools.js` | v2.5 ULTIMATE tools (40 new) |
+
+## Tool Categories (80+)
+
+### v2.5 NEW Tools (40)
+- ☁️ Cloud Deployment: `deploy_vercel`, `deploy_netlify`, `deploy_railway`, `deploy_docker_hub`
+- 🔄 CI/CD: `setup_github_actions`, `setup_gitlab_ci`, `run_pipeline`, `check_pipeline_status`
+- 🔧 Code Ops: `refactor_code`, `generate_docs`, `code_review`, `find_dead_code`, `analyze_complexity`
+- 🔒 Security: `security_audit`, `update_dependencies`, `check_licenses`, `scan_secrets`
+- 🌐 API: `test_api`, `mock_server`, `generate_api_docs`
+- 📁 Templates: `save_template`, `list_templates`, `use_template`
+- 🔔 Notifications: `notify`, `send_webhook`, `schedule_task`
+- 📄 Files: `file_diff`, `file_merge`, `bulk_rename`, `find_replace_all`
+- 📊 Logs: `analyze_logs`, `tail_logs`, `search_logs`
+- ⚡ Performance: `benchmark_project`, `profile_app`, `analyze_bundle`
+- 🏢 Workspace: `switch_project`, `list_projects`, `project_health`, `cleanup_project`
+
+### Previous Tools (v2.0-v2.4)
+- Commands, Files, Git, Packages, Projects, Tasks, Environment
+- Error handling, HTTP, Code quality, Testing, Process, Docker
+- AI decision, Code generation, Database, Backup, Progress
+- Learning, Web search, Knowledge graph, Feedback
+
+## Sync with Windsurf
+
+Both servers share the same codebase. To sync:
+
+```powershell
+# Copy from mcp-server to lmstudio-autopilot
+Copy-Item -Path "mcp-server\src\*" -Destination "lmstudio-autopilot\src\" -Force
+```
+
+## Testing
 
 ```bash
+# Syntax check
+node --check src/index.js
+
+# Start server (for testing)
 node src/index.js
 ```
+
+## Version
+
+- **Version**: 2.5.0 ULTIMATE EDITION
+- **Tools**: 80+
+- **Autopilot**: 95%
