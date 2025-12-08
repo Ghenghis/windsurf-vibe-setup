@@ -1,3 +1,4 @@
+const fetch = require('node-fetch');
 /**
  * ============================================================================
  * WINDSURF VIBE SETUP - HIVE MIND SWARM ARCHITECTURE v4.1

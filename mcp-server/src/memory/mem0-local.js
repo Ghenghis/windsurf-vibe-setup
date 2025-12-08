@@ -1,3 +1,4 @@
+const fetch = require('node-fetch');
 /**
  * ============================================================================
  * WINDSURF VIBE SETUP - MEM0 INTEGRATION v4.1

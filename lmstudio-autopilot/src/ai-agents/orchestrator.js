@@ -1,3 +1,4 @@
+const fetch = require('node-fetch');
 /**
  * ============================================================================
  * WINDSURF VIBE SETUP - MULTI-AGENT ORCHESTRATOR v4.0

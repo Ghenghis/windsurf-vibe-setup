@@ -1,3 +1,4 @@
+const fetch = require('node-fetch');
 /**
  * ============================================================================
  * WINDSURF VIBE SETUP - HIVE MIND MCP TOOLS v4.1

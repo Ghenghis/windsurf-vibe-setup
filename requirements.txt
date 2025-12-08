@@ -1,31 +1,13 @@
-# ============================================================================
-# WINDSURF VIBE SETUP - Python Dependencies
-# ============================================================================
-# Install: pip install -r requirements.txt
-# ============================================================================
-
-# Code Quality & Linting
-pylint>=3.0.0
-flake8>=7.0.0
-black>=24.0.0
-isort>=5.13.0
-mypy>=1.8.0
-
-# Security Scanning
-bandit>=1.7.0
-safety>=3.0.0
-
-# Testing
-pytest>=8.0.0
-pytest-cov>=4.1.0
-
-# Type Stubs (for mypy)
-types-requests>=2.31.0
-
-# Documentation
-mkdocs>=1.5.0
-mkdocs-material>=9.5.0
-
-# Utilities
-pyyaml>=6.0.0
+open-interpreter>=0.2.0
+chromadb>=0.4.0
+redis>=5.0.0
+psycopg2-binary>=2.9.0
 python-dotenv>=1.0.0
+pyyaml>=6.0
+pyautogui>=0.9.54
+pytesseract>=0.3.10
+pillow>=10.0.0
+transformers>=4.35.0
+torch>=2.0.0
+langchain>=0.1.0
+crewai>=0.1.0
