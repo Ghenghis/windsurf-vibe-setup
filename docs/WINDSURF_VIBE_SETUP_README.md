@@ -146,24 +146,61 @@ windsurf-vibe-setup/
 └── README.md                         # Main README
 ```
 
-## Benchmark Results
+## Benchmark Results (v1.0.0)
 
 | Test | Category | Avg (ms) | Status |
 |------|----------|----------|--------|
-| FS-001 | FileSystem | 45 | Optimal |
-| FS-002 | FileSystem | 120 | Acceptable |
-| LANG-001 | Language | 85 | Optimal |
-| SEC-001 | Security | 15 | Optimal |
-| EXT-001 | Extension | 95 | Optimal |
+| FS-001 | FileSystem | 90 | Optimal |
+| FS-002 | FileSystem | 330 | Acceptable |
+| FS-003 | FileSystem | 15 | Optimal |
+| LANG-001 | Language | 155 | Acceptable |
+| LANG-002 | Language | 440 | Acceptable |
+| LANG-003 | Language | 25 | Optimal |
+| SEC-001 | Security | 9 | Optimal |
+| SEC-002 | Security | 5 | Optimal |
+| EXT-001 | Extension | 335 | Acceptable |
+| EXT-002 | Extension | 270 | Acceptable |
+| EXT-003 | Extension | 5 | Optimal |
+| EXT-004 | Extension | 17 | Optimal |
+| EDITOR-001 | Editor | 4 | Optimal |
+| EDITOR-002 | Editor | 17 | Optimal |
+
+**Summary:** 14 tests | 9 Optimal | 5 Acceptable | 0 Failed
 
 ## Performance Thresholds
 
 | Classification | Response Time | Indicator |
 |----------------|---------------|-----------|
 | Optimal | < 100ms | No action needed |
-| Acceptable | 100-300ms | Monitor |
-| Degraded | 300-1000ms | Investigate |
-| Critical | > 1000ms | Immediate action |
+| Acceptable | 100-500ms | Monitor |
+| Degraded | 500-2000ms | Investigate |
+| Critical | 2000-5000ms | Immediate action |
+| Failed | > 10000ms | Blocking issue |
+
+## MCP Server Configuration
+
+The project includes MCP (Model Context Protocol) server templates for enhanced AI capabilities:
+
+### Available MCP Servers
+| Server | Purpose | Status |
+|--------|---------|--------|
+| time | Timezone operations | ✅ Active |
+| git | Repository management | ✅ Active |
+| fetch | HTTP requests | ✅ Active |
+| filesystem | File operations | ✅ Active |
+| memory | Persistent memory | ✅ Active |
+| puppeteer | Browser automation | ✅ Active |
+| playwright | Browser testing | ✅ Active |
+| sequential-thinking | Chain-of-thought | ✅ Active |
+| github | GitHub API access | Optional |
+
+### Setup MCP
+```powershell
+# Copy example config to Windsurf
+Copy-Item "examples\mcp_config.json" "$env:USERPROFILE\.codeium\windsurf\mcp_config.json"
+
+# Restart Windsurf to load MCP servers
+```
 
 ## Contributing
 
