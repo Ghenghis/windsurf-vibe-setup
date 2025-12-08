@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 /**
  * Windsurf Autopilot - Context Tools v2.6
- * 
+ *
  * Session context persistence across restarts.
  * Remembers project state, conversation history, and user preferences.
- * 
+ *
  * Tools:
  * - save_context: Save current session context
  * - load_context: Load previous session context
@@ -126,15 +126,23 @@ const contextTools = {
       try {
         // Update last active
         currentContext.session.lastActive = new Date().toISOString();
-        
+
         // Update project info if provided
         if (args.project) {
-          if (args.project.path) currentContext.project.path = args.project.path;
-          if (args.project.name) currentContext.project.name = args.project.name;
-          if (args.project.techStack) currentContext.project.techStack = args.project.techStack;
-          if (args.project.gitBranch) currentContext.project.gitBranch = args.project.gitBranch;
+          if (args.project.path) {
+            currentContext.project.path = args.project.path;
+          }
+          if (args.project.name) {
+            currentContext.project.name = args.project.name;
+          }
+          if (args.project.techStack) {
+            currentContext.project.techStack = args.project.techStack;
+          }
+          if (args.project.gitBranch) {
+            currentContext.project.gitBranch = args.project.gitBranch;
+          }
         }
-        
+
         // Add message to history
         if (args.message) {
           currentContext.conversation.history.push({
@@ -142,13 +150,13 @@ const contextTools = {
             content: args.message,
             type: 'user'
           });
-          
+
           // Keep only last 100 messages
           if (currentContext.conversation.history.length > 100) {
             currentContext.conversation.history = currentContext.conversation.history.slice(-100);
           }
         }
-        
+
         // Add or update task
         if (args.task) {
           const task = {
@@ -158,7 +166,7 @@ const contextTools = {
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString()
           };
-          
+
           if (task.status === 'completed') {
             currentContext.conversation.completedTasks.push(task);
             // Keep only last 50 completed tasks
@@ -169,17 +177,17 @@ const contextTools = {
             currentContext.conversation.pendingTasks.push(task);
           }
         }
-        
+
         // Save preference
         if (args.preference && args.preference.key) {
           currentContext.preferences.customSettings[args.preference.key] = args.preference.value;
         }
-        
+
         // Determine context file name
-        const contextName = args.name || 
+        const contextName = args.name ||
           (currentContext.project.name ? `project_${currentContext.project.name}` : 'default');
         const contextFile = path.join(DATA_DIR, `${sanitizeFileName(contextName)}.json`);
-        
+
         // Prepare context for saving
         const contextToSave = {
           ...currentContext,
@@ -190,10 +198,10 @@ const contextTools = {
           },
           preferences: args.includePreferences !== false ? currentContext.preferences : {}
         };
-        
+
         // Save to file
         fs.writeFileSync(contextFile, JSON.stringify(contextToSave, null, 2));
-        
+
         // Also save to a "latest" file for quick access
         const latestFile = path.join(DATA_DIR, 'latest.json');
         fs.writeFileSync(latestFile, JSON.stringify({
@@ -202,7 +210,7 @@ const contextTools = {
           savedAt: new Date().toISOString(),
           projectPath: currentContext.project.path
         }, null, 2));
-        
+
         return {
           success: true,
           contextName,
@@ -216,7 +224,7 @@ const contextTools = {
           },
           message: `Context saved successfully to ${contextFile}`
         };
-        
+
       } catch (error) {
         return { success: false, error: error.message };
       }
@@ -256,7 +264,7 @@ const contextTools = {
     handler: async (args) => {
       try {
         let contextFile;
-        
+
         if (args.name) {
           // Load specific context
           contextFile = path.join(DATA_DIR, `${sanitizeFileName(args.name)}.json`);
@@ -271,25 +279,25 @@ const contextTools = {
             contextFile = path.join(DATA_DIR, 'default.json');
           }
         }
-        
+
         if (!fs.existsSync(contextFile)) {
           // List available contexts
           const availableContexts = fs.readdirSync(DATA_DIR)
             .filter(f => f.endsWith('.json') && f !== 'latest.json')
             .map(f => f.replace('.json', ''));
-          
+
           return {
             success: false,
             error: `Context not found: ${contextFile}`,
             availableContexts,
-            suggestion: availableContexts.length > 0 
+            suggestion: availableContexts.length > 0
               ? `Try loading one of: ${availableContexts.join(', ')}`
               : 'No saved contexts found. Use save_context first.'
           };
         }
-        
+
         const loadedContext = JSON.parse(fs.readFileSync(contextFile, 'utf8'));
-        
+
         if (args.merge) {
           // Merge with current context
           if (loadedContext.project) {
@@ -325,7 +333,7 @@ const contextTools = {
             preferences: args.loadPreferences !== false ? loadedContext.preferences : currentContext.preferences
           };
         }
-        
+
         return {
           success: true,
           contextFile,
@@ -341,7 +349,7 @@ const contextTools = {
           },
           message: `Context loaded successfully from ${contextFile}`
         };
-        
+
       } catch (error) {
         return { success: false, error: error.message };
       }
@@ -387,7 +395,7 @@ const contextTools = {
       try {
         const target = args.target || 'all';
         const cleared = [];
-        
+
         switch (target) {
           case 'all':
             // Reset to initial state
@@ -425,18 +433,18 @@ const contextTools = {
             };
             cleared.push('session', 'project', 'conversation', 'preferences', 'memory');
             break;
-            
+
           case 'history':
             currentContext.conversation.history = [];
             cleared.push('conversation history');
             break;
-            
+
           case 'tasks':
             currentContext.conversation.pendingTasks = [];
             currentContext.conversation.completedTasks = [];
             cleared.push('pending tasks', 'completed tasks');
             break;
-            
+
           case 'preferences':
             currentContext.preferences = {
               codingStyle: {},
@@ -446,7 +454,7 @@ const contextTools = {
             };
             cleared.push('preferences');
             break;
-            
+
           case 'memory':
             currentContext.memory = {
               learnedPatterns: [],
@@ -455,7 +463,7 @@ const contextTools = {
             };
             cleared.push('memory');
             break;
-            
+
           case 'file':
             if (!args.name) {
               return { success: false, error: 'Context name required when target is "file"' };
@@ -469,14 +477,14 @@ const contextTools = {
             }
             break;
         }
-        
+
         return {
           success: true,
           cleared,
           newSessionId: currentContext.session.id,
           message: `Cleared: ${cleared.join(', ')}`
         };
-        
+
       } catch (error) {
         return { success: false, error: error.message };
       }
@@ -502,7 +510,7 @@ const contextTools = {
     },
     handler: async (args) => {
       const section = args.section || 'all';
-      
+
       if (section === 'all') {
         return {
           success: true,
@@ -523,7 +531,7 @@ const contextTools = {
           }
         };
       }
-      
+
       return {
         success: true,
         section,
@@ -546,7 +554,7 @@ const contextTools = {
       try {
         const files = fs.readdirSync(DATA_DIR)
           .filter(f => f.endsWith('.json') && f !== 'latest.json');
-        
+
         const contexts = files.map(f => {
           const filePath = path.join(DATA_DIR, f);
           const stats = fs.statSync(filePath);
@@ -567,7 +575,7 @@ const contextTools = {
             };
           }
         });
-        
+
         // Get latest info
         let latest = null;
         const latestFile = path.join(DATA_DIR, 'latest.json');
@@ -576,7 +584,7 @@ const contextTools = {
             latest = JSON.parse(fs.readFileSync(latestFile, 'utf8'));
           } catch (e) {}
         }
-        
+
         return {
           success: true,
           count: contexts.length,
@@ -584,7 +592,7 @@ const contextTools = {
           contexts,
           dataDirectory: DATA_DIR
         };
-        
+
       } catch (error) {
         return { success: false, error: error.message };
       }
@@ -592,17 +600,17 @@ const contextTools = {
   },
 
   // Get current context (for internal use)
-  getCurrentContext: function() {
+  getCurrentContext: function () {
     return currentContext;
   },
 
   // Update current context (for internal use)
-  updateContext: function(updates) {
+  updateContext: function (updates) {
     Object.assign(currentContext, updates);
   },
 
   // Get all tool definitions for registration
-  getToolDefinitions: function() {
+  getToolDefinitions: function () {
     return [
       { name: this.save_context.name, description: this.save_context.description, inputSchema: this.save_context.inputSchema },
       { name: this.load_context.name, description: this.load_context.description, inputSchema: this.load_context.inputSchema },
@@ -613,14 +621,16 @@ const contextTools = {
   },
 
   // Get handler for a tool
-  getHandler: function(toolName) {
+  getHandler: function (toolName) {
     const tool = this[toolName];
     return tool ? tool.handler : null;
   },
 
   // Start auto-save (call on server start)
-  startAutoSave: function(intervalMs = 60000) {
-    if (autoSaveTimer) clearInterval(autoSaveTimer);
+  startAutoSave: function (intervalMs = 60000) {
+    if (autoSaveTimer) {
+      clearInterval(autoSaveTimer);
+    }
     autoSaveTimer = setInterval(() => {
       if (currentContext.project.path) {
         this.save_context.handler({ includeHistory: true }).catch(() => {});
@@ -629,7 +639,7 @@ const contextTools = {
   },
 
   // Stop auto-save
-  stopAutoSave: function() {
+  stopAutoSave: function () {
     if (autoSaveTimer) {
       clearInterval(autoSaveTimer);
       autoSaveTimer = null;
@@ -644,7 +654,9 @@ function sanitizeFileName(name) {
 
 // Helper function to format bytes
 function formatBytes(bytes) {
-  if (bytes === 0) return '0 Bytes';
+  if (bytes === 0) {
+    return '0 Bytes';
+  }
   const k = 1024;
   const sizes = ['Bytes', 'KB', 'MB', 'GB'];
   const i = Math.floor(Math.log(bytes) / Math.log(k));

@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * Windsurf Autopilot MCP Server v2.0
- * 
+ *
  * COMPLETE ZERO-CODE AUTOPILOT for vibe coders.
  * This server gives Windsurf AI FULL capability to:
  * - Execute ANY command (npm, pip, git, etc.)
@@ -10,7 +10,7 @@
  * - Run multi-step tasks autonomously
  * - Auto-fix issues without user intervention
  * - Make intelligent decisions when stuck
- * 
+ *
  * The user NEVER needs to touch a terminal.
  */
 
@@ -35,7 +35,7 @@ const HOME = os.homedir();
 const IS_WINDOWS = process.platform === 'win32';
 
 const PATHS = {
-  windsurfSettings: IS_WINDOWS 
+  windsurfSettings: IS_WINDOWS
     ? path.join(process.env.APPDATA || '', 'Windsurf', 'User')
     : process.platform === 'darwin'
       ? path.join(HOME, 'Library', 'Application Support', 'Windsurf', 'User')
@@ -62,19 +62,19 @@ const taskState = {
  * Execute a command safely with timeout and output capture
  */
 function safeExec(command, options = {}) {
-  const defaults = { 
-    encoding: 'utf8', 
+  const defaults = {
+    encoding: 'utf8',
     timeout: options.timeout || 60000,
     maxBuffer: 10 * 1024 * 1024,
     windowsHide: true
   };
-  
+
   try {
     const output = execSync(command, { ...defaults, ...options }).toString().trim();
     return { success: true, output, exitCode: 0 };
   } catch (e) {
-    return { 
-      success: false, 
+    return {
+      success: false,
       error: e.message,
       output: e.stdout?.toString() || '',
       stderr: e.stderr?.toString() || '',
@@ -90,19 +90,23 @@ function execAsync(command, options = {}) {
   return new Promise((resolve) => {
     const shell = IS_WINDOWS ? 'cmd.exe' : '/bin/bash';
     const shellArgs = IS_WINDOWS ? ['/c', command] : ['-c', command];
-    
+
     const proc = spawn(shell, shellArgs, {
       cwd: options.cwd || HOME,
       env: { ...process.env, ...options.env },
       windowsHide: true
     });
-    
+
     let stdout = '';
     let stderr = '';
-    
-    proc.stdout.on('data', (data) => { stdout += data.toString(); });
-    proc.stderr.on('data', (data) => { stderr += data.toString(); });
-    
+
+    proc.stdout.on('data', (data) => {
+      stdout += data.toString();
+    });
+    proc.stderr.on('data', (data) => {
+      stderr += data.toString();
+    });
+
     proc.on('close', (code) => {
       resolve({
         success: code === 0,
@@ -111,7 +115,7 @@ function execAsync(command, options = {}) {
         exitCode: code
       });
     });
-    
+
     proc.on('error', (err) => {
       resolve({
         success: false,
@@ -121,7 +125,7 @@ function execAsync(command, options = {}) {
         exitCode: 1
       });
     });
-    
+
     // Timeout after specified duration
     setTimeout(() => {
       proc.kill();
@@ -156,7 +160,7 @@ function readJsonSafe(filePath) {
   try {
     let content = fs.readFileSync(filePath, 'utf8');
     content = content.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
-    
+
     // Handle JSONC (strip comments)
     let result = '';
     let i = 0;
@@ -169,19 +173,25 @@ function readJsonSafe(filePath) {
           }
           result += content[i++];
         }
-        if (i < content.length) result += content[i++];
+        if (i < content.length) {
+          result += content[i++];
+        }
       } else if (content[i] === '/' && content[i + 1] === '/') {
-        while (i < content.length && content[i] !== '\n') i++;
+        while (i < content.length && content[i] !== '\n') {
+          i++;
+        }
       } else if (content[i] === '/' && content[i + 1] === '*') {
         i += 2;
-        while (i < content.length && !(content[i] === '*' && content[i + 1] === '/')) i++;
+        while (i < content.length && !(content[i] === '*' && content[i + 1] === '/')) {
+          i++;
+        }
         i += 2;
       } else {
         result += content[i++];
       }
     }
     result = result.replace(/,(\s*[}\]])/g, '$1');
-    
+
     return { success: true, data: JSON.parse(result) };
   } catch (e) {
     return { success: false, error: e.message };
@@ -236,9 +246,9 @@ const tools = {
   // ===========================================================================
   execute_command: async ({ command, cwd, timeout, background }) => {
     logAction('execute_command', { command, cwd });
-    
+
     const workingDir = cwd || HOME;
-    
+
     // Validate working directory exists
     if (!fileExists(workingDir)) {
       return {
@@ -247,7 +257,7 @@ const tools = {
         suggestion: 'Create the directory first or use a valid path'
       };
     }
-    
+
     if (background) {
       // Start process in background
       const shell = IS_WINDOWS ? 'cmd.exe' : '/bin/bash';
@@ -265,12 +275,12 @@ const tools = {
         pid: proc.pid
       };
     }
-    
-    const result = await execAsync(command, { 
-      cwd: workingDir, 
-      timeout: timeout || 120000 
+
+    const result = await execAsync(command, {
+      cwd: workingDir,
+      timeout: timeout || 120000
     });
-    
+
     return {
       success: result.success,
       output: result.output,
@@ -286,11 +296,11 @@ const tools = {
   // ===========================================================================
   read_file: async ({ path: filePath, encoding }) => {
     logAction('read_file', { path: filePath });
-    
+
     if (!fileExists(filePath)) {
       return { success: false, error: `File not found: ${filePath}` };
     }
-    
+
     try {
       const content = fs.readFileSync(filePath, encoding || 'utf8');
       const stats = fs.statSync(filePath);
@@ -308,19 +318,19 @@ const tools = {
 
   write_file: async ({ path: filePath, content, append, createDirs }) => {
     logAction('write_file', { path: filePath, append, lines: content?.split('\n').length });
-    
+
     try {
       const dir = path.dirname(filePath);
       if (createDirs !== false && !fs.existsSync(dir)) {
         fs.mkdirSync(dir, { recursive: true });
       }
-      
+
       if (append) {
         fs.appendFileSync(filePath, content, 'utf8');
       } else {
         fs.writeFileSync(filePath, content, 'utf8');
       }
-      
+
       return {
         success: true,
         path: filePath,
@@ -334,21 +344,21 @@ const tools = {
 
   edit_file: async ({ path: filePath, find, replace, replaceAll }) => {
     logAction('edit_file', { path: filePath, find: find?.substring(0, 50) });
-    
+
     if (!fileExists(filePath)) {
       return { success: false, error: `File not found: ${filePath}` };
     }
-    
+
     try {
       let content = fs.readFileSync(filePath, 'utf8');
       const originalContent = content;
-      
+
       if (replaceAll) {
         content = content.split(find).join(replace);
       } else {
         content = content.replace(find, replace);
       }
-      
+
       if (content === originalContent) {
         return {
           success: true,
@@ -356,9 +366,9 @@ const tools = {
           message: 'No changes made - pattern not found'
         };
       }
-      
+
       fs.writeFileSync(filePath, content, 'utf8');
-      
+
       return {
         success: true,
         changed: true,
@@ -372,11 +382,11 @@ const tools = {
 
   delete_file: async ({ path: filePath, recursive }) => {
     logAction('delete_file', { path: filePath, recursive });
-    
+
     if (!fileExists(filePath)) {
       return { success: true, message: 'File already does not exist' };
     }
-    
+
     try {
       if (isDirectory(filePath)) {
         if (recursive) {
@@ -395,55 +405,61 @@ const tools = {
 
   list_directory: async ({ path: dirPath, recursive, pattern }) => {
     logAction('list_directory', { path: dirPath, recursive, pattern });
-    
+
     if (!fileExists(dirPath)) {
       return { success: false, error: `Directory not found: ${dirPath}` };
     }
-    
+
     try {
       const items = [];
-      
+
       function scanDir(currentPath, depth = 0) {
-        if (!recursive && depth > 0) return;
-        if (depth > 5) return; // Max depth to prevent infinite loops
-        
+        if (!recursive && depth > 0) {
+          return;
+        }
+        if (depth > 5) {
+          return;
+        } // Max depth to prevent infinite loops
+
         const entries = fs.readdirSync(currentPath, { withFileTypes: true });
-        
+
         for (const entry of entries) {
           // Skip node_modules and .git for cleaner output
-          if (entry.name === 'node_modules' || entry.name === '.git') continue;
-          
+          if (entry.name === 'node_modules' || entry.name === '.git') {
+            continue;
+          }
+
           const fullPath = path.join(currentPath, entry.name);
           const relativePath = path.relative(dirPath, fullPath);
-          
+
           // Pattern matching
           if (pattern && !entry.name.includes(pattern) && !relativePath.includes(pattern)) {
             continue;
           }
-          
+
           const item = {
             name: entry.name,
             path: relativePath,
             type: entry.isDirectory() ? 'directory' : 'file'
           };
-          
+
           if (!entry.isDirectory()) {
             try {
               const stats = fs.statSync(fullPath);
               item.size = stats.size;
             } catch {}
           }
-          
+
           items.push(item);
-          
+
           if (entry.isDirectory() && recursive) {
             scanDir(fullPath, depth + 1);
           }
         }
       }
-      
+
       scanDir(dirPath);
-      
+
       return {
         success: true,
         path: dirPath,
@@ -457,47 +473,53 @@ const tools = {
 
   search_files: async ({ path: searchPath, pattern, contentPattern, fileExtensions }) => {
     logAction('search_files', { path: searchPath, pattern, contentPattern });
-    
+
     if (!fileExists(searchPath)) {
       return { success: false, error: `Path not found: ${searchPath}` };
     }
-    
+
     try {
       const results = [];
       const extensions = fileExtensions ? fileExtensions.split(',').map(e => e.trim()) : null;
-      
+
       function searchDir(currentPath, depth = 0) {
-        if (depth > 10) return;
-        
+        if (depth > 10) {
+          return;
+        }
+
         const entries = fs.readdirSync(currentPath, { withFileTypes: true });
-        
+
         for (const entry of entries) {
-          if (entry.name === 'node_modules' || entry.name === '.git') continue;
-          
+          if (entry.name === 'node_modules' || entry.name === '.git') {
+            continue;
+          }
+
           const fullPath = path.join(currentPath, entry.name);
-          
+
           if (entry.isDirectory()) {
             searchDir(fullPath, depth + 1);
           } else {
             // Check extension filter
             if (extensions) {
               const ext = path.extname(entry.name).toLowerCase();
-              if (!extensions.some(e => ext === e || ext === '.' + e)) continue;
+              if (!extensions.some(e => ext === e || ext === '.' + e)) {
+                continue;
+              }
             }
-            
+
             // Check filename pattern
             const nameMatch = !pattern || entry.name.toLowerCase().includes(pattern.toLowerCase());
-            
+
             // Check content pattern
             let contentMatch = true;
-            let matchingLines = [];
-            
+            const matchingLines = [];
+
             if (contentPattern) {
               try {
                 const content = fs.readFileSync(fullPath, 'utf8');
                 const lines = content.split('\n');
                 contentMatch = false;
-                
+
                 lines.forEach((line, idx) => {
                   if (line.toLowerCase().includes(contentPattern.toLowerCase())) {
                     contentMatch = true;
@@ -510,7 +532,7 @@ const tools = {
                 contentMatch = false;
               }
             }
-            
+
             if (nameMatch || contentMatch) {
               results.push({
                 path: fullPath,
@@ -518,14 +540,16 @@ const tools = {
                 matches: matchingLines
               });
             }
-            
-            if (results.length >= 50) return;
+
+            if (results.length >= 50) {
+              return;
+            }
           }
         }
       }
-      
+
       searchDir(searchPath);
-      
+
       return {
         success: true,
         searchPath,
@@ -546,11 +570,11 @@ const tools = {
   git_status: async ({ path: repoPath }) => {
     logAction('git_status', { path: repoPath });
     const cwd = repoPath || process.cwd();
-    
+
     const status = safeExec('git status --porcelain', { cwd });
     const branch = safeExec('git branch --show-current', { cwd });
     const remote = safeExec('git remote -v', { cwd });
-    
+
     return {
       success: true,
       cwd,
@@ -564,16 +588,16 @@ const tools = {
   git_commit: async ({ path: repoPath, message, addAll }) => {
     logAction('git_commit', { path: repoPath, message });
     const cwd = repoPath || process.cwd();
-    
+
     if (addAll !== false) {
       const addResult = safeExec('git add -A', { cwd });
       if (!addResult.success) {
         return { success: false, error: `Failed to stage files: ${addResult.error}` };
       }
     }
-    
+
     const commitResult = safeExec(`git commit -m "${message.replace(/"/g, '\\"')}"`, { cwd });
-    
+
     return {
       success: commitResult.success,
       output: commitResult.output,
@@ -584,14 +608,20 @@ const tools = {
   git_push: async ({ path: repoPath, remote, branch, force }) => {
     logAction('git_push', { path: repoPath, remote, branch, force });
     const cwd = repoPath || process.cwd();
-    
+
     let cmd = 'git push';
-    if (remote) cmd += ` ${remote}`;
-    if (branch) cmd += ` ${branch}`;
-    if (force) cmd += ' --force';
-    
+    if (remote) {
+      cmd += ` ${remote}`;
+    }
+    if (branch) {
+      cmd += ` ${branch}`;
+    }
+    if (force) {
+      cmd += ' --force';
+    }
+
     const result = safeExec(cmd, { cwd, timeout: 60000 });
-    
+
     return {
       success: result.success,
       output: result.output,
@@ -603,13 +633,17 @@ const tools = {
   git_pull: async ({ path: repoPath, remote, branch }) => {
     logAction('git_pull', { path: repoPath, remote, branch });
     const cwd = repoPath || process.cwd();
-    
+
     let cmd = 'git pull';
-    if (remote) cmd += ` ${remote}`;
-    if (branch) cmd += ` ${branch}`;
-    
+    if (remote) {
+      cmd += ` ${remote}`;
+    }
+    if (branch) {
+      cmd += ` ${branch}`;
+    }
+
     const result = safeExec(cmd, { cwd, timeout: 60000 });
-    
+
     return {
       success: result.success,
       output: result.output,
@@ -619,13 +653,17 @@ const tools = {
 
   git_clone: async ({ url, path: destPath, branch }) => {
     logAction('git_clone', { url, path: destPath, branch });
-    
+
     let cmd = `git clone "${url}"`;
-    if (destPath) cmd += ` "${destPath}"`;
-    if (branch) cmd += ` -b ${branch}`;
-    
+    if (destPath) {
+      cmd += ` "${destPath}"`;
+    }
+    if (branch) {
+      cmd += ` -b ${branch}`;
+    }
+
     const result = safeExec(cmd, { timeout: 120000 });
-    
+
     return {
       success: result.success,
       output: result.output,
@@ -637,17 +675,17 @@ const tools = {
   git_branch: async ({ path: repoPath, name, checkout, delete: deleteBranch }) => {
     logAction('git_branch', { path: repoPath, name, checkout, delete: deleteBranch });
     const cwd = repoPath || process.cwd();
-    
+
     if (deleteBranch) {
       const result = safeExec(`git branch -d ${name}`, { cwd });
       return { success: result.success, output: result.output, error: result.error };
     }
-    
+
     if (checkout) {
       const result = safeExec(`git checkout -b ${name}`, { cwd });
       return { success: result.success, output: result.output, error: result.error };
     }
-    
+
     // List branches
     const result = safeExec('git branch -a', { cwd });
     return {
@@ -663,19 +701,19 @@ const tools = {
   install_packages: async ({ packages, path: projectPath, manager, dev }) => {
     logAction('install_packages', { packages, path: projectPath, manager });
     const cwd = projectPath || process.cwd();
-    
+
     // Auto-detect package manager
     const hasPackageJson = fileExists(path.join(cwd, 'package.json'));
     const hasRequirements = fileExists(path.join(cwd, 'requirements.txt'));
     const hasPyproject = fileExists(path.join(cwd, 'pyproject.toml'));
-    
-    const detectedManager = manager || 
-      (hasPackageJson ? 'npm' : 
-       hasRequirements || hasPyproject ? 'pip' : 'npm');
-    
+
+    const detectedManager = manager ||
+      (hasPackageJson ? 'npm' :
+        hasRequirements || hasPyproject ? 'pip' : 'npm');
+
     let cmd;
     const pkgList = Array.isArray(packages) ? packages.join(' ') : packages;
-    
+
     switch (detectedManager) {
       case 'npm':
         cmd = `npm install ${pkgList}${dev ? ' --save-dev' : ''}`;
@@ -695,9 +733,9 @@ const tools = {
       default:
         return { success: false, error: `Unknown package manager: ${detectedManager}` };
     }
-    
+
     const result = safeExec(cmd, { cwd, timeout: 120000 });
-    
+
     return {
       success: result.success,
       manager: detectedManager,
@@ -710,14 +748,16 @@ const tools = {
   run_script: async ({ script, path: projectPath, args }) => {
     logAction('run_script', { script, path: projectPath, args });
     const cwd = projectPath || process.cwd();
-    
+
     // Check if package.json exists with scripts
     const pkgPath = path.join(cwd, 'package.json');
     if (fileExists(pkgPath)) {
       const pkg = readJsonSafe(pkgPath);
       if (pkg.success && pkg.data.scripts?.[script]) {
         let cmd = `npm run ${script}`;
-        if (args) cmd += ` -- ${args}`;
+        if (args) {
+          cmd += ` -- ${args}`;
+        }
         const result = await execAsync(cmd, { cwd, timeout: 300000 });
         return {
           success: result.success,
@@ -728,7 +768,7 @@ const tools = {
         };
       }
     }
-    
+
     return { success: false, error: `Script "${script}" not found in package.json` };
   },
 
@@ -738,23 +778,23 @@ const tools = {
   // ===========================================================================
   create_project: async ({ name, type, path: location, template, features }) => {
     logAction('create_project', { name, type, location, template, features });
-    
+
     const projectPath = path.join(location || PATHS.projects, name);
-    
+
     // Create directory
     if (!fs.existsSync(projectPath)) {
       fs.mkdirSync(projectPath, { recursive: true });
     }
-    
+
     const results = { steps: [], success: true };
-    
+
     // Project templates
     const templates = {
       react: async () => {
         // Create React project using Vite (faster than CRA)
-        const result = safeExec(`npm create vite@latest ${name} -- --template react-ts`, { 
+        const result = safeExec(`npm create vite@latest ${name} -- --template react-ts`, {
           cwd: path.dirname(projectPath),
-          timeout: 120000 
+          timeout: 120000
         });
         if (result.success) {
           results.steps.push({ step: 'Created Vite React TypeScript project', success: true });
@@ -767,26 +807,26 @@ const tools = {
         }
         return 'React TypeScript project with Vite';
       },
-      
+
       nextjs: async () => {
         const result = safeExec(
           `npx create-next-app@latest ${name} --typescript --tailwind --eslint --app --src-dir --no-turbopack --use-npm`,
           { cwd: path.dirname(projectPath), timeout: 180000 }
         );
-        results.steps.push({ 
-          step: 'Created Next.js project', 
+        results.steps.push({
+          step: 'Created Next.js project',
           success: result.success,
-          error: result.error 
+          error: result.error
         });
         results.success = result.success;
         return 'Next.js project with TypeScript, Tailwind, App Router';
       },
-      
+
       python: async () => {
         // Create Python project structure
         const dirs = ['src', 'tests', 'docs'];
         dirs.forEach(d => fs.mkdirSync(path.join(projectPath, d), { recursive: true }));
-        
+
         // Create files
         const files = {
           'requirements.txt': '# Dependencies\nfastapi>=0.100.0\nuvicorn>=0.22.0\npython-dotenv>=1.0.0\n',
@@ -824,30 +864,30 @@ def test_root():
           '.gitignore': '__pycache__/\n*.py[cod]\n*$py.class\n.env\nvenv/\n.venv/\n*.egg-info/\n',
           '.env.example': 'DEBUG=true\nAPI_KEY=your-key-here\n'
         };
-        
+
         Object.entries(files).forEach(([filename, content]) => {
           fs.writeFileSync(path.join(projectPath, filename), content);
         });
-        
+
         // Initialize git
         safeExec('git init', { cwd: projectPath });
-        
+
         // Create virtual environment
         const venvResult = safeExec('python -m venv venv', { cwd: projectPath, timeout: 60000 });
         results.steps.push({ step: 'Created virtual environment', success: venvResult.success });
-        
+
         results.steps.push({ step: 'Created Python FastAPI project', success: true });
         return 'Python FastAPI project with tests';
       },
-      
+
       node: async () => {
         // Initialize npm
         safeExec('npm init -y', { cwd: projectPath });
-        
+
         // Create structure
         fs.mkdirSync(path.join(projectPath, 'src'), { recursive: true });
         fs.mkdirSync(path.join(projectPath, 'tests'), { recursive: true });
-        
+
         const files = {
           'src/index.js': `/**
  * ${name} - Main Entry Point
@@ -877,11 +917,11 @@ module.exports = app;
           '.env.example': 'PORT=3000\nNODE_ENV=development\n',
           'README.md': `# ${name}\n\n## Install\n\`\`\`bash\nnpm install\n\`\`\`\n\n## Run\n\`\`\`bash\nnpm start\n\`\`\`\n`
         };
-        
+
         Object.entries(files).forEach(([filename, content]) => {
           fs.writeFileSync(path.join(projectPath, filename), content);
         });
-        
+
         // Update package.json
         const pkgPath = path.join(projectPath, 'package.json');
         const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf8'));
@@ -892,27 +932,27 @@ module.exports = app;
           test: 'jest'
         };
         fs.writeFileSync(pkgPath, JSON.stringify(pkg, null, 2));
-        
+
         // Install dependencies
         safeExec('npm install express', { cwd: projectPath, timeout: 60000 });
-        
+
         // Initialize git
         safeExec('git init', { cwd: projectPath });
-        
+
         results.steps.push({ step: 'Created Node.js Express project', success: true });
         return 'Node.js Express project';
       },
-      
+
       mcp: async () => {
         // MCP Server template
         fs.mkdirSync(path.join(projectPath, 'src'), { recursive: true });
-        
+
         // Copy from this project's template
         const templateSrc = path.join(PATHS.projectRoot, 'templates', 'workspace-rules', 'mcp-server.md');
         if (fileExists(templateSrc)) {
           fs.copyFileSync(templateSrc, path.join(projectPath, 'GUIDE.md'));
         }
-        
+
         // Create package.json
         const pkg = {
           name,
@@ -923,7 +963,7 @@ module.exports = app;
           dependencies: { '@modelcontextprotocol/sdk': '^1.0.0' }
         };
         fs.writeFileSync(path.join(projectPath, 'package.json'), JSON.stringify(pkg, null, 2));
-        
+
         // Create MCP server template
         const mcpTemplate = `#!/usr/bin/env node
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
@@ -961,15 +1001,15 @@ const transport = new StdioServerTransport();
 await server.connect(transport);
 `;
         fs.writeFileSync(path.join(projectPath, 'src', 'index.js'), mcpTemplate);
-        
+
         // Install deps
         safeExec('npm install', { cwd: projectPath, timeout: 60000 });
         safeExec('git init', { cwd: projectPath });
-        
+
         results.steps.push({ step: 'Created MCP Server project', success: true });
         return 'MCP Server project';
       },
-      
+
       empty: async () => {
         fs.writeFileSync(path.join(projectPath, 'README.md'), `# ${name}\n\nNew project.\n`);
         fs.writeFileSync(path.join(projectPath, '.gitignore'), 'node_modules/\n.env\n');
@@ -978,10 +1018,10 @@ await server.connect(transport);
         return 'Empty project with git';
       }
     };
-    
+
     const templateFn = templates[type] || templates.empty;
     const description = await templateFn();
-    
+
     return {
       success: results.success,
       path: projectPath,
@@ -1001,17 +1041,17 @@ await server.connect(transport);
   // ===========================================================================
   run_task: async ({ task, steps, context }) => {
     logAction('run_task', { task, stepCount: steps?.length });
-    
+
     taskState.currentTask = { task, startedAt: new Date().toISOString(), steps: [], context };
     const results = [];
-    
+
     for (let i = 0; i < steps.length; i++) {
       const step = steps[i];
       taskState.currentTask.currentStep = i;
-      
+
       try {
         let result;
-        
+
         // Execute step based on type
         if (step.command) {
           result = await tools.execute_command({ command: step.command, cwd: step.cwd });
@@ -1022,15 +1062,15 @@ await server.connect(transport);
         } else {
           result = { success: false, error: 'Unknown step type' };
         }
-        
+
         results.push({
           step: i + 1,
           description: step.description || step.command || step.tool,
           ...result
         });
-        
+
         taskState.currentTask.steps.push({ ...step, result, completedAt: new Date().toISOString() });
-        
+
         // Stop on failure unless step is marked as optional
         if (!result.success && !step.optional) {
           taskState.lastError = result.error;
@@ -1057,9 +1097,9 @@ await server.connect(transport);
         };
       }
     }
-    
+
     taskState.currentTask = null;
-    
+
     return {
       success: true,
       completedSteps: steps.length,
@@ -1071,45 +1111,45 @@ await server.connect(transport);
 
   continue_task: async ({ action, newStep }) => {
     logAction('continue_task', { action });
-    
+
     if (!taskState.currentTask) {
-      return { 
-        success: false, 
+      return {
+        success: false,
         error: 'No active task to continue',
         lastError: taskState.lastError,
         history: taskState.history.slice(-5)
       };
     }
-    
+
     const task = taskState.currentTask;
-    
+
     if (action === 'retry') {
       // Retry the current step
       const stepIndex = task.currentStep;
-      return { 
-        success: true, 
+      return {
+        success: true,
         action: 'retry',
         message: `Will retry step ${stepIndex + 1}`,
         step: task.steps[stepIndex]
       };
     }
-    
+
     if (action === 'skip') {
       // Skip current step and continue
       task.currentStep++;
-      return { 
-        success: true, 
+      return {
+        success: true,
         action: 'skip',
         message: `Skipped step ${task.currentStep}, continuing...`,
         nextStep: task.currentStep
       };
     }
-    
+
     if (action === 'abort') {
       taskState.currentTask = null;
       return { success: true, action: 'abort', message: 'Task aborted' };
     }
-    
+
     return { success: false, error: `Unknown action: ${action}. Use: retry, skip, abort` };
   },
 
@@ -1118,7 +1158,7 @@ await server.connect(transport);
   // ===========================================================================
   diagnose_environment: async () => {
     logAction('diagnose_environment', {});
-    
+
     const issues = [];
     const status = { healthy: true };
 
@@ -1203,7 +1243,7 @@ await server.connect(transport);
       status,
       issues,
       autoFixable: issues.filter(i => i.autoFix).length,
-      summary: issues.length === 0 
+      summary: issues.length === 0
         ? '✅ Environment is healthy! All systems operational.'
         : `Found ${issues.length} issue(s). ${issues.filter(i => i.autoFix).length} can be auto-fixed.`
     };
@@ -1211,12 +1251,14 @@ await server.connect(transport);
 
   auto_fix: async ({ issue_type, all }) => {
     logAction('auto_fix', { issue_type, all });
-    
+
     const fixes = {
       setup_windsurf: async () => {
         const src = path.join(PATHS.projectRoot, 'settings.json');
         const dest = path.join(PATHS.windsurfSettings, 'settings.json');
-        if (!fileExists(src)) return { success: false, message: 'Source settings.json not found' };
+        if (!fileExists(src)) {
+          return { success: false, message: 'Source settings.json not found' };
+        }
         const result = copyFileSafe(src, dest);
         return result.success ? { success: true, message: 'Windsurf settings installed' } : { success: false, message: result.error };
       },
@@ -1224,7 +1266,9 @@ await server.connect(transport);
       setup_mcp: async () => {
         const src = path.join(PATHS.projectRoot, 'examples', 'mcp_config.json');
         const dest = path.join(PATHS.codeium, 'mcp_config.json');
-        if (!fileExists(src)) return { success: false, message: 'Source mcp_config.json not found' };
+        if (!fileExists(src)) {
+          return { success: false, message: 'Source mcp_config.json not found' };
+        }
         const result = copyFileSafe(src, dest);
         return result.success ? { success: true, message: 'MCP configuration installed' } : { success: false, message: result.error };
       },
@@ -1232,7 +1276,9 @@ await server.connect(transport);
       setup_rules: async () => {
         const src = path.join(PATHS.projectRoot, 'examples', 'global_rules.md');
         const dest = path.join(PATHS.memories, 'global_rules.md');
-        if (!fileExists(src)) return { success: false, message: 'Source global_rules.md not found' };
+        if (!fileExists(src)) {
+          return { success: false, message: 'Source global_rules.md not found' };
+        }
         const result = copyFileSafe(src, dest);
         return result.success ? { success: true, message: 'AI global rules installed' } : { success: false, message: result.error };
       },
@@ -1240,14 +1286,18 @@ await server.connect(transport);
       repair_settings: async () => {
         const settingsPath = path.join(PATHS.windsurfSettings, 'settings.json');
         const backupPath = path.join(PATHS.windsurfSettings, `settings.backup.${Date.now()}.json`);
-        if (fileExists(settingsPath)) copyFileSafe(settingsPath, backupPath);
+        if (fileExists(settingsPath)) {
+          copyFileSafe(settingsPath, backupPath);
+        }
         return await fixes.setup_windsurf();
       },
 
       repair_mcp: async () => {
         const mcpPath = path.join(PATHS.codeium, 'mcp_config.json');
         const backupPath = path.join(PATHS.codeium, `mcp_config.backup.${Date.now()}.json`);
-        if (fileExists(mcpPath)) copyFileSafe(mcpPath, backupPath);
+        if (fileExists(mcpPath)) {
+          copyFileSafe(mcpPath, backupPath);
+        }
         return await fixes.setup_mcp();
       },
 
@@ -1287,17 +1337,17 @@ await server.connect(transport);
   // ===========================================================================
   complete_setup: async () => {
     logAction('complete_setup', {});
-    
+
     const results = { steps: [], success: true };
-    
+
     // Fix all auto-fixable issues
     const fixResult = await tools.auto_fix({ all: true });
     results.steps.push({ step: 'Auto-fix issues', ...fixResult });
-    
+
     // Install project dependencies
     const depsResult = await tools.auto_fix({ issue_type: 'install_dependencies' });
     results.steps.push({ step: 'Install dependencies', ...depsResult });
-    
+
     return {
       success: results.steps.every(s => s.success !== false),
       steps: results.steps,
@@ -1315,9 +1365,9 @@ await server.connect(transport);
   // ===========================================================================
   guide_task: async ({ task }) => {
     logAction('guide_task', { task });
-    
+
     const taskLower = task.toLowerCase();
-    
+
     // Intelligent task matching
     const guides = {
       'setup|configure|install': {
@@ -1333,7 +1383,7 @@ await server.connect(transport);
         tool: 'complete_setup',
         willDo: 'I will configure everything. You just need to restart Windsurf after.'
       },
-      
+
       'website|web|react|nextjs|frontend': {
         name: 'Create Website',
         description: 'Create a modern website with React or Next.js',
@@ -1347,7 +1397,7 @@ await server.connect(transport);
         args: { type: 'nextjs' },
         willDo: 'I will create a complete Next.js website. Just give me a name for it.'
       },
-      
+
       'api|backend|server|python|fastapi': {
         name: 'Create API',
         description: 'Create a Python FastAPI backend',
@@ -1362,7 +1412,7 @@ await server.connect(transport);
         args: { type: 'python' },
         willDo: 'I will create a Python API project. Just give me a name.'
       },
-      
+
       'mcp|plugin|extension|tool': {
         name: 'Create MCP Server',
         description: 'Create a custom MCP server/plugin',
@@ -1376,7 +1426,7 @@ await server.connect(transport);
         args: { type: 'mcp' },
         willDo: 'I will create an MCP server template you can customize.'
       },
-      
+
       'fix|repair|diagnose|problem|error|issue': {
         name: 'Fix Issues',
         description: 'Diagnose and fix environment problems',
@@ -1389,7 +1439,7 @@ await server.connect(transport);
         tool: 'diagnose_environment',
         willDo: 'I will find and fix issues automatically. Just say "fix it" after diagnosis.'
       },
-      
+
       'status|check|health|ready': {
         name: 'Check Status',
         description: 'Check if everything is working',
@@ -1402,7 +1452,7 @@ await server.connect(transport);
         tool: 'get_status',
         willDo: 'I will check your entire environment and tell you what\'s working.'
       },
-      
+
       'git|commit|push|version': {
         name: 'Git Operations',
         description: 'Manage version control',
@@ -1428,7 +1478,7 @@ await server.connect(transport);
         willDo: 'I will start your project. What script should I run? (e.g., dev, start, build)'
       }
     };
-    
+
     // Find matching guide
     for (const [pattern, guide] of Object.entries(guides)) {
       const keywords = pattern.split('|');
@@ -1441,7 +1491,7 @@ await server.connect(transport);
         };
       }
     }
-    
+
     return {
       found: false,
       message: "I'm not sure what you want to do. I can help with:",
@@ -1455,7 +1505,7 @@ await server.connect(transport);
   // ===========================================================================
   get_status: async () => {
     logAction('get_status', {});
-    
+
     const status = {
       server: 'windsurf-autopilot',
       version: '2.0.0',
@@ -1469,28 +1519,30 @@ await server.connect(transport);
 
     // Check each component
     const components = {};
-    
+
     // Node & npm
     const nodeCheck = safeExec('node --version');
     components.node = { installed: nodeCheck.success, version: nodeCheck.output };
-    
+
     const npmCheck = safeExec('npm --version');
     components.npm = { installed: npmCheck.success, version: npmCheck.output };
-    
+
     // Git
     const gitCheck = safeExec('git --version');
     components.git = { installed: gitCheck.success, version: gitCheck.output };
-    
+
     // Python
     let pythonCheck = safeExec('python --version');
-    if (!pythonCheck.success) pythonCheck = safeExec('python3 --version');
+    if (!pythonCheck.success) {
+      pythonCheck = safeExec('python3 --version');
+    }
     components.python = { installed: pythonCheck.success, version: pythonCheck.output };
-    
+
     // Windsurf settings
-    components.windsurfSettings = { 
-      exists: fileExists(path.join(PATHS.windsurfSettings, 'settings.json')) 
+    components.windsurfSettings = {
+      exists: fileExists(path.join(PATHS.windsurfSettings, 'settings.json'))
     };
-    
+
     // MCP config
     const mcpPath = path.join(PATHS.codeium, 'mcp_config.json');
     if (fileExists(mcpPath)) {
@@ -1503,24 +1555,24 @@ await server.connect(transport);
     } else {
       components.mcpConfig = { exists: false };
     }
-    
+
     // Global rules
-    components.globalRules = { 
-      exists: fileExists(path.join(PATHS.memories, 'global_rules.md')) 
+    components.globalRules = {
+      exists: fileExists(path.join(PATHS.memories, 'global_rules.md'))
     };
-    
+
     // Projects directory
     components.projectsDir = { exists: fileExists(PATHS.projects) };
-    
+
     status.components = components;
-    
+
     // Overall readiness
     const critical = components.node.installed && components.npm.installed;
     const recommended = components.git.installed && components.windsurfSettings.exists && components.mcpConfig.exists;
-    
+
     status.ready = critical;
     status.fullyConfigured = critical && recommended;
-    
+
     if (!critical) {
       status.message = '❌ Node.js required. Install from nodejs.org';
       status.action = 'Install Node.js first';
@@ -1575,7 +1627,7 @@ const toolDefinitions = [
       required: ['command']
     }
   },
-  
+
   // File Operations
   {
     name: 'read_file',
@@ -1740,12 +1792,12 @@ const toolDefinitions = [
     inputSchema: {
       type: 'object',
       properties: {
-        packages: { 
+        packages: {
           oneOf: [
             { type: 'string' },
             { type: 'array', items: { type: 'string' } }
           ],
-          description: 'Package(s) to install' 
+          description: 'Package(s) to install'
         },
         path: { type: 'string', description: 'Project path' },
         manager: { type: 'string', enum: ['npm', 'yarn', 'pnpm', 'pip', 'pip3'], description: 'Package manager' },
@@ -1776,8 +1828,8 @@ const toolDefinitions = [
       type: 'object',
       properties: {
         name: { type: 'string', description: 'Project name' },
-        type: { 
-          type: 'string', 
+        type: {
+          type: 'string',
           enum: ['react', 'nextjs', 'python', 'node', 'mcp', 'empty'],
           description: 'Project type'
         },
@@ -1797,8 +1849,8 @@ const toolDefinitions = [
       type: 'object',
       properties: {
         task: { type: 'string', description: 'Task name/description' },
-        steps: { 
-          type: 'array', 
+        steps: {
+          type: 'array',
           items: { type: 'object' },
           description: 'Array of steps to execute'
         },
@@ -1813,8 +1865,8 @@ const toolDefinitions = [
     inputSchema: {
       type: 'object',
       properties: {
-        action: { 
-          type: 'string', 
+        action: {
+          type: 'string',
           enum: ['retry', 'skip', 'abort'],
           description: 'Action to take'
         },
@@ -1929,21 +1981,21 @@ server.setRequestHandler(ListResourcesRequestSchema, async () => ({
 
 server.setRequestHandler(ReadResourceRequestSchema, async (request) => {
   const uri = request.params.uri;
-  
+
   if (uri === 'autopilot://status') {
     const status = await tools.get_status();
     return {
       contents: [{ uri, mimeType: 'application/json', text: JSON.stringify(status, null, 2) }]
     };
   }
-  
+
   if (uri === 'autopilot://history') {
     const history = await tools.get_history({ limit: 50 });
     return {
       contents: [{ uri, mimeType: 'application/json', text: JSON.stringify(history, null, 2) }]
     };
   }
-  
+
   throw new Error(`Unknown resource: ${uri}`);
 });
 

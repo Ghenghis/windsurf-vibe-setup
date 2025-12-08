@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * Windsurf Autopilot - Project Management Tools v3.1
- * 
+ *
  * Jira, Linear, GitHub Issues, Changelog, and Release automation.
  */
 
@@ -67,7 +67,9 @@ function httpRequest(url, method, data, headers = {}) {
     });
 
     req.on('error', reject);
-    if (data) req.write(JSON.stringify(data));
+    if (data) {
+      req.write(JSON.stringify(data));
+    }
     req.end();
   });
 }
@@ -97,7 +99,7 @@ const pmTools = {
     },
     handler: async (args) => {
       const config = loadConfig();
-      
+
       const domain = args.domain || config.jiraDomain;
       const email = args.email || config.jiraEmail;
       const apiToken = args.apiToken || config.jiraApiToken;
@@ -111,13 +113,19 @@ const pmTools = {
       }
 
       // Save config
-      if (args.domain) config.jiraDomain = args.domain;
-      if (args.email) config.jiraEmail = args.email;
-      if (args.apiToken) config.jiraApiToken = args.apiToken;
+      if (args.domain) {
+        config.jiraDomain = args.domain;
+      }
+      if (args.email) {
+        config.jiraEmail = args.email;
+      }
+      if (args.apiToken) {
+        config.jiraApiToken = args.apiToken;
+      }
       saveConfig(config);
 
       const auth = Buffer.from(`${email}:${apiToken}`).toString('base64');
-      
+
       const payload = {
         fields: {
           project: { key: args.project },
@@ -126,17 +134,25 @@ const pmTools = {
         }
       };
 
-      if (args.description) payload.fields.description = {
-        type: 'doc',
-        version: 1,
-        content: [{
-          type: 'paragraph',
-          content: [{ type: 'text', text: args.description }]
-        }]
-      };
-      if (args.priority) payload.fields.priority = { name: args.priority };
-      if (args.assignee) payload.fields.assignee = { accountId: args.assignee };
-      if (args.labels) payload.fields.labels = args.labels;
+      if (args.description) {
+        payload.fields.description = {
+          type: 'doc',
+          version: 1,
+          content: [{
+            type: 'paragraph',
+            content: [{ type: 'text', text: args.description }]
+          }]
+        };
+      }
+      if (args.priority) {
+        payload.fields.priority = { name: args.priority };
+      }
+      if (args.assignee) {
+        payload.fields.assignee = { accountId: args.assignee };
+      }
+      if (args.labels) {
+        payload.fields.labels = args.labels;
+      }
 
       try {
         const response = await httpRequest(
@@ -229,7 +245,9 @@ const pmTools = {
 
       // Remove undefined values
       Object.keys(variables.input).forEach(key => {
-        if (variables.input[key] === undefined) delete variables.input[key];
+        if (variables.input[key] === undefined) {
+          delete variables.input[key];
+        }
       });
 
       try {
@@ -296,7 +314,7 @@ const pmTools = {
       }
 
       const [owner, repo] = args.repo.split('/');
-      
+
       const payload = {
         title: args.title,
         body: args.body,
@@ -307,7 +325,9 @@ const pmTools = {
 
       // Remove undefined
       Object.keys(payload).forEach(key => {
-        if (payload[key] === undefined) delete payload[key];
+        if (payload[key] === undefined) {
+          delete payload[key];
+        }
       });
 
       try {
@@ -384,11 +404,13 @@ const pmTools = {
       try {
         // Get commits
         let range = to;
-        if (from) range = `${from}..${to}`;
-        
+        if (from) {
+          range = `${from}..${to}`;
+        }
+
         const logCmd = `git log ${range} --pretty=format:"%H|%s|%an|%ad" --date=short`;
         const logOutput = execSync(logCmd, { cwd: repoPath, encoding: 'utf8' });
-        
+
         const commits = logOutput.split('\n').filter(Boolean).map(line => {
           const [hash, message, author, date] = line.split('|');
           // Parse conventional commit
@@ -408,7 +430,9 @@ const pmTools = {
         const grouped = {};
         for (const commit of commits) {
           const section = types[commit.type] || 'Other';
-          if (!grouped[section]) grouped[section] = [];
+          if (!grouped[section]) {
+            grouped[section] = [];
+          }
           grouped[section].push(commit);
         }
 
@@ -426,7 +450,7 @@ const pmTools = {
           // Markdown format
           const date = new Date().toISOString().split('T')[0];
           changelog = `# Changelog\n\n## [Unreleased] - ${date}\n\n`;
-          
+
           for (const [section, sectionCommits] of Object.entries(grouped)) {
             changelog += `### ${section}\n\n`;
             for (const commit of sectionCommits) {
@@ -472,8 +496,8 @@ const pmTools = {
         draft: { type: 'boolean', description: 'Create as draft' },
         prerelease: { type: 'boolean', description: 'Mark as pre-release' },
         generateNotes: { type: 'boolean', description: 'Auto-generate release notes' },
-        assets: { 
-          type: 'array', 
+        assets: {
+          type: 'array',
           items: { type: 'string' },
           description: 'Paths to assets to upload'
         },
@@ -493,7 +517,7 @@ const pmTools = {
       }
 
       const [owner, repo] = args.repo.split('/');
-      
+
       const payload = {
         tag_name: args.tag,
         name: args.name || args.tag,
@@ -513,7 +537,7 @@ const pmTools = {
 
         if (response.statusCode === 201) {
           const release = response.data;
-          
+
           // Upload assets (simplified - full implementation would use upload_url)
           const assetCount = args.assets?.length || 0;
 

@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 /**
  * Windsurf Autopilot - Embedding Tools v2.6
- * 
+ *
  * Vector embeddings for semantic search using local models.
  * No external API calls required - runs entirely locally.
- * 
+ *
  * Tools:
  * - embed_text: Generate embeddings from text
  * - semantic_search: Search codebase semantically
@@ -55,7 +55,7 @@ class SimpleTFIDF {
   fit(documents) {
     this.documents = documents;
     const docFreq = new Map();
-    
+
     // Count document frequencies
     for (const doc of documents) {
       const tokens = new Set(this.tokenize(doc));
@@ -63,7 +63,7 @@ class SimpleTFIDF {
         docFreq.set(token, (docFreq.get(token) || 0) + 1);
       }
     }
-    
+
     // Calculate IDF
     const N = documents.length;
     for (const [token, freq] of docFreq) {
@@ -76,12 +76,12 @@ class SimpleTFIDF {
   transform(text) {
     const tokens = this.tokenize(text);
     const tf = new Map();
-    
+
     // Calculate term frequency
     for (const token of tokens) {
       tf.set(token, (tf.get(token) || 0) + 1);
     }
-    
+
     // Create sparse vector
     const vector = new Array(this.vocabulary.size).fill(0);
     for (const [token, freq] of tf) {
@@ -91,7 +91,7 @@ class SimpleTFIDF {
         vector[idx] = (freq / tokens.length) * idf;
       }
     }
-    
+
     // Normalize
     const norm = Math.sqrt(vector.reduce((sum, v) => sum + v * v, 0));
     if (norm > 0) {
@@ -99,13 +99,15 @@ class SimpleTFIDF {
         vector[i] /= norm;
       }
     }
-    
+
     return vector;
   }
 
   // Cosine similarity between two vectors
   cosineSimilarity(v1, v2) {
-    if (v1.length !== v2.length) return 0;
+    if (v1.length !== v2.length) {
+      return 0;
+    }
     let dot = 0, norm1 = 0, norm2 = 0;
     for (let i = 0; i < v1.length; i++) {
       dot += v1[i] * v2[i];
@@ -157,11 +159,11 @@ const embeddingTools = {
     handler: async (args) => {
       const texts = Array.isArray(args.text) ? args.text : [args.text];
       const useCache = args.cache !== false;
-      
+
       try {
         const embeddings = [];
         const model = args.model || 'tfidf';
-        
+
         for (const text of texts) {
           // Check cache
           const cacheKey = crypto.createHash('md5').update(text).digest('hex');
@@ -169,9 +171,9 @@ const embeddingTools = {
             embeddings.push(embeddingCache.get(cacheKey));
             continue;
           }
-          
+
           let embedding;
-          
+
           if (model === 'tfidf') {
             // Use simple TF-IDF
             if (!tfidfModel) {
@@ -180,7 +182,7 @@ const embeddingTools = {
               tfidfModel.fit(texts);
             }
             embedding = tfidfModel.transform(text);
-            
+
           } else {
             // Try to use transformers.js
             try {
@@ -197,15 +199,15 @@ const embeddingTools = {
               embedding = tfidfModel.transform(text);
             }
           }
-          
+
           // Cache the embedding
           if (useCache) {
             embeddingCache.set(cacheKey, embedding);
           }
-          
+
           embeddings.push(embedding);
         }
-        
+
         return {
           success: true,
           embeddings,
@@ -214,7 +216,7 @@ const embeddingTools = {
           model: model,
           cached: useCache
         };
-        
+
       } catch (error) {
         return { success: false, error: error.message };
       }
@@ -259,7 +261,7 @@ const embeddingTools = {
     handler: async (args) => {
       const projectPath = args.projectPath;
       const indexId = crypto.createHash('md5').update(projectPath).digest('hex');
-      
+
       // Check if project is indexed
       let index = projectIndexes.get(indexId);
       if (!index) {
@@ -270,15 +272,15 @@ const embeddingTools = {
             index = JSON.parse(fs.readFileSync(indexPath, 'utf8'));
             projectIndexes.set(indexId, index);
           } catch (e) {
-            return { 
-              success: false, 
+            return {
+              success: false,
               error: 'Project not indexed. Run index_project first.',
               suggestion: `Use index_project with path: ${projectPath}`
             };
           }
         } else {
-          return { 
-            success: false, 
+          return {
+            success: false,
             error: 'Project not indexed. Run index_project first.',
             suggestion: `Use index_project with path: ${projectPath}`
           };
@@ -291,21 +293,23 @@ const embeddingTools = {
           tfidfModel = new SimpleTFIDF();
           tfidfModel.fit(index.chunks.map(c => c.content));
         }
-        
+
         // Embed the query
         const queryEmbedding = tfidfModel.transform(args.query);
-        
+
         // Calculate similarities
         const results = [];
         for (const chunk of index.chunks) {
           // Filter by file type if specified
           if (args.fileTypes && args.fileTypes.length > 0) {
             const ext = path.extname(chunk.file);
-            if (!args.fileTypes.includes(ext)) continue;
+            if (!args.fileTypes.includes(ext)) {
+              continue;
+            }
           }
-          
+
           const similarity = tfidfModel.cosineSimilarity(queryEmbedding, chunk.embedding);
-          
+
           if (similarity >= (args.threshold || 0.3)) {
             results.push({
               file: chunk.file,
@@ -315,11 +319,11 @@ const embeddingTools = {
             });
           }
         }
-        
+
         // Sort by score and limit
         results.sort((a, b) => b.score - a.score);
         const topResults = results.slice(0, args.topK || 10);
-        
+
         return {
           success: true,
           query: args.query,
@@ -328,7 +332,7 @@ const embeddingTools = {
           returned: topResults.length,
           threshold: args.threshold || 0.3
         };
-        
+
       } catch (error) {
         return { success: false, error: error.message };
       }
@@ -375,7 +379,7 @@ const embeddingTools = {
     },
     handler: async (args) => {
       const projectPath = args.path;
-      
+
       if (!fs.existsSync(projectPath)) {
         return { success: false, error: `Path not found: ${projectPath}` };
       }
@@ -384,10 +388,10 @@ const embeddingTools = {
         const fileTypes = args.fileTypes || ['.js', '.ts', '.jsx', '.tsx', '.py', '.java', '.cpp', '.c', '.go', '.rs', '.md', '.txt'];
         const excludePatterns = args.excludePatterns || ['node_modules', '.git', 'dist', 'build', '__pycache__', '.next'];
         const chunkSize = args.chunkSize || 20;
-        
+
         const indexId = crypto.createHash('md5').update(projectPath).digest('hex');
         const indexPath = path.join(DATA_DIR, `index_${indexId}.json`);
-        
+
         // Load existing index for incremental updates
         let existingIndex = null;
         const existingChunks = new Map();
@@ -401,7 +405,7 @@ const embeddingTools = {
             // Ignore, will reindex
           }
         }
-        
+
         // Collect all files
         const files = [];
         const collectFiles = (dir) => {
@@ -409,10 +413,12 @@ const embeddingTools = {
           for (const entry of entries) {
             const fullPath = path.join(dir, entry.name);
             const relativePath = path.relative(projectPath, fullPath);
-            
+
             // Check exclusions
-            if (excludePatterns.some(p => relativePath.includes(p))) continue;
-            
+            if (excludePatterns.some(p => relativePath.includes(p))) {
+              continue;
+            }
+
             if (entry.isDirectory()) {
               collectFiles(fullPath);
             } else if (entry.isFile()) {
@@ -423,27 +429,29 @@ const embeddingTools = {
             }
           }
         };
-        
+
         collectFiles(projectPath);
-        
+
         // Create chunks and embeddings
         const chunks = [];
         const allContents = [];
-        
+
         for (const file of files) {
           try {
             const content = fs.readFileSync(file.fullPath, 'utf8');
             const lines = content.split('\n');
-            
+
             for (let i = 0; i < lines.length; i += chunkSize) {
               const chunkLines = lines.slice(i, i + chunkSize);
               const chunkContent = chunkLines.join('\n');
-              
-              if (chunkContent.trim().length < 10) continue; // Skip nearly empty chunks
-              
+
+              if (chunkContent.trim().length < 10) {
+                continue;
+              } // Skip nearly empty chunks
+
               const hash = crypto.createHash('md5').update(chunkContent).digest('hex').substring(0, 8);
               const chunkKey = `${file.relativePath}:${i + 1}:${hash}`;
-              
+
               // Check if we can reuse existing embedding
               if (existingChunks.has(chunkKey)) {
                 chunks.push(existingChunks.get(chunkKey));
@@ -462,12 +470,12 @@ const embeddingTools = {
             // Skip files that can't be read
           }
         }
-        
+
         // Fit TF-IDF model on all content
         if (allContents.length > 0) {
           tfidfModel = new SimpleTFIDF();
           tfidfModel.fit(allContents);
-          
+
           // Generate embeddings for new chunks
           for (const chunk of chunks) {
             if (!chunk.embedding) {
@@ -475,7 +483,7 @@ const embeddingTools = {
             }
           }
         }
-        
+
         // Create index
         const index = {
           projectPath,
@@ -485,11 +493,11 @@ const embeddingTools = {
           fileTypes,
           chunks
         };
-        
+
         // Save index
         fs.writeFileSync(indexPath, JSON.stringify(index, null, 2));
         projectIndexes.set(indexId, index);
-        
+
         return {
           success: true,
           projectPath,
@@ -499,7 +507,7 @@ const embeddingTools = {
           indexSize: formatBytes(fs.statSync(indexPath).size),
           message: `Indexed ${files.length} files with ${chunks.length} searchable chunks`
         };
-        
+
       } catch (error) {
         return { success: false, error: error.message };
       }
@@ -507,7 +515,7 @@ const embeddingTools = {
   },
 
   // Get all tool definitions for registration
-  getToolDefinitions: function() {
+  getToolDefinitions: function () {
     return [
       { name: this.embed_text.name, description: this.embed_text.description, inputSchema: this.embed_text.inputSchema },
       { name: this.semantic_search.name, description: this.semantic_search.description, inputSchema: this.semantic_search.inputSchema },
@@ -516,7 +524,7 @@ const embeddingTools = {
   },
 
   // Get handler for a tool
-  getHandler: function(toolName) {
+  getHandler: function (toolName) {
     const tool = this[toolName];
     return tool ? tool.handler : null;
   }
@@ -524,7 +532,9 @@ const embeddingTools = {
 
 // Helper function to format bytes
 function formatBytes(bytes) {
-  if (bytes === 0) return '0 Bytes';
+  if (bytes === 0) {
+    return '0 Bytes';
+  }
   const k = 1024;
   const sizes = ['Bytes', 'KB', 'MB', 'GB'];
   const i = Math.floor(Math.log(bytes) / Math.log(k));

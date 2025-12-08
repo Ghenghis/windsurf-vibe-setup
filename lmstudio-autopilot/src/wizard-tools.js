@@ -1,6 +1,6 @@
 /**
  * Quick Start Wizard Tools - v3.2 Vibe Coder Experience
- * 
+ *
  * One-command solutions for creating projects, web apps, APIs, and more.
  * Perfect for non-technical users who want to build quickly.
  */
@@ -27,8 +27,8 @@ const project_wizard = {
   inputSchema: {
     type: 'object',
     properties: {
-      answers: { 
-        type: 'object', 
+      answers: {
+        type: 'object',
         description: 'Pre-filled answers: name, type, features, styling, database',
         properties: {
           name: { type: 'string' },
@@ -81,10 +81,10 @@ const project_wizard = {
           message: 'Please answer these questions to create your project.'
         };
       }
-      
+
       // Generate project based on answers
       const targetPath = projectPath || path.join(process.cwd(), answers.name);
-      
+
       // Define project structure based on type
       const structures = {
         'web-app': {
@@ -223,14 +223,14 @@ module.exports = {
           }
         }
       };
-      
+
       const structure = structures[answers.type] || structures['web-app'];
-      
+
       // Create project
       if (!fs.existsSync(targetPath)) {
         fs.mkdirSync(targetPath, { recursive: true });
       }
-      
+
       // Create folders
       for (const folder of structure.folders) {
         const folderPath = path.join(targetPath, folder);
@@ -238,13 +238,13 @@ module.exports = {
           fs.mkdirSync(folderPath, { recursive: true });
         }
       }
-      
+
       // Create files
       for (const [file, content] of Object.entries(structure.files)) {
         const filePath = path.join(targetPath, file);
         fs.writeFileSync(filePath, content);
       }
-      
+
       return {
         success: true,
         stage: 'complete',
@@ -278,13 +278,13 @@ const quick_web_app = {
     type: 'object',
     properties: {
       name: { type: 'string', description: 'Project name' },
-      features: { 
-        type: 'array', 
+      features: {
+        type: 'array',
         items: { type: 'string' },
         description: 'Features to include: auth, database, api, file-upload'
       },
-      style: { 
-        type: 'string', 
+      style: {
+        type: 'string',
         enum: ['modern', 'minimal', 'corporate', 'creative'],
         default: 'modern',
         description: 'Visual style'
@@ -296,24 +296,24 @@ const quick_web_app = {
   handler: async ({ name, features = ['auth', 'database'], style = 'modern', path: projectPath }) => {
     try {
       const targetPath = projectPath || path.join(process.cwd(), name);
-      
+
       // Create project structure
       const folders = [
         'src', 'src/app', 'src/components', 'src/lib', 'src/api',
         'public', 'prisma'
       ];
-      
+
       if (!fs.existsSync(targetPath)) {
         fs.mkdirSync(targetPath, { recursive: true });
       }
-      
+
       folders.forEach(folder => {
         const folderPath = path.join(targetPath, folder);
         if (!fs.existsSync(folderPath)) {
           fs.mkdirSync(folderPath, { recursive: true });
         }
       });
-      
+
       // Create package.json
       const packageJson = {
         name,
@@ -334,21 +334,21 @@ const quick_web_app = {
           postcss: '^8'
         }
       };
-      
+
       if (features.includes('database')) {
         packageJson.dependencies['@prisma/client'] = '^5';
         packageJson.devDependencies = { prisma: '^5' };
       }
-      
+
       if (features.includes('auth')) {
         packageJson.dependencies['next-auth'] = '^4';
       }
-      
+
       fs.writeFileSync(
         path.join(targetPath, 'package.json'),
         JSON.stringify(packageJson, null, 2)
       );
-      
+
       // Create main page
       const styleClasses = {
         modern: 'bg-gradient-to-br from-blue-500 to-purple-600 text-white',
@@ -356,7 +356,7 @@ const quick_web_app = {
         corporate: 'bg-slate-100 text-slate-900',
         creative: 'bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 text-white'
       };
-      
+
       const pageContent = `export default function Home() {
   return (
     <main className="min-h-screen ${styleClasses[style]} flex items-center justify-center">
@@ -375,9 +375,9 @@ const quick_web_app = {
     </main>
   );
 }`;
-      
+
       fs.writeFileSync(path.join(targetPath, 'src/app/page.js'), pageContent);
-      
+
       // Create layout
       const layoutContent = `import './globals.css';
 
@@ -393,9 +393,9 @@ export default function RootLayout({ children }) {
     </html>
   );
 }`;
-      
+
       fs.writeFileSync(path.join(targetPath, 'src/app/layout.js'), layoutContent);
-      
+
       // Create globals.css
       const cssContent = `@tailwind base;
 @tailwind components;
@@ -409,9 +409,9 @@ export default function RootLayout({ children }) {
 body {
   font-family: system-ui, -apple-system, sans-serif;
 }`;
-      
+
       fs.writeFileSync(path.join(targetPath, 'src/app/globals.css'), cssContent);
-      
+
       // Create tailwind.config.js
       const tailwindConfig = `/** @type {import('tailwindcss').Config} */
 module.exports = {
@@ -419,9 +419,9 @@ module.exports = {
   theme: { extend: {} },
   plugins: []
 };`;
-      
+
       fs.writeFileSync(path.join(targetPath, 'tailwind.config.js'), tailwindConfig);
-      
+
       // Create README
       const readme = `# ${name}
 
@@ -439,9 +439,9 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000) to see your app.
 `;
-      
+
       fs.writeFileSync(path.join(targetPath, 'README.md'), readme);
-      
+
       return {
         success: true,
         project: {
@@ -486,12 +486,12 @@ const quick_landing = {
   handler: async ({ name, headline, subheadline = '', cta = 'Get Started', features = [], path: projectPath }) => {
     try {
       const targetPath = projectPath || path.join(process.cwd(), name.toLowerCase().replace(/\s+/g, '-'));
-      
+
       if (!fs.existsSync(targetPath)) {
         fs.mkdirSync(targetPath, { recursive: true });
       }
-      
-      const featuresHtml = features.length > 0 
+
+      const featuresHtml = features.length > 0
         ? `<section class="py-20 bg-gray-50">
           <div class="max-w-6xl mx-auto px-4">
             <h2 class="text-3xl font-bold text-center mb-12">Features</h2>
@@ -509,7 +509,7 @@ const quick_landing = {
           </div>
         </section>`
         : '';
-      
+
       const html = `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -558,9 +558,9 @@ const quick_landing = {
   </footer>
 </body>
 </html>`;
-      
+
       fs.writeFileSync(path.join(targetPath, 'index.html'), html);
-      
+
       // Create README
       const readme = `# ${name} Landing Page
 
@@ -578,9 +578,9 @@ Upload to any static hosting:
 - GitHub Pages
 - Any web server
 `;
-      
+
       fs.writeFileSync(path.join(targetPath, 'README.md'), readme);
-      
+
       return {
         success: true,
         project: {
@@ -614,8 +614,8 @@ const quick_api = {
     type: 'object',
     properties: {
       name: { type: 'string', description: 'API project name' },
-      resources: { 
-        type: 'array', 
+      resources: {
+        type: 'array',
         items: { type: 'string' },
         description: 'Resources to create (e.g., users, posts, products)'
       },
@@ -627,16 +627,18 @@ const quick_api = {
   handler: async ({ name, resources = ['items'], auth = true, path: projectPath }) => {
     try {
       const targetPath = projectPath || path.join(process.cwd(), name);
-      
+
       const folders = ['src', 'src/routes', 'src/middleware', 'src/models'];
       if (!fs.existsSync(targetPath)) {
         fs.mkdirSync(targetPath, { recursive: true });
       }
       folders.forEach(f => {
         const fp = path.join(targetPath, f);
-        if (!fs.existsSync(fp)) fs.mkdirSync(fp, { recursive: true });
+        if (!fs.existsSync(fp)) {
+          fs.mkdirSync(fp, { recursive: true });
+        }
       });
-      
+
       // Package.json
       const pkg = {
         name,
@@ -656,7 +658,7 @@ const quick_api = {
         pkg.dependencies['bcryptjs'] = '^2.4';
       }
       fs.writeFileSync(path.join(targetPath, 'package.json'), JSON.stringify(pkg, null, 2));
-      
+
       // Main server file
       const serverCode = `const express = require('express');
 const cors = require('cors');
@@ -692,7 +694,7 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(\`🚀 ${name} API running on port \${PORT}\`));
 `;
       fs.writeFileSync(path.join(targetPath, 'src/index.js'), serverCode);
-      
+
       // Create route files for each resource
       resources.forEach(resource => {
         const routeCode = `const express = require('express');
@@ -741,7 +743,7 @@ module.exports = router;
 `;
         fs.writeFileSync(path.join(targetPath, `src/routes/${resource}.js`), routeCode);
       });
-      
+
       // README with API docs
       const readme = `# ${name} API
 
@@ -768,7 +770,7 @@ ${resources.map(r => `### ${r.charAt(0).toUpperCase() + r.slice(1)}
 `).join('\n')}
 `;
       fs.writeFileSync(path.join(targetPath, 'README.md'), readme);
-      
+
       return {
         success: true,
         project: { name, path: targetPath, resources, auth },
@@ -796,8 +798,8 @@ const quick_mobile = {
     type: 'object',
     properties: {
       name: { type: 'string', description: 'App name' },
-      platform: { 
-        type: 'string', 
+      platform: {
+        type: 'string',
         enum: ['ios', 'android', 'both'],
         default: 'both',
         description: 'Target platform'
@@ -815,16 +817,18 @@ const quick_mobile = {
   handler: async ({ name, platform = 'both', template = 'blank', path: projectPath }) => {
     try {
       const targetPath = projectPath || path.join(process.cwd(), name);
-      
+
       const folders = ['src', 'src/screens', 'src/components', 'src/navigation', 'assets'];
       if (!fs.existsSync(targetPath)) {
         fs.mkdirSync(targetPath, { recursive: true });
       }
       folders.forEach(f => {
         const fp = path.join(targetPath, f);
-        if (!fs.existsSync(fp)) fs.mkdirSync(fp, { recursive: true });
+        if (!fs.existsSync(fp)) {
+          fs.mkdirSync(fp, { recursive: true });
+        }
       });
-      
+
       // Package.json
       const pkg = {
         name: name.toLowerCase().replace(/\s+/g, '-'),
@@ -846,7 +850,7 @@ const quick_mobile = {
         }
       };
       fs.writeFileSync(path.join(targetPath, 'package.json'), JSON.stringify(pkg, null, 2));
-      
+
       // App.js
       const appJs = `import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -866,7 +870,7 @@ export default function App() {
   );
 }`;
       fs.writeFileSync(path.join(targetPath, 'App.js'), appJs);
-      
+
       // HomeScreen
       const homeScreen = `import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 
@@ -913,7 +917,7 @@ const styles = StyleSheet.create({
   }
 });`;
       fs.writeFileSync(path.join(targetPath, 'src/screens/HomeScreen.js'), homeScreen);
-      
+
       // app.json
       const appJson = {
         expo: {
@@ -927,7 +931,7 @@ const styles = StyleSheet.create({
         }
       };
       fs.writeFileSync(path.join(targetPath, 'app.json'), JSON.stringify(appJson, null, 2));
-      
+
       // README
       const readme = `# ${name}
 
@@ -950,7 +954,7 @@ expo build:ios
 \`\`\`
 `;
       fs.writeFileSync(path.join(targetPath, 'README.md'), readme);
-      
+
       return {
         success: true,
         project: { name, path: targetPath, platform, template },
@@ -980,8 +984,8 @@ const quick_chrome_ext = {
     properties: {
       name: { type: 'string', description: 'Extension name' },
       description: { type: 'string', description: 'Extension description' },
-      permissions: { 
-        type: 'array', 
+      permissions: {
+        type: 'array',
         items: { type: 'string' },
         description: 'Permissions: storage, tabs, activeTab, notifications'
       },
@@ -992,16 +996,18 @@ const quick_chrome_ext = {
   handler: async ({ name, description = 'Chrome extension created with Windsurf Autopilot', permissions = ['storage', 'activeTab'], path: projectPath }) => {
     try {
       const targetPath = projectPath || path.join(process.cwd(), name.toLowerCase().replace(/\s+/g, '-'));
-      
+
       const folders = ['images', 'scripts'];
       if (!fs.existsSync(targetPath)) {
         fs.mkdirSync(targetPath, { recursive: true });
       }
       folders.forEach(f => {
         const fp = path.join(targetPath, f);
-        if (!fs.existsSync(fp)) fs.mkdirSync(fp, { recursive: true });
+        if (!fs.existsSync(fp)) {
+          fs.mkdirSync(fp, { recursive: true });
+        }
       });
-      
+
       // manifest.json (Manifest V3)
       const manifest = {
         manifest_version: 3,
@@ -1017,7 +1023,7 @@ const quick_chrome_ext = {
         icons: { '16': 'images/icon16.png', '48': 'images/icon48.png', '128': 'images/icon128.png' }
       };
       fs.writeFileSync(path.join(targetPath, 'manifest.json'), JSON.stringify(manifest, null, 2));
-      
+
       // popup.html
       const popupHtml = `<!DOCTYPE html>
 <html>
@@ -1039,7 +1045,7 @@ const quick_chrome_ext = {
 </body>
 </html>`;
       fs.writeFileSync(path.join(targetPath, 'popup.html'), popupHtml);
-      
+
       // popup.js
       const popupJs = `document.getElementById('actionBtn').addEventListener('click', async () => {
   const status = document.getElementById('status');
@@ -1060,7 +1066,7 @@ chrome.storage.local.get(['lastAction'], (result) => {
   }
 });`;
       fs.writeFileSync(path.join(targetPath, 'scripts/popup.js'), popupJs);
-      
+
       // background.js
       const backgroundJs = `// Background service worker
 chrome.runtime.onInstalled.addListener(() => {
@@ -1075,7 +1081,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   return true;
 });`;
       fs.writeFileSync(path.join(targetPath, 'scripts/background.js'), backgroundJs);
-      
+
       // README
       const readme = `# ${name}
 
@@ -1100,7 +1106,7 @@ Chrome extension created with Windsurf Autopilot.
 ${permissions.map(p => `- ${p}`).join('\n')}
 `;
       fs.writeFileSync(path.join(targetPath, 'README.md'), readme);
-      
+
       return {
         success: true,
         project: { name, path: targetPath, permissions },

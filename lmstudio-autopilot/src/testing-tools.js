@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * Windsurf Autopilot - Advanced Testing Tools v3.1
- * 
+ *
  * E2E, Visual Regression, Load, Contract, and Mutation testing.
  */
 
@@ -20,7 +20,9 @@ const REPORTS_DIR = path.join(TESTING_DIR, 'reports');
 
 // Ensure directories exist
 [TESTING_DIR, SCREENSHOTS_DIR, REPORTS_DIR].forEach(dir => {
-  if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir, { recursive: true });
+  }
 });
 
 const testingTools = {
@@ -32,8 +34,8 @@ const testingTools = {
     inputSchema: {
       type: 'object',
       properties: {
-        framework: { 
-          type: 'string', 
+        framework: {
+          type: 'string',
           enum: ['playwright', 'cypress'],
           description: 'Testing framework to use'
         },
@@ -67,10 +69,16 @@ const testingTools = {
         }
 
         cmd = 'npx playwright test';
-        if (spec) cmd += ` ${spec}`;
+        if (spec) {
+          cmd += ` ${spec}`;
+        }
         cmd += ` --browser=${browser}`;
-        if (headed) cmd += ' --headed';
-        if (baseUrl) cmd += ` --base-url=${baseUrl}`;
+        if (headed) {
+          cmd += ' --headed';
+        }
+        if (baseUrl) {
+          cmd += ` --base-url=${baseUrl}`;
+        }
         cmd += ' --reporter=json';
 
       } else if (framework === 'cypress') {
@@ -85,9 +93,13 @@ const testingTools = {
         }
 
         cmd = headed ? 'npx cypress open' : 'npx cypress run';
-        if (spec) cmd += ` --spec "${spec}"`;
+        if (spec) {
+          cmd += ` --spec "${spec}"`;
+        }
         cmd += ` --browser ${browser}`;
-        if (baseUrl) cmd += ` --config baseUrl=${baseUrl}`;
+        if (baseUrl) {
+          cmd += ` --config baseUrl=${baseUrl}`;
+        }
       }
 
       try {
@@ -99,8 +111,8 @@ const testingTools = {
         });
 
         // Parse results
-        let results = { passed: 0, failed: 0, skipped: 0 };
-        
+        const results = { passed: 0, failed: 0, skipped: 0 };
+
         if (framework === 'playwright') {
           try {
             const jsonMatch = output.match(/\{[\s\S]*\}/);
@@ -115,9 +127,15 @@ const testingTools = {
           const passMatch = output.match(/(\d+) passing/);
           const failMatch = output.match(/(\d+) failing/);
           const skipMatch = output.match(/(\d+) pending/);
-          if (passMatch) results.passed = parseInt(passMatch[1]);
-          if (failMatch) results.failed = parseInt(failMatch[1]);
-          if (skipMatch) results.skipped = parseInt(skipMatch[1]);
+          if (passMatch) {
+            results.passed = parseInt(passMatch[1]);
+          }
+          if (failMatch) {
+            results.failed = parseInt(failMatch[1]);
+          }
+          if (skipMatch) {
+            results.skipped = parseInt(skipMatch[1]);
+          }
         }
 
         const reportPath = path.join(REPORTS_DIR, `e2e-${Date.now()}.txt`);
@@ -189,7 +207,7 @@ const testingTools = {
       }
 
       const puppeteer = require('puppeteer');
-      
+
       let browser;
       try {
         browser = await puppeteer.launch({ headless: 'new' });
@@ -199,7 +217,7 @@ const testingTools = {
 
         // Capture screenshot
         const currentPath = path.join(SCREENSHOTS_DIR, `${name}-current.png`);
-        
+
         if (selector) {
           const element = await page.$(selector);
           if (element) {
@@ -229,10 +247,10 @@ const testingTools = {
         // Simple comparison - for production use pixelmatch or similar
         const baselineBuffer = fs.readFileSync(baseline);
         const currentBuffer = fs.readFileSync(currentPath);
-        
+
         const sizeDiff = Math.abs(baselineBuffer.length - currentBuffer.length);
         const sizeRatio = sizeDiff / Math.max(baselineBuffer.length, currentBuffer.length);
-        
+
         // Simple heuristic - if file sizes are very different, images differ
         const match = sizeRatio < threshold;
 
@@ -246,12 +264,14 @@ const testingTools = {
           baseline,
           current: currentPath,
           diffImage: match ? null : diffPath,
-          message: match 
+          message: match
             ? 'Visual comparison passed'
             : `Visual difference detected: ${Math.round(sizeRatio * 100)}% change`
         };
       } catch (error) {
-        if (browser) await browser.close();
+        if (browser) {
+          await browser.close();
+        }
         return {
           success: false,
           error: error.message
@@ -341,7 +361,7 @@ export default function () {
 
           // Parse k6 output
           const lines = output.split('\n').filter(l => l.startsWith('{'));
-          let metrics = {
+          const metrics = {
             requests: 0,
             failed: 0,
             avgDuration: 0,
@@ -506,16 +526,16 @@ export default function () {
 
       // Check if Stryker is installed
       const strykerInstalled = fs.existsSync(path.join(projectPath, 'node_modules', '@stryker-mutator', 'core'));
-      
+
       if (!strykerInstalled) {
         // Create stryker config
         const strykerConfig = {
-          "$schema": "./node_modules/@stryker-mutator/core/schema/stryker-schema.json",
-          "packageManager": "npm",
-          "reporters": ["html", "clear-text", "progress"],
-          "testRunner": testRunner,
-          "coverageAnalysis": "perTest",
-          "mutate": files
+          '$schema': './node_modules/@stryker-mutator/core/schema/stryker-schema.json',
+          'packageManager': 'npm',
+          'reporters': ['html', 'clear-text', 'progress'],
+          'testRunner': testRunner,
+          'coverageAnalysis': 'perTest',
+          'mutate': files
         };
 
         const configPath = path.join(projectPath, 'stryker.conf.json');

@@ -19,7 +19,7 @@ console.log('✅ Backup created: index.v2.1.backup.js');
 // 1. Add import for advanced tools
 if (!content.includes('advanced-tools.js')) {
   content = content.replace(
-    `const additionalTools = require('./additional-tools.js');`,
+    'const additionalTools = require(\'./additional-tools.js\');',
     `const additionalTools = require('./additional-tools.js');
 const advancedTools = require('./advanced-tools.js');`
   );
@@ -27,7 +27,7 @@ const advancedTools = require('./advanced-tools.js');`
 }
 
 // 2. Update version number
-content = content.replace(/version: '2\.1\.0'/g, `version: '2.2.0'`);
+content = content.replace(/version: '2\.1\.0'/g, 'version: \'2.2.0\'');
 content = content.replace(/v2\.1/g, 'v2.2');
 console.log('✅ Updated version to 2.2.0');
 
@@ -395,7 +395,7 @@ console.log('✅ Added new tool definitions');
 // 5. Update startup message
 content = content.replace(
   /console\.error\('🚀 Windsurf Autopilot MCP Server v2\.1[^']*'\);/,
-  `console.error('🚀 Windsurf Autopilot MCP Server v2.2 running (AI Decision Engine, Code Gen, DB, Backup)');`
+  'console.error(\'🚀 Windsurf Autopilot MCP Server v2.2 running (AI Decision Engine, Code Gen, DB, Backup)\');'
 );
 
 // Write patched file

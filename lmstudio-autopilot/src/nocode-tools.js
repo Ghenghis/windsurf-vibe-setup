@@ -1,6 +1,6 @@
 /**
  * No-Code Platform Integration Tools - v3.2 Vibe Coder Experience
- * 
+ *
  * Connect to popular no-code platforms like Notion, Airtable, Google Sheets, etc.
  */
 
@@ -24,8 +24,8 @@ const notion_sync = {
   inputSchema: {
     type: 'object',
     properties: {
-      action: { 
-        type: 'string', 
+      action: {
+        type: 'string',
         enum: ['read', 'write', 'create', 'list'],
         description: 'Action to perform'
       },
@@ -39,7 +39,7 @@ const notion_sync = {
   handler: async ({ action, apiKey, databaseId, pageId, data }) => {
     try {
       const key = apiKey || process.env.NOTION_API_KEY;
-      
+
       if (!key) {
         return {
           success: false,
@@ -56,7 +56,7 @@ const notion_sync = {
           }
         };
       }
-      
+
       // Simulate Notion operations
       const operations = {
         list: {
@@ -76,7 +76,7 @@ const notion_sync = {
           requires: databaseId ? 'databaseId provided' : 'databaseId required'
         }
       };
-      
+
       return {
         success: true,
         action,
@@ -104,8 +104,8 @@ const airtable_ops = {
   inputSchema: {
     type: 'object',
     properties: {
-      action: { 
-        type: 'string', 
+      action: {
+        type: 'string',
         enum: ['list', 'get', 'create', 'update', 'delete'],
         description: 'CRUD action'
       },
@@ -120,7 +120,7 @@ const airtable_ops = {
   handler: async ({ action, apiKey, baseId, tableName, recordId, data }) => {
     try {
       const key = apiKey || process.env.AIRTABLE_API_KEY;
-      
+
       if (!key) {
         return {
           success: false,
@@ -135,15 +135,15 @@ const airtable_ops = {
           }
         };
       }
-      
+
       const operations = {
         list: `List all records from ${tableName || 'table'}`,
         get: `Get record ${recordId || 'ID required'}`,
-        create: `Create new record with provided data`,
+        create: 'Create new record with provided data',
         update: `Update record ${recordId || 'ID required'}`,
         delete: `Delete record ${recordId || 'ID required'}`
       };
-      
+
       return {
         success: true,
         action,
@@ -171,8 +171,8 @@ const google_sheets_sync = {
   inputSchema: {
     type: 'object',
     properties: {
-      action: { 
-        type: 'string', 
+      action: {
+        type: 'string',
         enum: ['read', 'write', 'append', 'clear'],
         description: 'Action to perform'
       },
@@ -186,7 +186,7 @@ const google_sheets_sync = {
   handler: async ({ action, spreadsheetId, range = 'Sheet1!A1:Z1000', values, credentialsPath }) => {
     try {
       const credsPath = credentialsPath || process.env.GOOGLE_APPLICATION_CREDENTIALS;
-      
+
       if (!credsPath) {
         return {
           success: false,
@@ -203,14 +203,14 @@ const google_sheets_sync = {
           }
         };
       }
-      
+
       const operations = {
         read: `Read data from ${range}`,
         write: `Write data to ${range}`,
-        append: `Append rows after existing data`,
+        append: 'Append rows after existing data',
         clear: `Clear cells in ${range}`
       };
-      
+
       return {
         success: true,
         action,
@@ -262,7 +262,7 @@ const zapier_trigger = {
           }
         };
       }
-      
+
       // Save webhook if requested
       if (saveWebhook && webhookName) {
         const webhooksFile = path.join(CONFIG_DIR, 'zapier-webhooks.json');
@@ -273,7 +273,7 @@ const zapier_trigger = {
         webhooks[webhookName] = webhookUrl;
         fs.writeFileSync(webhooksFile, JSON.stringify(webhooks, null, 2));
       }
-      
+
       // In production, would actually POST to the webhook
       return {
         success: true,
@@ -324,7 +324,7 @@ const make_scenario = {
           }
         };
       }
-      
+
       return {
         success: true,
         triggered: true,

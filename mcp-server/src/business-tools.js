@@ -1,6 +1,6 @@
 /**
  * Business & Analytics Tools - v3.2 Vibe Coder Experience
- * 
+ *
  * Cost estimation, productivity tracking, and business analytics.
  */
 
@@ -23,19 +23,19 @@ const cost_estimate = {
   inputSchema: {
     type: 'object',
     properties: {
-      projectType: { 
-        type: 'string', 
+      projectType: {
+        type: 'string',
         enum: ['web-app', 'api', 'static-site', 'mobile-backend', 'full-stack'],
         description: 'Type of project'
       },
       expectedUsers: { type: 'integer', description: 'Expected monthly active users' },
-      features: { 
-        type: 'array', 
+      features: {
+        type: 'array',
         items: { type: 'string' },
         description: 'Features: database, storage, auth, email, sms, ai'
       },
-      provider: { 
-        type: 'string', 
+      provider: {
+        type: 'string',
         enum: ['vercel', 'netlify', 'railway', 'aws', 'gcp', 'azure'],
         description: 'Preferred cloud provider'
       }
@@ -52,7 +52,7 @@ const cost_estimate = {
         'mobile-backend': { hosting: 10, bandwidth: 0.03, compute: 0.03 },
         'full-stack': { hosting: 15, bandwidth: 0.03, compute: 0.03 }
       };
-      
+
       const featureCosts = {
         database: { monthly: 0, perUser: 0.001 },
         storage: { monthly: 0, perGB: 0.023 },
@@ -61,7 +61,7 @@ const cost_estimate = {
         sms: { monthly: 0, perSMS: 0.01 },
         ai: { monthly: 0, perRequest: 0.002 }
       };
-      
+
       const providerFreeTeirs = {
         vercel: { hosting: 'Free', bandwidth: '100GB', note: 'Great for Next.js' },
         netlify: { hosting: 'Free', bandwidth: '100GB', note: 'Great for static + functions' },
@@ -70,18 +70,18 @@ const cost_estimate = {
         gcp: { hosting: 'Free tier', bandwidth: '1GB', note: 'Good for AI/ML' },
         azure: { hosting: 'Free tier', bandwidth: '15GB', note: 'Enterprise focused' }
       };
-      
+
       // Calculate estimates
       const base = baseCosts[projectType] || baseCosts['web-app'];
       let monthlyEstimate = base.hosting;
       let perUserCost = base.bandwidth + (base.compute || 0);
-      
+
       const breakdown = [{
         item: 'Base Hosting',
         monthly: base.hosting,
         note: 'Platform base cost'
       }];
-      
+
       features.forEach(feature => {
         const fc = featureCosts[feature];
         if (fc) {
@@ -95,9 +95,9 @@ const cost_estimate = {
           });
         }
       });
-      
+
       const totalMonthly = monthlyEstimate + (perUserCost * expectedUsers);
-      
+
       return {
         success: true,
         estimate: {
@@ -135,8 +135,8 @@ const usage_analytics = {
   inputSchema: {
     type: 'object',
     properties: {
-      action: { 
-        type: 'string', 
+      action: {
+        type: 'string',
         enum: ['view', 'record', 'reset'],
         default: 'view'
       },
@@ -155,11 +155,11 @@ const usage_analytics = {
         streak: 0,
         lastActive: null
       };
-      
+
       if (fs.existsSync(analyticsFile)) {
         analytics = JSON.parse(fs.readFileSync(analyticsFile, 'utf8'));
       }
-      
+
       if (action === 'record' && category && duration) {
         const session = {
           date: new Date().toISOString(),
@@ -170,7 +170,7 @@ const usage_analytics = {
         analytics.totalTime += duration;
         analytics.byCategory[category] = (analytics.byCategory[category] || 0) + duration;
         analytics.lastActive = session.date;
-        
+
         // Update streak
         const today = new Date().toDateString();
         const lastDate = analytics.lastActive ? new Date(analytics.lastActive).toDateString() : null;
@@ -178,20 +178,20 @@ const usage_analytics = {
           const yesterday = new Date(Date.now() - 86400000).toDateString();
           analytics.streak = lastDate === yesterday ? analytics.streak + 1 : 1;
         }
-        
+
         fs.writeFileSync(analyticsFile, JSON.stringify(analytics, null, 2));
       }
-      
+
       if (action === 'reset') {
         analytics = { sessions: [], totalTime: 0, byCategory: {}, streak: 0, lastActive: null };
         fs.writeFileSync(analyticsFile, JSON.stringify(analytics, null, 2));
       }
-      
+
       // Calculate insights
       const totalHours = (analytics.totalTime / 60).toFixed(1);
       const topCategory = Object.entries(analytics.byCategory)
-        .sort(([,a], [,b]) => b - a)[0];
-      
+        .sort(([, a], [, b]) => b - a)[0];
+
       return {
         success: true,
         analytics: {
@@ -224,8 +224,8 @@ const time_tracker = {
   inputSchema: {
     type: 'object',
     properties: {
-      action: { 
-        type: 'string', 
+      action: {
+        type: 'string',
         enum: ['start', 'stop', 'status', 'report'],
         description: 'Timer action'
       },
@@ -242,11 +242,11 @@ const time_tracker = {
         current: null,
         entries: []
       };
-      
+
       if (fs.existsSync(timerFile)) {
         tracker = JSON.parse(fs.readFileSync(timerFile, 'utf8'));
       }
-      
+
       if (action === 'start') {
         if (tracker.current) {
           // Stop existing timer first
@@ -257,7 +257,7 @@ const time_tracker = {
             duration: Math.round(elapsed / 60000)
           });
         }
-        
+
         tracker.current = {
           task: task || 'Unnamed task',
           project: project || 'Default',
@@ -265,7 +265,7 @@ const time_tracker = {
           startTime: new Date().toISOString()
         };
         fs.writeFileSync(timerFile, JSON.stringify(tracker, null, 2));
-        
+
         return {
           success: true,
           status: 'started',
@@ -273,12 +273,12 @@ const time_tracker = {
           message: `⏱️ Timer started for "${task || 'Unnamed task'}"`
         };
       }
-      
+
       if (action === 'stop') {
         if (!tracker.current) {
           return { success: false, error: 'No timer running' };
         }
-        
+
         const elapsed = Date.now() - new Date(tracker.current.startTime).getTime();
         const entry = {
           ...tracker.current,
@@ -288,7 +288,7 @@ const time_tracker = {
         tracker.entries.push(entry);
         tracker.current = null;
         fs.writeFileSync(timerFile, JSON.stringify(tracker, null, 2));
-        
+
         return {
           success: true,
           status: 'stopped',
@@ -296,12 +296,12 @@ const time_tracker = {
           message: `⏹️ Timer stopped. Duration: ${entry.duration} minutes`
         };
       }
-      
+
       if (action === 'status') {
         if (!tracker.current) {
           return { success: true, status: 'idle', message: 'No timer running' };
         }
-        
+
         const elapsed = Date.now() - new Date(tracker.current.startTime).getTime();
         return {
           success: true,
@@ -313,19 +313,19 @@ const time_tracker = {
           message: `⏱️ Running: ${tracker.current.task} (${Math.round(elapsed / 60000)} min)`
         };
       }
-      
+
       if (action === 'report') {
         const today = new Date().toDateString();
-        const todayEntries = tracker.entries.filter(e => 
+        const todayEntries = tracker.entries.filter(e =>
           new Date(e.startTime).toDateString() === today
         );
         const todayMinutes = todayEntries.reduce((sum, e) => sum + e.duration, 0);
-        
+
         const byProject = {};
         tracker.entries.forEach(e => {
           byProject[e.project] = (byProject[e.project] || 0) + e.duration;
         });
-        
+
         return {
           success: true,
           report: {
@@ -338,7 +338,7 @@ const time_tracker = {
           message: `📊 Today: ${(todayMinutes / 60).toFixed(1)} hours across ${todayEntries.length} tasks`
         };
       }
-      
+
       return { success: false, error: 'Invalid action' };
     } catch (error) {
       return { success: false, error: error.message };
@@ -366,21 +366,21 @@ const roi_calculator = {
   handler: async ({ investment, investmentType = 'money', expectedRevenue, timeframe = 12, hourlyRate = 50 }) => {
     try {
       // Convert time to money if needed
-      const monetaryInvestment = investmentType === 'hours' 
-        ? investment * hourlyRate 
+      const monetaryInvestment = investmentType === 'hours'
+        ? investment * hourlyRate
         : investment;
-      
+
       const totalRevenue = expectedRevenue * timeframe;
       const profit = totalRevenue - monetaryInvestment;
       const roi = ((profit / monetaryInvestment) * 100).toFixed(1);
       const breakEvenMonths = Math.ceil(monetaryInvestment / expectedRevenue);
-      
+
       return {
         success: true,
         calculation: {
           investment: `$${monetaryInvestment.toFixed(2)}`,
-          investmentBreakdown: investmentType === 'hours' 
-            ? `${investment} hours × $${hourlyRate}/hr` 
+          investmentBreakdown: investmentType === 'hours'
+            ? `${investment} hours × $${hourlyRate}/hr`
             : 'Direct investment',
           monthlyRevenue: `$${expectedRevenue.toFixed(2)}`,
           totalRevenue: `$${totalRevenue.toFixed(2)}`,
@@ -392,8 +392,8 @@ const roi_calculator = {
         analysis: {
           profitable: profit > 0,
           roiRating: roi > 100 ? '🚀 Excellent' : roi > 50 ? '👍 Good' : roi > 0 ? '📊 Moderate' : '⚠️ Negative',
-          breakEven: breakEvenMonths <= timeframe 
-            ? `✅ Break even in ${breakEvenMonths} months` 
+          breakEven: breakEvenMonths <= timeframe
+            ? `✅ Break even in ${breakEvenMonths} months`
             : `⚠️ Won't break even in ${timeframe} months`
         },
         message: `📈 ROI: ${roi}% | Break even: ${breakEvenMonths} months`
@@ -414,8 +414,8 @@ const competitor_scan = {
     type: 'object',
     properties: {
       url: { type: 'string', description: 'Competitor website URL' },
-      aspects: { 
-        type: 'array', 
+      aspects: {
+        type: 'array',
         items: { type: 'string' },
         description: 'What to analyze: tech, features, seo, performance'
       }
@@ -427,16 +427,16 @@ const competitor_scan = {
       // Normalize URL
       const normalizedUrl = url.startsWith('http') ? url : `https://${url}`;
       const domain = new URL(normalizedUrl).hostname;
-      
+
       // In production, would actually fetch and analyze the site
       // This provides a framework for what the analysis would include
-      
+
       const analysis = {
         url: normalizedUrl,
         domain,
         scannedAt: new Date().toISOString()
       };
-      
+
       if (aspects.includes('tech')) {
         analysis.techStack = {
           note: 'Tech detection requires actual site scanning',
@@ -449,7 +449,7 @@ const competitor_scan = {
           tools: ['Wappalyzer', 'BuiltWith', 'WhatRuns']
         };
       }
-      
+
       if (aspects.includes('features')) {
         analysis.features = {
           note: 'Manual review recommended',
@@ -462,7 +462,7 @@ const competitor_scan = {
           ]
         };
       }
-      
+
       if (aspects.includes('seo')) {
         analysis.seo = {
           note: 'SEO analysis requires page content',
@@ -475,7 +475,7 @@ const competitor_scan = {
           ]
         };
       }
-      
+
       if (aspects.includes('performance')) {
         analysis.performance = {
           note: 'Run through PageSpeed Insights',
@@ -483,7 +483,7 @@ const competitor_scan = {
           metrics: ['FCP', 'LCP', 'CLS', 'TTI']
         };
       }
-      
+
       return {
         success: true,
         analysis,

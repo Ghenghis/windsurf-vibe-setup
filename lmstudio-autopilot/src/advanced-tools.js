@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * Windsurf Autopilot - Advanced Tools v2.2
- * 
+ *
  * This module adds the remaining critical features:
  * - AI Decision Engine (autonomous problem solving)
  * - Code Generation (from natural language)
@@ -86,7 +86,7 @@ async function decideNextStep({ projectPath, currentError, goal, context }) {
   if (currentError) {
     const errorAnalysis = analyzeErrorPattern(currentError);
     decision.analysis.push(`Error detected: ${errorAnalysis.type}`);
-    
+
     if (errorAnalysis.autoFixCommand) {
       decision.recommendedActions.push({
         action: 'fix_error',
@@ -104,7 +104,7 @@ async function decideNextStep({ projectPath, currentError, goal, context }) {
   // Goal-based recommendations
   if (goal) {
     const goalLower = goal.toLowerCase();
-    
+
     if (goalLower.includes('run') || goalLower.includes('start')) {
       decision.recommendedActions.push({
         action: 'start_server',
@@ -113,7 +113,7 @@ async function decideNextStep({ projectPath, currentError, goal, context }) {
         priority: 1
       });
     }
-    
+
     if (goalLower.includes('test')) {
       decision.recommendedActions.push({
         action: 'run_tests',
@@ -122,7 +122,7 @@ async function decideNextStep({ projectPath, currentError, goal, context }) {
         priority: 1
       });
     }
-    
+
     if (goalLower.includes('build') || goalLower.includes('deploy')) {
       decision.recommendedActions.push({
         action: 'build_project',
@@ -131,7 +131,7 @@ async function decideNextStep({ projectPath, currentError, goal, context }) {
         priority: 1
       });
     }
-    
+
     if (goalLower.includes('lint') || goalLower.includes('fix')) {
       decision.recommendedActions.push({
         action: 'lint_fix',
@@ -144,7 +144,7 @@ async function decideNextStep({ projectPath, currentError, goal, context }) {
 
   // Sort by priority
   decision.recommendedActions.sort((a, b) => a.priority - b.priority);
-  
+
   // Calculate confidence
   decision.confidence = decision.autoExecutable.length > 0 ? 0.8 : 0.5;
   decision.needsUserInput = decision.recommendedActions.length === 0;
@@ -157,7 +157,7 @@ async function decideNextStep({ projectPath, currentError, goal, context }) {
  */
 function analyzeErrorPattern(error) {
   const errorLower = error.toLowerCase();
-  
+
   const patterns = [
     { pattern: /module not found|cannot find module/i, type: 'missing_module', cause: 'Missing dependency', autoFixCommand: 'npm install' },
     { pattern: /enoent|no such file/i, type: 'file_not_found', cause: 'File not found', autoFixCommand: null },
@@ -166,7 +166,7 @@ function analyzeErrorPattern(error) {
     { pattern: /port.*in use|eaddrinuse/i, type: 'port_conflict', cause: 'Port already in use', autoFixCommand: null },
     { pattern: /npm err/i, type: 'npm_error', cause: 'npm package error', autoFixCommand: 'npm cache clean --force && npm install' },
     { pattern: /typescript|ts\d+/i, type: 'typescript', cause: 'TypeScript error', autoFixCommand: 'npx tsc --noEmit' },
-    { pattern: /eslint|lint/i, type: 'lint', cause: 'Linting error', autoFixCommand: 'npx eslint . --fix' },
+    { pattern: /eslint|lint/i, type: 'lint', cause: 'Linting error', autoFixCommand: 'npx eslint . --fix' }
   ];
 
   for (const { pattern, type, cause, autoFixCommand } of patterns) {
@@ -240,7 +240,7 @@ async function findSolution({ problem, projectPath, errorMessage }) {
       keywords: ['port', 'address', 'in use', 'eaddrinuse'],
       title: 'Port Conflict',
       steps: ['Find process using port', 'Kill process or use different port'],
-      commands: IS_WINDOWS 
+      commands: IS_WINDOWS
         ? ['netstat -ano | findstr :3000', 'taskkill /PID <pid> /F']
         : ['lsof -i :3000', 'kill -9 <pid>']
     },
@@ -260,10 +260,10 @@ async function findSolution({ problem, projectPath, errorMessage }) {
 
   // Find matching solutions
   for (const solution of solutionDb) {
-    const matches = solution.keywords.some(kw => 
+    const matches = solution.keywords.some(kw =>
       problemLower.includes(kw) || errorLower.includes(kw)
     );
-    
+
     if (matches) {
       solutions.found = true;
       solutions.solutions.push(solution);
@@ -456,7 +456,7 @@ export async function ${name.charAt(0).toLowerCase() + name.slice(1)}Async(input
 `,
 
     // Test File
-    'test': (name, testFramework = 'jest') => testFramework === 'vitest' 
+    'test': (name, testFramework = 'jest') => testFramework === 'vitest'
       ? `import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { ${name} } from './${name}';
 
@@ -664,7 +664,7 @@ async function generateTests({ filePath, projectPath, testFramework = 'jest' }) 
   const content = fs.readFileSync(filePath, 'utf8');
   const fileName = path.basename(filePath, path.extname(filePath));
   const fileExt = path.extname(filePath);
-  
+
   // Detect exports and functions
   const exports = [];
   const functions = [];
@@ -694,10 +694,10 @@ async function generateTests({ filePath, projectPath, testFramework = 'jest' }) 
   }
 
   // Generate test file
-  const testDir = projectPath 
+  const testDir = projectPath
     ? path.join(projectPath, '__tests__')
     : path.join(path.dirname(filePath), '__tests__');
-  
+
   if (!fs.existsSync(testDir)) {
     fs.mkdirSync(testDir, { recursive: true });
   }
@@ -798,16 +798,20 @@ async function dbQuery({ query, database = 'sqlite', connectionString, projectPa
     const prismaSchema = path.join(projectPath, 'prisma', 'schema.prisma');
     if (fs.existsSync(prismaSchema)) {
       const schema = fs.readFileSync(prismaSchema, 'utf8');
-      if (schema.includes('postgresql')) dbType = 'postgresql';
-      else if (schema.includes('mysql')) dbType = 'mysql';
-      else if (schema.includes('sqlite')) dbType = 'sqlite';
+      if (schema.includes('postgresql')) {
+        dbType = 'postgresql';
+      } else if (schema.includes('mysql')) {
+        dbType = 'mysql';
+      } else if (schema.includes('sqlite')) {
+        dbType = 'sqlite';
+      }
     }
   }
 
   // For Prisma projects, use Prisma CLI
   if (projectPath && fs.existsSync(path.join(projectPath, 'prisma'))) {
     try {
-      const result = execSync(`npx prisma db execute --stdin`, {
+      const result = execSync('npx prisma db execute --stdin', {
         input: query,
         cwd: projectPath,
         encoding: 'utf8',
@@ -968,7 +972,7 @@ async function manageEnv({ projectPath, action, key, value }) {
     }
     const content = fs.readFileSync(envPath, 'utf8');
     const match = content.match(new RegExp(`^${key}=(.*)$`, 'm'));
-    return match 
+    return match
       ? { success: true, key, value: match[1] }
       : { success: false, error: `Variable ${key} not found` };
   }
@@ -976,13 +980,13 @@ async function manageEnv({ projectPath, action, key, value }) {
   if (action === 'set') {
     let content = fs.existsSync(envPath) ? fs.readFileSync(envPath, 'utf8') : '';
     const regex = new RegExp(`^${key}=.*$`, 'm');
-    
+
     if (regex.test(content)) {
       content = content.replace(regex, `${key}=${value}`);
     } else {
       content += `\n${key}=${value}`;
     }
-    
+
     fs.writeFileSync(envPath, content.trim() + '\n');
     return { success: true, message: `Set ${key}` };
   }
@@ -1015,24 +1019,28 @@ async function manageEnv({ projectPath, action, key, value }) {
     if (!fs.existsSync(envPath)) {
       return { success: false, error: '.env file not found' };
     }
-    
+
     const example = fs.readFileSync(envExamplePath, 'utf8');
     const actual = fs.readFileSync(envPath, 'utf8');
-    
+
     const requiredVars = [];
     example.split('\n').forEach(line => {
       const match = line.match(/^([^#=]+)=/);
-      if (match) requiredVars.push(match[1].trim());
+      if (match) {
+        requiredVars.push(match[1].trim());
+      }
     });
-    
+
     const actualVars = [];
     actual.split('\n').forEach(line => {
       const match = line.match(/^([^#=]+)=/);
-      if (match) actualVars.push(match[1].trim());
+      if (match) {
+        actualVars.push(match[1].trim());
+      }
     });
-    
+
     const missing = requiredVars.filter(v => !actualVars.includes(v));
-    
+
     return {
       success: missing.length === 0,
       required: requiredVars,
@@ -1059,29 +1067,31 @@ async function backupProject({ projectPath, backupDir }) {
   const projectName = path.basename(projectPath);
   const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
   const backupName = `${projectName}-backup-${timestamp}`;
-  
+
   const targetDir = backupDir || path.join(HOME, 'Backups');
   if (!fs.existsSync(targetDir)) {
     fs.mkdirSync(targetDir, { recursive: true });
   }
-  
+
   const backupPath = path.join(targetDir, backupName);
 
   // Create backup excluding node_modules, .git, etc.
   const excludes = ['node_modules', '.git', '__pycache__', 'venv', '.venv', 'dist', 'build', '.next', 'coverage'];
-  
+
   try {
     fs.mkdirSync(backupPath, { recursive: true });
-    
+
     function copyDir(src, dest) {
       const entries = fs.readdirSync(src, { withFileTypes: true });
-      
+
       for (const entry of entries) {
-        if (excludes.includes(entry.name)) continue;
-        
+        if (excludes.includes(entry.name)) {
+          continue;
+        }
+
         const srcPath = path.join(src, entry.name);
         const destPath = path.join(dest, entry.name);
-        
+
         if (entry.isDirectory()) {
           fs.mkdirSync(destPath, { recursive: true });
           copyDir(srcPath, destPath);
@@ -1090,9 +1100,9 @@ async function backupProject({ projectPath, backupDir }) {
         }
       }
     }
-    
+
     copyDir(projectPath, backupPath);
-    
+
     // Get backup size
     let totalSize = 0;
     function getSize(dir) {
@@ -1107,7 +1117,7 @@ async function backupProject({ projectPath, backupDir }) {
       }
     }
     getSize(backupPath);
-    
+
     return {
       success: true,
       backupPath,
@@ -1143,11 +1153,11 @@ async function restoreBackup({ backupPath, targetPath, overwrite = false }) {
     function copyDir(src, dest) {
       fs.mkdirSync(dest, { recursive: true });
       const entries = fs.readdirSync(src, { withFileTypes: true });
-      
+
       for (const entry of entries) {
         const srcPath = path.join(src, entry.name);
         const destPath = path.join(dest, entry.name);
-        
+
         if (entry.isDirectory()) {
           copyDir(srcPath, destPath);
         } else {
@@ -1155,9 +1165,9 @@ async function restoreBackup({ backupPath, targetPath, overwrite = false }) {
         }
       }
     }
-    
+
     copyDir(backupPath, targetPath);
-    
+
     return {
       success: true,
       restoredTo: targetPath,
@@ -1173,7 +1183,7 @@ async function restoreBackup({ backupPath, targetPath, overwrite = false }) {
  */
 async function listBackups({ projectName, backupDir }) {
   const targetDir = backupDir || path.join(HOME, 'Backups');
-  
+
   if (!fs.existsSync(targetDir)) {
     return { success: true, backups: [] };
   }
@@ -1182,18 +1192,24 @@ async function listBackups({ projectName, backupDir }) {
   const backups = [];
 
   for (const entry of entries) {
-    if (!entry.isDirectory()) continue;
-    
+    if (!entry.isDirectory()) {
+      continue;
+    }
+
     // Match backup pattern
-    if (projectName && !entry.name.startsWith(projectName)) continue;
-    if (!entry.name.includes('-backup-')) continue;
+    if (projectName && !entry.name.startsWith(projectName)) {
+      continue;
+    }
+    if (!entry.name.includes('-backup-')) {
+      continue;
+    }
 
     const backupPath = path.join(targetDir, entry.name);
     const stats = fs.statSync(backupPath);
-    
+
     // Extract timestamp from name
     const timestampMatch = entry.name.match(/backup-(.+)$/);
-    
+
     backups.push({
       name: entry.name,
       path: backupPath,
@@ -1230,9 +1246,9 @@ async function startProgress({ taskId, taskName, totalSteps, description }) {
     steps: [],
     logs: []
   };
-  
+
   progressTasks.set(task.id, task);
-  
+
   return { success: true, taskId: task.id, message: 'Progress tracking started' };
 }
 
@@ -1330,26 +1346,26 @@ module.exports = {
   // AI Decision Engine
   decideNextStep,
   findSolution,
-  
+
   // Code Generation
   generateCode,
-  
+
   // Test Generation
   generateTests,
-  
+
   // Database
   dbQuery,
   dbMigrate,
   dbSeed,
-  
+
   // Environment
   manageEnv,
-  
+
   // Backup & Recovery
   backupProject,
   restoreBackup,
   listBackups,
-  
+
   // Progress
   startProgress,
   updateProgress,

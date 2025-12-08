@@ -23,7 +23,7 @@ const importPatch = `const { execSync, exec, spawn } = require('child_process');
 const additionalTools = require('./additional-tools.js');`;
 
 content = content.replace(
-  `const { execSync, exec, spawn } = require('child_process');`,
+  'const { execSync, exec, spawn } = require(\'child_process\');',
   importPatch
 );
 console.log('✅ Added import for additional-tools.js');
@@ -35,7 +35,7 @@ content = content.replace(
 );
 content = content.replace(
   /{ name: 'windsurf-autopilot', version: '2\.0\.0' }/g,
-  `{ name: 'windsurf-autopilot', version: '2.1.0' }`
+  '{ name: \'windsurf-autopilot\', version: \'2.1.0\' }'
 );
 console.log('✅ Updated version to 2.1.0');
 
@@ -387,8 +387,8 @@ console.log('✅ Added new tool definitions');
 
 // 5. Update startup message
 content = content.replace(
-  `console.error('🚀 Windsurf Autopilot MCP Server v2.0 running');`,
-  `console.error('🚀 Windsurf Autopilot MCP Server v2.1 running (with Project Intelligence, Testing, Docker)');`
+  'console.error(\'🚀 Windsurf Autopilot MCP Server v2.0 running\');',
+  'console.error(\'🚀 Windsurf Autopilot MCP Server v2.1 running (with Project Intelligence, Testing, Docker)\');'
 );
 
 // Write patched file

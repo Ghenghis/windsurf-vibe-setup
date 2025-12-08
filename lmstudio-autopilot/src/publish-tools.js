@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * Windsurf Autopilot - Package Publishing Tools v3.1
- * 
+ *
  * npm, PyPI, Docker, and GitHub Packages publishing.
  */
 
@@ -61,8 +61,12 @@ const publishTools = {
       let cmd = 'npm publish';
       cmd += ` --tag ${tag}`;
       cmd += ` --access ${access}`;
-      if (dryRun) cmd += ' --dry-run';
-      if (otp) cmd += ` --otp=${otp}`;
+      if (dryRun) {
+        cmd += ' --dry-run';
+      }
+      if (otp) {
+        cmd += ` --otp=${otp}`;
+      }
 
       try {
         const output = execSync(cmd, { cwd: projectPath, encoding: 'utf8', timeout: 120000 });
@@ -76,7 +80,7 @@ const publishTools = {
           dryRun,
           registry: 'https://registry.npmjs.org',
           url: `https://www.npmjs.com/package/${pkg.name}`,
-          message: dryRun 
+          message: dryRun
             ? `Dry run completed for ${pkg.name}@${pkg.version}`
             : `Published ${pkg.name}@${pkg.version} to npm`
         };
@@ -84,9 +88,9 @@ const publishTools = {
         return {
           success: false,
           error: error.message,
-          hint: error.message.includes('ENEEDAUTH') 
-            ? 'Run: npm login' 
-            : error.message.includes('E403') 
+          hint: error.message.includes('ENEEDAUTH')
+            ? 'Run: npm login'
+            : error.message.includes('E403')
               ? 'Package name may be taken or you lack permissions'
               : null
         };
@@ -162,13 +166,17 @@ const publishTools = {
       }
 
       // Build upload command
-      const repoUrl = repository === 'testpypi' 
+      const repoUrl = repository === 'testpypi'
         ? 'https://test.pypi.org/legacy/'
         : 'https://upload.pypi.org/legacy/';
 
       let cmd = `python -m twine upload --repository-url ${repoUrl}`;
-      if (username) cmd += ` -u ${username}`;
-      if (password) cmd += ` -p ${password}`;
+      if (username) {
+        cmd += ` -u ${username}`;
+      }
+      if (password) {
+        cmd += ` -p ${password}`;
+      }
       cmd += ' dist/*';
 
       if (!password) {
@@ -188,7 +196,9 @@ const publishTools = {
         if (hasPyproject) {
           const content = fs.readFileSync(path.join(projectPath, 'pyproject.toml'), 'utf8');
           const match = content.match(/name\s*=\s*["']([^"']+)["']/);
-          if (match) packageName = match[1];
+          if (match) {
+            packageName = match[1];
+          }
         }
 
         return {
@@ -240,7 +250,9 @@ const publishTools = {
 
       const fullImage = registry === 'docker.io' ? image : `${registry}/${image}`;
       const tags = [`${fullImage}:${tag}`];
-      if (latest) tags.push(`${fullImage}:latest`);
+      if (latest) {
+        tags.push(`${fullImage}:latest`);
+      }
 
       try {
         // Build with multiple platforms if specified
@@ -248,14 +260,18 @@ const publishTools = {
           // Multi-platform requires buildx
           const platformStr = platforms.join(',');
           let buildCmd = `docker buildx build --platform ${platformStr}`;
-          for (const t of tags) buildCmd += ` -t ${t}`;
+          for (const t of tags) {
+            buildCmd += ` -t ${t}`;
+          }
           buildCmd += ` --push ${buildPath}`;
 
           execSync(buildCmd, { encoding: 'utf8', timeout: 600000 });
         } else {
           // Single platform - standard build and push
           let buildCmd = 'docker build';
-          for (const t of tags) buildCmd += ` -t ${t}`;
+          for (const t of tags) {
+            buildCmd += ` -t ${t}`;
+          }
           buildCmd += ` ${buildPath}`;
 
           execSync(buildCmd, { encoding: 'utf8', timeout: 300000 });
@@ -348,7 +364,7 @@ const publishTools = {
         }
       } else if (type === 'container') {
         const image = `ghcr.io/${owner}/${repoName}`;
-        
+
         // Login to ghcr.io
         try {
           execSync(`echo ${token} | docker login ghcr.io -u ${owner} --password-stdin`, { encoding: 'utf8' });

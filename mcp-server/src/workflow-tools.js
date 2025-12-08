@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 /**
  * Windsurf Autopilot - Workflow Tools v3.0
- * 
+ *
  * Visual workflow builder for automation.
  * Create, run, edit, and share automation workflows.
- * 
+ *
  * Tools:
  * - create_workflow: Create automation workflow
  * - run_workflow: Execute workflow
@@ -220,7 +220,7 @@ const workflowTools = {
         // Find workflow
         let workflow = null;
         const files = fs.readdirSync(WORKFLOW_DIR);
-        
+
         for (const file of files) {
           if (file.endsWith('.json')) {
             const content = JSON.parse(fs.readFileSync(path.join(WORKFLOW_DIR, file), 'utf8'));
@@ -302,14 +302,16 @@ const workflowTools = {
         let startIndex = 0;
         if (args.startFromStep) {
           startIndex = workflow.steps.findIndex(s => s.id === args.startFromStep);
-          if (startIndex === -1) startIndex = 0;
+          if (startIndex === -1) {
+            startIndex = 0;
+          }
         }
 
         // Execute steps
         let prevResult = null;
         for (let i = startIndex; i < workflow.steps.length; i++) {
           const step = workflow.steps[i];
-          
+
           // Check condition
           if (step.condition) {
             const conditionMet = evaluateCondition(step.condition, { prev: prevResult, variables });
@@ -330,7 +332,7 @@ const workflowTools = {
           // Execute step (simulated - in real implementation this would call the actual tool)
           let stepResult;
           let retries = step.retries || 0;
-          
+
           do {
             try {
               // In a real implementation, this would call the tool executor
@@ -347,7 +349,7 @@ const workflowTools = {
                 continue;
               }
               stepResult = { success: false, error: e.message };
-              
+
               if (step.onError === 'stop') {
                 execution.status = 'failed';
                 execution.error = `Step ${step.id} failed: ${e.message}`;
@@ -364,13 +366,15 @@ const workflowTools = {
 
           prevResult = stepResult;
 
-          if (execution.status === 'failed') break;
+          if (execution.status === 'failed') {
+            break;
+          }
         }
 
         if (execution.status !== 'failed') {
           execution.status = 'completed';
         }
-        
+
         execution.completedAt = new Date().toISOString();
         runningWorkflows.delete(runId);
 
@@ -467,7 +471,7 @@ const workflowTools = {
             args: args.addStep.args || {},
             onError: 'stop'
           };
-          
+
           if (args.addStep.position !== undefined) {
             workflow.steps.splice(args.addStep.position, 0, newStep);
           } else {
@@ -773,7 +777,7 @@ const workflowTools = {
   },
 
   // Get tool definitions
-  getToolDefinitions: function() {
+  getToolDefinitions: function () {
     return [
       { name: this.create_workflow.name, description: this.create_workflow.description, inputSchema: this.create_workflow.inputSchema },
       { name: this.run_workflow.name, description: this.run_workflow.description, inputSchema: this.run_workflow.inputSchema },
@@ -783,7 +787,7 @@ const workflowTools = {
     ];
   },
 
-  getHandler: function(toolName) {
+  getHandler: function (toolName) {
     const tool = this[toolName];
     return tool ? tool.handler : null;
   }
@@ -820,8 +824,12 @@ function evaluateCondition(condition, context) {
   try {
     const resolved = substituteVariables(condition, context);
     // Simple boolean evaluation
-    if (resolved === 'true' || resolved === true) return true;
-    if (resolved === 'false' || resolved === false) return false;
+    if (resolved === 'true' || resolved === true) {
+      return true;
+    }
+    if (resolved === 'false' || resolved === false) {
+      return false;
+    }
     return Boolean(resolved);
   } catch {
     return false;

@@ -1,6 +1,6 @@
 /**
  * Asset Generation Tools - v3.2 Vibe Coder Experience
- * 
+ *
  * Generate logos, images, and other assets without needing a designer.
  */
 
@@ -25,8 +25,8 @@ const generate_logo = {
     type: 'object',
     properties: {
       name: { type: 'string', description: 'Brand/project name' },
-      style: { 
-        type: 'string', 
+      style: {
+        type: 'string',
         enum: ['minimal', 'bold', 'geometric', 'playful', 'professional'],
         default: 'minimal'
       },
@@ -41,11 +41,11 @@ const generate_logo = {
       if (!fs.existsSync(targetDir)) {
         fs.mkdirSync(targetDir, { recursive: true });
       }
-      
+
       const initials = name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
       const primaryColor = colors[0] || '#3B82F6';
       const secondaryColor = colors[1] || '#1E40AF';
-      
+
       // Generate different logo styles
       const logos = {
         'logo-icon': `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
@@ -73,14 +73,14 @@ const generate_logo = {
   <text x="150" y="42" font-family="system-ui" font-size="36" font-weight="bold" fill="${primaryColor}" text-anchor="middle">${name}</text>
 </svg>`
       };
-      
+
       const created = [];
       for (const [filename, svg] of Object.entries(logos)) {
         const filePath = path.join(targetDir, `${filename}.svg`);
         fs.writeFileSync(filePath, svg);
         created.push(filePath);
       }
-      
+
       return {
         success: true,
         logos: {
@@ -126,15 +126,15 @@ const generate_og_image = {
       if (!fs.existsSync(targetDir)) {
         fs.mkdirSync(targetDir, { recursive: true });
       }
-      
+
       const themes = {
         light: { bg: '#ffffff', text: '#1a1a1a', accent: '#3B82F6' },
         dark: { bg: '#1a1a1a', text: '#ffffff', accent: '#60A5FA' },
         gradient: { bg: 'url(#bgGrad)', text: '#ffffff', accent: '#ffffff' }
       };
-      
+
       const t = themes[theme];
-      
+
       const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630">
   <defs>
     <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -147,17 +147,17 @@ const generate_og_image = {
   ${subtitle ? `<text x="80" y="360" font-family="system-ui" font-size="32" fill="${t.text}" opacity="0.8">${subtitle.slice(0, 80)}</text>` : ''}
   ${brand ? `<text x="80" y="570" font-family="system-ui" font-size="24" fill="${t.accent}">${brand}</text>` : ''}
 </svg>`;
-      
+
       const filename = `og-${Date.now()}.svg`;
       const filePath = path.join(targetDir, filename);
       fs.writeFileSync(filePath, svg);
-      
+
       return {
         success: true,
         image: filePath,
         dimensions: '1200x630',
         theme,
-        usage: `<meta property="og:image" content="URL_TO_YOUR_IMAGE">`,
+        usage: '<meta property="og:image" content="URL_TO_YOUR_IMAGE">',
         message: `📸 Generated OG image for "${title}"`,
         nextSteps: [
           'Convert SVG to PNG for broader compatibility',
@@ -192,33 +192,33 @@ const optimize_assets = {
       if (!fs.existsSync(inputDir)) {
         return { success: false, error: `Input directory not found: ${inputDir}` };
       }
-      
+
       const targetDir = outputDir || path.join(inputDir, 'optimized');
       if (!fs.existsSync(targetDir)) {
         fs.mkdirSync(targetDir, { recursive: true });
       }
-      
+
       const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.svg'];
-      const files = fs.readdirSync(inputDir).filter(f => 
+      const files = fs.readdirSync(inputDir).filter(f =>
         imageExtensions.includes(path.extname(f).toLowerCase())
       );
-      
+
       const results = [];
       let totalOriginal = 0;
       let totalOptimized = 0;
-      
+
       for (const file of files) {
         const inputPath = path.join(inputDir, file);
         const outputPath = path.join(targetDir, file);
         const stats = fs.statSync(inputPath);
         totalOriginal += stats.size;
-        
+
         // Copy file (in real implementation, would use sharp/imagemin)
         fs.copyFileSync(inputPath, outputPath);
-        
+
         const newStats = fs.statSync(outputPath);
         totalOptimized += newStats.size;
-        
+
         results.push({
           file,
           originalSize: `${(stats.size / 1024).toFixed(1)}KB`,
@@ -226,7 +226,7 @@ const optimize_assets = {
           savings: '0%' // Would show actual savings with real optimization
         });
       }
-      
+
       return {
         success: true,
         processed: results.length,
@@ -267,28 +267,28 @@ const create_favicon = {
       if (!fs.existsSync(targetDir)) {
         fs.mkdirSync(targetDir, { recursive: true });
       }
-      
+
       const initial = text.slice(0, 2).toUpperCase();
       const sizes = [16, 32, 48, 64, 128, 180, 192, 512];
       const created = [];
-      
+
       for (const size of sizes) {
         const fontSize = Math.floor(size * 0.5);
         const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${size} ${size}">
   <rect width="${size}" height="${size}" rx="${size * 0.15}" fill="${backgroundColor}"/>
   <text x="50%" y="55%" dominant-baseline="middle" text-anchor="middle" font-family="system-ui" font-size="${fontSize}" font-weight="bold" fill="${textColor}">${initial}</text>
 </svg>`;
-        
-        const filename = size === 180 ? 'apple-touch-icon.svg' : 
-                        size === 192 ? 'icon-192.svg' :
-                        size === 512 ? 'icon-512.svg' :
-                        `favicon-${size}x${size}.svg`;
-        
+
+        const filename = size === 180 ? 'apple-touch-icon.svg' :
+          size === 192 ? 'icon-192.svg' :
+            size === 512 ? 'icon-512.svg' :
+              `favicon-${size}x${size}.svg`;
+
         const filePath = path.join(targetDir, filename);
         fs.writeFileSync(filePath, svg);
         created.push({ size, path: filePath });
       }
-      
+
       // Generate manifest.json
       const manifest = {
         name: text,
@@ -302,16 +302,16 @@ const create_favicon = {
         display: 'standalone'
       };
       fs.writeFileSync(path.join(targetDir, 'manifest.json'), JSON.stringify(manifest, null, 2));
-      
+
       // Generate HTML snippet
       const htmlSnippet = `<!-- Favicon -->
 <link rel="icon" type="image/svg+xml" href="/favicon-32x32.svg">
 <link rel="apple-touch-icon" href="/apple-touch-icon.svg">
 <link rel="manifest" href="/manifest.json">
 <meta name="theme-color" content="${backgroundColor}">`;
-      
+
       fs.writeFileSync(path.join(targetDir, 'favicon-snippet.html'), htmlSnippet);
-      
+
       return {
         success: true,
         favicons: created,
@@ -339,13 +339,13 @@ const generate_screenshots = {
   inputSchema: {
     type: 'object',
     properties: {
-      screenshots: { 
-        type: 'array', 
+      screenshots: {
+        type: 'array',
         items: { type: 'string' },
         description: 'Paths to screenshot images'
       },
-      device: { 
-        type: 'string', 
+      device: {
+        type: 'string',
         enum: ['iphone', 'android', 'ipad', 'desktop'],
         default: 'iphone'
       },
@@ -360,7 +360,7 @@ const generate_screenshots = {
       if (!fs.existsSync(targetDir)) {
         fs.mkdirSync(targetDir, { recursive: true });
       }
-      
+
       // Device dimensions for app stores
       const devices = {
         iphone: { width: 1290, height: 2796, name: 'iPhone 14 Pro Max' },
@@ -368,10 +368,10 @@ const generate_screenshots = {
         ipad: { width: 2048, height: 2732, name: 'iPad Pro 12.9' },
         desktop: { width: 2880, height: 1800, name: 'MacBook Pro' }
       };
-      
+
       const d = devices[device];
       const generated = [];
-      
+
       // Generate placeholder screenshots if none provided
       const screenshotCount = screenshots.length || 5;
       const defaultCaptions = [
@@ -381,10 +381,10 @@ const generate_screenshots = {
         'Track your progress',
         'Get started today'
       ];
-      
+
       for (let i = 0; i < screenshotCount; i++) {
         const caption = captions[i] || defaultCaptions[i] || `Screenshot ${i + 1}`;
-        
+
         const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${d.width} ${d.height}">
   <defs>
     <linearGradient id="bg${i}" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -393,16 +393,16 @@ const generate_screenshots = {
     </linearGradient>
   </defs>
   <rect width="${d.width}" height="${d.height}" fill="url(#bg${i})"/>
-  <text x="${d.width/2}" y="${d.height/2}" font-family="system-ui" font-size="${d.width * 0.05}" font-weight="bold" fill="white" text-anchor="middle">${caption}</text>
-  <text x="${d.width/2}" y="${d.height * 0.9}" font-family="system-ui" font-size="${d.width * 0.025}" fill="white" opacity="0.7" text-anchor="middle">${d.name} • ${d.width}x${d.height}</text>
+  <text x="${d.width / 2}" y="${d.height / 2}" font-family="system-ui" font-size="${d.width * 0.05}" font-weight="bold" fill="white" text-anchor="middle">${caption}</text>
+  <text x="${d.width / 2}" y="${d.height * 0.9}" font-family="system-ui" font-size="${d.width * 0.025}" fill="white" opacity="0.7" text-anchor="middle">${d.name} • ${d.width}x${d.height}</text>
 </svg>`;
-        
+
         const filename = `screenshot-${i + 1}-${device}.svg`;
         const filePath = path.join(targetDir, filename);
         fs.writeFileSync(filePath, svg);
         generated.push({ index: i + 1, caption, path: filePath });
       }
-      
+
       return {
         success: true,
         device: d,

@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 /**
  * Windsurf Autopilot - Plugin Tools v2.6
- * 
+ *
  * Plugin system for extending autopilot with custom tools.
  * Install plugins from npm, GitHub, or local directories.
- * 
+ *
  * Tools:
  * - install_plugin: Install a plugin
  * - list_plugins: List installed plugins
@@ -99,75 +99,75 @@ const pluginTools = {
     },
     handler: async (args) => {
       const source = args.source;
-      
+
       try {
         let pluginPath;
         let pluginName = args.name;
         let installType;
-        
+
         // Determine source type
         if (source.startsWith('http') || source.includes('github.com')) {
           // GitHub URL
           installType = 'github';
           pluginName = pluginName || source.split('/').pop().replace('.git', '');
           pluginPath = path.join(PLUGIN_DIR, pluginName);
-          
+
           if (fs.existsSync(pluginPath) && !args.force) {
             return {
               success: false,
               error: `Plugin ${pluginName} already exists. Use force: true to reinstall.`
             };
           }
-          
+
           // Clone from GitHub
           if (fs.existsSync(pluginPath)) {
             fs.rmSync(pluginPath, { recursive: true, force: true });
           }
-          
+
           execSync(`git clone ${source} ${pluginPath}`, { stdio: 'pipe' });
-          
+
           // Install dependencies if package.json exists
           if (fs.existsSync(path.join(pluginPath, 'package.json'))) {
             execSync('npm install --production', { cwd: pluginPath, stdio: 'pipe' });
           }
-          
+
         } else if (fs.existsSync(source)) {
           // Local path
           installType = 'local';
           pluginName = pluginName || path.basename(source);
           pluginPath = path.join(PLUGIN_DIR, pluginName);
-          
+
           if (fs.existsSync(pluginPath) && !args.force) {
             return {
               success: false,
               error: `Plugin ${pluginName} already exists. Use force: true to reinstall.`
             };
           }
-          
+
           // Copy local directory
           if (fs.existsSync(pluginPath)) {
             fs.rmSync(pluginPath, { recursive: true, force: true });
           }
-          
+
           fs.mkdirSync(pluginPath, { recursive: true });
           copyDir(source, pluginPath);
-          
+
         } else {
           // Assume npm package
           installType = 'npm';
           pluginName = pluginName || source.replace(/^@/, '').replace(/\//g, '-');
           pluginPath = path.join(PLUGIN_DIR, pluginName);
-          
+
           if (fs.existsSync(pluginPath) && !args.force) {
             return {
               success: false,
               error: `Plugin ${pluginName} already exists. Use force: true to reinstall.`
             };
           }
-          
+
           // Create directory and install via npm
           fs.mkdirSync(pluginPath, { recursive: true });
-          
+
           // Create minimal package.json
           fs.writeFileSync(path.join(pluginPath, 'package.json'), JSON.stringify({
             name: `autopilot-plugin-${pluginName}`,
@@ -176,15 +176,15 @@ const pluginTools = {
               [source]: args.version || 'latest'
             }
           }, null, 2));
-          
+
           execSync('npm install', { cwd: pluginPath, stdio: 'pipe' });
-          
+
           // Create index.js that re-exports the package
-          fs.writeFileSync(path.join(pluginPath, 'index.js'), 
+          fs.writeFileSync(path.join(pluginPath, 'index.js'),
             `module.exports = require('${source}');`
           );
         }
-        
+
         // Validate plugin structure
         const validation = validatePlugin(pluginPath);
         if (!validation.valid) {
@@ -199,10 +199,10 @@ const pluginTools = {
             }
           };
         }
-        
+
         // Load and register the plugin
         const plugin = loadPlugin(pluginPath);
-        
+
         // Save to registry
         pluginRegistry.set(pluginName, {
           name: pluginName,
@@ -214,7 +214,7 @@ const pluginTools = {
           tools: plugin.tools?.map(t => t.name) || []
         });
         saveRegistry();
-        
+
         return {
           success: true,
           pluginName,
@@ -224,7 +224,7 @@ const pluginTools = {
           tools: plugin.tools?.map(t => ({ name: t.name, description: t.description })) || [],
           message: `Plugin ${pluginName} installed successfully with ${plugin.tools?.length || 0} tools`
         };
-        
+
       } catch (error) {
         return { success: false, error: error.message };
       }
@@ -250,7 +250,7 @@ const pluginTools = {
     handler: async (args) => {
       try {
         const plugins = [];
-        
+
         for (const [name, info] of pluginRegistry) {
           const pluginInfo = {
             name: info.name,
@@ -260,28 +260,28 @@ const pluginTools = {
             installedAt: info.installedAt,
             toolCount: info.tools?.length || 0
           };
-          
+
           // Check if plugin is loaded
           pluginInfo.loaded = loadedPlugins.has(name);
-          
+
           // Include tool details if requested
           if (args.includeTools !== false && info.tools) {
             pluginInfo.tools = info.tools;
           }
-          
+
           // Check if plugin path still exists
           pluginInfo.exists = fs.existsSync(info.path);
-          
+
           plugins.push(pluginInfo);
         }
-        
+
         return {
           success: true,
           count: plugins.length,
           plugins,
           pluginDirectory: PLUGIN_DIR
         };
-        
+
       } catch (error) {
         return { success: false, error: error.message };
       }
@@ -321,7 +321,7 @@ const pluginTools = {
       try {
         const pluginName = args.name;
         const info = pluginRegistry.get(pluginName);
-        
+
         if (!info) {
           return {
             success: false,
@@ -329,7 +329,7 @@ const pluginTools = {
             availablePlugins: Array.from(pluginRegistry.keys())
           };
         }
-        
+
         // Cleanup if plugin has cleanup function
         if (loadedPlugins.has(pluginName)) {
           const plugin = loadedPlugins.get(pluginName);
@@ -342,22 +342,22 @@ const pluginTools = {
           }
           loadedPlugins.delete(pluginName);
         }
-        
+
         // Remove plugin directory
         if (fs.existsSync(info.path)) {
           fs.rmSync(info.path, { recursive: true, force: true });
         }
-        
+
         // Remove from registry
         pluginRegistry.delete(pluginName);
         saveRegistry();
-        
+
         return {
           success: true,
           pluginName,
           message: `Plugin ${pluginName} uninstalled successfully`
         };
-        
+
       } catch (error) {
         return { success: false, error: error.message };
       }
@@ -394,16 +394,16 @@ const pluginTools = {
         const pluginName = args.name.replace(/[^a-zA-Z0-9-_]/g, '-');
         const outputPath = args.outputPath || process.cwd();
         const pluginPath = path.join(outputPath, `autopilot-plugin-${pluginName}`);
-        
+
         if (fs.existsSync(pluginPath)) {
           return {
             success: false,
             error: `Directory already exists: ${pluginPath}`
           };
         }
-        
+
         fs.mkdirSync(pluginPath, { recursive: true });
-        
+
         // Create package.json
         const packageJson = {
           name: `autopilot-plugin-${pluginName}`,
@@ -421,7 +421,7 @@ const pluginTools = {
           path.join(pluginPath, 'package.json'),
           JSON.stringify(packageJson, null, 2)
         );
-        
+
         // Create tool templates
         const toolNames = args.tools || ['example_tool'];
         const toolTemplates = toolNames.map(name => `
@@ -454,7 +454,7 @@ const pluginTools = {
       }
     }
   }`).join(',\n');
-        
+
         // Create index.js
         const indexJs = `#!/usr/bin/env node
 /**
@@ -504,7 +504,7 @@ const plugin = {
 module.exports = plugin;
 `;
         fs.writeFileSync(path.join(pluginPath, 'index.js'), indexJs);
-        
+
         // Create README
         const readme = `# Autopilot Plugin: ${pluginName}
 
@@ -534,7 +534,7 @@ ${toolNames.map(t => `- \`${t}\`: Description`).join('\n')}
 MIT
 `;
         fs.writeFileSync(path.join(pluginPath, 'README.md'), readme);
-        
+
         return {
           success: true,
           pluginName,
@@ -547,7 +547,7 @@ MIT
             `Run: install_plugin with source: "${pluginPath}"`
           ]
         };
-        
+
       } catch (error) {
         return { success: false, error: error.message };
       }
@@ -555,7 +555,7 @@ MIT
   },
 
   // Get all tool definitions for registration
-  getToolDefinitions: function() {
+  getToolDefinitions: function () {
     return [
       { name: this.install_plugin.name, description: this.install_plugin.description, inputSchema: this.install_plugin.inputSchema },
       { name: this.list_plugins.name, description: this.list_plugins.description, inputSchema: this.list_plugins.inputSchema },
@@ -565,18 +565,18 @@ MIT
   },
 
   // Get handler for a tool
-  getHandler: function(toolName) {
+  getHandler: function (toolName) {
     const tool = this[toolName];
     return tool ? tool.handler : null;
   },
 
   // Get all loaded plugins
-  getLoadedPlugins: function() {
+  getLoadedPlugins: function () {
     return loadedPlugins;
   },
 
   // Get all plugin tools for registration with main server
-  getAllPluginTools: function() {
+  getAllPluginTools: function () {
     const allTools = [];
     for (const [name, plugin] of loadedPlugins) {
       if (plugin.tools) {
@@ -592,10 +592,10 @@ MIT
   },
 
   // Load all installed plugins
-  loadAllPlugins: async function() {
+  loadAllPlugins: async function () {
     const loaded = [];
     const failed = [];
-    
+
     for (const [name, info] of pluginRegistry) {
       if (fs.existsSync(info.path)) {
         try {
@@ -606,7 +606,7 @@ MIT
         }
       }
     }
-    
+
     return { loaded, failed };
   }
 };
@@ -617,7 +617,7 @@ MIT
 function validatePlugin(pluginPath) {
   // Check for index.js or package.json main
   let mainFile = path.join(pluginPath, 'index.js');
-  
+
   if (!fs.existsSync(mainFile)) {
     const pkgPath = path.join(pluginPath, 'package.json');
     if (fs.existsSync(pkgPath)) {
@@ -629,32 +629,32 @@ function validatePlugin(pluginPath) {
       } catch (e) {}
     }
   }
-  
+
   if (!fs.existsSync(mainFile)) {
     return { valid: false, error: 'No index.js or main file found' };
   }
-  
+
   // Try to load and check exports
   try {
     const plugin = require(mainFile);
-    
+
     if (!plugin.name) {
       return { valid: false, error: 'Plugin must export a name' };
     }
-    
+
     if (!plugin.tools || !Array.isArray(plugin.tools)) {
       return { valid: false, error: 'Plugin must export a tools array' };
     }
-    
+
     // Validate each tool
     for (const tool of plugin.tools) {
       if (!tool.name || !tool.handler) {
         return { valid: false, error: `Tool missing name or handler: ${tool.name || 'unknown'}` };
       }
     }
-    
+
     return { valid: true };
-    
+
   } catch (e) {
     return { valid: false, error: `Failed to load plugin: ${e.message}` };
   }
@@ -665,7 +665,7 @@ function validatePlugin(pluginPath) {
  */
 function loadPlugin(pluginPath) {
   let mainFile = path.join(pluginPath, 'index.js');
-  
+
   const pkgPath = path.join(pluginPath, 'package.json');
   if (fs.existsSync(pkgPath)) {
     try {
@@ -675,12 +675,12 @@ function loadPlugin(pluginPath) {
       }
     } catch (e) {}
   }
-  
+
   // Clear require cache
   delete require.cache[require.resolve(mainFile)];
-  
+
   const plugin = require(mainFile);
-  
+
   // Call init if exists
   if (plugin.init) {
     plugin.init({
@@ -688,7 +688,7 @@ function loadPlugin(pluginPath) {
       config: {}
     });
   }
-  
+
   loadedPlugins.set(plugin.name, plugin);
   return plugin;
 }
@@ -699,11 +699,11 @@ function loadPlugin(pluginPath) {
 function copyDir(src, dest) {
   fs.mkdirSync(dest, { recursive: true });
   const entries = fs.readdirSync(src, { withFileTypes: true });
-  
+
   for (const entry of entries) {
     const srcPath = path.join(src, entry.name);
     const destPath = path.join(dest, entry.name);
-    
+
     if (entry.isDirectory()) {
       copyDir(srcPath, destPath);
     } else {

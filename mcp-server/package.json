@@ -1,7 +1,7 @@
 {
   "name": "@windsurf-vibe/autopilot-mcp",
-  "version": "3.0.0",
-  "description": "Autopilot MCP Server v3.0 ENTERPRISE - 120+ Tools, Zero-code task completion for Windsurf",
+  "version": "3.2.0",
+  "description": "Autopilot MCP Server v3.2 VIBE CODER EXPERIENCE - 195+ Tools, Zero-code task completion for Windsurf",
   "main": "src/index.js",
   "bin": {
     "windsurf-autopilot": "./src/index.js"

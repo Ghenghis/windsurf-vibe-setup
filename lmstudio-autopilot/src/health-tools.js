@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * Windsurf Autopilot - Health Check Tools v3.0
- * 
+ *
  * System health monitoring and diagnostics.
  */
 
@@ -10,7 +10,7 @@ const path = require('path');
 const { execSync } = require('child_process');
 
 const healthTools = {
-  
+
   // Health check for the autopilot system
   autopilot_health: {
     name: 'autopilot_health',
@@ -67,7 +67,9 @@ const healthTools = {
       for (const mod of modules) {
         const modPath = path.join(__dirname, mod);
         const exists = fs.existsSync(modPath);
-        if (exists) modulesPassing++;
+        if (exists) {
+          modulesPassing++;
+        }
         if (verbose) {
           results.checks.push({
             name: `Module: ${mod}`,
@@ -89,7 +91,7 @@ const healthTools = {
       const dataDir = process.platform === 'win32'
         ? path.join(process.env.APPDATA || '', 'WindsurfAutopilot')
         : path.join(process.env.HOME || '', '.windsurf-autopilot');
-      
+
       const dataDirExists = fs.existsSync(dataDir);
       results.checks.push({
         name: 'Data Directory',
@@ -156,8 +158,11 @@ const healthTools = {
         total: results.checks.length
       };
 
-      if (failCount > 0) results.status = 'unhealthy';
-      else if (warnCount > 0) results.status = 'degraded';
+      if (failCount > 0) {
+        results.status = 'unhealthy';
+      } else if (warnCount > 0) {
+        results.status = 'degraded';
+      }
 
       return results;
     }

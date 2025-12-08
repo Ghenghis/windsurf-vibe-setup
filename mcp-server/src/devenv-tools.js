@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * Windsurf Autopilot - Dev Environment Tools v3.1
- * 
+ *
  * Devcontainer, Codespaces, and Gitpod configuration generators.
  */
 
@@ -95,7 +95,7 @@ const devenvTools = {
       if (services.length > 0) {
         const composeContent = generateDockerCompose(services, image);
         fs.writeFileSync(path.join(devcontainerDir, 'docker-compose.yml'), composeContent);
-        
+
         const dockerfile = `FROM ${image}\n# Custom setup here\n`;
         fs.writeFileSync(path.join(devcontainerDir, 'Dockerfile'), dockerfile);
 
@@ -154,10 +154,16 @@ const devenvTools = {
         storage: '32gb'
       };
 
-      if (!devcontainer.customizations) devcontainer.customizations = {};
-      if (!devcontainer.customizations.vscode) devcontainer.customizations.vscode = {};
-      if (!devcontainer.customizations.vscode.extensions) devcontainer.customizations.vscode.extensions = [];
-      
+      if (!devcontainer.customizations) {
+        devcontainer.customizations = {};
+      }
+      if (!devcontainer.customizations.vscode) {
+        devcontainer.customizations.vscode = {};
+      }
+      if (!devcontainer.customizations.vscode.extensions) {
+        devcontainer.customizations.vscode.extensions = [];
+      }
+
       devcontainer.customizations.vscode.extensions.push('GitHub.copilot', 'GitHub.vscode-pull-request-github');
 
       if (secrets.length > 0) {
@@ -172,7 +178,9 @@ const devenvTools = {
       // Create prebuild workflow if enabled
       if (prebuild) {
         const githubDir = path.join(projectPath, '.github', 'workflows');
-        if (!fs.existsSync(githubDir)) fs.mkdirSync(githubDir, { recursive: true });
+        if (!fs.existsSync(githubDir)) {
+          fs.mkdirSync(githubDir, { recursive: true });
+        }
 
         const workflow = `name: Codespaces Prebuild
 on:
@@ -239,7 +247,7 @@ jobs:
 
       // Build .gitpod.yml content
       let gitpodYml = '';
-      
+
       if (image) {
         gitpodYml += `image: ${image}\n\n`;
       }
@@ -247,16 +255,24 @@ jobs:
       gitpodYml += 'tasks:\n';
       for (const task of tasks) {
         gitpodYml += `  - name: ${task.name || 'Task'}\n`;
-        if (task.init) gitpodYml += `    init: ${task.init}\n`;
-        if (task.command) gitpodYml += `    command: ${task.command}\n`;
+        if (task.init) {
+          gitpodYml += `    init: ${task.init}\n`;
+        }
+        if (task.command) {
+          gitpodYml += `    command: ${task.command}\n`;
+        }
       }
 
       if (ports && ports.length > 0) {
         gitpodYml += '\nports:\n';
         for (const port of ports) {
           gitpodYml += `  - port: ${port.port || port}\n`;
-          if (port.onOpen) gitpodYml += `    onOpen: ${port.onOpen}\n`;
-          if (port.visibility) gitpodYml += `    visibility: ${port.visibility}\n`;
+          if (port.onOpen) {
+            gitpodYml += `    onOpen: ${port.onOpen}\n`;
+          }
+          if (port.visibility) {
+            gitpodYml += `    visibility: ${port.visibility}\n`;
+          }
         }
       }
 

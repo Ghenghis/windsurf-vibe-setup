@@ -20,17 +20,17 @@ const https = require('https');
 // Helper: Safe command execution
 function safeExec(command, options = {}) {
   try {
-    const output = execSync(command, { 
-      encoding: 'utf8', 
+    const output = execSync(command, {
+      encoding: 'utf8',
       timeout: options.timeout || 60000,
       maxBuffer: 10 * 1024 * 1024,
       windowsHide: true,
-      ...options 
+      ...options
     }).toString().trim();
     return { success: true, output, exitCode: 0 };
   } catch (e) {
-    return { 
-      success: false, 
+    return {
+      success: false,
       error: e.message,
       output: e.stdout?.toString() || '',
       stderr: e.stderr?.toString() || '',
@@ -72,16 +72,20 @@ async function analyzeProject({ projectPath }) {
   // Detect files
   const files = [];
   const directories = [];
-  
+
   function scanDir(dir, depth = 0) {
-    if (depth > 3) return;
+    if (depth > 3) {
+      return;
+    }
     try {
       const entries = fs.readdirSync(dir, { withFileTypes: true });
       for (const entry of entries) {
-        if (entry.name === 'node_modules' || entry.name === '.git' || entry.name === '__pycache__') continue;
+        if (entry.name === 'node_modules' || entry.name === '.git' || entry.name === '__pycache__') {
+          continue;
+        }
         const fullPath = path.join(dir, entry.name);
         const relativePath = path.relative(projectPath, fullPath);
-        
+
         if (entry.isDirectory()) {
           directories.push(relativePath);
           scanDir(fullPath, depth + 1);
@@ -91,7 +95,7 @@ async function analyzeProject({ projectPath }) {
       }
     } catch {}
   }
-  
+
   scanDir(projectPath);
   analysis.structure = { directories, files: files.slice(0, 100), totalFiles: files.length };
 
@@ -107,7 +111,7 @@ async function analyzeProject({ projectPath }) {
     'src/App.jsx', 'src/App.tsx', 'pages/index.js', 'pages/index.tsx',
     'app/page.tsx', 'app/page.js'
   ];
-  
+
   for (const entry of entryPoints) {
     if (fs.existsSync(path.join(projectPath, entry))) {
       analysis.entryPoints.push(entry);
@@ -120,7 +124,7 @@ async function analyzeProject({ projectPath }) {
     try {
       const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf8'));
       analysis.scripts = pkg.scripts || {};
-      
+
       // Parse dependencies
       if (pkg.dependencies) {
         analysis.dependencies.production = Object.keys(pkg.dependencies);
@@ -183,68 +187,142 @@ async function detectTechStack({ projectPath }) {
     'package.json': () => {
       const pkg = JSON.parse(fs.readFileSync(path.join(projectPath, 'package.json'), 'utf8'));
       const allDeps = { ...pkg.dependencies, ...pkg.devDependencies };
-      
-      if (allDeps.next) { technologies.push('Next.js'); projectType = 'nextjs'; }
-      if (allDeps.react) { technologies.push('React'); if (!projectType.includes('next')) projectType = 'react'; }
-      if (allDeps.vue) { technologies.push('Vue.js'); projectType = 'vue'; }
-      if (allDeps.angular) { technologies.push('Angular'); projectType = 'angular'; }
-      if (allDeps.express) { technologies.push('Express'); projectType = 'node-backend'; }
-      if (allDeps.fastify) { technologies.push('Fastify'); projectType = 'node-backend'; }
-      if (allDeps.nest) { technologies.push('NestJS'); projectType = 'nestjs'; }
-      if (allDeps.typescript) technologies.push('TypeScript');
-      if (allDeps.tailwindcss) technologies.push('Tailwind CSS');
-      if (allDeps.prisma) technologies.push('Prisma');
-      if (allDeps.mongoose) technologies.push('MongoDB/Mongoose');
-      if (allDeps.jest || allDeps.vitest || allDeps.mocha) technologies.push('Testing Framework');
-      if (allDeps.eslint) technologies.push('ESLint');
-      if (allDeps.prettier) technologies.push('Prettier');
-      
+
+      if (allDeps.next) {
+        technologies.push('Next.js'); projectType = 'nextjs';
+      }
+      if (allDeps.react) {
+        technologies.push('React'); if (!projectType.includes('next')) {
+          projectType = 'react';
+        }
+      }
+      if (allDeps.vue) {
+        technologies.push('Vue.js'); projectType = 'vue';
+      }
+      if (allDeps.angular) {
+        technologies.push('Angular'); projectType = 'angular';
+      }
+      if (allDeps.express) {
+        technologies.push('Express'); projectType = 'node-backend';
+      }
+      if (allDeps.fastify) {
+        technologies.push('Fastify'); projectType = 'node-backend';
+      }
+      if (allDeps.nest) {
+        technologies.push('NestJS'); projectType = 'nestjs';
+      }
+      if (allDeps.typescript) {
+        technologies.push('TypeScript');
+      }
+      if (allDeps.tailwindcss) {
+        technologies.push('Tailwind CSS');
+      }
+      if (allDeps.prisma) {
+        technologies.push('Prisma');
+      }
+      if (allDeps.mongoose) {
+        technologies.push('MongoDB/Mongoose');
+      }
+      if (allDeps.jest || allDeps.vitest || allDeps.mocha) {
+        technologies.push('Testing Framework');
+      }
+      if (allDeps.eslint) {
+        technologies.push('ESLint');
+      }
+      if (allDeps.prettier) {
+        technologies.push('Prettier');
+      }
+
       return true;
     },
-    
+
     // Python
     'requirements.txt': () => {
       const content = fs.readFileSync(path.join(projectPath, 'requirements.txt'), 'utf8').toLowerCase();
       technologies.push('Python');
       projectType = 'python';
-      
-      if (content.includes('fastapi')) { technologies.push('FastAPI'); projectType = 'python-api'; }
-      if (content.includes('django')) { technologies.push('Django'); projectType = 'django'; }
-      if (content.includes('flask')) { technologies.push('Flask'); projectType = 'flask'; }
-      if (content.includes('pytorch') || content.includes('torch')) technologies.push('PyTorch');
-      if (content.includes('tensorflow')) technologies.push('TensorFlow');
-      if (content.includes('pandas')) technologies.push('Pandas');
-      if (content.includes('pytest')) technologies.push('Pytest');
-      
+
+      if (content.includes('fastapi')) {
+        technologies.push('FastAPI'); projectType = 'python-api';
+      }
+      if (content.includes('django')) {
+        technologies.push('Django'); projectType = 'django';
+      }
+      if (content.includes('flask')) {
+        technologies.push('Flask'); projectType = 'flask';
+      }
+      if (content.includes('pytorch') || content.includes('torch')) {
+        technologies.push('PyTorch');
+      }
+      if (content.includes('tensorflow')) {
+        technologies.push('TensorFlow');
+      }
+      if (content.includes('pandas')) {
+        technologies.push('Pandas');
+      }
+      if (content.includes('pytest')) {
+        technologies.push('Pytest');
+      }
+
       return true;
     },
-    
+
     'pyproject.toml': () => {
       technologies.push('Python');
       projectType = 'python';
       return true;
     },
-    
+
     // Docker
-    'Dockerfile': () => { technologies.push('Docker'); return true; },
-    'docker-compose.yml': () => { technologies.push('Docker Compose'); return true; },
-    'docker-compose.yaml': () => { technologies.push('Docker Compose'); return true; },
-    
+    'Dockerfile': () => {
+      technologies.push('Docker'); return true;
+    },
+    'docker-compose.yml': () => {
+      technologies.push('Docker Compose'); return true;
+    },
+    'docker-compose.yaml': () => {
+      technologies.push('Docker Compose'); return true;
+    },
+
     // Config files
-    'tsconfig.json': () => { technologies.push('TypeScript'); return true; },
-    'tailwind.config.js': () => { technologies.push('Tailwind CSS'); return true; },
-    'tailwind.config.ts': () => { technologies.push('Tailwind CSS'); return true; },
-    '.eslintrc.json': () => { technologies.push('ESLint'); return true; },
-    '.prettierrc': () => { technologies.push('Prettier'); return true; },
-    'vite.config.js': () => { technologies.push('Vite'); return true; },
-    'vite.config.ts': () => { technologies.push('Vite'); return true; },
-    'webpack.config.js': () => { technologies.push('Webpack'); return true; },
-    
+    'tsconfig.json': () => {
+      technologies.push('TypeScript'); return true;
+    },
+    'tailwind.config.js': () => {
+      technologies.push('Tailwind CSS'); return true;
+    },
+    'tailwind.config.ts': () => {
+      technologies.push('Tailwind CSS'); return true;
+    },
+    '.eslintrc.json': () => {
+      technologies.push('ESLint'); return true;
+    },
+    '.prettierrc': () => {
+      technologies.push('Prettier'); return true;
+    },
+    'vite.config.js': () => {
+      technologies.push('Vite'); return true;
+    },
+    'vite.config.ts': () => {
+      technologies.push('Vite'); return true;
+    },
+    'webpack.config.js': () => {
+      technologies.push('Webpack'); return true;
+    },
+
     // Other
-    'Cargo.toml': () => { technologies.push('Rust'); projectType = 'rust'; return true; },
-    'go.mod': () => { technologies.push('Go'); projectType = 'go'; return true; },
-    'pom.xml': () => { technologies.push('Java/Maven'); projectType = 'java'; return true; },
-    'build.gradle': () => { technologies.push('Java/Gradle'); projectType = 'java'; return true; },
+    'Cargo.toml': () => {
+      technologies.push('Rust'); projectType = 'rust'; return true;
+    },
+    'go.mod': () => {
+      technologies.push('Go'); projectType = 'go'; return true;
+    },
+    'pom.xml': () => {
+      technologies.push('Java/Maven'); projectType = 'java'; return true;
+    },
+    'build.gradle': () => {
+      technologies.push('Java/Gradle'); projectType = 'java'; return true;
+    }
   };
 
   for (const [file, check] of Object.entries(checks)) {
@@ -258,27 +336,41 @@ async function detectTechStack({ projectPath }) {
   // File extension analysis
   const extensions = {};
   function countExtensions(dir, depth = 0) {
-    if (depth > 2) return;
+    if (depth > 2) {
+      return;
+    }
     try {
       const entries = fs.readdirSync(dir, { withFileTypes: true });
       for (const entry of entries) {
-        if (entry.name === 'node_modules' || entry.name === '.git') continue;
+        if (entry.name === 'node_modules' || entry.name === '.git') {
+          continue;
+        }
         const fullPath = path.join(dir, entry.name);
         if (entry.isDirectory()) {
           countExtensions(fullPath, depth + 1);
         } else {
           const ext = path.extname(entry.name).toLowerCase();
-          if (ext) extensions[ext] = (extensions[ext] || 0) + 1;
+          if (ext) {
+            extensions[ext] = (extensions[ext] || 0) + 1;
+          }
         }
       }
     } catch {}
   }
   countExtensions(projectPath);
 
-  if (extensions['.ts'] || extensions['.tsx']) technologies.push('TypeScript');
-  if (extensions['.jsx']) technologies.push('JSX');
-  if (extensions['.vue']) technologies.push('Vue SFC');
-  if (extensions['.svelte']) { technologies.push('Svelte'); projectType = 'svelte'; }
+  if (extensions['.ts'] || extensions['.tsx']) {
+    technologies.push('TypeScript');
+  }
+  if (extensions['.jsx']) {
+    technologies.push('JSX');
+  }
+  if (extensions['.vue']) {
+    technologies.push('Vue SFC');
+  }
+  if (extensions['.svelte']) {
+    technologies.push('Svelte'); projectType = 'svelte';
+  }
 
   return {
     success: true,
@@ -382,12 +474,12 @@ async function analyzeError({ error, context, projectPath }) {
           cause: `Port ${port} is already in use`,
           fixes: [
             `Kill process using port ${port}`,
-            `Use a different port`,
+            'Use a different port',
             'Check for other running servers'
           ],
           canAutoFix: true,
-          autoFixCommand: process.platform === 'win32' 
-            ? `netstat -ano | findstr :${port}` 
+          autoFixCommand: process.platform === 'win32'
+            ? `netstat -ano | findstr :${port}`
             : `lsof -i :${port}`
         };
       }
@@ -492,10 +584,10 @@ async function analyzeError({ error, context, projectPath }) {
  */
 async function smartRetry({ command, cwd, maxAttempts = 3, strategies = ['retry', 'clear_cache', 'reinstall'] }) {
   const results = [];
-  
+
   for (let attempt = 1; attempt <= maxAttempts; attempt++) {
     const strategy = strategies[Math.min(attempt - 1, strategies.length - 1)];
-    
+
     let cmdToRun = command;
     let preCommand = null;
 
@@ -524,7 +616,7 @@ async function smartRetry({ command, cwd, maxAttempts = 3, strategies = ['retry'
 
     // Run the main command
     const result = safeExec(cmdToRun, { cwd, timeout: 120000 });
-    
+
     results.push({
       attempt,
       strategy,
@@ -563,7 +655,7 @@ async function httpRequest({ url, method = 'GET', headers = {}, body = null, tim
     try {
       const urlObj = new URL(url);
       const lib = urlObj.protocol === 'https:' ? https : http;
-      
+
       const options = {
         hostname: urlObj.hostname,
         port: urlObj.port || (urlObj.protocol === 'https:' ? 443 : 80),
@@ -616,7 +708,7 @@ async function httpRequest({ url, method = 'GET', headers = {}, body = null, tim
       if (body && method !== 'GET') {
         req.write(typeof body === 'string' ? body : JSON.stringify(body));
       }
-      
+
       req.end();
     } catch (e) {
       resolve({ success: false, error: e.message });
@@ -643,7 +735,7 @@ async function downloadFile({ url, destPath, overwrite = false }) {
       const lib = urlObj.protocol === 'https:' ? https : http;
 
       const file = fs.createWriteStream(destPath);
-      
+
       lib.get(url, (res) => {
         if (res.statusCode === 301 || res.statusCode === 302) {
           // Follow redirect
@@ -684,8 +776,8 @@ async function lintCode({ projectPath, fix = false }) {
   // Check for ESLint
   const eslintConfig = ['.eslintrc.json', '.eslintrc.js', '.eslintrc', 'eslint.config.js']
     .some(f => fs.existsSync(path.join(projectPath, f)));
-  
-  const hasEslint = eslintConfig || 
+
+  const hasEslint = eslintConfig ||
     (fs.existsSync(path.join(projectPath, 'package.json')) &&
      JSON.parse(fs.readFileSync(path.join(projectPath, 'package.json'), 'utf8'))
        .devDependencies?.eslint);
@@ -703,7 +795,7 @@ async function lintCode({ projectPath, fix = false }) {
   // Check for Python linters
   if (fs.existsSync(path.join(projectPath, 'requirements.txt')) ||
       fs.existsSync(path.join(projectPath, 'pyproject.toml'))) {
-    
+
     // Try flake8
     const flake8 = safeExec('python -m flake8 .', { cwd: projectPath, timeout: 60000 });
     if (flake8.success || flake8.output) {
@@ -736,7 +828,7 @@ async function formatCode({ projectPath }) {
 
   // Prettier
   const hasPrettier = fs.existsSync(path.join(projectPath, 'node_modules', '.bin', 'prettier')) ||
-    ['.prettierrc', '.prettierrc.json', 'prettier.config.js'].some(f => 
+    ['.prettierrc', '.prettierrc.json', 'prettier.config.js'].some(f =>
       fs.existsSync(path.join(projectPath, f)));
 
   if (hasPrettier) {
@@ -782,16 +874,22 @@ async function runTests({ projectPath, testFile = null, coverage = false }) {
     }
 
     if (cmd) {
-      if (testFile) cmd += ` ${testFile}`;
+      if (testFile) {
+        cmd += ` ${testFile}`;
+      }
       const result = safeExec(cmd, { cwd: projectPath, timeout: 300000 });
       results.success = result.success;
       results.output = result.output + '\n' + result.stderr;
-      
+
       // Parse test stats from output
       const passMatch = results.output.match(/(\d+)\s*pass/i);
       const failMatch = results.output.match(/(\d+)\s*fail/i);
-      if (passMatch) results.stats.passed = parseInt(passMatch[1]);
-      if (failMatch) results.stats.failed = parseInt(failMatch[1]);
+      if (passMatch) {
+        results.stats.passed = parseInt(passMatch[1]);
+      }
+      if (failMatch) {
+        results.stats.failed = parseInt(failMatch[1]);
+      }
     }
   }
 
@@ -799,11 +897,13 @@ async function runTests({ projectPath, testFile = null, coverage = false }) {
   if (fs.existsSync(path.join(projectPath, 'requirements.txt')) ||
       fs.existsSync(path.join(projectPath, 'pytest.ini')) ||
       fs.existsSync(path.join(projectPath, 'tests'))) {
-    
+
     results.framework = 'Pytest';
     let cmd = coverage ? 'python -m pytest --cov' : 'python -m pytest';
-    if (testFile) cmd += ` ${testFile}`;
-    
+    if (testFile) {
+      cmd += ` ${testFile}`;
+    }
+
     const result = safeExec(cmd, { cwd: projectPath, timeout: 300000 });
     results.success = result.success;
     results.output = result.output + '\n' + result.stderr;
@@ -825,13 +925,13 @@ async function runTests({ projectPath, testFile = null, coverage = false }) {
  */
 async function startServer({ projectPath, script = 'dev', port = null }) {
   const pkgPath = path.join(projectPath, 'package.json');
-  
+
   if (!fs.existsSync(pkgPath)) {
     return { success: false, error: 'No package.json found' };
   }
 
   const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf8'));
-  
+
   // Find appropriate script
   const scriptToRun = pkg.scripts?.[script] || pkg.scripts?.start || pkg.scripts?.dev;
   if (!scriptToRun) {
@@ -840,8 +940,8 @@ async function startServer({ projectPath, script = 'dev', port = null }) {
 
   // Start the process
   const shell = process.platform === 'win32' ? 'cmd.exe' : '/bin/bash';
-  const shellArgs = process.platform === 'win32' 
-    ? ['/c', `npm run ${script}`] 
+  const shellArgs = process.platform === 'win32'
+    ? ['/c', `npm run ${script}`]
     : ['-c', `npm run ${script}`];
 
   const proc = spawn(shell, shellArgs, {
@@ -927,7 +1027,7 @@ async function listRunning() {
 async function dockerStatus() {
   const docker = safeExec('docker --version');
   const compose = safeExec('docker compose version') || safeExec('docker-compose --version');
-  
+
   if (!docker.success) {
     return { success: false, installed: false, error: 'Docker not installed' };
   }
@@ -956,9 +1056,9 @@ async function dockerBuild({ projectPath, tag = null, dockerfile = 'Dockerfile' 
 
   const imageName = tag || path.basename(projectPath).toLowerCase();
   const cmd = `docker build -t ${imageName} -f ${dockerfile} .`;
-  
+
   const result = safeExec(cmd, { cwd: projectPath, timeout: 600000 });
-  
+
   return {
     success: result.success,
     image: imageName,
@@ -972,10 +1072,18 @@ async function dockerBuild({ projectPath, tag = null, dockerfile = 'Dockerfile' 
  */
 async function dockerRun({ image, name = null, ports = [], env = {}, detach = true }) {
   let cmd = 'docker run';
-  if (detach) cmd += ' -d';
-  if (name) cmd += ` --name ${name}`;
-  for (const port of ports) cmd += ` -p ${port}`;
-  for (const [key, val] of Object.entries(env)) cmd += ` -e ${key}=${val}`;
+  if (detach) {
+    cmd += ' -d';
+  }
+  if (name) {
+    cmd += ` --name ${name}`;
+  }
+  for (const port of ports) {
+    cmd += ` -p ${port}`;
+  }
+  for (const [key, val] of Object.entries(env)) {
+    cmd += ` -e ${key}=${val}`;
+  }
   cmd += ` ${image}`;
 
   const result = safeExec(cmd, { timeout: 60000 });
@@ -993,14 +1101,18 @@ async function dockerRun({ image, name = null, ports = [], env = {}, detach = tr
 async function dockerComposeUp({ projectPath, detach = true, build = false }) {
   const composeFiles = ['docker-compose.yml', 'docker-compose.yaml', 'compose.yml', 'compose.yaml'];
   const hasCompose = composeFiles.some(f => fs.existsSync(path.join(projectPath, f)));
-  
+
   if (!hasCompose) {
     return { success: false, error: 'No docker-compose file found' };
   }
 
   let cmd = 'docker compose up';
-  if (detach) cmd += ' -d';
-  if (build) cmd += ' --build';
+  if (detach) {
+    cmd += ' -d';
+  }
+  if (build) {
+    cmd += ' --build';
+  }
 
   const result = safeExec(cmd, { cwd: projectPath, timeout: 300000 });
 
@@ -1018,27 +1130,27 @@ module.exports = {
   // Project Intelligence
   analyzeProject,
   detectTechStack,
-  
+
   // Error Handling
   analyzeError,
   smartRetry,
-  
+
   // HTTP
   httpRequest,
   downloadFile,
-  
+
   // Code Quality
   lintCode,
   formatCode,
-  
+
   // Testing
   runTests,
-  
+
   // Process Management
   startServer,
   stopServer,
   listRunning,
-  
+
   // Docker
   dockerStatus,
   dockerBuild,

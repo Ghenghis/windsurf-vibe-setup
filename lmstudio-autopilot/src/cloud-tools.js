@@ -12,7 +12,9 @@ const CLOUD_DIR = process.platform === 'win32'
   ? path.join(process.env.APPDATA || '', 'WindsurfAutopilot', 'cloud')
   : path.join(process.env.HOME || '', '.windsurf-autopilot', 'cloud');
 
-if (!fs.existsSync(CLOUD_DIR)) fs.mkdirSync(CLOUD_DIR, { recursive: true });
+if (!fs.existsSync(CLOUD_DIR)) {
+  fs.mkdirSync(CLOUD_DIR, { recursive: true });
+}
 
 // Simulated cloud state (would connect to real service in production)
 let cloudSession = null;
@@ -39,9 +41,9 @@ const cloudTools = {
           email: args.email || 'local@autopilot',
           connectedAt: new Date().toISOString()
         };
-        
+
         fs.writeFileSync(path.join(CLOUD_DIR, 'session.json'), JSON.stringify(cloudSession, null, 2));
-        
+
         return {
           success: true,
           sessionId: cloudSession.id,
@@ -65,18 +67,20 @@ const cloudTools = {
       }
     },
     handler: async (args) => {
-      if (!cloudSession) return { success: false, error: 'Not logged in. Use cloud_login first.' };
-      
+      if (!cloudSession) {
+        return { success: false, error: 'Not logged in. Use cloud_login first.' };
+      }
+
       const direction = args.direction || 'merge';
       const syncFile = path.join(CLOUD_DIR, 'synced_settings.json');
-      
-      let localSettings = {};
+
+      const localSettings = {};
       let cloudSettings = {};
-      
+
       if (fs.existsSync(syncFile)) {
         cloudSettings = JSON.parse(fs.readFileSync(syncFile, 'utf8'));
       }
-      
+
       // Simulated sync
       const result = {
         success: true,
@@ -85,7 +89,7 @@ const cloudTools = {
         itemsSynced: Object.keys(cloudSettings).length,
         message: `Settings ${direction} completed`
       };
-      
+
       fs.writeFileSync(syncFile, JSON.stringify({ ...cloudSettings, lastSync: result.synced }, null, 2));
       return result;
     }
@@ -102,15 +106,17 @@ const cloudTools = {
       }
     },
     handler: async (args) => {
-      if (!cloudSession) return { success: false, error: 'Not logged in' };
-      
+      if (!cloudSession) {
+        return { success: false, error: 'Not logged in' };
+      }
+
       const templatesFile = path.join(CLOUD_DIR, 'templates.json');
       let templates = [];
-      
+
       if (fs.existsSync(templatesFile)) {
         templates = JSON.parse(fs.readFileSync(templatesFile, 'utf8'));
       }
-      
+
       return {
         success: true,
         direction: args.direction || 'pull',
@@ -131,8 +137,10 @@ const cloudTools = {
       }
     },
     handler: async (args) => {
-      if (!cloudSession) return { success: false, error: 'Not logged in' };
-      
+      if (!cloudSession) {
+        return { success: false, error: 'Not logged in' };
+      }
+
       return {
         success: true,
         historySynced: args.limit || 100,
@@ -142,7 +150,7 @@ const cloudTools = {
     }
   },
 
-  getToolDefinitions: function() {
+  getToolDefinitions: function () {
     return [
       { name: this.cloud_login.name, description: this.cloud_login.description, inputSchema: this.cloud_login.inputSchema },
       { name: this.sync_settings.name, description: this.sync_settings.description, inputSchema: this.sync_settings.inputSchema },
@@ -151,7 +159,7 @@ const cloudTools = {
     ];
   },
 
-  getHandler: function(toolName) {
+  getHandler: function (toolName) {
     return this[toolName]?.handler;
   }
 };

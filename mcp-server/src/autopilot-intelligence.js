@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * Autopilot Intelligence Module v1.0
- * 
+ *
  * Provides:
  * 1. AUTOPILOT STATUS INDICATOR - Visual feedback when autopilot is active
  * 2. AI/ML LEARNING ENGINE - Learn from interactions, remember preferences
@@ -19,7 +19,7 @@ const IS_WINDOWS = process.platform === 'win32';
 // ==============================================================================
 // AUTOPILOT STATE - Persistent storage location
 // ==============================================================================
-const AUTOPILOT_DATA_DIR = IS_WINDOWS 
+const AUTOPILOT_DATA_DIR = IS_WINDOWS
   ? path.join(process.env.APPDATA || HOME, 'WindsurfAutopilot')
   : path.join(HOME, '.windsurf-autopilot');
 
@@ -36,10 +36,10 @@ function initDataDir() {
   if (!fs.existsSync(AUTOPILOT_DATA_DIR)) {
     fs.mkdirSync(AUTOPILOT_DATA_DIR, { recursive: true });
   }
-  
+
   // Initialize data files with defaults
   const defaults = {
-    memory: { 
+    memory: {
       version: '1.0',
       createdAt: new Date().toISOString(),
       interactions: [],
@@ -67,7 +67,7 @@ function initDataDir() {
       contexts: {}
     }
   };
-  
+
   Object.entries(DATA_FILES).forEach(([key, filepath]) => {
     if (!fs.existsSync(filepath)) {
       fs.writeFileSync(filepath, JSON.stringify(defaults[key], null, 2));
@@ -105,7 +105,7 @@ function saveData(file, data) {
 // ==============================================================================
 
 // Current autopilot state
-let autopilotState = {
+const autopilotState = {
   active: false,
   currentAction: null,
   startTime: null,
@@ -119,18 +119,18 @@ let autopilotState = {
 function getAutopilotStatus() {
   const history = loadData('history') || { totalActions: 0, sessions: [] };
   const memory = loadData('memory') || { interactions: [], insights: [] };
-  
-  const indicator = autopilotState.active 
+
+  const indicator = autopilotState.active
     ? '🤖 AUTO-PILOT ACTIVE'
     : '🔵 Auto-Pilot Ready';
-  
+
   return {
     indicator,
     active: autopilotState.active,
     currentAction: autopilotState.currentAction,
     sessionStats: {
       actionsThisSession: autopilotState.actionsInSession,
-      sessionDuration: autopilotState.startTime 
+      sessionDuration: autopilotState.startTime
         ? Math.round((Date.now() - autopilotState.startTime) / 1000) + 's'
         : null
     },
@@ -140,7 +140,7 @@ function getAutopilotStatus() {
       totalInteractions: memory.interactions.length,
       insightsLearned: memory.insights.length
     },
-    status: autopilotState.active 
+    status: autopilotState.active
       ? `Currently executing: ${autopilotState.currentAction}`
       : 'Waiting for your request...',
     message: getAutopilotMessage()
@@ -153,9 +153,9 @@ function getAutopilotStatus() {
 function getAutopilotMessage() {
   const memory = loadData('memory') || { interactions: [] };
   const prefs = loadData('preferences') || { userPreferences: {} };
-  
+
   const totalInteractions = memory.interactions.length;
-  
+
   if (totalInteractions === 0) {
     return "👋 Welcome! I'm your AI Autopilot. Just tell me what you want to build!";
   } else if (totalInteractions < 10) {
@@ -175,10 +175,10 @@ function startAction(actionName, params = {}) {
   autopilotState.currentAction = actionName;
   autopilotState.lastActionTime = Date.now();
   autopilotState.actionsInSession++;
-  
+
   if (!autopilotState.startTime) {
     autopilotState.startTime = Date.now();
-    
+
     // Record new session
     const history = loadData('history') || { sessions: [], totalActions: 0 };
     history.sessions.push({
@@ -188,10 +188,10 @@ function startAction(actionName, params = {}) {
     });
     saveData('history', history);
   }
-  
+
   // Record interaction for learning
   recordInteraction(actionName, params, 'started');
-  
+
   return {
     indicator: '🤖 AUTO-PILOT ACTIVE',
     action: actionName,
@@ -205,22 +205,22 @@ function startAction(actionName, params = {}) {
 function endAction(actionName, result, success = true) {
   autopilotState.active = false;
   autopilotState.currentAction = null;
-  
+
   // Update total actions
   const history = loadData('history') || { sessions: [], totalActions: 0 };
   history.totalActions++;
   saveData('history', history);
-  
+
   // Record result for learning
   recordInteraction(actionName, { result }, success ? 'completed' : 'failed');
-  
+
   // Learn from the interaction
   if (success) {
     learnFromSuccess(actionName, result);
   } else {
     learnFromFailure(actionName, result);
   }
-  
+
   return {
     indicator: '✅ Action Complete',
     action: actionName,
@@ -237,7 +237,7 @@ function endAction(actionName, result, success = true) {
  */
 function recordInteraction(action, params, status) {
   const memory = loadData('memory') || { interactions: [], insights: [] };
-  
+
   memory.interactions.push({
     timestamp: new Date().toISOString(),
     action,
@@ -245,12 +245,12 @@ function recordInteraction(action, params, status) {
     status,
     platform: process.platform
   });
-  
+
   // Keep last 1000 interactions
   if (memory.interactions.length > 1000) {
     memory.interactions = memory.interactions.slice(-1000);
   }
-  
+
   saveData('memory', memory);
 }
 
@@ -260,13 +260,13 @@ function recordInteraction(action, params, status) {
 function sanitizeParams(params) {
   const sanitized = { ...params };
   const sensitiveKeys = ['password', 'token', 'secret', 'key', 'auth', 'credential'];
-  
+
   Object.keys(sanitized).forEach(key => {
     if (sensitiveKeys.some(sk => key.toLowerCase().includes(sk))) {
       sanitized[key] = '[REDACTED]';
     }
   });
-  
+
   return sanitized;
 }
 
@@ -275,7 +275,7 @@ function sanitizeParams(params) {
  */
 function learnFromSuccess(action, result) {
   const patterns = loadData('patterns') || { successPatterns: [], errorPatterns: [], workflows: [] };
-  
+
   // Record success pattern
   const existingPattern = patterns.successPatterns.find(p => p.action === action);
   if (existingPattern) {
@@ -289,7 +289,7 @@ function learnFromSuccess(action, result) {
       lastSuccess: new Date().toISOString()
     });
   }
-  
+
   saveData('patterns', patterns);
 }
 
@@ -298,14 +298,14 @@ function learnFromSuccess(action, result) {
  */
 function learnFromFailure(action, result) {
   const patterns = loadData('patterns') || { successPatterns: [], errorPatterns: [], workflows: [] };
-  
+
   const errorMessage = typeof result === 'string' ? result : result?.error || result?.message || 'Unknown error';
-  
+
   // Record error pattern
-  const existingPattern = patterns.errorPatterns.find(p => 
+  const existingPattern = patterns.errorPatterns.find(p =>
     p.action === action && p.errorType === categorizeError(errorMessage)
   );
-  
+
   if (existingPattern) {
     existingPattern.count++;
     existingPattern.lastOccurrence = new Date().toISOString();
@@ -320,7 +320,7 @@ function learnFromFailure(action, result) {
       suggestedFix: suggestFix(errorMessage)
     });
   }
-  
+
   saveData('patterns', patterns);
 }
 
@@ -329,16 +329,32 @@ function learnFromFailure(action, result) {
  */
 function categorizeError(error) {
   const errorLower = error.toLowerCase();
-  
-  if (errorLower.includes('enoent') || errorLower.includes('not found')) return 'FILE_NOT_FOUND';
-  if (errorLower.includes('permission') || errorLower.includes('eacces')) return 'PERMISSION_DENIED';
-  if (errorLower.includes('network') || errorLower.includes('econnrefused')) return 'NETWORK_ERROR';
-  if (errorLower.includes('timeout')) return 'TIMEOUT';
-  if (errorLower.includes('syntax')) return 'SYNTAX_ERROR';
-  if (errorLower.includes('npm err')) return 'NPM_ERROR';
-  if (errorLower.includes('git')) return 'GIT_ERROR';
-  if (errorLower.includes('python') || errorLower.includes('pip')) return 'PYTHON_ERROR';
-  
+
+  if (errorLower.includes('enoent') || errorLower.includes('not found')) {
+    return 'FILE_NOT_FOUND';
+  }
+  if (errorLower.includes('permission') || errorLower.includes('eacces')) {
+    return 'PERMISSION_DENIED';
+  }
+  if (errorLower.includes('network') || errorLower.includes('econnrefused')) {
+    return 'NETWORK_ERROR';
+  }
+  if (errorLower.includes('timeout')) {
+    return 'TIMEOUT';
+  }
+  if (errorLower.includes('syntax')) {
+    return 'SYNTAX_ERROR';
+  }
+  if (errorLower.includes('npm err')) {
+    return 'NPM_ERROR';
+  }
+  if (errorLower.includes('git')) {
+    return 'GIT_ERROR';
+  }
+  if (errorLower.includes('python') || errorLower.includes('pip')) {
+    return 'PYTHON_ERROR';
+  }
+
   return 'UNKNOWN';
 }
 
@@ -347,7 +363,7 @@ function categorizeError(error) {
  */
 function suggestFix(error) {
   const errorType = categorizeError(error);
-  
+
   const fixes = {
     'FILE_NOT_FOUND': 'Check if the file/directory exists. Create it if needed.',
     'PERMISSION_DENIED': 'Run with elevated permissions or check file ownership.',
@@ -359,7 +375,7 @@ function suggestFix(error) {
     'PYTHON_ERROR': 'Check Python version and virtual environment.',
     'UNKNOWN': 'Check error details and logs for more information.'
   };
-  
+
   return fixes[errorType] || fixes['UNKNOWN'];
 }
 
@@ -372,13 +388,13 @@ function suggestFix(error) {
  */
 function saveProjectContext(projectPath, context) {
   const projects = loadData('projects') || { contexts: {} };
-  
+
   projects.contexts[projectPath] = {
     ...context,
     lastAccessed: new Date().toISOString(),
     accessCount: (projects.contexts[projectPath]?.accessCount || 0) + 1
   };
-  
+
   saveData('projects', projects);
 }
 
@@ -421,14 +437,14 @@ function getSuggestions(currentAction, projectPath) {
   const patterns = loadData('patterns') || { successPatterns: [], workflows: [] };
   const projects = loadData('projects') || { contexts: {} };
   const prefs = loadData('preferences') || { userPreferences: {} };
-  
+
   const suggestions = [];
-  
+
   // Suggest based on common success patterns
   const topPatterns = patterns.successPatterns
     .sort((a, b) => b.count - a.count)
     .slice(0, 5);
-  
+
   if (topPatterns.length > 0) {
     suggestions.push({
       type: 'frequent_actions',
@@ -436,7 +452,7 @@ function getSuggestions(currentAction, projectPath) {
       actions: topPatterns.map(p => p.action)
     });
   }
-  
+
   // Suggest based on project context
   if (projectPath && projects.contexts[projectPath]) {
     const ctx = projects.contexts[projectPath];
@@ -446,7 +462,7 @@ function getSuggestions(currentAction, projectPath) {
       context: ctx
     });
   }
-  
+
   return suggestions;
 }
 
@@ -456,7 +472,7 @@ function getSuggestions(currentAction, projectPath) {
 function getInsights() {
   const memory = loadData('memory') || { interactions: [], insights: [] };
   const patterns = loadData('patterns') || { successPatterns: [], errorPatterns: [] };
-  
+
   return {
     totalInteractions: memory.interactions.length,
     successfulPatterns: patterns.successPatterns.length,
@@ -468,9 +484,9 @@ function getInsights() {
     commonErrors: patterns.errorPatterns
       .sort((a, b) => b.count - a.count)
       .slice(0, 5)
-      .map(p => ({ 
-        action: p.action, 
-        errorType: p.errorType, 
+      .map(p => ({
+        action: p.action,
+        errorType: p.errorType,
         count: p.count,
         suggestedFix: p.suggestedFix
       }))
@@ -499,27 +515,27 @@ module.exports = {
   getAutopilotStatus,
   startAction,
   endAction,
-  
+
   // Learning Engine
   recordInteraction,
   learnFromSuccess,
   learnFromFailure,
   getInsights,
-  
+
   // Context Persistence
   saveProjectContext,
   getProjectContext,
   rememberPreference,
   getPreference,
-  
+
   // Suggestions
   getSuggestions,
-  
+
   // Data Management
   clearAllData,
   loadData,
   saveData,
-  
+
   // Constants
   AUTOPILOT_DATA_DIR,
   DATA_FILES

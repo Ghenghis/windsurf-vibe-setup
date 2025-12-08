@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * Windsurf Autopilot - Infrastructure as Code Tools v3.1
- * 
+ *
  * Terraform, Kubernetes, and Helm integration.
  */
 
@@ -31,8 +31,8 @@ const iacTools = {
       type: 'object',
       properties: {
         path: { type: 'string', description: 'Path to Terraform project' },
-        backend: { 
-          type: 'object', 
+        backend: {
+          type: 'object',
           description: 'Backend configuration (s3, gcs, azurerm, local)',
           properties: {
             type: { type: 'string' },
@@ -196,7 +196,7 @@ variable "gcp_region" {
 
       // Run terraform init
       try {
-        const output = execSync('terraform init', { 
+        const output = execSync('terraform init', {
           cwd: projectPath,
           encoding: 'utf8',
           timeout: 120000
@@ -258,11 +258,17 @@ variable "gcp_region" {
 
       // Build command
       let cmd = 'terraform plan -no-color';
-      
-      if (destroy) cmd += ' -destroy';
-      if (target) cmd += ` -target=${target}`;
-      if (varFile) cmd += ` -var-file=${varFile}`;
-      
+
+      if (destroy) {
+        cmd += ' -destroy';
+      }
+      if (target) {
+        cmd += ` -target=${target}`;
+      }
+      if (varFile) {
+        cmd += ` -var-file=${varFile}`;
+      }
+
       // Add variables
       for (const [key, value] of Object.entries(vars)) {
         cmd += ` -var="${key}=${value}"`;
@@ -297,7 +303,7 @@ variable "gcp_region" {
           path: projectPath,
           noChanges,
           changes,
-          summary: noChanges 
+          summary: noChanges
             ? 'Infrastructure is up-to-date'
             : `Plan: ${changes.add} to add, ${changes.change} to change, ${changes.destroy} to destroy`,
           output: output.slice(0, 5000) // Truncate large output
@@ -343,11 +349,17 @@ variable "gcp_region" {
       // Build command
       let cmd = destroy ? 'terraform destroy' : 'terraform apply';
       cmd += ' -no-color';
-      
-      if (autoApprove) cmd += ' -auto-approve';
-      if (target) cmd += ` -target=${target}`;
-      if (varFile) cmd += ` -var-file=${varFile}`;
-      
+
+      if (autoApprove) {
+        cmd += ' -auto-approve';
+      }
+      if (target) {
+        cmd += ` -target=${target}`;
+      }
+      if (varFile) {
+        cmd += ` -var-file=${varFile}`;
+      }
+
       // Add variables
       for (const [key, value] of Object.entries(vars)) {
         cmd += ` -var="${key}=${value}"`;
@@ -384,7 +396,7 @@ variable "gcp_region" {
             changed: resourcesChanged,
             destroyed: resourcesDestroyed
           },
-          message: destroy 
+          message: destroy
             ? 'Infrastructure destroyed successfully'
             : 'Infrastructure applied successfully',
           output: output.slice(-2000) // Last 2000 chars
@@ -439,8 +451,12 @@ variable "gcp_region" {
       let cmd = 'kubectl apply';
       cmd += ` -f "${manifest}"`;
       cmd += ` -n ${namespace}`;
-      if (context) cmd += ` --context=${context}`;
-      if (dryRun) cmd += ' --dry-run=client';
+      if (context) {
+        cmd += ` --context=${context}`;
+      }
+      if (dryRun) {
+        cmd += ' --dry-run=client';
+      }
 
       try {
         const output = execSync(cmd, {
@@ -479,7 +495,7 @@ variable "gcp_region" {
           dryRun,
           deployed,
           count: deployed.length,
-          message: dryRun 
+          message: dryRun
             ? 'Dry run completed'
             : `Deployed ${deployed.length} resources to ${namespace}`
         };
@@ -547,10 +563,18 @@ variable "gcp_region" {
       // Build command
       let cmd = `helm upgrade --install ${release} ${chart}`;
       cmd += ` -n ${namespace} --create-namespace`;
-      if (version) cmd += ` --version ${version}`;
-      if (valuesFile && fs.existsSync(valuesFile)) cmd += ` -f "${valuesFile}"`;
-      if (dryRun) cmd += ' --dry-run';
-      if (wait) cmd += ' --wait --timeout=5m';
+      if (version) {
+        cmd += ` --version ${version}`;
+      }
+      if (valuesFile && fs.existsSync(valuesFile)) {
+        cmd += ` -f "${valuesFile}"`;
+      }
+      if (dryRun) {
+        cmd += ' --dry-run';
+      }
+      if (wait) {
+        cmd += ' --wait --timeout=5m';
+      }
 
       // Add values
       for (const [key, value] of Object.entries(values)) {

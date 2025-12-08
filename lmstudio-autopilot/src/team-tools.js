@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 /**
  * Windsurf Autopilot - Team Tools v3.0
- * 
+ *
  * Team collaboration features.
  * Create teams, invite members, share settings and templates.
- * 
+ *
  * Tools:
  * - create_team: Create team workspace
  * - invite_member: Invite team members
@@ -294,8 +294,8 @@ const teamTools = {
 
         if (action === 'get') {
           if (!args.settingName || !team.sharedSettings[args.settingName]) {
-            return { 
-              success: false, 
+            return {
+              success: false,
               error: `Setting not found: ${args.settingName}`,
               availableSettings: Object.keys(team.sharedSettings)
             };
@@ -627,7 +627,7 @@ const teamTools = {
     handler: async () => {
       try {
         const teams = [];
-        
+
         if (!fs.existsSync(TEAM_DIR)) {
           return { success: true, count: 0, teams: [] };
         }
@@ -640,7 +640,7 @@ const teamTools = {
             if (fs.existsSync(teamFile)) {
               const team = JSON.parse(fs.readFileSync(teamFile, 'utf8'));
               const membership = team.members.find(m => m.userId === currentUser.id);
-              
+
               if (membership) {
                 teams.push({
                   id: team.id,
@@ -668,7 +668,7 @@ const teamTools = {
   },
 
   // Get tool definitions
-  getToolDefinitions: function() {
+  getToolDefinitions: function () {
     return [
       { name: this.create_team.name, description: this.create_team.description, inputSchema: this.create_team.inputSchema },
       { name: this.invite_member.name, description: this.invite_member.description, inputSchema: this.invite_member.inputSchema },
@@ -679,7 +679,7 @@ const teamTools = {
     ];
   },
 
-  getHandler: function(toolName) {
+  getHandler: function (toolName) {
     const tool = this[toolName];
     return tool ? tool.handler : null;
   }

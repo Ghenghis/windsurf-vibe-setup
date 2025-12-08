@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * Windsurf Autopilot - Observability Tools v3.1
- * 
+ *
  * Sentry, Prometheus metrics, Grafana dashboards, and alerting.
  */
 
@@ -22,7 +22,9 @@ if (!fs.existsSync(OBS_DIR)) {
 }
 
 function loadConfig() {
-  if (fs.existsSync(CONFIG_FILE)) return JSON.parse(fs.readFileSync(CONFIG_FILE, 'utf8'));
+  if (fs.existsSync(CONFIG_FILE)) {
+    return JSON.parse(fs.readFileSync(CONFIG_FILE, 'utf8'));
+  }
   return {};
 }
 
@@ -60,14 +62,22 @@ const observabilityTools = {
         if (fs.existsSync(pkgPath)) {
           const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf8'));
           const deps = { ...pkg.dependencies, ...pkg.devDependencies };
-          if (deps['next']) framework = 'nextjs';
-          else if (deps['react']) framework = 'react';
-          else if (deps['express']) framework = 'express';
-          else framework = 'node';
+          if (deps['next']) {
+            framework = 'nextjs';
+          } else if (deps['react']) {
+            framework = 'react';
+          } else if (deps['express']) {
+            framework = 'express';
+          } else {
+            framework = 'node';
+          }
         } else if (fs.existsSync(path.join(projectPath, 'requirements.txt'))) {
           const reqs = fs.readFileSync(path.join(projectPath, 'requirements.txt'), 'utf8');
-          if (reqs.includes('django')) framework = 'django';
-          else framework = 'python';
+          if (reqs.includes('django')) {
+            framework = 'django';
+          } else {
+            framework = 'python';
+          }
         }
       }
 
@@ -153,7 +163,9 @@ sentry_sdk.init(
       // Write config file
       const configPath = path.join(projectPath, configFile);
       const configDir = path.dirname(configPath);
-      if (!fs.existsSync(configDir)) fs.mkdirSync(configDir, { recursive: true });
+      if (!fs.existsSync(configDir)) {
+        fs.mkdirSync(configDir, { recursive: true });
+      }
       fs.writeFileSync(configPath, setupCode);
 
       // Save config

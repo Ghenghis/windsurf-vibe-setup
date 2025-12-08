@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * Windsurf Autopilot - Advanced Security Tools v3.1
- * 
+ *
  * SAST, SBOM, Dependency Graph, Tech Debt, and Compliance.
  */
 
@@ -19,7 +19,9 @@ const REPORTS_DIR = path.join(SECURITY_DIR, 'reports');
 
 // Ensure directories exist
 [SECURITY_DIR, REPORTS_DIR].forEach(dir => {
-  if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir, { recursive: true });
+  }
 });
 
 const securityAdvancedTools = {
@@ -66,17 +68,17 @@ const securityAdvancedTools = {
         }
 
         const ruleConfig = rules.includes('auto') ? '--config=auto' : rules.map(r => `--config=${r}`).join(' ');
-        
+
         try {
           const cmd = `semgrep ${ruleConfig} --json --severity=${severity} "${projectPath}"`;
-          const output = execSync(cmd, { 
+          const output = execSync(cmd, {
             encoding: 'utf8',
             timeout: 300000,
             maxBuffer: 50 * 1024 * 1024
           });
 
           const results = JSON.parse(output);
-          
+
           for (const result of results.results || []) {
             findings.push({
               rule: result.check_id,
@@ -107,7 +109,7 @@ const securityAdvancedTools = {
       } else if (tool === 'eslint-security') {
         // Use ESLint with security plugins
         const eslintInstalled = fs.existsSync(path.join(projectPath, 'node_modules', 'eslint'));
-        
+
         if (!eslintInstalled) {
           return {
             success: false,
@@ -125,7 +127,7 @@ const securityAdvancedTools = {
           });
 
           const results = JSON.parse(output || '[]');
-          
+
           for (const file of results) {
             for (const msg of file.messages || []) {
               if (msg.ruleId?.includes('security') || msg.message?.toLowerCase().includes('security')) {
@@ -164,7 +166,7 @@ const securityAdvancedTools = {
           info: bySeverity.info.length
         }
       };
-      
+
       fs.writeFileSync(reportPath, JSON.stringify(report, null, 2));
 
       return {
@@ -174,7 +176,7 @@ const securityAdvancedTools = {
         summary: report.summary,
         reportPath,
         criticalFindings: findings.slice(0, 10),
-        message: findings.length === 0 
+        message: findings.length === 0
           ? 'No security issues found'
           : `Found ${findings.length} potential security issues`
       };
@@ -199,24 +201,26 @@ const securityAdvancedTools = {
       const projectPath = args.path;
       const format = args.format || 'cyclonedx';
       const includeDevDeps = args.includeDevDeps !== false;
-      
+
       if (!fs.existsSync(projectPath)) {
         return { success: false, error: 'Project path does not exist' };
       }
 
       const packageJsonPath = path.join(projectPath, 'package.json');
       const packageLockPath = path.join(projectPath, 'package-lock.json');
-      
+
       if (!fs.existsSync(packageJsonPath)) {
         return { success: false, error: 'No package.json found' };
       }
 
       const pkg = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
       const deps = { ...pkg.dependencies };
-      if (includeDevDeps) Object.assign(deps, pkg.devDependencies);
+      if (includeDevDeps) {
+        Object.assign(deps, pkg.devDependencies);
+      }
 
       const components = [];
-      
+
       for (const [name, version] of Object.entries(deps || {})) {
         const cleanVersion = version.replace(/[\^~>=<]/g, '');
         components.push({
@@ -335,19 +339,19 @@ const securityAdvancedTools = {
       if (format === 'json') {
         output = JSON.stringify({ nodes, edges }, null, 2);
       } else if (format === 'dot') {
-        output = `digraph Dependencies {\n`;
-        output += `  rankdir=LR;\n`;
-        output += `  node [shape=box];\n`;
+        output = 'digraph Dependencies {\n';
+        output += '  rankdir=LR;\n';
+        output += '  node [shape=box];\n';
         for (const node of nodes) {
           output += `  "${node.id}" [label="${node.label}"];\n`;
         }
         for (const edge of edges) {
           output += `  "${edge.from}" -> "${edge.to}";\n`;
         }
-        output += `}\n`;
+        output += '}\n';
       } else {
         // Mermaid format
-        output = `graph LR\n`;
+        output = 'graph LR\n';
         for (const node of nodes) {
           const shape = node.type === 'root' ? `((${node.label}))` : `[${node.label}]`;
           output += `  ${node.id.replace(/[^a-zA-Z0-9]/g, '_')}${shape}\n`;
@@ -406,12 +410,14 @@ const securityAdvancedTools = {
 
       // Scan source files
       function scanDir(dir) {
-        if (!fs.existsSync(dir)) return;
+        if (!fs.existsSync(dir)) {
+          return;
+        }
         const entries = fs.readdirSync(dir, { withFileTypes: true });
-        
+
         for (const entry of entries) {
           const fullPath = path.join(dir, entry.name);
-          
+
           if (entry.isDirectory()) {
             if (!['node_modules', '.git', 'dist', 'build'].includes(entry.name)) {
               scanDir(fullPath);
@@ -420,20 +426,24 @@ const securityAdvancedTools = {
             try {
               const content = fs.readFileSync(fullPath, 'utf8');
               const lines = content.split('\n');
-              
+
               // Count debt markers
               metrics.todoCount += (content.match(/TODO/gi) || []).length;
               metrics.fixmeCount += (content.match(/FIXME/gi) || []).length;
               metrics.hackCount += (content.match(/HACK|XXX|TEMP/gi) || []).length;
-              
+
               // Long files (>500 lines)
-              if (lines.length > 500) metrics.longFiles++;
-              
+              if (lines.length > 500) {
+                metrics.longFiles++;
+              }
+
               // Complex functions (simple heuristic: functions with many conditions)
               const functionBlocks = content.match(/function\s*\w*\s*\([^)]*\)\s*\{[^}]+\}/g) || [];
               for (const block of functionBlocks) {
                 const conditions = (block.match(/if|else|switch|case|\?|&&|\|\|/g) || []).length;
-                if (conditions > 10) metrics.complexFunctions++;
+                if (conditions > 10) {
+                  metrics.complexFunctions++;
+                }
               }
             } catch {}
           }
@@ -446,8 +456,8 @@ const securityAdvancedTools = {
       const packageJsonPath = path.join(projectPath, 'package.json');
       if (fs.existsSync(packageJsonPath)) {
         try {
-          const output = execSync('npm outdated --json', { 
-            cwd: projectPath, 
+          const output = execSync('npm outdated --json', {
+            cwd: projectPath,
             encoding: 'utf8',
             timeout: 60000
           });
@@ -510,8 +520,8 @@ const securityAdvancedTools = {
       type: 'object',
       properties: {
         path: { type: 'string', description: 'Project path' },
-        framework: { 
-          type: 'string', 
+        framework: {
+          type: 'string',
           enum: ['soc2', 'gdpr', 'hipaa', 'pci-dss'],
           description: 'Compliance framework'
         }
@@ -577,11 +587,11 @@ const securityAdvancedTools = {
         try {
           const srcDir = path.join(projectPath, 'src');
           const searchDir = fs.existsSync(srcDir) ? srcDir : projectPath;
-          
+
           const grepCmd = process.platform === 'win32'
             ? `findstr /s /i /r "${pattern.source}" "${searchDir}\\*.js" "${searchDir}\\*.ts"`
             : `grep -r -l "${pattern.source}" "${searchDir}" --include="*.js" --include="*.ts"`;
-          
+
           execSync(grepCmd, { encoding: 'utf8', timeout: 10000 });
           return true;
         } catch {
@@ -597,7 +607,7 @@ const securityAdvancedTools = {
         try {
           passed = item.test();
         } catch {}
-        
+
         results.push({
           id: item.id,
           check: item.check,

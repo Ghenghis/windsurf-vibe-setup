@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 /**
  * Windsurf Autopilot - Ultimate Tools v2.5.0
- * 
+ *
  * FINAL PUSH TO 95%+ AUTOPILOT CAPABILITY
- * 
+ *
  * This module adds ALL remaining features:
- * 
+ *
  * ═══════════════════════════════════════════════════════════════════════════
  * CATEGORY 1: CLOUD DEPLOYMENT (deploy without leaving IDE)
  * ═══════════════════════════════════════════════════════════════════════════
@@ -13,7 +13,7 @@
  * - deploy_netlify     - Deploy to Netlify
  * - deploy_railway     - Deploy to Railway.app
  * - deploy_docker_hub  - Push images to Docker Hub
- * 
+ *
  * ═══════════════════════════════════════════════════════════════════════════
  * CATEGORY 2: CI/CD AUTOMATION (setup pipelines automatically)
  * ═══════════════════════════════════════════════════════════════════════════
@@ -21,7 +21,7 @@
  * - setup_gitlab_ci       - Create GitLab CI config
  * - run_pipeline          - Trigger CI/CD manually
  * - check_pipeline_status - Get pipeline status
- * 
+ *
  * ═══════════════════════════════════════════════════════════════════════════
  * CATEGORY 3: ADVANCED CODE OPERATIONS (automated code improvements)
  * ═══════════════════════════════════════════════════════════════════════════
@@ -30,7 +30,7 @@
  * - code_review           - Automated code review
  * - find_dead_code        - Find unused code
  * - analyze_complexity    - Cyclomatic complexity analysis
- * 
+ *
  * ═══════════════════════════════════════════════════════════════════════════
  * CATEGORY 4: SECURITY & DEPENDENCIES (keep project safe)
  * ═══════════════════════════════════════════════════════════════════════════
@@ -38,28 +38,28 @@
  * - update_dependencies   - Update all deps safely
  * - check_licenses        - License compliance check
  * - scan_secrets          - Find exposed secrets
- * 
+ *
  * ═══════════════════════════════════════════════════════════════════════════
  * CATEGORY 5: API & ENDPOINT TESTING (test APIs automatically)
  * ═══════════════════════════════════════════════════════════════════════════
  * - test_api              - Automated API testing
  * - mock_server           - Start mock API server
  * - generate_api_docs     - Generate OpenAPI/Swagger docs
- * 
+ *
  * ═══════════════════════════════════════════════════════════════════════════
  * CATEGORY 6: PROJECT TEMPLATES (save and reuse setups)
  * ═══════════════════════════════════════════════════════════════════════════
  * - save_template         - Save project as reusable template
  * - list_templates        - List available templates
  * - use_template          - Create project from template
- * 
+ *
  * ═══════════════════════════════════════════════════════════════════════════
  * CATEGORY 7: NOTIFICATIONS & WEBHOOKS (stay informed)
  * ═══════════════════════════════════════════════════════════════════════════
  * - notify                - Send notification (desktop/webhook)
  * - send_webhook          - Send webhook to URL
  * - schedule_task         - Schedule future task
- * 
+ *
  * ═══════════════════════════════════════════════════════════════════════════
  * CATEGORY 8: ADVANCED FILE OPERATIONS (bulk operations)
  * ═══════════════════════════════════════════════════════════════════════════
@@ -67,21 +67,21 @@
  * - file_merge            - Merge files/branches
  * - bulk_rename           - Rename multiple files
  * - find_replace_all      - Find/replace across project
- * 
+ *
  * ═══════════════════════════════════════════════════════════════════════════
  * CATEGORY 9: LOGS & MONITORING (understand what's happening)
  * ═══════════════════════════════════════════════════════════════════════════
  * - analyze_logs          - Analyze log files for patterns
  * - tail_logs             - Real-time log streaming
  * - search_logs           - Search across log files
- * 
+ *
  * ═══════════════════════════════════════════════════════════════════════════
  * CATEGORY 10: PERFORMANCE (optimize and benchmark)
  * ═══════════════════════════════════════════════════════════════════════════
  * - benchmark_project     - Run performance benchmarks
  * - profile_app           - Profile app performance
  * - analyze_bundle        - Analyze JS bundle size
- * 
+ *
  * ═══════════════════════════════════════════════════════════════════════════
  * CATEGORY 11: WORKSPACE MANAGEMENT (manage multiple projects)
  * ═══════════════════════════════════════════════════════════════════════════
@@ -123,16 +123,16 @@ initDirs();
 // Helper: Safe exec
 function safeExec(cmd, opts = {}) {
   try {
-    const output = execSync(cmd, { 
-      encoding: 'utf8', 
+    const output = execSync(cmd, {
+      encoding: 'utf8',
       timeout: opts.timeout || 60000,
       maxBuffer: 10 * 1024 * 1024,
       ...opts
     });
     return { success: true, output: output.trim() };
   } catch (e) {
-    return { 
-      success: false, 
+    return {
+      success: false,
       error: e.message,
       output: e.stdout?.toString() || '',
       stderr: e.stderr?.toString() || ''
@@ -150,7 +150,9 @@ function httpRequest(url, options = {}) {
       res.on('end', () => resolve({ status: res.statusCode, data }));
     });
     req.on('error', reject);
-    if (options.body) req.write(options.body);
+    if (options.body) {
+      req.write(options.body);
+    }
     req.end();
   });
 }
@@ -181,7 +183,7 @@ async function deployVercel({ projectPath, token, prod = false }) {
   const tokenFlag = token ? `--token ${token}` : '';
   const confirmFlag = '--yes';
 
-  const result = safeExec(`vercel ${prodFlag} ${tokenFlag} ${confirmFlag}`, { 
+  const result = safeExec(`vercel ${prodFlag} ${tokenFlag} ${confirmFlag}`, {
     cwd: projectPath,
     timeout: 300000 // 5 minutes
   });
@@ -219,9 +221,15 @@ async function deployNetlify({ projectPath, token, prod = false, siteName }) {
 
   // Detect build directory
   let buildDir = 'dist';
-  if (fs.existsSync(path.join(projectPath, 'build'))) buildDir = 'build';
-  if (fs.existsSync(path.join(projectPath, 'out'))) buildDir = 'out';
-  if (fs.existsSync(path.join(projectPath, '.next'))) buildDir = '.next';
+  if (fs.existsSync(path.join(projectPath, 'build'))) {
+    buildDir = 'build';
+  }
+  if (fs.existsSync(path.join(projectPath, 'out'))) {
+    buildDir = 'out';
+  }
+  if (fs.existsSync(path.join(projectPath, '.next'))) {
+    buildDir = '.next';
+  }
 
   const prodFlag = prod ? '--prod' : '';
   const tokenFlag = token ? `--auth ${token}` : '';
@@ -264,7 +272,7 @@ async function deployRailway({ projectPath, token }) {
     timeout: 300000
   });
 
-  return result.success 
+  return result.success
     ? { success: true, output: result.output }
     : { success: false, error: result.error };
 }
@@ -635,7 +643,9 @@ async function checkPipelineStatus({ projectPath, owner, repo, token }) {
       'User-Agent': 'windsurf-autopilot',
       'Accept': 'application/vnd.github.v3+json'
     };
-    if (token) headers['Authorization'] = `token ${token}`;
+    if (token) {
+      headers['Authorization'] = `token ${token}`;
+    }
 
     const response = await httpRequest(
       `https://api.github.com/repos/${owner}/${repo}/actions/runs?per_page=5`,
@@ -676,12 +686,12 @@ async function refactorCode({ projectPath, operation, target, newName, filePath 
       if (!filePath || !target || !newName) {
         return { success: false, error: 'filePath, target, and newName required for rename' };
       }
-      
+
       const content = fs.readFileSync(filePath, 'utf8');
       const regex = new RegExp(`\\b${target}\\b`, 'g');
       const newContent = content.replace(regex, newName);
       fs.writeFileSync(filePath, newContent);
-      
+
       const count = (content.match(regex) || []).length;
       return {
         success: true,
@@ -691,7 +701,7 @@ async function refactorCode({ projectPath, operation, target, newName, filePath 
         replacements: count
       };
     },
-    
+
     extract_function: async () => {
       return {
         success: true,
@@ -699,7 +709,7 @@ async function refactorCode({ projectPath, operation, target, newName, filePath 
         suggestion: 'Select code → Right-click → Refactor → Extract Method'
       };
     },
-    
+
     remove_unused_imports: async () => {
       // Run ESLint with fix
       const result = safeExec(
@@ -712,7 +722,7 @@ async function refactorCode({ projectPath, operation, target, newName, filePath 
         output: result.output || 'Cleaned unused imports'
       };
     },
-    
+
     organize_imports: async () => {
       // Use prettier with import sorting
       const result = safeExec('npx prettier --write "**/*.{js,ts,jsx,tsx}"', { cwd: projectPath });
@@ -753,42 +763,42 @@ async function generateDocs({ projectPath, type = 'jsdoc', outputDir = 'docs' })
         };
         fs.writeFileSync(configPath, JSON.stringify(config, null, 2));
       }
-      
+
       const result = safeExec('npx jsdoc -c jsdoc.json', { cwd: projectPath });
       return result;
     },
-    
+
     typedoc: async () => {
       const result = safeExec(`npx typedoc --out ${outputDir} src`, { cwd: projectPath });
       return result;
     },
-    
+
     sphinx: async () => {
       const result = safeExec(`sphinx-build -b html docs/source ${outputDir}`, { cwd: projectPath });
       return result;
     },
-    
+
     readme: async () => {
       // Generate basic README if none exists
       const readmePath = path.join(projectPath, 'README.md');
       const pkgPath = path.join(projectPath, 'package.json');
-      
+
       let content = '# Project\n\n## Description\n\nProject description here.\n\n';
-      
+
       if (fs.existsSync(pkgPath)) {
         const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf8'));
         content = `# ${pkg.name || 'Project'}\n\n`;
         content += `${pkg.description || 'Project description here.'}\n\n`;
-        content += `## Installation\n\n\`\`\`bash\nnpm install\n\`\`\`\n\n`;
-        content += `## Usage\n\n\`\`\`bash\nnpm start\n\`\`\`\n\n`;
+        content += '## Installation\n\n```bash\nnpm install\n```\n\n';
+        content += '## Usage\n\n```bash\nnpm start\n```\n\n';
         if (pkg.scripts) {
-          content += `## Scripts\n\n`;
+          content += '## Scripts\n\n';
           Object.entries(pkg.scripts).forEach(([name, cmd]) => {
             content += `- \`npm run ${name}\` - ${cmd}\n`;
           });
         }
       }
-      
+
       fs.writeFileSync(readmePath, content);
       return { success: true, output: 'README.md generated' };
     }
@@ -844,7 +854,7 @@ async function codeReview({ projectPath, files = [], strictness = 'medium' }) {
     const checkFile = (filePath) => {
       const content = fs.readFileSync(filePath, 'utf8');
       const lines = content.split('\n');
-      
+
       // Check for console.log
       lines.forEach((line, i) => {
         if (line.includes('console.log') && !line.trim().startsWith('//')) {
@@ -855,7 +865,7 @@ async function codeReview({ projectPath, files = [], strictness = 'medium' }) {
             message: 'Consider removing console.log before production'
           });
         }
-        
+
         // Check for TODO/FIXME
         if (line.includes('TODO') || line.includes('FIXME')) {
           suggestions.push({
@@ -865,7 +875,7 @@ async function codeReview({ projectPath, files = [], strictness = 'medium' }) {
             message: line.trim()
           });
         }
-        
+
         // Check for very long lines
         if (line.length > 120 && strictness !== 'low') {
           suggestions.push({
@@ -949,7 +959,7 @@ async function analyzeComplexity({ projectPath, threshold = 10 }) {
   }
 
   // Try complexity-report
-  let result = safeExec(`npx plato -r -d complexity-report src`, { cwd: projectPath });
+  let result = safeExec('npx plato -r -d complexity-report src', { cwd: projectPath });
   if (result.success) {
     return {
       success: true,
@@ -961,7 +971,7 @@ async function analyzeComplexity({ projectPath, threshold = 10 }) {
 
   // Fallback to eslint complexity rule
   result = safeExec(`npx eslint . --rule "complexity: [error, ${threshold}]" --format json`, { cwd: projectPath });
-  
+
   const complexFunctions = [];
   try {
     const data = JSON.parse(result.output || '[]');
@@ -1036,7 +1046,9 @@ async function securityAudit({ projectPath }) {
     try {
       const entries = fs.readdirSync(dir, { withFileTypes: true });
       for (const entry of entries) {
-        if (['node_modules', '.git', 'dist', 'build'].includes(entry.name)) continue;
+        if (['node_modules', '.git', 'dist', 'build'].includes(entry.name)) {
+          continue;
+        }
         const fullPath = path.join(dir, entry.name);
         if (entry.isDirectory()) {
           walkDir(fullPath);
@@ -1081,19 +1093,19 @@ async function updateDependencies({ projectPath, mode = 'safe', packages = [] })
       const result = safeExec('npm update', { cwd: projectPath });
       return result;
     },
-    
+
     minor: async () => {
       // Update to latest minor versions
       const result = safeExec('npx npm-check-updates -u --target minor && npm install', { cwd: projectPath });
       return result;
     },
-    
+
     major: async () => {
       // Update to latest (with breaking changes)
       const result = safeExec('npx npm-check-updates -u && npm install', { cwd: projectPath });
       return result;
     },
-    
+
     specific: async () => {
       if (!packages.length) {
         return { success: false, error: 'No packages specified' };
@@ -1115,13 +1127,13 @@ async function updateDependencies({ projectPath, mode = 'safe', packages = [] })
   }
 
   const result = await modes[mode]();
-  
+
   return {
     success: result.success,
     mode,
     output: result.output,
     backup: backupPath,
-    message: result.success 
+    message: result.success
       ? `Dependencies updated (${mode} mode). Backup at package.json.backup`
       : result.error
   };
@@ -1136,7 +1148,7 @@ async function checkLicenses({ projectPath, allowed = ['MIT', 'ISC', 'Apache-2.0
   }
 
   const result = safeExec('npx license-checker --json', { cwd: projectPath });
-  
+
   if (!result.success) {
     return { success: false, error: 'license-checker not available or failed' };
   }
@@ -1149,7 +1161,7 @@ async function checkLicenses({ projectPath, allowed = ['MIT', 'ISC', 'Apache-2.0
     Object.entries(licenses).forEach(([pkg, info]) => {
       const license = info.licenses || 'UNKNOWN';
       summary[license] = (summary[license] || 0) + 1;
-      
+
       if (!allowed.includes(license) && license !== 'UNKNOWN') {
         issues.push({ package: pkg, license });
       }
@@ -1172,7 +1184,7 @@ async function checkLicenses({ projectPath, allowed = ['MIT', 'ISC', 'Apache-2.0
  */
 async function scanSecrets({ projectPath }) {
   // Try gitleaks
-  let result = safeExec('gitleaks detect --source . --report-format json', { cwd: projectPath });
+  const result = safeExec('gitleaks detect --source . --report-format json', { cwd: projectPath });
   if (result.success || result.output) {
     try {
       const findings = JSON.parse(result.output || '[]');
@@ -1220,7 +1232,9 @@ async function testApi({ baseUrl, endpoints = [], method = 'GET', headers = {}, 
         method,
         headers: { 'Content-Type': 'application/json', ...headers }
       };
-      if (body) options.body = JSON.stringify(body);
+      if (body) {
+        options.body = JSON.stringify(body);
+      }
 
       const start = Date.now();
       const response = await httpRequest(url, options);
@@ -1323,7 +1337,7 @@ async function generateApiDocs({ projectPath, outputFile = 'openapi.json' }) {
   }
 
   // Try swagger-jsdoc
-  let result = safeExec('npx swagger-jsdoc -d swaggerDef.js -o ' + outputFile, { cwd: projectPath });
+  const result = safeExec('npx swagger-jsdoc -d swaggerDef.js -o ' + outputFile, { cwd: projectPath });
   if (result.success) {
     return { success: true, tool: 'swagger-jsdoc', output: outputFile };
   }
@@ -1380,7 +1394,9 @@ async function saveTemplate({ projectPath, templateName, description = '' }) {
   const copyDir = (src, dest) => {
     const entries = fs.readdirSync(src, { withFileTypes: true });
     for (const entry of entries) {
-      if (excludes.includes(entry.name)) continue;
+      if (excludes.includes(entry.name)) {
+        continue;
+      }
       const srcPath = path.join(src, entry.name);
       const destPath = path.join(dest, entry.name);
       if (entry.isDirectory()) {
@@ -1423,7 +1439,9 @@ async function listTemplates() {
   const templates = [];
 
   for (const entry of entries) {
-    if (!entry.isDirectory()) continue;
+    if (!entry.isDirectory()) {
+      continue;
+    }
     const metaPath = path.join(TEMPLATE_DIR, entry.name, '.template-meta.json');
     let meta = { name: entry.name };
     if (fs.existsSync(metaPath)) {
@@ -1455,7 +1473,9 @@ async function useTemplate({ templateName, targetPath, projectName }) {
     fs.mkdirSync(dest, { recursive: true });
     const entries = fs.readdirSync(src, { withFileTypes: true });
     for (const entry of entries) {
-      if (entry.name === '.template-meta.json') continue;
+      if (entry.name === '.template-meta.json') {
+        continue;
+      }
       const srcPath = path.join(src, entry.name);
       const destPath = path.join(dest, entry.name);
       if (entry.isDirectory()) {
@@ -1549,7 +1569,7 @@ async function sendWebhook({ url, method = 'POST', payload = {}, headers = {} })
  */
 async function scheduleTask({ taskName, command, runAt, projectPath }) {
   const schedulePath = path.join(HOME, '.windsurf-autopilot', 'scheduled-tasks.json');
-  
+
   let tasks = [];
   if (fs.existsSync(schedulePath)) {
     tasks = JSON.parse(fs.readFileSync(schedulePath, 'utf8'));
@@ -1571,7 +1591,7 @@ async function scheduleTask({ taskName, command, runAt, projectPath }) {
   return {
     success: true,
     task,
-    message: `Task scheduled. Note: Actual scheduling requires external cron/task scheduler.`
+    message: 'Task scheduled. Note: Actual scheduling requires external cron/task scheduler.'
   };
 }
 
@@ -1583,8 +1603,12 @@ async function scheduleTask({ taskName, command, runAt, projectPath }) {
  * Compare two files
  */
 async function fileDiff({ file1, file2, format = 'unified' }) {
-  if (!fs.existsSync(file1)) return { success: false, error: `File not found: ${file1}` };
-  if (!fs.existsSync(file2)) return { success: false, error: `File not found: ${file2}` };
+  if (!fs.existsSync(file1)) {
+    return { success: false, error: `File not found: ${file1}` };
+  }
+  if (!fs.existsSync(file2)) {
+    return { success: false, error: `File not found: ${file2}` };
+  }
 
   const content1 = fs.readFileSync(file1, 'utf8').split('\n');
   const content2 = fs.readFileSync(file2, 'utf8').split('\n');
@@ -1625,7 +1649,7 @@ async function fileMerge({ projectPath, source, target = 'main' }) {
   }
 
   const result = safeExec(`git merge ${source}`, { cwd: projectPath });
-  
+
   return {
     success: result.success,
     source,
@@ -1650,19 +1674,21 @@ async function bulkRename({ projectPath, pattern, replacement, dryRun = true }) 
   const processDir = (dir) => {
     const entries = fs.readdirSync(dir, { withFileTypes: true });
     for (const entry of entries) {
-      if (['node_modules', '.git'].includes(entry.name)) continue;
+      if (['node_modules', '.git'].includes(entry.name)) {
+        continue;
+      }
       const fullPath = path.join(dir, entry.name);
-      
+
       if (regex.test(entry.name)) {
         const newName = entry.name.replace(regex, replacement);
         const newPath = path.join(dir, newName);
         results.push({ oldPath: fullPath, newPath, oldName: entry.name, newName });
-        
+
         if (!dryRun) {
           fs.renameSync(fullPath, newPath);
         }
       }
-      
+
       if (entry.isDirectory()) {
         processDir(fullPath);
       }
@@ -1711,7 +1737,9 @@ async function findReplaceAll({ projectPath, find, replace, filePattern = '**/*.
   const processDir = (dir) => {
     const entries = fs.readdirSync(dir, { withFileTypes: true });
     for (const entry of entries) {
-      if (['node_modules', '.git', 'dist', 'build'].includes(entry.name)) continue;
+      if (['node_modules', '.git', 'dist', 'build'].includes(entry.name)) {
+        continue;
+      }
       const fullPath = path.join(dir, entry.name);
       if (entry.isDirectory()) {
         processDir(fullPath);
@@ -1820,7 +1848,9 @@ async function searchLogs({ logDir, pattern, maxResults = 100 }) {
     if (entry.isFile() && /\.(log|txt)$/.test(entry.name)) {
       processFile(path.join(logDir, entry.name));
     }
-    if (results.length >= maxResults) break;
+    if (results.length >= maxResults) {
+      break;
+    }
   }
 
   return {
@@ -1849,13 +1879,13 @@ async function benchmarkProject({ projectPath, type = 'build' }) {
       const result = safeExec('npm run build', { cwd: projectPath, timeout: 300000 });
       return { duration: Date.now() - start, success: result.success };
     },
-    
+
     test: async () => {
       const start = Date.now();
       const result = safeExec('npm test', { cwd: projectPath, timeout: 300000 });
       return { duration: Date.now() - start, success: result.success };
     },
-    
+
     install: async () => {
       // Clean install
       safeExec('rm -rf node_modules package-lock.json', { cwd: projectPath });
@@ -1969,8 +1999,8 @@ async function switchProject({ projectPath }) {
   }
 
   // Update known projects
-  let data = JSON.parse(fs.readFileSync(PROJECTS_FILE, 'utf8'));
-  
+  const data = JSON.parse(fs.readFileSync(PROJECTS_FILE, 'utf8'));
+
   // Add to known projects if not exists
   if (!data.projects.find(p => p.path === projectPath)) {
     data.projects.push({
@@ -1983,7 +2013,7 @@ async function switchProject({ projectPath }) {
   // Set as active
   data.activeProject = projectPath;
   data.lastSwitchedAt = new Date().toISOString();
-  
+
   fs.writeFileSync(PROJECTS_FILE, JSON.stringify(data, null, 2));
 
   return {
@@ -2002,7 +2032,7 @@ async function listProjects() {
   }
 
   const data = JSON.parse(fs.readFileSync(PROJECTS_FILE, 'utf8'));
-  
+
   // Add exists check
   data.projects = data.projects.map(p => ({
     ...p,
@@ -2037,9 +2067,15 @@ async function projectHealth({ projectPath }) {
   if (fs.existsSync(pkgPath)) {
     health.good.push('Has package.json');
     const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf8'));
-    if (!pkg.description) health.warnings.push('Missing package description');
-    if (!pkg.license) health.warnings.push('Missing license');
-    if (!pkg.repository) health.warnings.push('Missing repository URL');
+    if (!pkg.description) {
+      health.warnings.push('Missing package description');
+    }
+    if (!pkg.license) {
+      health.warnings.push('Missing license');
+    }
+    if (!pkg.repository) {
+      health.warnings.push('Missing repository URL');
+    }
   } else {
     health.issues.push('No package.json found');
     health.score -= 20;
@@ -2078,7 +2114,7 @@ async function projectHealth({ projectPath }) {
   }
 
   // Check tests
-  const hasTests = fs.existsSync(path.join(projectPath, 'tests')) || 
+  const hasTests = fs.existsSync(path.join(projectPath, 'tests')) ||
                    fs.existsSync(path.join(projectPath, '__tests__')) ||
                    fs.existsSync(path.join(projectPath, 'test'));
   if (hasTests) {
@@ -2107,10 +2143,10 @@ async function projectHealth({ projectPath }) {
   health.score -= health.warnings.length * 2;
   health.score = Math.max(0, Math.min(100, health.score));
 
-  health.grade = health.score >= 90 ? 'A' : 
-                 health.score >= 80 ? 'B' :
-                 health.score >= 70 ? 'C' :
-                 health.score >= 60 ? 'D' : 'F';
+  health.grade = health.score >= 90 ? 'A' :
+    health.score >= 80 ? 'B' :
+      health.score >= 70 ? 'C' :
+        health.score >= 60 ? 'D' : 'F';
 
   return {
     success: true,
@@ -2186,7 +2222,7 @@ async function cleanupProject({ projectPath, aggressive = false }) {
     cleaned,
     count: cleaned.length,
     aggressive,
-    message: aggressive 
+    message: aggressive
       ? 'Deep clean complete. Run npm install to restore dependencies.'
       : 'Cache clean complete.'
   };
@@ -2202,57 +2238,57 @@ module.exports = {
   deployNetlify,
   deployRailway,
   deployDockerHub,
-  
+
   // CI/CD
   setupGitHubActions,
   setupGitLabCI,
   runPipeline,
   checkPipelineStatus,
-  
+
   // Code Operations
   refactorCode,
   generateDocs,
   codeReview,
   findDeadCode,
   analyzeComplexity,
-  
+
   // Security
   securityAudit,
   updateDependencies,
   checkLicenses,
   scanSecrets,
-  
+
   // API Testing
   testApi,
   mockServer,
   generateApiDocs,
-  
+
   // Templates
   saveTemplate,
   listTemplates,
   useTemplate,
-  
+
   // Notifications
   notify,
   sendWebhook,
   scheduleTask,
-  
+
   // File Operations
   fileDiff,
   fileMerge,
   bulkRename,
   findReplaceAll,
-  
+
   // Logs
   analyzeLogs,
   tailLogs,
   searchLogs,
-  
+
   // Performance
   benchmarkProject,
   profileApp,
   analyzeBundle,
-  
+
   // Workspace
   switchProject,
   listProjects,

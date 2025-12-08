@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * Windsurf Autopilot - Communications Tools v3.1
- * 
+ *
  * Slack, Discord, Teams, Email, and SMS notifications.
  */
 
@@ -40,7 +40,7 @@ function httpPost(url, data, headers = {}) {
   return new Promise((resolve, reject) => {
     const urlObj = new URL(url);
     const protocol = urlObj.protocol === 'https:' ? https : http;
-    
+
     const options = {
       hostname: urlObj.hostname,
       port: urlObj.port || (urlObj.protocol === 'https:' ? 443 : 80),
@@ -84,8 +84,8 @@ const commsTools = {
         channel: { type: 'string', description: 'Channel override' },
         username: { type: 'string', description: 'Bot username' },
         iconEmoji: { type: 'string', description: 'Bot icon emoji' },
-        blocks: { 
-          type: 'array', 
+        blocks: {
+          type: 'array',
           description: 'Slack Block Kit blocks for rich formatting'
         },
         attachments: {
@@ -125,17 +125,23 @@ const commsTools = {
         icon_emoji: iconEmoji
       };
 
-      if (channel) payload.channel = channel;
-      if (blocks) payload.blocks = blocks;
-      if (attachments) payload.attachments = attachments;
+      if (channel) {
+        payload.channel = channel;
+      }
+      if (blocks) {
+        payload.blocks = blocks;
+      }
+      if (attachments) {
+        payload.attachments = attachments;
+      }
 
       try {
         const response = await httpPost(webhookUrl, payload);
-        
+
         return {
           success: response.statusCode === 200,
           statusCode: response.statusCode,
-          message: response.statusCode === 200 
+          message: response.statusCode === 200
             ? 'Message sent to Slack successfully'
             : `Slack returned status ${response.statusCode}`
         };
@@ -204,12 +210,16 @@ const commsTools = {
         tts
       };
 
-      if (avatarUrl) payload.avatar_url = avatarUrl;
-      if (embeds) payload.embeds = embeds;
+      if (avatarUrl) {
+        payload.avatar_url = avatarUrl;
+      }
+      if (embeds) {
+        payload.embeds = embeds;
+      }
 
       try {
         const response = await httpPost(webhookUrl, payload);
-        
+
         return {
           success: response.statusCode >= 200 && response.statusCode < 300,
           statusCode: response.statusCode,
@@ -272,20 +282,24 @@ const commsTools = {
 
       // MessageCard format
       const payload = {
-        "@type": "MessageCard",
-        "@context": "http://schema.org/extensions",
+        '@type': 'MessageCard',
+        '@context': 'http://schema.org/extensions',
         themeColor,
         summary: title,
         title,
         text
       };
 
-      if (sections) payload.sections = sections;
-      if (potentialAction) payload.potentialAction = potentialAction;
+      if (sections) {
+        payload.sections = sections;
+      }
+      if (potentialAction) {
+        payload.potentialAction = potentialAction;
+      }
 
       try {
         const response = await httpPost(webhookUrl, payload);
-        
+
         return {
           success: response.statusCode === 200,
           statusCode: response.statusCode,
@@ -309,8 +323,8 @@ const commsTools = {
     inputSchema: {
       type: 'object',
       properties: {
-        provider: { 
-          type: 'string', 
+        provider: {
+          type: 'string',
           enum: ['smtp', 'sendgrid'],
           description: 'Email provider'
         },
@@ -341,7 +355,7 @@ const commsTools = {
 
       if (provider === 'sendgrid') {
         const apiKey = args.sendgridApiKey || config.sendgridApiKey;
-        
+
         if (!apiKey) {
           return {
             success: false,
@@ -431,7 +445,7 @@ await transporter.sendMail({
       const to = args.to;
       const message = args.message;
       const config = loadConfig();
-      
+
       const from = args.from || config.twilioFrom;
       const accountSid = args.accountSid || config.twilioAccountSid;
       const authToken = args.authToken || config.twilioAuthToken;
@@ -452,15 +466,21 @@ await transporter.sendMail({
       }
 
       // Save config
-      if (args.accountSid) config.twilioAccountSid = args.accountSid;
-      if (args.authToken) config.twilioAuthToken = args.authToken;
-      if (args.from) config.twilioFrom = args.from;
+      if (args.accountSid) {
+        config.twilioAccountSid = args.accountSid;
+      }
+      if (args.authToken) {
+        config.twilioAuthToken = args.authToken;
+      }
+      if (args.from) {
+        config.twilioFrom = args.from;
+      }
       saveConfig(config);
 
       // Twilio API
       const url = `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Messages.json`;
       const auth = Buffer.from(`${accountSid}:${authToken}`).toString('base64');
-      
+
       const formData = new URLSearchParams({
         To: to,
         From: from,

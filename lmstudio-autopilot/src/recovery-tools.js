@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 /**
  * Windsurf Autopilot - Recovery Tools v2.6
- * 
+ *
  * Error recovery and rollback capabilities.
  * Create checkpoints, rollback changes, and auto-recover from errors.
- * 
+ *
  * Tools:
  * - create_checkpoint: Create a rollback checkpoint
  * - rollback: Rollback to a previous checkpoint
@@ -41,7 +41,7 @@ const recoveryPatterns = {
       { action: 'command', cmd: 'npm install', description: 'Reinstall packages' }
     ]
   },
-  
+
   // Git errors
   'git_push_rejected': {
     patterns: [/rejected/, /non-fast-forward/, /failed to push/],
@@ -50,7 +50,7 @@ const recoveryPatterns = {
       { action: 'command', cmd: 'git push', description: 'Push again' }
     ]
   },
-  
+
   'git_merge_conflict': {
     patterns: [/CONFLICT/, /Automatic merge failed/],
     recovery: [
@@ -58,7 +58,7 @@ const recoveryPatterns = {
       { action: 'command', cmd: 'git status', description: 'Show conflicting files' }
     ]
   },
-  
+
   // Permission errors
   'permission_denied': {
     patterns: [/EACCES/, /Permission denied/, /EPERM/],
@@ -66,19 +66,19 @@ const recoveryPatterns = {
       { action: 'notify', message: 'Permission denied. Try running with elevated privileges.' }
     ]
   },
-  
+
   // Port in use
   'port_in_use': {
     patterns: [/EADDRINUSE/, /address already in use/, /port.*in use/i],
     recovery: [
-      { action: 'command', cmd: process.platform === 'win32' 
-        ? 'netstat -ano | findstr :${PORT}' 
-        : 'lsof -i :${PORT}', 
-        description: 'Find process using port' },
+      { action: 'command', cmd: process.platform === 'win32'
+        ? 'netstat -ano | findstr :${PORT}'
+        : 'lsof -i :${PORT}',
+      description: 'Find process using port' },
       { action: 'notify', message: 'Port is in use. Kill the process or use a different port.' }
     ]
   },
-  
+
   // Module not found
   'module_not_found': {
     patterns: [/Cannot find module/, /Module not found/, /Error: Cannot resolve/],
@@ -86,7 +86,7 @@ const recoveryPatterns = {
       { action: 'command', cmd: 'npm install', description: 'Install missing dependencies' }
     ]
   },
-  
+
   // TypeScript errors
   'typescript_error': {
     patterns: [/TS\d{4}:/, /TypeScript error/],
@@ -94,7 +94,7 @@ const recoveryPatterns = {
       { action: 'command', cmd: 'npx tsc --noEmit', description: 'Check TypeScript errors' }
     ]
   },
-  
+
   // Python errors
   'python_module_not_found': {
     patterns: [/ModuleNotFoundError/, /No module named/],
@@ -102,7 +102,7 @@ const recoveryPatterns = {
       { action: 'command', cmd: 'pip install -r requirements.txt', description: 'Install Python dependencies' }
     ]
   },
-  
+
   // Docker errors
   'docker_not_running': {
     patterns: [/Cannot connect to the Docker daemon/, /docker daemon is not running/],
@@ -110,7 +110,7 @@ const recoveryPatterns = {
       { action: 'notify', message: 'Docker is not running. Please start Docker Desktop.' }
     ]
   },
-  
+
   // Build errors
   'build_failed': {
     patterns: [/Build failed/, /Compilation failed/, /ERROR in/],
@@ -161,7 +161,7 @@ const recoveryTools = {
     },
     handler: async (args) => {
       const projectPath = args.projectPath;
-      
+
       if (!fs.existsSync(projectPath)) {
         return { success: false, error: `Project path not found: ${projectPath}` };
       }
@@ -170,10 +170,10 @@ const recoveryTools = {
         const checkpointId = crypto.randomUUID().substring(0, 8);
         const checkpointName = args.name || `checkpoint_${checkpointId}`;
         const timestamp = new Date().toISOString();
-        
+
         const checkpointDir = path.join(DATA_DIR, checkpointName);
         fs.mkdirSync(checkpointDir, { recursive: true });
-        
+
         const checkpoint = {
           id: checkpointId,
           name: checkpointName,
@@ -183,42 +183,42 @@ const recoveryTools = {
           files: [],
           gitState: null
         };
-        
+
         // Save git state if requested
         if (args.includeGit !== false) {
           const gitDir = path.join(projectPath, '.git');
           if (fs.existsSync(gitDir)) {
             try {
               // Get current branch
-              const branch = execSync('git rev-parse --abbrev-ref HEAD', { 
-                cwd: projectPath, 
-                encoding: 'utf8' 
+              const branch = execSync('git rev-parse --abbrev-ref HEAD', {
+                cwd: projectPath,
+                encoding: 'utf8'
               }).trim();
-              
+
               // Get current commit
-              const commit = execSync('git rev-parse HEAD', { 
-                cwd: projectPath, 
-                encoding: 'utf8' 
+              const commit = execSync('git rev-parse HEAD', {
+                cwd: projectPath,
+                encoding: 'utf8'
               }).trim();
-              
+
               // Check for uncommitted changes
-              const status = execSync('git status --porcelain', { 
-                cwd: projectPath, 
-                encoding: 'utf8' 
+              const status = execSync('git status --porcelain', {
+                cwd: projectPath,
+                encoding: 'utf8'
               });
-              
+
               checkpoint.gitState = {
                 branch,
                 commit,
                 hasChanges: status.length > 0,
                 status: status.substring(0, 500)
               };
-              
+
               // Stash changes if any
               if (status.length > 0) {
                 try {
-                  execSync(`git stash push -m "autopilot_checkpoint_${checkpointId}"`, { 
-                    cwd: projectPath 
+                  execSync(`git stash push -m "autopilot_checkpoint_${checkpointId}"`, {
+                    cwd: projectPath
                   });
                   checkpoint.gitState.stashed = true;
                 } catch (e) {
@@ -230,10 +230,10 @@ const recoveryTools = {
             }
           }
         }
-        
+
         // Backup specific files or all tracked files
         const filesToBackup = args.files || [];
-        
+
         if (filesToBackup.length === 0) {
           // Get list of important files (not node_modules, etc.)
           const collectFiles = (dir, base = '') => {
@@ -241,12 +241,12 @@ const recoveryTools = {
             for (const entry of entries) {
               const relativePath = path.join(base, entry.name);
               const fullPath = path.join(dir, entry.name);
-              
+
               // Skip common large/generated directories
               if (['node_modules', '.git', 'dist', 'build', '.next', '__pycache__', 'venv'].includes(entry.name)) {
                 continue;
               }
-              
+
               if (entry.isDirectory()) {
                 collectFiles(fullPath, relativePath);
               } else if (entry.isFile()) {
@@ -261,12 +261,12 @@ const recoveryTools = {
           };
           collectFiles(projectPath);
         }
-        
+
         // Copy files to checkpoint
         for (const file of filesToBackup.slice(0, 100)) { // Limit to 100 files
           const sourcePath = path.join(projectPath, file);
           const destPath = path.join(checkpointDir, 'files', file);
-          
+
           if (fs.existsSync(sourcePath)) {
             try {
               fs.mkdirSync(path.dirname(destPath), { recursive: true });
@@ -277,14 +277,14 @@ const recoveryTools = {
             }
           }
         }
-        
+
         // Save checkpoint metadata
         const metadataPath = path.join(checkpointDir, 'checkpoint.json');
         fs.writeFileSync(metadataPath, JSON.stringify(checkpoint, null, 2));
-        
+
         // Store in memory
         checkpoints.set(checkpointName, checkpoint);
-        
+
         return {
           success: true,
           checkpointId,
@@ -295,7 +295,7 @@ const recoveryTools = {
           gitState: checkpoint.gitState,
           message: `Checkpoint created: ${checkpointName} with ${checkpoint.files.length} files`
         };
-        
+
       } catch (error) {
         return { success: false, error: error.message };
       }
@@ -345,40 +345,40 @@ const recoveryTools = {
       try {
         const checkpointDir = path.join(DATA_DIR, args.checkpointName);
         const metadataPath = path.join(checkpointDir, 'checkpoint.json');
-        
+
         if (!fs.existsSync(metadataPath)) {
           // List available checkpoints
           const available = fs.readdirSync(DATA_DIR)
             .filter(d => fs.existsSync(path.join(DATA_DIR, d, 'checkpoint.json')));
-          
+
           return {
             success: false,
             error: `Checkpoint not found: ${args.checkpointName}`,
             availableCheckpoints: available
           };
         }
-        
+
         const checkpoint = JSON.parse(fs.readFileSync(metadataPath, 'utf8'));
         const projectPath = checkpoint.projectPath;
-        
+
         if (!fs.existsSync(projectPath)) {
           return {
             success: false,
             error: `Project path no longer exists: ${projectPath}`
           };
         }
-        
+
         const restored = [];
         const failed = [];
-        
+
         // Determine which files to restore
         const filesToRestore = args.files || checkpoint.files;
-        
+
         // Restore files
         for (const file of filesToRestore) {
           const sourcePath = path.join(checkpointDir, 'files', file);
           const destPath = path.join(projectPath, file);
-          
+
           if (fs.existsSync(sourcePath)) {
             try {
               fs.mkdirSync(path.dirname(destPath), { recursive: true });
@@ -389,25 +389,25 @@ const recoveryTools = {
             }
           }
         }
-        
+
         // Restore git state if requested
         let gitRestored = null;
         if (args.restoreGit !== false && checkpoint.gitState) {
           try {
             if (checkpoint.gitState.stashed) {
               // Try to pop the stash
-              const stashes = execSync('git stash list', { 
-                cwd: projectPath, 
-                encoding: 'utf8' 
+              const stashes = execSync('git stash list', {
+                cwd: projectPath,
+                encoding: 'utf8'
               });
-              
+
               const stashMatch = stashes.match(new RegExp(`(stash@\\{\\d+\\}).*autopilot_checkpoint_${checkpoint.id}`));
               if (stashMatch) {
                 execSync(`git stash pop ${stashMatch[1]}`, { cwd: projectPath });
                 gitRestored = { stashPopped: true };
               }
             }
-            
+
             // Optionally reset to the commit
             if (checkpoint.gitState.commit) {
               gitRestored = {
@@ -420,7 +420,7 @@ const recoveryTools = {
             gitRestored = { error: e.message };
           }
         }
-        
+
         return {
           success: true,
           checkpointName: args.checkpointName,
@@ -432,7 +432,7 @@ const recoveryTools = {
           gitRestored,
           message: `Rolled back to checkpoint: ${args.checkpointName}. Restored ${restored.length} files.`
         };
-        
+
       } catch (error) {
         return { success: false, error: error.message };
       }
@@ -473,12 +473,12 @@ const recoveryTools = {
       const errorMessage = args.error;
       const projectPath = args.projectPath || process.cwd();
       const dryRun = args.dryRun || false;
-      
+
       try {
         // Find matching recovery pattern
         let matchedPattern = null;
         let patternName = null;
-        
+
         for (const [name, pattern] of Object.entries(recoveryPatterns)) {
           for (const regex of pattern.patterns) {
             if (regex.test(errorMessage)) {
@@ -487,9 +487,11 @@ const recoveryTools = {
               break;
             }
           }
-          if (matchedPattern) break;
+          if (matchedPattern) {
+            break;
+          }
         }
-        
+
         if (!matchedPattern) {
           return {
             success: false,
@@ -499,10 +501,10 @@ const recoveryTools = {
             knownPatterns: Object.keys(recoveryPatterns)
           };
         }
-        
+
         const recoverySteps = matchedPattern.recovery;
         const results = [];
-        
+
         if (dryRun) {
           // Just return the suggested steps
           return {
@@ -517,24 +519,24 @@ const recoveryTools = {
             message: 'Dry run - no actions taken. Set dryRun: false to execute.'
           };
         }
-        
+
         // Execute recovery steps
         for (const step of recoverySteps) {
           const result = { action: step.action, description: step.description };
-          
+
           try {
             switch (step.action) {
               case 'command':
                 const cmd = step.cmd.replace('${PORT}', '3000'); // Replace variables
-                const output = execSync(cmd, { 
-                  cwd: projectPath, 
+                const output = execSync(cmd, {
+                  cwd: projectPath,
                   encoding: 'utf8',
                   timeout: 60000
                 });
                 result.success = true;
                 result.output = output.substring(0, 500);
                 break;
-                
+
               case 'delete':
                 const targetPath = path.join(projectPath, step.path);
                 if (fs.existsSync(targetPath)) {
@@ -546,12 +548,12 @@ const recoveryTools = {
                   result.note = 'Path did not exist';
                 }
                 break;
-                
+
               case 'notify':
                 result.success = true;
                 result.message = step.message;
                 break;
-                
+
               default:
                 result.success = false;
                 result.error = 'Unknown action type';
@@ -560,27 +562,27 @@ const recoveryTools = {
             result.success = false;
             result.error = e.message;
           }
-          
+
           results.push(result);
-          
+
           // Stop if a step fails (unless it's a notification)
           if (!result.success && step.action !== 'notify') {
             break;
           }
         }
-        
+
         const allSucceeded = results.every(r => r.success);
-        
+
         return {
           success: allSucceeded,
           patternMatched: patternName,
           stepsExecuted: results.length,
           results,
-          message: allSucceeded 
+          message: allSucceeded
             ? `Recovery successful using pattern: ${patternName}`
-            : `Recovery partially failed. Check results for details.`
+            : 'Recovery partially failed. Check results for details.'
         };
-        
+
       } catch (error) {
         return { success: false, error: error.message };
       }
@@ -606,18 +608,18 @@ const recoveryTools = {
       try {
         const dirs = fs.readdirSync(DATA_DIR);
         const checkpointList = [];
-        
+
         for (const dir of dirs) {
           const metadataPath = path.join(DATA_DIR, dir, 'checkpoint.json');
           if (fs.existsSync(metadataPath)) {
             try {
               const checkpoint = JSON.parse(fs.readFileSync(metadataPath, 'utf8'));
-              
+
               // Filter by project path if specified
               if (args.projectPath && checkpoint.projectPath !== args.projectPath) {
                 continue;
               }
-              
+
               checkpointList.push({
                 name: checkpoint.name,
                 id: checkpoint.id,
@@ -632,17 +634,17 @@ const recoveryTools = {
             }
           }
         }
-        
+
         // Sort by timestamp descending
         checkpointList.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-        
+
         return {
           success: true,
           count: checkpointList.length,
           checkpoints: checkpointList,
           dataDirectory: DATA_DIR
         };
-        
+
       } catch (error) {
         return { success: false, error: error.message };
       }
@@ -650,7 +652,7 @@ const recoveryTools = {
   },
 
   // Get all tool definitions for registration
-  getToolDefinitions: function() {
+  getToolDefinitions: function () {
     return [
       { name: this.create_checkpoint.name, description: this.create_checkpoint.description, inputSchema: this.create_checkpoint.inputSchema },
       { name: this.rollback.name, description: this.rollback.description, inputSchema: this.rollback.inputSchema },
@@ -660,18 +662,18 @@ const recoveryTools = {
   },
 
   // Get handler for a tool
-  getHandler: function(toolName) {
+  getHandler: function (toolName) {
     const tool = this[toolName];
     return tool ? tool.handler : null;
   },
 
   // Get recovery patterns (for customization)
-  getRecoveryPatterns: function() {
+  getRecoveryPatterns: function () {
     return recoveryPatterns;
   },
 
   // Add custom recovery pattern
-  addRecoveryPattern: function(name, pattern) {
+  addRecoveryPattern: function (name, pattern) {
     recoveryPatterns[name] = pattern;
   }
 };

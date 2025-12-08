@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 /**
  * Real-Time AI/ML Learning Engine v1.0
- * 
+ *
  * COMPREHENSIVE AI/ML SYSTEM FOR AUTOPILOT
- * 
+ *
  * Features:
  * 1. SQLite Database - Persistent structured storage
  * 2. Real-Time Learning - Learn from every interaction immediately
@@ -28,7 +28,7 @@ const IS_WINDOWS = process.platform === 'win32';
 // ==============================================================================
 // DATABASE CONFIGURATION
 // ==============================================================================
-const AI_DATA_DIR = IS_WINDOWS 
+const AI_DATA_DIR = IS_WINDOWS
   ? path.join(process.env.APPDATA || HOME, 'WindsurfAutopilot', 'ai-engine')
   : path.join(HOME, '.windsurf-autopilot', 'ai-engine');
 
@@ -47,7 +47,7 @@ function initAIEngine() {
   if (!fs.existsSync(AI_DATA_DIR)) {
     fs.mkdirSync(AI_DATA_DIR, { recursive: true });
   }
-  
+
   const defaults = {
     interactions: {
       version: '1.0',
@@ -90,13 +90,13 @@ function initAIEngine() {
       lastUpdate: null
     }
   };
-  
+
   Object.entries(DB_FILES).forEach(([key, filepath]) => {
     if (!fs.existsSync(filepath)) {
       fs.writeFileSync(filepath, JSON.stringify(defaults[key], null, 2));
     }
   });
-  
+
   return { success: true, dataDir: AI_DATA_DIR };
 }
 
@@ -129,7 +129,7 @@ function saveDB(name, data) {
  */
 async function learnFromInteraction(interaction) {
   const db = loadDB('interactions') || { total: 0, sessions: [], realtimeQueue: [] };
-  
+
   // Add to real-time queue
   const enrichedInteraction = {
     ...interaction,
@@ -137,22 +137,22 @@ async function learnFromInteraction(interaction) {
     id: `int_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
     processed: false
   };
-  
+
   db.realtimeQueue.push(enrichedInteraction);
   db.total++;
-  
+
   // Process immediately
   const learnings = await processInteractionRealtime(enrichedInteraction);
   enrichedInteraction.processed = true;
   enrichedInteraction.learnings = learnings;
-  
+
   // Keep last 10000 interactions
   if (db.realtimeQueue.length > 10000) {
     db.realtimeQueue = db.realtimeQueue.slice(-10000);
   }
-  
+
   saveDB('interactions', db);
-  
+
   return {
     interactionId: enrichedInteraction.id,
     learnings,
@@ -170,15 +170,15 @@ async function processInteractionRealtime(interaction) {
     solutions: [],
     improvements: []
   };
-  
+
   // 1. Classify intent
   const intent = classifyIntent(interaction.action, interaction.params);
   learnings.intent = intent;
-  
+
   // 2. Extract entities
   const entities = extractEntities(interaction);
   learnings.entities = entities;
-  
+
   // 3. Learn patterns
   if (interaction.success) {
     learnings.patterns.push({
@@ -187,7 +187,7 @@ async function processInteractionRealtime(interaction) {
       context: interaction.context,
       weight: 1.0
     });
-    
+
     // Update success model
     updateSuccessModel(interaction);
   } else {
@@ -197,21 +197,21 @@ async function processInteractionRealtime(interaction) {
       error: interaction.error,
       weight: 1.0
     });
-    
+
     // Learn from failure
     const solution = await findSolutionForError(interaction.error);
     if (solution) {
       learnings.solutions.push(solution);
     }
   }
-  
+
   // 4. Update knowledge graph
   updateKnowledgeGraph(interaction, entities);
-  
+
   // 5. Create/update embeddings for similarity search
   const embedding = createEmbedding(interaction);
   storeEmbedding(interaction.id, embedding);
-  
+
   return learnings;
 }
 
@@ -228,13 +228,13 @@ function classifyIntent(action, params) {
     'test': ['run_tests', 'generate_tests'],
     'query': ['get_status', 'get_insights', 'get_suggestions']
   };
-  
+
   for (const [intent, actions] of Object.entries(intents)) {
     if (actions.includes(action)) {
       return { intent, confidence: 0.9 };
     }
   }
-  
+
   return { intent: 'unknown', confidence: 0.5 };
 }
 
@@ -244,39 +244,45 @@ function classifyIntent(action, params) {
 function extractEntities(interaction) {
   const entities = [];
   const params = interaction.params || {};
-  
+
   // Extract file paths
   if (params.path || params.filePath || params.projectPath) {
     const filePath = params.path || params.filePath || params.projectPath;
     entities.push({ type: 'path', value: filePath });
-    
+
     // Extract file extension
     const ext = path.extname(filePath);
     if (ext) {
       entities.push({ type: 'fileType', value: ext });
     }
   }
-  
+
   // Extract commands
   if (params.command) {
     entities.push({ type: 'command', value: params.command });
-    
+
     // Extract package manager
-    if (params.command.startsWith('npm')) entities.push({ type: 'tool', value: 'npm' });
-    if (params.command.startsWith('pip')) entities.push({ type: 'tool', value: 'pip' });
-    if (params.command.startsWith('git')) entities.push({ type: 'tool', value: 'git' });
+    if (params.command.startsWith('npm')) {
+      entities.push({ type: 'tool', value: 'npm' });
+    }
+    if (params.command.startsWith('pip')) {
+      entities.push({ type: 'tool', value: 'pip' });
+    }
+    if (params.command.startsWith('git')) {
+      entities.push({ type: 'tool', value: 'git' });
+    }
   }
-  
+
   // Extract project types
   if (params.type) {
     entities.push({ type: 'projectType', value: params.type });
   }
-  
+
   // Extract error types
   if (interaction.error) {
     entities.push({ type: 'error', value: categorizeError(interaction.error) });
   }
-  
+
   return entities;
 }
 
@@ -285,19 +291,41 @@ function extractEntities(interaction) {
  */
 function categorizeError(error) {
   const errorStr = String(error).toLowerCase();
-  
-  if (errorStr.includes('enoent') || errorStr.includes('not found')) return 'FILE_NOT_FOUND';
-  if (errorStr.includes('permission') || errorStr.includes('eacces')) return 'PERMISSION_ERROR';
-  if (errorStr.includes('network') || errorStr.includes('econnrefused')) return 'NETWORK_ERROR';
-  if (errorStr.includes('timeout')) return 'TIMEOUT_ERROR';
-  if (errorStr.includes('syntax')) return 'SYNTAX_ERROR';
-  if (errorStr.includes('module') || errorStr.includes('import')) return 'MODULE_ERROR';
-  if (errorStr.includes('memory') || errorStr.includes('heap')) return 'MEMORY_ERROR';
-  if (errorStr.includes('npm err')) return 'NPM_ERROR';
-  if (errorStr.includes('git')) return 'GIT_ERROR';
-  if (errorStr.includes('python') || errorStr.includes('pip')) return 'PYTHON_ERROR';
-  if (errorStr.includes('typescript') || errorStr.includes('type')) return 'TYPE_ERROR';
-  
+
+  if (errorStr.includes('enoent') || errorStr.includes('not found')) {
+    return 'FILE_NOT_FOUND';
+  }
+  if (errorStr.includes('permission') || errorStr.includes('eacces')) {
+    return 'PERMISSION_ERROR';
+  }
+  if (errorStr.includes('network') || errorStr.includes('econnrefused')) {
+    return 'NETWORK_ERROR';
+  }
+  if (errorStr.includes('timeout')) {
+    return 'TIMEOUT_ERROR';
+  }
+  if (errorStr.includes('syntax')) {
+    return 'SYNTAX_ERROR';
+  }
+  if (errorStr.includes('module') || errorStr.includes('import')) {
+    return 'MODULE_ERROR';
+  }
+  if (errorStr.includes('memory') || errorStr.includes('heap')) {
+    return 'MEMORY_ERROR';
+  }
+  if (errorStr.includes('npm err')) {
+    return 'NPM_ERROR';
+  }
+  if (errorStr.includes('git')) {
+    return 'GIT_ERROR';
+  }
+  if (errorStr.includes('python') || errorStr.includes('pip')) {
+    return 'PYTHON_ERROR';
+  }
+  if (errorStr.includes('typescript') || errorStr.includes('type')) {
+    return 'TYPE_ERROR';
+  }
+
   return 'UNKNOWN_ERROR';
 }
 
@@ -311,7 +339,7 @@ function categorizeError(error) {
 async function searchStackOverflow(query, tags = []) {
   const cache = loadDB('webCache') || { stackoverflow: {} };
   const cacheKey = `${query}_${tags.join(',')}`;
-  
+
   // Check cache (valid for 24 hours)
   if (cache.stackoverflow[cacheKey]) {
     const cached = cache.stackoverflow[cacheKey];
@@ -319,15 +347,15 @@ async function searchStackOverflow(query, tags = []) {
       return { ...cached.data, fromCache: true };
     }
   }
-  
+
   try {
     const encodedQuery = encodeURIComponent(query);
     const tagString = tags.length > 0 ? `&tagged=${tags.join(';')}` : '';
     const url = `https://api.stackexchange.com/2.3/search/advanced?order=desc&sort=relevance&q=${encodedQuery}${tagString}&site=stackoverflow&filter=withbody`;
-    
+
     const response = await httpGet(url);
     const data = JSON.parse(response);
-    
+
     const results = {
       query,
       tags,
@@ -341,14 +369,14 @@ async function searchStackOverflow(query, tags = []) {
       })),
       timestamp: Date.now()
     };
-    
+
     // Cache results
     cache.stackoverflow[cacheKey] = { data: results, timestamp: Date.now() };
     saveDB('webCache', cache);
-    
+
     // Learn from results
     learnFromWebResults('stackoverflow', results);
-    
+
     return results;
   } catch (e) {
     return { error: e.message, query, tags };
@@ -361,7 +389,7 @@ async function searchStackOverflow(query, tags = []) {
 async function searchGitHub(query, language = '') {
   const cache = loadDB('webCache') || { github: {} };
   const cacheKey = `${query}_${language}`;
-  
+
   // Check cache
   if (cache.github[cacheKey]) {
     const cached = cache.github[cacheKey];
@@ -369,18 +397,18 @@ async function searchGitHub(query, language = '') {
       return { ...cached.data, fromCache: true };
     }
   }
-  
+
   try {
     const encodedQuery = encodeURIComponent(query);
     const langFilter = language ? `+language:${language}` : '';
     const url = `https://api.github.com/search/code?q=${encodedQuery}${langFilter}&per_page=5`;
-    
+
     const response = await httpGet(url, {
       'User-Agent': 'WindsurfAutopilot/2.3',
       'Accept': 'application/vnd.github.v3+json'
     });
     const data = JSON.parse(response);
-    
+
     const results = {
       query,
       language,
@@ -393,11 +421,11 @@ async function searchGitHub(query, language = '') {
       })),
       timestamp: Date.now()
     };
-    
+
     // Cache results
     cache.github[cacheKey] = { data: results, timestamp: Date.now() };
     saveDB('webCache', cache);
-    
+
     return results;
   } catch (e) {
     return { error: e.message, query, language };
@@ -409,19 +437,19 @@ async function searchGitHub(query, language = '') {
  */
 async function searchNPM(query) {
   const cache = loadDB('webCache') || { npm: {} };
-  
+
   if (cache.npm[query]) {
     const cached = cache.npm[query];
     if (Date.now() - cached.timestamp < 24 * 60 * 60 * 1000) {
       return { ...cached.data, fromCache: true };
     }
   }
-  
+
   try {
     const url = `https://registry.npmjs.org/-/v1/search?text=${encodeURIComponent(query)}&size=5`;
     const response = await httpGet(url);
     const data = JSON.parse(response);
-    
+
     const results = {
       query,
       packages: (data.objects || []).map(obj => ({
@@ -433,10 +461,10 @@ async function searchNPM(query) {
       })),
       timestamp: Date.now()
     };
-    
+
     cache.npm[query] = { data: results, timestamp: Date.now() };
     saveDB('webCache', cache);
-    
+
     return results;
   } catch (e) {
     return { error: e.message, query };
@@ -448,7 +476,7 @@ async function searchNPM(query) {
  */
 function learnFromWebResults(source, results) {
   const knowledge = loadDB('knowledge') || { concepts: {}, relationships: [], facts: [] };
-  
+
   if (source === 'stackoverflow' && results.items) {
     results.items.forEach(item => {
       // Learn common tags/concepts
@@ -465,7 +493,7 @@ function learnFromWebResults(source, results) {
       });
     });
   }
-  
+
   saveDB('knowledge', knowledge);
 }
 
@@ -475,25 +503,25 @@ function learnFromWebResults(source, results) {
 async function findSolutionForError(error) {
   const errorType = categorizeError(error);
   const solutions = loadDB('solutions') || { cache: {}, successRates: {} };
-  
+
   // Check local cache first
   if (solutions.cache[errorType]) {
     const cached = solutions.cache[errorType];
     // Return highest success rate solution
-    const sorted = cached.solutions.sort((a, b) => 
+    const sorted = cached.solutions.sort((a, b) =>
       (solutions.successRates[b.id] || 0) - (solutions.successRates[a.id] || 0)
     );
     if (sorted.length > 0) {
       return { ...sorted[0], source: 'local_cache' };
     }
   }
-  
+
   // Search web for solutions
   const webSolutions = await searchStackOverflow(
     `${errorType.replace(/_/g, ' ')} ${error.substring(0, 100)}`,
     ['javascript', 'node.js', 'python']
   );
-  
+
   if (webSolutions.items && webSolutions.items.length > 0) {
     const solution = {
       id: `sol_${Date.now()}`,
@@ -503,17 +531,17 @@ async function findSolutionForError(error) {
       link: webSolutions.items[0].link,
       confidence: webSolutions.items[0].score / 100
     };
-    
+
     // Cache the solution
     if (!solutions.cache[errorType]) {
       solutions.cache[errorType] = { solutions: [] };
     }
     solutions.cache[errorType].solutions.push(solution);
     saveDB('solutions', solutions);
-    
+
     return solution;
   }
-  
+
   return null;
 }
 
@@ -526,7 +554,7 @@ async function findSolutionForError(error) {
  */
 function updateKnowledgeGraph(interaction, entities) {
   const knowledge = loadDB('knowledge') || { concepts: {}, relationships: [], facts: [] };
-  
+
   // Add entities as concepts
   entities.forEach(entity => {
     const key = `${entity.type}:${entity.value}`;
@@ -542,7 +570,7 @@ function updateKnowledgeGraph(interaction, entities) {
     knowledge.concepts[key].occurrences++;
     knowledge.concepts[key].lastSeen = new Date().toISOString();
   });
-  
+
   // Create relationships between entities
   for (let i = 0; i < entities.length; i++) {
     for (let j = i + 1; j < entities.length; j++) {
@@ -553,12 +581,12 @@ function updateKnowledgeGraph(interaction, entities) {
         strength: 1,
         timestamp: new Date().toISOString()
       };
-      
+
       // Check if relationship exists
-      const existing = knowledge.relationships.find(r => 
+      const existing = knowledge.relationships.find(r =>
         r.from === relationship.from && r.to === relationship.to
       );
-      
+
       if (existing) {
         existing.strength++;
         existing.timestamp = new Date().toISOString();
@@ -567,7 +595,7 @@ function updateKnowledgeGraph(interaction, entities) {
       }
     }
   }
-  
+
   // Add fact
   knowledge.facts.push({
     action: interaction.action,
@@ -575,12 +603,12 @@ function updateKnowledgeGraph(interaction, entities) {
     entities: entities.map(e => `${e.type}:${e.value}`),
     timestamp: new Date().toISOString()
   });
-  
+
   // Keep last 5000 facts
   if (knowledge.facts.length > 5000) {
     knowledge.facts = knowledge.facts.slice(-5000);
   }
-  
+
   saveDB('knowledge', knowledge);
 }
 
@@ -589,35 +617,35 @@ function updateKnowledgeGraph(interaction, entities) {
  */
 function queryKnowledgeGraph(query) {
   const knowledge = loadDB('knowledge') || { concepts: {}, relationships: [], facts: [] };
-  
+
   const results = {
     concepts: [],
     relationships: [],
     facts: []
   };
-  
+
   const queryLower = query.toLowerCase();
-  
+
   // Search concepts
   Object.entries(knowledge.concepts).forEach(([key, concept]) => {
-    if (key.toLowerCase().includes(queryLower) || 
+    if (key.toLowerCase().includes(queryLower) ||
         (concept.value && concept.value.toLowerCase().includes(queryLower))) {
       results.concepts.push({ key, ...concept });
     }
   });
-  
+
   // Search relationships
   results.relationships = knowledge.relationships.filter(r =>
     r.from.toLowerCase().includes(queryLower) ||
     r.to.toLowerCase().includes(queryLower)
   );
-  
+
   // Search facts
   results.facts = knowledge.facts.filter(f =>
     f.action.toLowerCase().includes(queryLower) ||
     f.entities.some(e => e.toLowerCase().includes(queryLower))
   ).slice(-20);
-  
+
   return results;
 }
 
@@ -631,7 +659,7 @@ function queryKnowledgeGraph(query) {
 function createEmbedding(interaction) {
   const text = JSON.stringify(interaction).toLowerCase();
   const words = text.match(/\b\w+\b/g) || [];
-  
+
   // Create word frequency vector
   const vector = {};
   words.forEach(word => {
@@ -639,7 +667,7 @@ function createEmbedding(interaction) {
       vector[word] = (vector[word] || 0) + 1;
     }
   });
-  
+
   // Normalize
   const magnitude = Math.sqrt(Object.values(vector).reduce((sum, v) => sum + v * v, 0));
   if (magnitude > 0) {
@@ -647,7 +675,7 @@ function createEmbedding(interaction) {
       vector[key] = vector[key] / magnitude;
     });
   }
-  
+
   return vector;
 }
 
@@ -656,17 +684,17 @@ function createEmbedding(interaction) {
  */
 function storeEmbedding(id, vector) {
   const embeddings = loadDB('embeddings') || { vectors: {}, index: [] };
-  
+
   embeddings.vectors[id] = vector;
   embeddings.index.push({ id, timestamp: Date.now() });
-  
+
   // Keep last 5000 embeddings
   if (embeddings.index.length > 5000) {
     const toRemove = embeddings.index.slice(0, embeddings.index.length - 5000);
     toRemove.forEach(item => delete embeddings.vectors[item.id]);
     embeddings.index = embeddings.index.slice(-5000);
   }
-  
+
   saveDB('embeddings', embeddings);
 }
 
@@ -676,14 +704,14 @@ function storeEmbedding(id, vector) {
 function findSimilar(query, topK = 5) {
   const embeddings = loadDB('embeddings') || { vectors: {}, index: [] };
   const queryVector = createEmbedding({ query });
-  
+
   const similarities = [];
-  
+
   Object.entries(embeddings.vectors).forEach(([id, vector]) => {
     const similarity = cosineSimilarity(queryVector, vector);
     similarities.push({ id, similarity });
   });
-  
+
   return similarities
     .sort((a, b) => b.similarity - a.similarity)
     .slice(0, topK);
@@ -697,7 +725,7 @@ function cosineSimilarity(vec1, vec2) {
   let dotProduct = 0;
   let mag1 = 0;
   let mag2 = 0;
-  
+
   keys.forEach(key => {
     const v1 = vec1[key] || 0;
     const v2 = vec2[key] || 0;
@@ -705,7 +733,7 @@ function cosineSimilarity(vec1, vec2) {
     mag1 += v1 * v1;
     mag2 += v2 * v2;
   });
-  
+
   const magnitude = Math.sqrt(mag1) * Math.sqrt(mag2);
   return magnitude > 0 ? dotProduct / magnitude : 0;
 }
@@ -719,14 +747,14 @@ function cosineSimilarity(vec1, vec2) {
  */
 function recordFeedback(actionId, rating, comment = '') {
   const feedback = loadDB('feedback') || { ratings: [], improvements: [] };
-  
+
   feedback.ratings.push({
     actionId,
     rating, // 1-5 stars or thumbs up/down
     comment,
     timestamp: new Date().toISOString()
   });
-  
+
   // Update success model based on feedback
   if (rating >= 4) {
     // Positive feedback - reinforce
@@ -735,9 +763,9 @@ function recordFeedback(actionId, rating, comment = '') {
     // Negative feedback - reduce weight
     updateModelWeights('negative', actionId);
   }
-  
+
   saveDB('feedback', feedback);
-  
+
   return { success: true, message: 'Feedback recorded and learning updated.' };
 }
 
@@ -745,20 +773,20 @@ function recordFeedback(actionId, rating, comment = '') {
  * Update model weights based on feedback
  */
 function updateModelWeights(type, actionId) {
-  const models = loadDB('models') || { 
+  const models = loadDB('models') || {
     errorClassifier: { weights: {} },
     intentClassifier: { weights: {} },
     solutionRanker: { weights: {} }
   };
-  
+
   const factor = type === 'positive' ? 1.1 : 0.9;
-  
+
   // Update solution ranker weights
   if (!models.solutionRanker.weights[actionId]) {
     models.solutionRanker.weights[actionId] = 1.0;
   }
   models.solutionRanker.weights[actionId] *= factor;
-  
+
   saveDB('models', models);
 }
 
@@ -766,24 +794,24 @@ function updateModelWeights(type, actionId) {
  * Update success model from interaction outcome
  */
 function updateSuccessModel(interaction) {
-  const models = loadDB('models') || { 
+  const models = loadDB('models') || {
     errorClassifier: { weights: {} },
     intentClassifier: { weights: {} },
     solutionRanker: { weights: {} }
   };
-  
+
   const actionKey = interaction.action;
-  
+
   if (!models.solutionRanker.weights[actionKey]) {
     models.solutionRanker.weights[actionKey] = { successes: 0, failures: 0 };
   }
-  
+
   if (interaction.success) {
     models.solutionRanker.weights[actionKey].successes++;
   } else {
     models.solutionRanker.weights[actionKey].failures++;
   }
-  
+
   saveDB('models', models);
 }
 
@@ -798,7 +826,7 @@ async function getProactiveSuggestions(context) {
   const suggestions = [];
   const knowledge = loadDB('knowledge') || { concepts: {}, facts: [] };
   const models = loadDB('models') || { solutionRanker: { weights: {} } };
-  
+
   // 1. Suggest based on project type
   if (context.projectPath) {
     const projectType = detectProjectType(context.projectPath);
@@ -810,13 +838,13 @@ async function getProactiveSuggestions(context) {
       });
     }
   }
-  
+
   // 2. Suggest based on common patterns
   const topActions = Object.entries(models.solutionRanker.weights)
     .filter(([key, val]) => typeof val === 'object')
     .sort((a, b) => (b[1].successes || 0) - (a[1].successes || 0))
     .slice(0, 3);
-  
+
   if (topActions.length > 0) {
     suggestions.push({
       type: 'learned_patterns',
@@ -827,7 +855,7 @@ async function getProactiveSuggestions(context) {
       }))
     });
   }
-  
+
   // 3. Suggest based on similar past interactions
   if (context.currentAction) {
     const similar = findSimilar({ action: context.currentAction }, 3);
@@ -839,7 +867,7 @@ async function getProactiveSuggestions(context) {
       });
     }
   }
-  
+
   // 4. Web-based suggestions
   if (context.error) {
     const webSolution = await findSolutionForError(context.error);
@@ -851,7 +879,7 @@ async function getProactiveSuggestions(context) {
       });
     }
   }
-  
+
   return suggestions;
 }
 
@@ -862,15 +890,29 @@ function detectProjectType(projectPath) {
   try {
     if (fs.existsSync(path.join(projectPath, 'package.json'))) {
       const pkg = JSON.parse(fs.readFileSync(path.join(projectPath, 'package.json'), 'utf8'));
-      if (pkg.dependencies?.next || pkg.devDependencies?.next) return 'nextjs';
-      if (pkg.dependencies?.react || pkg.devDependencies?.react) return 'react';
-      if (pkg.dependencies?.express) return 'express';
-      if (pkg.dependencies?.vue) return 'vue';
+      if (pkg.dependencies?.next || pkg.devDependencies?.next) {
+        return 'nextjs';
+      }
+      if (pkg.dependencies?.react || pkg.devDependencies?.react) {
+        return 'react';
+      }
+      if (pkg.dependencies?.express) {
+        return 'express';
+      }
+      if (pkg.dependencies?.vue) {
+        return 'vue';
+      }
       return 'node';
     }
-    if (fs.existsSync(path.join(projectPath, 'requirements.txt'))) return 'python';
-    if (fs.existsSync(path.join(projectPath, 'Cargo.toml'))) return 'rust';
-    if (fs.existsSync(path.join(projectPath, 'go.mod'))) return 'go';
+    if (fs.existsSync(path.join(projectPath, 'requirements.txt'))) {
+      return 'python';
+    }
+    if (fs.existsSync(path.join(projectPath, 'Cargo.toml'))) {
+      return 'rust';
+    }
+    if (fs.existsSync(path.join(projectPath, 'go.mod'))) {
+      return 'go';
+    }
   } catch (e) {}
   return null;
 }
@@ -894,7 +936,7 @@ function getActionsForProjectType(type) {
  */
 async function autoLearnFromWeb(topics = ['nodejs', 'react', 'python', 'typescript']) {
   const results = { learned: 0, topics: [] };
-  
+
   for (const topic of topics) {
     try {
       const soResults = await searchStackOverflow(`best practices ${topic}`, [topic]);
@@ -904,7 +946,7 @@ async function autoLearnFromWeb(topics = ['nodejs', 'react', 'python', 'typescri
       // Continue with other topics
     }
   }
-  
+
   return results;
 }
 
@@ -921,11 +963,11 @@ function getAIEngineStatus() {
   const solutions = loadDB('solutions') || { cache: {} };
   const feedback = loadDB('feedback') || { ratings: [] };
   const models = loadDB('models') || {};
-  
+
   const avgRating = feedback.ratings.length > 0
     ? feedback.ratings.reduce((sum, r) => sum + r.rating, 0) / feedback.ratings.length
     : 0;
-  
+
   return {
     indicator: '🧠 AI ENGINE ACTIVE',
     version: '1.0',
@@ -966,7 +1008,7 @@ function httpGet(url, headers = {}) {
         ...headers
       }
     };
-    
+
     protocol.get(url, options, (res) => {
       let data = '';
       res.on('data', chunk => data += chunk);
@@ -982,42 +1024,42 @@ function httpGet(url, headers = {}) {
 module.exports = {
   // Initialize
   initAIEngine,
-  
+
   // Real-time Learning
   learnFromInteraction,
   processInteractionRealtime,
-  
+
   // Web Integration
   searchStackOverflow,
   searchGitHub,
   searchNPM,
   findSolutionForError,
   autoLearnFromWeb,
-  
+
   // Knowledge Graph
   updateKnowledgeGraph,
   queryKnowledgeGraph,
-  
+
   // Embeddings & Similarity
   createEmbedding,
   findSimilar,
-  
+
   // Feedback & Reinforcement
   recordFeedback,
   updateModelWeights,
-  
+
   // Proactive Suggestions
   getProactiveSuggestions,
   detectProjectType,
-  
+
   // Status
   getAIEngineStatus,
-  
+
   // Utilities
   categorizeError,
   classifyIntent,
   extractEntities,
-  
+
   // Database
   loadDB,
   saveDB,

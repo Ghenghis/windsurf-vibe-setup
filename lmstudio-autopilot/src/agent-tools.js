@@ -12,7 +12,9 @@ const AGENT_DIR = process.platform === 'win32'
   ? path.join(process.env.APPDATA || '', 'WindsurfAutopilot', 'agents')
   : path.join(process.env.HOME || '', '.windsurf-autopilot', 'agents');
 
-if (!fs.existsSync(AGENT_DIR)) fs.mkdirSync(AGENT_DIR, { recursive: true });
+if (!fs.existsSync(AGENT_DIR)) {
+  fs.mkdirSync(AGENT_DIR, { recursive: true });
+}
 
 // Agent registry
 const agents = new Map();
@@ -61,8 +63,8 @@ const agentTools = {
       type: 'object',
       properties: {
         name: { type: 'string', description: 'Agent name' },
-        specialization: { 
-          type: 'string', 
+        specialization: {
+          type: 'string',
           enum: ['code', 'test', 'docs', 'review', 'deploy', 'custom'],
           description: 'Agent specialization'
         },
@@ -75,7 +77,7 @@ const agentTools = {
     handler: async (args) => {
       try {
         const spec = agentSpecializations[args.specialization] || {};
-        
+
         const agent = {
           id: crypto.randomUUID().substring(0, 8),
           name: args.name,
@@ -91,7 +93,7 @@ const agentTools = {
         };
 
         agents.set(agent.id, agent);
-        
+
         // Save to disk
         fs.writeFileSync(
           path.join(AGENT_DIR, `${agent.id}.json`),
@@ -128,7 +130,7 @@ const agentTools = {
     },
     handler: async (args) => {
       const agent = agents.get(args.agentId) || loadAgent(args.agentId);
-      
+
       if (!agent) {
         return {
           success: false,
@@ -236,8 +238,8 @@ const agentTools = {
       properties: {
         task: { type: 'string', description: 'Complex task requiring collaboration' },
         agents: { type: 'array', items: { type: 'string' }, description: 'Agent IDs to involve' },
-        strategy: { 
-          type: 'string', 
+        strategy: {
+          type: 'string',
           enum: ['sequential', 'parallel', 'pipeline'],
           default: 'pipeline',
           description: 'Collaboration strategy'
@@ -248,7 +250,7 @@ const agentTools = {
     },
     handler: async (args) => {
       loadAllAgents();
-      
+
       // If no agents specified, auto-select based on task
       let selectedAgents = [];
       if (args.agents && args.agents.length > 0) {
@@ -258,19 +260,27 @@ const agentTools = {
         const taskLower = args.task.toLowerCase();
         if (taskLower.includes('code') || taskLower.includes('implement')) {
           const codeAgent = Array.from(agents.values()).find(a => a.specialization === 'code');
-          if (codeAgent) selectedAgents.push(codeAgent);
+          if (codeAgent) {
+            selectedAgents.push(codeAgent);
+          }
         }
         if (taskLower.includes('test')) {
           const testAgent = Array.from(agents.values()).find(a => a.specialization === 'test');
-          if (testAgent) selectedAgents.push(testAgent);
+          if (testAgent) {
+            selectedAgents.push(testAgent);
+          }
         }
         if (taskLower.includes('review') || taskLower.includes('security')) {
           const reviewAgent = Array.from(agents.values()).find(a => a.specialization === 'review');
-          if (reviewAgent) selectedAgents.push(reviewAgent);
+          if (reviewAgent) {
+            selectedAgents.push(reviewAgent);
+          }
         }
         if (taskLower.includes('doc')) {
           const docsAgent = Array.from(agents.values()).find(a => a.specialization === 'docs');
-          if (docsAgent) selectedAgents.push(docsAgent);
+          if (docsAgent) {
+            selectedAgents.push(docsAgent);
+          }
         }
       }
 
@@ -343,7 +353,7 @@ const agentTools = {
     inputSchema: { type: 'object', properties: {} },
     handler: async () => {
       loadAllAgents();
-      
+
       return {
         success: true,
         count: agents.size,
@@ -365,7 +375,7 @@ const agentTools = {
     }
   },
 
-  getToolDefinitions: function() {
+  getToolDefinitions: function () {
     return [
       { name: this.create_agent.name, description: this.create_agent.description, inputSchema: this.create_agent.inputSchema },
       { name: this.assign_task.name, description: this.assign_task.description, inputSchema: this.assign_task.inputSchema },
@@ -375,7 +385,7 @@ const agentTools = {
     ];
   },
 
-  getHandler: function(toolName) {
+  getHandler: function (toolName) {
     return this[toolName]?.handler;
   }
 };
@@ -392,8 +402,10 @@ function loadAgent(agentId) {
 }
 
 function loadAllAgents() {
-  if (!fs.existsSync(AGENT_DIR)) return;
-  
+  if (!fs.existsSync(AGENT_DIR)) {
+    return;
+  }
+
   const files = fs.readdirSync(AGENT_DIR).filter(f => f.endsWith('.json'));
   for (const file of files) {
     try {

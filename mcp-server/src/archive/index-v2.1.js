@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * Windsurf Autopilot MCP Server v2.1
- * 
+ *
  * This is the enhanced version that includes:
  * - All original v2.0 tools
  * - Project Intelligence (analyze_project, detect_tech_stack)
@@ -11,7 +11,7 @@
  * - Testing (run_tests)
  * - Process Management (start_server, stop_server, list_running)
  * - Docker Support (docker_status, docker_build, docker_run, docker_compose_up)
- * 
+ *
  * ZERO-CODE AUTOPILOT - The user NEVER needs to touch a terminal.
  */
 
@@ -39,7 +39,7 @@ const IS_WINDOWS = process.platform === 'win32';
 const VERSION = '2.1.0';
 
 const PATHS = {
-  windsurfSettings: IS_WINDOWS 
+  windsurfSettings: IS_WINDOWS
     ? path.join(process.env.APPDATA || '', 'Windsurf', 'User')
     : process.platform === 'darwin'
       ? path.join(HOME, 'Library', 'Application Support', 'Windsurf', 'User')
@@ -66,19 +66,19 @@ const runningProcesses = new Map();
 // ==============================================================================
 
 function safeExec(command, options = {}) {
-  const defaults = { 
-    encoding: 'utf8', 
+  const defaults = {
+    encoding: 'utf8',
     timeout: options.timeout || 60000,
     maxBuffer: 10 * 1024 * 1024,
     windowsHide: true
   };
-  
+
   try {
     const output = execSync(command, { ...defaults, ...options }).toString().trim();
     return { success: true, output, exitCode: 0 };
   } catch (e) {
-    return { 
-      success: false, 
+    return {
+      success: false,
       error: e.message,
       output: e.stdout?.toString() || '',
       stderr: e.stderr?.toString() || '',
@@ -91,19 +91,23 @@ function execAsync(command, options = {}) {
   return new Promise((resolve) => {
     const shell = IS_WINDOWS ? 'cmd.exe' : '/bin/bash';
     const shellArgs = IS_WINDOWS ? ['/c', command] : ['-c', command];
-    
+
     const proc = spawn(shell, shellArgs, {
       cwd: options.cwd || HOME,
       env: { ...process.env, ...options.env },
       windowsHide: true
     });
-    
+
     let stdout = '';
     let stderr = '';
-    
-    proc.stdout.on('data', (data) => { stdout += data.toString(); });
-    proc.stderr.on('data', (data) => { stderr += data.toString(); });
-    
+
+    proc.stdout.on('data', (data) => {
+      stdout += data.toString();
+    });
+    proc.stderr.on('data', (data) => {
+      stderr += data.toString();
+    });
+
     proc.on('close', (code) => {
       resolve({
         success: code === 0,
@@ -112,7 +116,7 @@ function execAsync(command, options = {}) {
         exitCode: code
       });
     });
-    
+
     proc.on('error', (err) => {
       resolve({
         success: false,
@@ -122,7 +126,7 @@ function execAsync(command, options = {}) {
         exitCode: 1
       });
     });
-    
+
     setTimeout(() => {
       proc.kill();
       resolve({
@@ -137,18 +141,26 @@ function execAsync(command, options = {}) {
 }
 
 function fileExists(filePath) {
-  try { return fs.existsSync(filePath); } catch { return false; }
+  try {
+    return fs.existsSync(filePath);
+  } catch {
+    return false;
+  }
 }
 
 function isDirectory(filePath) {
-  try { return fs.statSync(filePath).isDirectory(); } catch { return false; }
+  try {
+    return fs.statSync(filePath).isDirectory();
+  } catch {
+    return false;
+  }
 }
 
 function readJsonSafe(filePath) {
   try {
     let content = fs.readFileSync(filePath, 'utf8');
     content = content.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
-    
+
     // Handle JSONC (strip comments)
     let result = '';
     let i = 0;
@@ -156,15 +168,23 @@ function readJsonSafe(filePath) {
       if (content[i] === '"') {
         result += content[i++];
         while (i < content.length && content[i] !== '"') {
-          if (content[i] === '\\' && i + 1 < content.length) result += content[i++];
+          if (content[i] === '\\' && i + 1 < content.length) {
+            result += content[i++];
+          }
           result += content[i++];
         }
-        if (i < content.length) result += content[i++];
+        if (i < content.length) {
+          result += content[i++];
+        }
       } else if (content[i] === '/' && content[i + 1] === '/') {
-        while (i < content.length && content[i] !== '\n') i++;
+        while (i < content.length && content[i] !== '\n') {
+          i++;
+        }
       } else if (content[i] === '/' && content[i + 1] === '*') {
         i += 2;
-        while (i < content.length && !(content[i] === '*' && content[i + 1] === '/')) i++;
+        while (i < content.length && !(content[i] === '*' && content[i + 1] === '/')) {
+          i++;
+        }
         i += 2;
       } else {
         result += content[i++];
@@ -180,7 +200,9 @@ function readJsonSafe(filePath) {
 function writeFileSafe(filePath, content) {
   try {
     const dir = path.dirname(filePath);
-    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
+    }
     fs.writeFileSync(filePath, content, 'utf8');
     return { success: true };
   } catch (e) {
@@ -191,7 +213,9 @@ function writeFileSafe(filePath, content) {
 function copyFileSafe(src, dest) {
   try {
     const dir = path.dirname(dest);
-    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
+    }
     fs.copyFileSync(src, dest);
     return { success: true };
   } catch (e) {
@@ -202,7 +226,9 @@ function copyFileSafe(src, dest) {
 function logAction(action, details) {
   const entry = { timestamp: new Date().toISOString(), action, ...details };
   taskState.history.push(entry);
-  if (taskState.history.length > 100) taskState.history.shift();
+  if (taskState.history.length > 100) {
+    taskState.history.shift();
+  }
 }
 
 // ==============================================================================

@@ -12,7 +12,9 @@ const MODEL_DIR = process.platform === 'win32'
   ? path.join(process.env.APPDATA || '', 'WindsurfAutopilot', 'models')
   : path.join(process.env.HOME || '', '.windsurf-autopilot', 'models');
 
-if (!fs.existsSync(MODEL_DIR)) fs.mkdirSync(MODEL_DIR, { recursive: true });
+if (!fs.existsSync(MODEL_DIR)) {
+  fs.mkdirSync(MODEL_DIR, { recursive: true });
+}
 
 // Model registry
 let modelRegistry = [];
@@ -96,7 +98,7 @@ const modelTools = {
     },
     handler: async (args) => {
       const model = modelRegistry.find(m => m.id === args.modelId || m.name === args.modelId);
-      
+
       if (!model) {
         return {
           success: false,
@@ -130,7 +132,7 @@ const modelTools = {
       }
     },
     handler: async (args) => {
-      const modelsToTest = args.modelId 
+      const modelsToTest = args.modelId
         ? modelRegistry.filter(m => m.id === args.modelId || m.name === args.modelId)
         : modelRegistry;
 
@@ -175,14 +177,14 @@ const modelTools = {
     },
     handler: async (args) => {
       const model = modelRegistry.find(m => m.id === args.modelId || m.name === args.modelId);
-      
+
       if (!model) {
         return { success: false, error: `Model not found: ${args.modelId}` };
       }
 
       if (!['ollama', 'openai'].includes(model.type)) {
-        return { 
-          success: false, 
+        return {
+          success: false,
           error: 'Fine-tuning only supported for Ollama and OpenAI models',
           supportedTypes: ['ollama', 'openai']
         };
@@ -223,7 +225,7 @@ const modelTools = {
     }
   },
 
-  getToolDefinitions: function() {
+  getToolDefinitions: function () {
     return [
       { name: this.add_model.name, description: this.add_model.description, inputSchema: this.add_model.inputSchema },
       { name: this.switch_model.name, description: this.switch_model.description, inputSchema: this.switch_model.inputSchema },
@@ -233,7 +235,7 @@ const modelTools = {
     ];
   },
 
-  getHandler: function(toolName) {
+  getHandler: function (toolName) {
     return this[toolName]?.handler;
   }
 };

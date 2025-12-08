@@ -1,6 +1,6 @@
-# Windsurf Vibe Setup - Architecture Guide
+# Windsurf Vibe Setup - Architecture Guide v3.2
 
-> Understanding how all the pieces fit together
+> Understanding how all the pieces fit together - 195+ tools across 32 source files
 
 ---
 
@@ -45,6 +45,22 @@ The **Autopilot MCP Server** enables zero-code operation:
 | `guide_task` | Get step-by-step help |
 
 **Non-coders just say**: "Set everything up for me" - the AI handles the rest.
+
+### Tool Summary by Version
+
+| Version | Category | Tools | Key Functionality |
+|---------|----------|-------|-------------------|
+| v2.0 | Core Operations | 20+ | Git, packages, files, commands |
+| v2.1 | Intelligence | 16 | HTTP, error handling, Docker |
+| v2.2 | AI Decision | 16 | Smart analysis, decisions |
+| v2.3 | Autopilot | 8 | Learning, context |
+| v2.4 | AI/ML | 11 | Real-time learning |
+| v2.5 | ULTIMATE | 40 | Cloud, CI/CD, security |
+| v2.6 | Data | 21 | Database, context, recovery |
+| v3.0 | Enterprise | 25 | Workflows, teams, AI models |
+| v3.1 | Integrations | 36 | IaC, testing, comms, PM |
+| v3.2 | Vibe Coder | 39 | Smart assist, wizards, no-code |
+| **Total** | | **195+** | **100%++ Vibe Coder** |
 
 ---
 
@@ -190,14 +206,53 @@ settings.json
 ```
 windsurf-vibe-setup/
 │
+├── 📁 mcp-server/                ← WINDSURF MCP SERVER (195+ tools)
+│   ├── src/
+│   │   ├── index.js              ← Main server entry point
+│   │   ├── ultimate-tools.js     ← v2.5 ULTIMATE tools (40)
+│   │   ├── realtime-ai-engine.js ← AI/ML learning engine
+│   │   ├── autopilot-intelligence.js ← Learning system
+│   │   ├── advanced-tools.js     ← v2.2 AI decision tools
+│   │   ├── additional-tools.js   ← v2.1 intelligence tools
+│   │   ├── database-tools.js     ← v2.6 database (5)
+│   │   ├── embedding-tools.js    ← v2.6 vector search (3)
+│   │   ├── context-tools.js      ← v2.6 context persistence (5)
+│   │   ├── recovery-tools.js     ← v2.6 error recovery (4)
+│   │   ├── plugin-tools.js       ← v2.6 plugin system (4)
+│   │   ├── workflow-tools.js     ← v3.0 workflows (5)
+│   │   ├── team-tools.js         ← v3.0 team collab (6)
+│   │   ├── cloud-tools.js        ← v3.0 cloud sync (4)
+│   │   ├── model-tools.js        ← v3.0 AI models (5)
+│   │   ├── agent-tools.js        ← v3.0 multi-agent (5)
+│   │   ├── iac-tools.js          ← v3.1 Terraform/K8s (5)
+│   │   ├── testing-tools.js      ← v3.1 advanced testing (5)
+│   │   ├── comms-tools.js        ← v3.1 communications (5)
+│   │   ├── pm-tools.js           ← v3.1 project mgmt (5)
+│   │   ├── security-advanced-tools.js ← v3.1 SAST/SBOM (5)
+│   │   ├── devenv-tools.js       ← v3.1 dev environment (3)
+│   │   ├── publish-tools.js      ← v3.1 publishing (4)
+│   │   ├── observability-tools.js ← v3.1 observability (4)
+│   │   ├── smart-assist-tools.js ← v3.2 smart assistance (6)
+│   │   ├── wizard-tools.js       ← v3.2 quick wizards (6)
+│   │   ├── asset-tools.js        ← v3.2 asset generation (5)
+│   │   ├── nocode-tools.js       ← v3.2 no-code integration (6)
+│   │   ├── business-tools.js     ← v3.2 business analytics (5)
+│   │   ├── launch-tools.js       ← v3.2 launch tools (5)
+│   │   ├── pair-tools.js         ← v3.2 AI pair programming (6)
+│   │   └── health-tools.js       ← Health check utilities
+│   └── package.json
+│
+├── 📁 lmstudio-autopilot/        ← LM STUDIO MCP SERVER (identical)
+│   ├── src/                      ← Mirror of mcp-server/src
+│   └── package.json
+│
 ├── 📄 settings.json              ← MAIN CONFIG - Copy to Windsurf
 │
 ├── 📄 Windsurf-IDE-config*.md    ← COMPREHENSIVE GUIDE - Read this!
 │
 ├── 📁 examples/                  ← TEMPLATES TO COPY
 │   ├── global_rules.md           ← AI behavior rules
-│   ├── mcp_config.json           ← MCP server setup
-│   └── windsurf-vibe.code-workspace  ← Multi-project workspace
+│   └── README.md                 ← Examples documentation
 │
 ├── 📁 scripts/                   ← AUTOMATION TOOLS
 │   ├── validate-json.js          ← Check JSON files
@@ -205,26 +260,32 @@ windsurf-vibe-setup/
 │   ├── scan-dependencies.js      ← Security scan
 │   ├── auto-repair.js            ← Auto-fix code issues
 │   ├── collect-metrics.js        ← Code quality metrics
-│   ├── security-audit.js         ← Security logging
-│   └── testing/
-│       └── Run-WindsurfBenchmark.ps1  ← Performance tests
+│   └── security-audit.js         ← Security logging
 │
 ├── 📁 docs/                      ← DOCUMENTATION
 │   ├── ARCHITECTURE.md           ← This file
+│   ├── AUTOPILOT_STATUS.md       ← Current tool status
 │   ├── QUICKSTART.md             ← Get started fast
 │   ├── TROUBLESHOOTING.md        ← Fix common problems
-│   └── testing/
-│       └── README.md             ← Testing documentation
+│   ├── MCP_SETUP_GUIDE.md        ← MCP configuration
+│   ├── WORKFLOW.md               ← Development workflow
+│   └── TODO.md                   ← Task tracking
 │
 ├── 📁 .github/                   ← GITHUB AUTOMATION
 │   ├── workflows/ci.yml          ← Automated testing
-│   └── ISSUE_TEMPLATE/           ← Bug/feature templates
+│   ├── ISSUE_TEMPLATE/           ← Bug/feature templates
+│   └── PULL_REQUEST_TEMPLATE.md  ← PR template
 │
 └── 📄 Config Files
     ├── .eslintrc.json            ← JavaScript linting
     ├── .prettierrc.json          ← Code formatting
-    ├── .markdownlint.json        ← Markdown linting
     ├── .editorconfig             ← Editor consistency
+    ├── CHANGELOG.md              ← Version history
+    ├── ROADMAP.md                ← Feature roadmap
+    ├── GAP_ANALYSIS.md           ← Completion status
+    ├── ACTION_PLAN.md            ← Development plan
+    ├── CONTRIBUTING.md           ← Contribution guide
+    ├── SECURITY.md               ← Security policy
     └── package.json              ← Node.js dependencies
 ```
 

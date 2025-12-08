@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 /**
  * Windsurf Autopilot - Database Tools v2.6
- * 
+ *
  * Persistent database integration for the autopilot system.
  * Supports SQLite (default), PostgreSQL, and MySQL.
- * 
+ *
  * Tools:
  * - db_connect: Connect to database
  * - db_schema: View/create/modify schemas
@@ -33,7 +33,7 @@ if (!fs.existsSync(DATA_DIR)) {
  * Database Tools Export
  */
 const databaseTools = {
-  
+
   // ═══════════════════════════════════════════════════════════════════════════
   // TOOL: db_connect
   // ═══════════════════════════════════════════════════════════════════════════
@@ -76,17 +76,17 @@ const databaseTools = {
     handler: async (args) => {
       const dbType = args.type || 'sqlite';
       const dbName = args.name;
-      
+
       try {
         let connection = null;
-        let connectionId = `${dbType}_${dbName}`;
-        
+        const connectionId = `${dbType}_${dbName}`;
+
         if (dbType === 'sqlite') {
           // SQLite - use better-sqlite3 if available, fallback to file-based
-          const dbPath = dbName.includes(path.sep) 
-            ? dbName 
+          const dbPath = dbName.includes(path.sep)
+            ? dbName
             : path.join(DATA_DIR, `${dbName}.db`);
-          
+
           try {
             const Database = require('better-sqlite3');
             connection = new Database(dbPath);
@@ -98,7 +98,7 @@ const databaseTools = {
             }
             connections.set(connectionId, { type: 'sqlite-file', path: dbPath });
           }
-          
+
           return {
             success: true,
             connectionId,
@@ -106,7 +106,7 @@ const databaseTools = {
             path: dbPath,
             message: `Connected to SQLite database: ${dbPath}`
           };
-          
+
         } else if (dbType === 'postgres') {
           const { Pool } = require('pg');
           const pool = new Pool({
@@ -116,11 +116,11 @@ const databaseTools = {
             user: args.user,
             password: args.password
           });
-          
+
           // Test connection
           await pool.query('SELECT NOW()');
           connections.set(connectionId, { type: 'postgres', pool });
-          
+
           return {
             success: true,
             connectionId,
@@ -129,7 +129,7 @@ const databaseTools = {
             database: dbName,
             message: `Connected to PostgreSQL database: ${dbName}`
           };
-          
+
         } else if (dbType === 'mysql') {
           const mysql = require('mysql2/promise');
           const pool = await mysql.createPool({
@@ -139,11 +139,11 @@ const databaseTools = {
             user: args.user,
             password: args.password
           });
-          
+
           // Test connection
           await pool.query('SELECT 1');
           connections.set(connectionId, { type: 'mysql', pool });
-          
+
           return {
             success: true,
             connectionId,
@@ -153,12 +153,12 @@ const databaseTools = {
             message: `Connected to MySQL database: ${dbName}`
           };
         }
-        
+
       } catch (error) {
         return {
           success: false,
           error: error.message,
-          suggestion: dbType === 'sqlite' 
+          suggestion: dbType === 'sqlite'
             ? 'SQLite should work out of the box. Try: npm install better-sqlite3'
             : `Make sure ${dbType} is running and credentials are correct`
         };
@@ -224,7 +224,7 @@ const databaseTools = {
             const tables = conn.db.prepare(
               "SELECT name FROM sqlite_master WHERE type='table'"
             ).all();
-            
+
             const schema = {};
             for (const t of tables) {
               const info = conn.db.prepare(`PRAGMA table_info(${t.name})`).all();
@@ -236,9 +236,9 @@ const databaseTools = {
                 primaryKey: col.pk === 1
               }));
             }
-            
+
             return { success: true, schema, tableCount: tables.length };
-            
+
           } else if (conn.type === 'postgres') {
             const result = await conn.pool.query(`
               SELECT table_name, column_name, data_type, is_nullable, column_default
@@ -246,10 +246,12 @@ const databaseTools = {
               WHERE table_schema = 'public'
               ORDER BY table_name, ordinal_position
             `);
-            
+
             const schema = {};
             for (const row of result.rows) {
-              if (!schema[row.table_name]) schema[row.table_name] = [];
+              if (!schema[row.table_name]) {
+                schema[row.table_name] = [];
+              }
               schema[row.table_name].push({
                 name: row.column_name,
                 type: row.data_type,
@@ -257,26 +259,34 @@ const databaseTools = {
                 default: row.column_default
               });
             }
-            
+
             return { success: true, schema, tableCount: Object.keys(schema).length };
           }
-          
+
         } else if (args.action === 'create') {
           if (!args.table || !args.schema) {
             return { success: false, error: 'Table name and schema required for create' };
           }
-          
+
           const columns = args.schema.columns.map(col => {
             let def = `${col.name} ${col.type}`;
-            if (col.primaryKey) def += ' PRIMARY KEY';
-            if (col.notNull) def += ' NOT NULL';
-            if (col.unique) def += ' UNIQUE';
-            if (col.default) def += ` DEFAULT ${col.default}`;
+            if (col.primaryKey) {
+              def += ' PRIMARY KEY';
+            }
+            if (col.notNull) {
+              def += ' NOT NULL';
+            }
+            if (col.unique) {
+              def += ' UNIQUE';
+            }
+            if (col.default) {
+              def += ` DEFAULT ${col.default}`;
+            }
             return def;
           }).join(', ');
-          
+
           const sql = `CREATE TABLE IF NOT EXISTS ${args.table} (${columns})`;
-          
+
           if (conn.type === 'sqlite' && conn.db) {
             conn.db.exec(sql);
           } else if (conn.type === 'postgres') {
@@ -284,27 +294,27 @@ const databaseTools = {
           } else if (conn.type === 'mysql') {
             await conn.pool.query(sql);
           }
-          
+
           return { success: true, message: `Table ${args.table} created`, sql };
-          
+
         } else if (args.action === 'drop') {
           if (!args.table) {
             return { success: false, error: 'Table name required for drop' };
           }
-          
+
           const sql = `DROP TABLE IF EXISTS ${args.table}`;
-          
+
           if (conn.type === 'sqlite' && conn.db) {
             conn.db.exec(sql);
           } else if (conn.type === 'postgres') {
             await conn.pool.query(sql);
           }
-          
+
           return { success: true, message: `Table ${args.table} dropped` };
         }
-        
+
         return { success: false, error: 'Invalid action or unsupported operation' };
-        
+
       } catch (error) {
         return { success: false, error: error.message };
       }
@@ -353,12 +363,12 @@ const databaseTools = {
           const sourcePath = conn.path;
           const backupName = `backup_${path.basename(sourcePath, '.db')}_${timestamp}.db`;
           const backupPath = args.outputPath || path.join(backupDir, backupName);
-          
+
           // Copy the database file
           fs.copyFileSync(sourcePath, backupPath);
-          
+
           const stats = fs.statSync(backupPath);
-          
+
           return {
             success: true,
             backupPath,
@@ -367,7 +377,7 @@ const databaseTools = {
             timestamp,
             message: `SQLite backup created: ${backupPath}`
           };
-          
+
         } else if (conn.type === 'postgres') {
           // For PostgreSQL, we'd need pg_dump - provide instructions
           return {
@@ -377,9 +387,9 @@ const databaseTools = {
             suggestion: 'Run the command above in your terminal'
           };
         }
-        
+
         return { success: false, error: 'Unsupported database type for backup' };
-        
+
       } catch (error) {
         return { success: false, error: error.message };
       }
@@ -432,16 +442,16 @@ const databaseTools = {
       try {
         if (conn.type === 'sqlite' || conn.type === 'sqlite-file') {
           const targetPath = conn.path;
-          
+
           // Create a safety backup first
           const safetyBackup = `${targetPath}.pre-restore.bak`;
           if (fs.existsSync(targetPath)) {
             fs.copyFileSync(targetPath, safetyBackup);
           }
-          
+
           // Restore from backup
           fs.copyFileSync(args.backupPath, targetPath);
-          
+
           return {
             success: true,
             restoredFrom: args.backupPath,
@@ -450,9 +460,9 @@ const databaseTools = {
             message: `Database restored successfully. Safety backup at: ${safetyBackup}`
           };
         }
-        
+
         return { success: false, error: 'Only SQLite restore is currently supported' };
-        
+
       } catch (error) {
         return { success: false, error: error.message };
       }
@@ -491,7 +501,7 @@ const databaseTools = {
 
       try {
         const isSelect = args.sql.trim().toLowerCase().startsWith('select');
-        
+
         if (conn.type === 'sqlite' && conn.db) {
           if (isSelect) {
             const stmt = conn.db.prepare(args.sql);
@@ -502,7 +512,7 @@ const databaseTools = {
             const result = args.params ? stmt.run(...args.params) : stmt.run();
             return { success: true, changes: result.changes, lastInsertRowid: result.lastInsertRowid };
           }
-          
+
         } else if (conn.type === 'postgres') {
           const result = await conn.pool.query(args.sql, args.params);
           return {
@@ -510,7 +520,7 @@ const databaseTools = {
             rows: result.rows,
             rowCount: result.rowCount
           };
-          
+
         } else if (conn.type === 'mysql') {
           const [rows, fields] = await conn.pool.query(args.sql, args.params);
           return {
@@ -519,9 +529,9 @@ const databaseTools = {
             rowCount: Array.isArray(rows) ? rows.length : rows.affectedRows
           };
         }
-        
+
         return { success: false, error: 'Unsupported database type' };
-        
+
       } catch (error) {
         return { success: false, error: error.message };
       }
@@ -529,7 +539,7 @@ const databaseTools = {
   },
 
   // Get all tool definitions for registration
-  getToolDefinitions: function() {
+  getToolDefinitions: function () {
     return [
       { name: this.db_connect.name, description: this.db_connect.description, inputSchema: this.db_connect.inputSchema },
       { name: this.db_schema.name, description: this.db_schema.description, inputSchema: this.db_schema.inputSchema },
@@ -540,13 +550,13 @@ const databaseTools = {
   },
 
   // Get handler for a tool
-  getHandler: function(toolName) {
+  getHandler: function (toolName) {
     const tool = this[toolName];
     return tool ? tool.handler : null;
   },
 
   // Close all connections
-  closeAll: function() {
+  closeAll: function () {
     for (const [id, conn] of connections) {
       try {
         if (conn.type === 'sqlite' && conn.db) {
@@ -564,7 +574,9 @@ const databaseTools = {
 
 // Helper function to format bytes
 function formatBytes(bytes) {
-  if (bytes === 0) return '0 Bytes';
+  if (bytes === 0) {
+    return '0 Bytes';
+  }
   const k = 1024;
   const sizes = ['Bytes', 'KB', 'MB', 'GB'];
   const i = Math.floor(Math.log(bytes) / Math.log(k));

@@ -1,6 +1,6 @@
 /**
  * AI Pair Programming Tools - v3.2 Vibe Coder Experience
- * 
+ *
  * Real-time AI assistance, suggestions, and collaborative coding.
  */
 
@@ -25,14 +25,14 @@ const pair_start = {
     properties: {
       projectPath: { type: 'string', description: 'Project directory to work on' },
       focus: { type: 'string', description: 'What are you working on today?' },
-      mode: { 
-        type: 'string', 
+      mode: {
+        type: 'string',
         enum: ['mentor', 'collaborator', 'reviewer', 'learner'],
         default: 'collaborator',
         description: 'Pairing mode'
       },
-      experience: { 
-        type: 'string', 
+      experience: {
+        type: 'string',
         enum: ['beginner', 'intermediate', 'advanced'],
         default: 'intermediate'
       }
@@ -42,7 +42,7 @@ const pair_start = {
   handler: async ({ projectPath, focus, mode = 'collaborator', experience = 'intermediate' }) => {
     try {
       const targetPath = projectPath || process.cwd();
-      
+
       // Create session
       const session = {
         id: `pair-${Date.now()}`,
@@ -55,42 +55,42 @@ const pair_start = {
         suggestions: [],
         learnings: []
       };
-      
+
       // Save session
       const sessionFile = path.join(DATA_DIR, 'current-session.json');
       fs.writeFileSync(sessionFile, JSON.stringify(session, null, 2));
-      
+
       // Analyze project context
-      let projectContext = { type: 'unknown', files: 0, hasPackageJson: false };
+      const projectContext = { type: 'unknown', files: 0, hasPackageJson: false };
       if (fs.existsSync(targetPath)) {
         const files = fs.readdirSync(targetPath);
         projectContext.files = files.length;
         projectContext.hasPackageJson = files.includes('package.json');
-        
+
         if (files.includes('package.json')) {
           try {
             const pkg = JSON.parse(fs.readFileSync(path.join(targetPath, 'package.json'), 'utf8'));
             projectContext.type = pkg.dependencies?.next ? 'Next.js' :
-                                  pkg.dependencies?.react ? 'React' :
-                                  pkg.dependencies?.express ? 'Express' :
-                                  pkg.dependencies?.vue ? 'Vue' : 'Node.js';
+              pkg.dependencies?.react ? 'React' :
+                pkg.dependencies?.express ? 'Express' :
+                  pkg.dependencies?.vue ? 'Vue' : 'Node.js';
             projectContext.name = pkg.name;
           } catch {}
         }
       }
-      
+
       const modeDescriptions = {
         mentor: '🎓 I\'ll guide you step-by-step, explaining concepts as we go.',
         collaborator: '🤝 We\'ll work together as equals, bouncing ideas off each other.',
         reviewer: '🔍 I\'ll review your code and suggest improvements.',
         learner: '📚 Tell me what you want to learn, and I\'ll create exercises.'
       };
-      
+
       return {
         success: true,
         session,
         projectContext,
-        greeting: `👋 Pair programming session started!`,
+        greeting: '👋 Pair programming session started!',
         modeDescription: modeDescriptions[mode],
         tips: {
           mentor: [
@@ -140,8 +140,8 @@ const pair_suggest = {
       context: { type: 'string', description: 'What you\'re currently working on' },
       code: { type: 'string', description: 'Current code (optional)' },
       stuck: { type: 'boolean', description: 'Are you stuck?', default: false },
-      type: { 
-        type: 'string', 
+      type: {
+        type: 'string',
         enum: ['next-step', 'improvement', 'alternative', 'completion'],
         default: 'next-step'
       }
@@ -152,14 +152,14 @@ const pair_suggest = {
     try {
       const contextLower = context.toLowerCase();
       const suggestions = [];
-      
+
       // Load current session for context
       const sessionFile = path.join(DATA_DIR, 'current-session.json');
       let session = null;
       if (fs.existsSync(sessionFile)) {
         session = JSON.parse(fs.readFileSync(sessionFile, 'utf8'));
       }
-      
+
       // Generate suggestions based on context
       if (stuck) {
         suggestions.push({
@@ -172,7 +172,7 @@ const pair_suggest = {
           ]
         });
       }
-      
+
       if (contextLower.includes('api') || contextLower.includes('fetch') || contextLower.includes('request')) {
         suggestions.push({
           type: 'api',
@@ -191,7 +191,7 @@ const pair_suggest = {
 }`
         });
       }
-      
+
       if (contextLower.includes('form') || contextLower.includes('input') || contextLower.includes('validation')) {
         suggestions.push({
           type: 'form',
@@ -203,7 +203,7 @@ const pair_suggest = {
           ]
         });
       }
-      
+
       if (contextLower.includes('state') || contextLower.includes('data') || contextLower.includes('store')) {
         suggestions.push({
           type: 'state',
@@ -215,7 +215,7 @@ const pair_suggest = {
           ]
         });
       }
-      
+
       if (contextLower.includes('style') || contextLower.includes('css') || contextLower.includes('design')) {
         suggestions.push({
           type: 'styling',
@@ -227,7 +227,7 @@ const pair_suggest = {
           ]
         });
       }
-      
+
       // Add next step suggestions based on type
       if (type === 'next-step') {
         suggestions.push({
@@ -241,7 +241,7 @@ const pair_suggest = {
           ]
         });
       }
-      
+
       if (type === 'improvement' && code) {
         suggestions.push({
           type: 'improvement',
@@ -254,7 +254,7 @@ const pair_suggest = {
           ]
         });
       }
-      
+
       // Save to session
       if (session) {
         session.interactions.push({
@@ -265,11 +265,11 @@ const pair_suggest = {
         });
         fs.writeFileSync(sessionFile, JSON.stringify(session, null, 2));
       }
-      
+
       return {
         success: true,
         suggestions,
-        encouragement: stuck 
+        encouragement: stuck
           ? '💪 Everyone gets stuck. Let\'s figure this out together!'
           : '🎯 Looking good! Here are some suggestions.',
         quickTips: [
@@ -296,8 +296,8 @@ const pair_review = {
     properties: {
       code: { type: 'string', description: 'Code to review' },
       filePath: { type: 'string', description: 'Or path to file to review' },
-      focus: { 
-        type: 'array', 
+      focus: {
+        type: 'array',
         items: { type: 'string' },
         description: 'Focus areas: bugs, performance, readability, security'
       }
@@ -307,21 +307,21 @@ const pair_review = {
   handler: async ({ code, filePath, focus = ['bugs', 'readability'] }) => {
     try {
       let codeToReview = code;
-      
+
       if (!code && filePath && fs.existsSync(filePath)) {
         codeToReview = fs.readFileSync(filePath, 'utf8');
       }
-      
+
       if (!codeToReview) {
-        return { 
-          success: false, 
-          error: 'Please provide code or a valid file path to review' 
+        return {
+          success: false,
+          error: 'Please provide code or a valid file path to review'
         };
       }
-      
+
       const feedback = [];
       const lines = codeToReview.split('\n');
-      
+
       // Basic code analysis
       if (focus.includes('bugs')) {
         // Check for common issues
@@ -333,7 +333,7 @@ const pair_review = {
             severity: 'low'
           });
         }
-        
+
         if (codeToReview.includes('TODO') || codeToReview.includes('FIXME')) {
           feedback.push({
             type: 'warning',
@@ -342,7 +342,7 @@ const pair_review = {
             severity: 'medium'
           });
         }
-        
+
         if (codeToReview.match(/catch\s*\([^)]*\)\s*{\s*}/)) {
           feedback.push({
             type: 'warning',
@@ -352,7 +352,7 @@ const pair_review = {
           });
         }
       }
-      
+
       if (focus.includes('readability')) {
         // Check line length
         const longLines = lines.filter(l => l.length > 100).length;
@@ -364,7 +364,7 @@ const pair_review = {
             severity: 'low'
           });
         }
-        
+
         // Check function length
         const functionCount = (codeToReview.match(/function\s+\w+/g) || []).length;
         if (lines.length > 100 && functionCount < 2) {
@@ -376,7 +376,7 @@ const pair_review = {
           });
         }
       }
-      
+
       if (focus.includes('security')) {
         if (codeToReview.includes('eval(')) {
           feedback.push({
@@ -386,7 +386,7 @@ const pair_review = {
             severity: 'high'
           });
         }
-        
+
         if (codeToReview.match(/innerHTML\s*=/)) {
           feedback.push({
             type: 'warning',
@@ -396,7 +396,7 @@ const pair_review = {
           });
         }
       }
-      
+
       if (focus.includes('performance')) {
         if (codeToReview.match(/document\.querySelector.*for|while.*document\.querySelector/)) {
           feedback.push({
@@ -407,12 +407,12 @@ const pair_review = {
           });
         }
       }
-      
+
       // Calculate score
       const highIssues = feedback.filter(f => f.severity === 'high').length;
       const mediumIssues = feedback.filter(f => f.severity === 'medium').length;
       const score = Math.max(0, 100 - (highIssues * 15) - (mediumIssues * 5));
-      
+
       return {
         success: true,
         review: {
@@ -446,8 +446,8 @@ const pair_explain = {
     properties: {
       code: { type: 'string', description: 'Code to explain' },
       concept: { type: 'string', description: 'Or concept to explain' },
-      depth: { 
-        type: 'string', 
+      depth: {
+        type: 'string',
         enum: ['brief', 'detailed', 'in-depth'],
         default: 'detailed'
       }
@@ -463,7 +463,7 @@ const pair_explain = {
           purpose: 'General code',
           components: []
         };
-        
+
         // Detect patterns
         if (code.includes('async') || code.includes('await')) {
           analysis.components.push({
@@ -471,35 +471,35 @@ const pair_explain = {
             explanation: 'This code handles operations that take time (like fetching data). "await" pauses execution until the operation completes.'
           });
         }
-        
+
         if (code.includes('map(') || code.includes('filter(') || code.includes('reduce(')) {
           analysis.components.push({
             pattern: 'Array Methods',
             explanation: 'These transform arrays: map changes each item, filter keeps matching items, reduce combines items into one value.'
           });
         }
-        
+
         if (code.includes('=>')) {
           analysis.components.push({
             pattern: 'Arrow Functions',
             explanation: 'Shorthand way to write functions. (x) => x * 2 is the same as function(x) { return x * 2; }'
           });
         }
-        
+
         if (code.includes('...')) {
           analysis.components.push({
             pattern: 'Spread Operator',
             explanation: 'The ... "spreads" items. [...array] copies array, {...obj} copies object.'
           });
         }
-        
+
         if (code.includes('useState') || code.includes('useEffect')) {
           analysis.components.push({
             pattern: 'React Hooks',
             explanation: 'useState stores data that can change. useEffect runs code when things change (like component loading).'
           });
         }
-        
+
         return {
           success: true,
           explanation: {
@@ -514,7 +514,7 @@ const pair_explain = {
           message: `📖 Explained code with ${analysis.components.length} patterns identified`
         };
       }
-      
+
       if (concept) {
         // Explain programming concept
         const concepts = {
@@ -539,17 +539,17 @@ const pair_explain = {
             example: 'A shopping cart\'s item count is state - it changes as you add/remove items.'
           }
         };
-        
+
         const conceptLower = concept.toLowerCase();
         let explanation = null;
-        
+
         for (const [key, value] of Object.entries(concepts)) {
           if (conceptLower.includes(key)) {
             explanation = value;
             break;
           }
         }
-        
+
         if (!explanation) {
           explanation = {
             simple: `${concept} is a programming concept.`,
@@ -557,7 +557,7 @@ const pair_explain = {
             example: `Search for "${concept} tutorial" for practical examples.`
           };
         }
-        
+
         return {
           success: true,
           concept,
@@ -573,7 +573,7 @@ const pair_explain = {
           message: `📖 Here's an explanation of "${concept}"`
         };
       }
-      
+
       return { success: false, error: 'Please provide code or a concept to explain' };
     } catch (error) {
       return { success: false, error: error.message };
@@ -592,8 +592,8 @@ const pair_refactor = {
     properties: {
       code: { type: 'string', description: 'Code to refactor' },
       filePath: { type: 'string', description: 'Or path to file' },
-      goal: { 
-        type: 'string', 
+      goal: {
+        type: 'string',
         enum: ['readability', 'performance', 'simplify', 'modernize'],
         default: 'readability'
       }
@@ -603,17 +603,17 @@ const pair_refactor = {
   handler: async ({ code, filePath, goal = 'readability' }) => {
     try {
       let codeToRefactor = code;
-      
+
       if (!code && filePath && fs.existsSync(filePath)) {
         codeToRefactor = fs.readFileSync(filePath, 'utf8');
       }
-      
+
       if (!codeToRefactor) {
         return { success: false, error: 'Please provide code to refactor' };
       }
-      
+
       const suggestions = [];
-      
+
       // Check for refactoring opportunities
       if (codeToRefactor.includes('var ')) {
         suggestions.push({
@@ -624,7 +624,7 @@ const pair_refactor = {
           priority: 'high'
         });
       }
-      
+
       if (codeToRefactor.match(/function\s+\w+\s*\([^)]*\)\s*{/)) {
         suggestions.push({
           type: 'modernize',
@@ -634,7 +634,7 @@ const pair_refactor = {
           priority: 'low'
         });
       }
-      
+
       if (codeToRefactor.includes('.then(')) {
         suggestions.push({
           type: 'modernize',
@@ -644,7 +644,7 @@ const pair_refactor = {
           priority: 'medium'
         });
       }
-      
+
       if (codeToRefactor.match(/if.*else.*if.*else/s)) {
         suggestions.push({
           type: 'readability',
@@ -654,7 +654,7 @@ const pair_refactor = {
           priority: 'medium'
         });
       }
-      
+
       const longFunctions = codeToRefactor.match(/function[^}]+}/g) || [];
       if (longFunctions.some(f => f.split('\n').length > 30)) {
         suggestions.push({
@@ -665,7 +665,7 @@ const pair_refactor = {
           priority: 'high'
         });
       }
-      
+
       if (codeToRefactor.includes('+ \'') || codeToRefactor.includes('\' +')) {
         suggestions.push({
           type: 'modernize',
@@ -675,7 +675,7 @@ const pair_refactor = {
           priority: 'low'
         });
       }
-      
+
       if (goal === 'performance') {
         suggestions.push({
           type: 'performance',
@@ -685,7 +685,7 @@ const pair_refactor = {
           priority: 'medium'
         });
       }
-      
+
       return {
         success: true,
         analysis: {
@@ -693,7 +693,7 @@ const pair_refactor = {
           linesAnalyzed: codeToRefactor.split('\n').length,
           suggestionsCount: suggestions.length
         },
-        suggestions: suggestions.sort((a, b) => 
+        suggestions: suggestions.sort((a, b) =>
           a.priority === 'high' ? -1 : b.priority === 'high' ? 1 : 0
         ),
         generalTips: {
@@ -729,47 +729,38 @@ const voice_command = {
       const commandLower = command.toLowerCase();
       let action = null;
       let params = {};
-      
+
       // Parse voice commands
       if (commandLower.includes('create') && commandLower.includes('file')) {
         const nameMatch = command.match(/(?:called|named)\s+(\S+)/i);
         action = 'create_file';
         params = { name: nameMatch ? nameMatch[1] : 'new-file.js' };
-      }
-      else if (commandLower.includes('run') && commandLower.includes('test')) {
+      } else if (commandLower.includes('run') && commandLower.includes('test')) {
         action = 'run_tests';
-      }
-      else if (commandLower.includes('commit')) {
+      } else if (commandLower.includes('commit')) {
         const messageMatch = command.match(/(?:message|saying)\s+["']?(.+?)["']?$/i);
         action = 'git_commit';
         params = { message: messageMatch ? messageMatch[1] : 'Update' };
-      }
-      else if (commandLower.includes('explain')) {
+      } else if (commandLower.includes('explain')) {
         action = 'pair_explain';
         params = { code: context };
-      }
-      else if (commandLower.includes('review')) {
+      } else if (commandLower.includes('review')) {
         action = 'pair_review';
         params = { code: context };
-      }
-      else if (commandLower.includes('refactor')) {
+      } else if (commandLower.includes('refactor')) {
         action = 'pair_refactor';
         params = { code: context };
-      }
-      else if (commandLower.includes('suggest') || commandLower.includes('help')) {
+      } else if (commandLower.includes('suggest') || commandLower.includes('help')) {
         action = 'pair_suggest';
         params = { context: command };
-      }
-      else if (commandLower.includes('deploy')) {
+      } else if (commandLower.includes('deploy')) {
         action = 'deploy';
-      }
-      else if (commandLower.includes('save')) {
+      } else if (commandLower.includes('save')) {
         action = 'save_file';
-      }
-      else if (commandLower.includes('undo')) {
+      } else if (commandLower.includes('undo')) {
         action = 'undo';
       }
-      
+
       if (!action) {
         return {
           success: true,
@@ -787,7 +778,7 @@ const voice_command = {
           message: '❓ Could not parse voice command'
         };
       }
-      
+
       return {
         success: true,
         parsed: true,
