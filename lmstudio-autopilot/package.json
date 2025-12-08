@@ -1,7 +1,7 @@
 {
   "name": "@windsurf-vibe/lmstudio-autopilot",
   "version": "3.2.0",
-  "description": "Autopilot MCP Server v3.2 VIBE CODER EXPERIENCE for LM Studio - 195+ Tools, Zero-code task completion",
+  "description": "Autopilot MCP Server v3.2 VIBE CODER EXPERIENCE for LM Studio - 250+ Tools, Zero-code task completion",
   "main": "src/index.js",
   "bin": {
     "lmstudio-autopilot": "./src/index.js"

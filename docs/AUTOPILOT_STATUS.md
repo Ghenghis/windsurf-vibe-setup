@@ -7,7 +7,7 @@
 ║  WINDSURF AUTOPILOT v3.2.0 - VIBE CODER EXPERIENCE                       ║
 ║══════════════════════════════════════════════════════════════════════════║
 ║                                                                           ║
-║  TOOLS:     195+ (250+ defined)                                          ║
+║  TOOLS:     250+ (250+ defined)                                          ║
 ║  AUTOPILOT: 100%++ Technical Capability                                  ║
 ║  STATUS:    PRODUCTION READY - ENTERPRISE GRADE                          ║
 ║  AUDIT:     PASSED (December 8, 2025)                                    ║
@@ -31,7 +31,7 @@
 | Enterprise | 25 | v3.0 |
 | Integrations | 36 | v3.1 |
 | Vibe Coder UX | 39 | v3.2 |
-| **TOTAL** | **195+** | **v3.2** |
+| **TOTAL** | **250+** | **v3.2** |
 
 ---
 
@@ -72,7 +72,7 @@ cd mcp-server && npm install && cd ..
 | v2.5 | Dec 8 | 80+ | 95% |
 | v3.0 | Dec 8 | 120+ | 100% |
 | v3.1 | Dec 8 | 156+ | 100%+ |
-| **v3.2** | **Dec 8** | **195+** | **100%++** |
+| **v3.2** | **Dec 8** | **250+** | **100%++** |
 
 ---
 

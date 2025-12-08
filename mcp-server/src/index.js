@@ -37,7 +37,7 @@
  * - AI Pair Programming - Review/Explain/Refactor (v3.2)
  *
  * The user NEVER needs to touch a terminal.
- * 195+ tools for 100%++ vibe coder autopilot.
+ * 250+ tools for 100%++ vibe coder autopilot.
  */
 
 const { Server } = require('@modelcontextprotocol/sdk/server/index.js');
@@ -3435,7 +3435,7 @@ server.setRequestHandler(ReadResourceRequestSchema, async (request) => {
 async function main() {
   const transport = new StdioServerTransport();
   await server.connect(transport);
-  console.error('🚀 Windsurf Autopilot v3.2.0 VIBE CODER EXPERIENCE - 195+ Tools, Anyone Can Build!');
+  console.error('🚀 Windsurf Autopilot v3.2.0 VIBE CODER EXPERIENCE - 250+ tools, Anyone Can Build!');
   console.error(`📂 Home: ${HOME}`);
   console.error(`💻 Platform: ${process.platform}`);
 }

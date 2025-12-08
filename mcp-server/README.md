@@ -1,10 +1,10 @@
 # Windsurf Autopilot MCP Server v3.2.0 - VIBE CODER EXPERIENCE
 
-> **195+ Tools** | **100%++ Autopilot** | **Production Ready**
+> **250+ Tools** | **100%++ Autopilot** | **Production Ready**
 
 ## Overview
 
-This is the MCP (Model Context Protocol) server that powers Windsurf Autopilot. It provides 195+ tools for complete development automation with a seamless experience for non-technical users.
+This is the MCP (Model Context Protocol) server that powers Windsurf Autopilot. It provides 250+ tools for complete development automation with a seamless experience for non-technical users.
 
 ## Installation
 
@@ -65,7 +65,7 @@ Add to `~/.codeium/windsurf/mcp_config.json`:
 | `launch-tools.js` | v3.2 app launchers |
 | `health-tools.js` | System health |
 
-## Tool Categories (195+)
+## Tool Categories (250+)
 
 ### Core & Intelligence (63 tools)
 - File System, Git, Commands, Projects
@@ -104,6 +104,6 @@ node src/index.js
 ## Version
 
 - **Version**: 3.2.0 VIBE CODER EXPERIENCE
-- **Tools**: 195+
+- **Tools**: 250+
 - **Autopilot**: 100%++
 - **Status**: Production Ready

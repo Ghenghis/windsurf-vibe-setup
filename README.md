@@ -5,7 +5,7 @@
 ## v3.2.0 VIBE CODER EXPERIENCE
 
 [![Version](https://img.shields.io/badge/version-3.2.0-blue.svg)](https://github.com/Ghenghis/windsurf-vibe-setup/releases)
-[![Tools](https://img.shields.io/badge/tools-195+-success.svg)](#-complete-tool-reference-195-tools)
+[![Tools](https://img.shields.io/badge/tools-250+-success.svg)](#-complete-tool-reference-250-tools)
 [![Autopilot](https://img.shields.io/badge/autopilot-100%25++_Vibe_Coder-gold.svg)](#-capability-matrix)
 [![License](https://img.shields.io/badge/license-MIT-purple.svg)](LICENSE)
 [![Node](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen.svg)](https://nodejs.org/)
@@ -14,14 +14,14 @@
 
 ---
 
-### **100%++ VIBE CODER AUTOPILOT** • **195+ TOOLS** • **ANYONE CAN BUILD**
+### **100%++ VIBE CODER AUTOPILOT** • **250+ TOOLS** • **ANYONE CAN BUILD**
 
 *The most comprehensive MCP (Model Context Protocol) server for AI-powered development.*
 *Works with both **Windsurf IDE** and **LM Studio**.*
 
 [Quick Start](#-quick-start) •
 [Installation](#-installation) •
-[Tools Reference](#-complete-tool-reference-195-tools) •
+[Tools Reference](#-complete-tool-reference-250-tools) •
 [Documentation](#-documentation) •
 [Contributing](#-contributing)
 
@@ -38,7 +38,7 @@
   - [Windsurf IDE Setup](#windsurf-ide-setup)
   - [LM Studio Setup](#lm-studio-setup)
 - [Capability Matrix](#-capability-matrix)
-- [Complete Tool Reference](#-complete-tool-reference-195-tools)
+- [Complete Tool Reference](#-complete-tool-reference-250-tools)
 - [Architecture](#-architecture)
 - [AI/ML Features](#-aiml-features)
 - [Configuration](#-configuration)
@@ -283,7 +283,7 @@ The autopilot tools will be available to your local LLM.
 
 ---
 
-## 🛠 Complete Tool Reference (195+ Tools)
+## 🛠 Complete Tool Reference (250+ Tools)
 
 ### v3.2 VIBE CODER EXPERIENCE - 39 New Tools
 
@@ -1146,7 +1146,7 @@ All learning data is stored locally:
 | v2.6 | 2024-12-08 | 95+ | 97% | Data & Persistence Layer |
 | v3.0 | 2024-12-08 | 120+ | 100% | ENTERPRISE: Workflows, Teams, Agents |
 | v3.1 | 2024-12-08 | 156+ | 100%+ | Extended: IaC, Testing, Comms, PM |
-| **v3.2** | **2024-12-08** | **195+** | **100%++** | **VIBE CODER: Smart Assist, Wizards, Pair** |
+| **v3.2** | **2024-12-08** | **250+** | **100%++** | **VIBE CODER: Smart Assist, Wizards, Pair** |
 
 ---
 
@@ -1297,7 +1297,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 🚀 Ready to Experience True Zero-Code Development?
 
-**195+ Tools** • **100%++ Automated** • **Anyone Can Build Anything**
+**250+ Tools** • **100%++ Automated** • **Anyone Can Build Anything**
 
 [![Star](https://img.shields.io/github/stars/Ghenghis/windsurf-vibe-setup?style=social)](https://github.com/Ghenghis/windsurf-vibe-setup)
 [![Fork](https://img.shields.io/github/forks/Ghenghis/windsurf-vibe-setup?style=social)](https://github.com/Ghenghis/windsurf-vibe-setup/fork)

@@ -1,6 +1,6 @@
 # Windsurf Vibe Setup - Architecture Guide v3.2
 
-> Understanding how all the pieces fit together - 195+ tools across 32 source files
+> Understanding how all the pieces fit together - 250+ tools across 32 source files
 
 ---
 
@@ -60,7 +60,7 @@ The **Autopilot MCP Server** enables zero-code operation:
 | v3.0 | Enterprise | 25 | Workflows, teams, AI models |
 | v3.1 | Integrations | 36 | IaC, testing, comms, PM |
 | v3.2 | Vibe Coder | 39 | Smart assist, wizards, no-code |
-| **Total** | | **195+** | **100%++ Vibe Coder** |
+| **Total** | | **250+** | **100%++ Vibe Coder** |
 
 ---
 
@@ -206,7 +206,7 @@ settings.json
 ```
 windsurf-vibe-setup/
 │
-├── 📁 mcp-server/                ← WINDSURF MCP SERVER (195+ tools)
+├── 📁 mcp-server/                ← WINDSURF MCP SERVER (250+ tools)
 │   ├── src/
 │   │   ├── index.js              ← Main server entry point
 │   │   ├── ultimate-tools.js     ← v2.5 ULTIMATE tools (40)
