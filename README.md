@@ -5,10 +5,10 @@
 
 <!-- BADGES ROW 1 -->
 <p>
-<img src="https://img.shields.io/badge/version-4.0.0-blue?style=for-the-badge&logo=semantic-release" alt="Version"/>
-<img src="https://img.shields.io/badge/tools-300+-success?style=for-the-badge&logo=tools" alt="Tools"/>
-<img src="https://img.shields.io/badge/agents-100+-purple?style=for-the-badge&logo=robot" alt="Agents"/>
-<img src="https://img.shields.io/badge/autopilot-100%25++-gold?style=for-the-badge&logo=autoprefixer" alt="Autopilot"/>
+<img src="https://img.shields.io/badge/version-4.3.0-blue?style=for-the-badge&logo=semantic-release" alt="Version"/>
+<img src="https://img.shields.io/badge/tools-465+-success?style=for-the-badge&logo=tools" alt="Tools"/>
+<img src="https://img.shields.io/badge/agents-120+-purple?style=for-the-badge&logo=robot" alt="Agents"/>
+<img src="https://img.shields.io/badge/swarm-hive_mind-gold?style=for-the-badge&logo=hive" alt="Swarm"/>
 </p>
 
 <!-- BADGES ROW 2 -->
@@ -83,10 +83,10 @@
 
 ### ✨ **Unmatched Capabilities**
 
-- 🤖 **100+ Specialized AI Agents** - Architects, coders, testers, security experts
-- 🛠️ **300+ MCP Tools** - Most comprehensive toolset available
-- 🎯 **Multi-Agent Orchestration** - Agents collaborate intelligently
-- 🧠 **Real-Time Learning** - Improves from every interaction
+- 🐝 **Hive Mind Swarm AI** - Agents collaborate as unified intelligence
+- 🤖 **120+ Specialized AI Agents** - Architects, coders, testers, security experts
+- 🛠️ **350+ MCP Tools** - Most comprehensive toolset available
+- 🧠 **Mem0 Memory System** - Persistent AI memory across sessions
 - 🔄 **Full Automation** - Create → Test → Deploy in one command
 
 </td>
@@ -194,6 +194,65 @@ graph TB
 
 ---
 
+## 🐝 Hive Mind Swarm System (v4.1)
+
+<div align="center">
+
+### **AI Agents Working as Unified Intelligence**
+
+```
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                          🐝 HIVE MIND ARCHITECTURE 🐝                        ║
+╠══════════════════════════════════════════════════════════════════════════════╣
+║                                                                              ║
+║    ┌─────────────┐     ┌─────────────┐     ┌─────────────┐                  ║
+║    │   OLLAMA    │────▶│  QUEEN BEE  │◀────│  LM STUDIO  │                  ║
+║    │   (Local)   │     │ (Coordinator)│     │   (Local)   │                  ║
+║    └─────────────┘     └──────┬──────┘     └─────────────┘                  ║
+║                               │                                              ║
+║         ┌─────────────────────┼─────────────────────┐                       ║
+║         ▼                     ▼                     ▼                       ║
+║    ┌─────────┐          ┌─────────┐          ┌─────────┐                   ║
+║    │ WORKERS │          │ SCOUTS  │          │SOLDIERS │                   ║
+║    │(Execute)│          │(Research)│          │(Validate)│                   ║
+║    └────┬────┘          └────┬────┘          └────┬────┘                   ║
+║         │                    │                    │                         ║
+║         └────────────────────┴────────────────────┘                         ║
+║                              │                                               ║
+║                    ┌─────────▼─────────┐                                    ║
+║                    │   SHARED MEMORY   │                                    ║
+║                    │    (Mem0 Layer)   │                                    ║
+║                    └───────────────────┘                                    ║
+║                                                                              ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+```
+
+</div>
+
+### Swarm Roles
+
+| Role | Icon | Function |
+|------|------|----------|
+| **Queen** | 👑 | Central coordinator, plans and synthesizes |
+| **Worker** | 🔨 | Execute tasks efficiently |
+| **Scout** | 🔍 | Gather information and explore |
+| **Soldier** | 🛡️ | Validate, test, and secure |
+| **Nurse** | 💊 | Fix issues and maintain health |
+| **Drone** | 📦 | Data transfer and deployment |
+| **Architect** | 🏗️ | System design and structure |
+
+### Multi-Provider Support
+
+```bash
+# Supported LLM Providers (all work simultaneously!)
+✅ Ollama (local) - Primary inference
+✅ LM Studio (local) - GUI + fine-tuning
+✅ OpenAI API (optional) - Cloud fallback
+✅ Anthropic API (optional) - Cloud fallback
+```
+
+---
+
 ## 🚀 Quick Start
 
 ### One-Line Installation
@@ -268,7 +327,7 @@ ollama pull qwen2.5-coder:32b
 │  🖥️  YOUR SYSTEM                    │  💪 CAPABILITY                    │
 ├─────────────────────────────────────┼───────────────────────────────────┤
 │  RTX 3090 Ti (24GB VRAM)           │  Run 70B+ parameter models        │
-│  RTX 3060 Ti (8GB VRAM)            │  Secondary inference / embedding  │
+│  RTX 3060 Ti (12GB VRAM)           │  Secondary inference / 32B models │
 │  128GB System RAM                   │  Massive context windows          │
 │  4TB NVMe Storage                   │  Store 254+ local models          │
 │  AMD Ryzen 7 5800X3D                │  Fast CPU inference fallback     │
@@ -313,7 +372,37 @@ ollama pull llama3.1:70b         # Meta's best, tool-calling native
 </details>
 
 <details>
-<summary><b>🧠 Smart Assistance (v3.2)</b></summary>
+<summary><b>🐝 Hive Mind Swarm Tools (NEW in v4.1)</b></summary>
+
+| Tool | Description |
+|------|-------------|
+| `hive_initialize` | Initialize the Hive Mind swarm system |
+| `hive_status` | Get current swarm system status |
+| `hive_spawn_swarm` | Spawn a new swarm for complex tasks |
+| `hive_execute_swarm` | Execute a spawned swarm task |
+| `hive_run_task` | Spawn and execute in one command |
+| `swarm_with_memory` | Run swarm with context from memory |
+
+</details>
+
+<details>
+<summary><b>🧠 Memory Tools (Mem0 - v4.1)</b></summary>
+
+| Tool | Description |
+|------|-------------|
+| `memory_initialize` | Initialize Mem0 memory system |
+| `memory_add` | Add a new memory |
+| `memory_search` | Semantic search memories |
+| `memory_get` | Get memory by ID |
+| `memory_update` | Update existing memory |
+| `memory_delete` | Delete a memory |
+| `memory_relate` | Create memory relationships |
+| `memory_stats` | Get memory statistics |
+
+</details>
+
+<details>
+<summary><b>🤖 Smart Assistance (v3.2)</b></summary>
 
 | Tool | Description | Example |
 |------|-------------|---------|

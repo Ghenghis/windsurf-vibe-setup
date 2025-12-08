@@ -6,7 +6,7 @@ This action plan transforms your Windsurf Vibe Setup into a **100% free, locally
 
 **Your Hardware Advantage:**
 - RTX 3090 Ti (24GB VRAM) - Can run 70B+ parameter models
-- RTX 3060 Ti (8GB) - Secondary inference / smaller models  
+- RTX 3060 Phoenix v2 (12GB VRAM) - Secondary inference / 32B models  
 - Optional Tesla P40 GPUs - Additional compute
 - 128GB RAM - Massive context windows
 - 4TB NVMe - Local model storage
@@ -572,8 +572,9 @@ Primary Model (RTX 3090 Ti - 24GB):
   - qwen2.5-coder:32b (~20GB) - Main coding assistant
   - OR llama3.1:70b (~24GB quantized) - Complex reasoning
 
-Secondary (RTX 3060 Ti - 8GB):
-  - starcoder2:3b (~4GB) - Autocomplete
+Secondary (RTX 3060 12GB Phoenix v2):
+  - deepseek-coder-v2:16b (~12GB) - Secondary coding
+  - starcoder2:7b (~6GB) - Autocomplete
   - nomic-embed-text (~1GB) - Embeddings
 ```
 

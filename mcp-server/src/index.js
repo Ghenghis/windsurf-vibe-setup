@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Windsurf Autopilot MCP Server v3.2.0 VIBE CODER EXPERIENCE
+ * Windsurf Autopilot MCP Server v4.3.0 REAL-TIME VIBE CODING EDITION
  *
  * COMPLETE ZERO-CODE AUTOPILOT for vibe coders.
  * This server gives Windsurf AI FULL capability to:
@@ -94,6 +94,16 @@ const nocodeTools = require('./nocode-tools.js');
 const businessTools = require('./business-tools.js');
 const launchTools = require('./launch-tools.js');
 const pairTools = require('./pair-tools.js');
+
+// Import v4.0 tools - MULTI-AGENT SYSTEM
+const multiAgentTools = require('./multi-agent-tools.js');
+const freeLocalTools = require('./free-local-tools.js');
+
+// Import v4.1 tools - HIVE MIND SWARM
+const { hiveMindTools, hiveMindHandlers, registerTools: registerHiveMind } = require('./hive-mind.js');
+
+// Import v4.2 tools - OPEN INTERPRETER
+const { openInterpreterTools, handlers: interpreterHandlers, registerTools: registerInterpreter } = require('./open-interpreter-tools.js');
 
 // ==============================================================================
 // Configuration
