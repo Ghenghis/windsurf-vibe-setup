@@ -47,6 +47,13 @@ const contextTools = require('./context-tools.js');
 const recoveryTools = require('./recovery-tools.js');
 const pluginTools = require('./plugin-tools.js');
 
+// Import v3.0 tools
+const workflowTools = require('./workflow-tools.js');
+const teamTools = require('./team-tools.js');
+const cloudTools = require('./cloud-tools.js');
+const modelTools = require('./model-tools.js');
+const agentTools = require('./agent-tools.js');
+
 // ==============================================================================
 // Configuration
 // ==============================================================================
@@ -1933,7 +1940,46 @@ await server.connect(transport);
   install_plugin: async (args) => pluginTools.install_plugin.handler(args),
   list_plugins: async (args) => pluginTools.list_plugins.handler(args || {}),
   uninstall_plugin: async (args) => pluginTools.uninstall_plugin.handler(args),
-  create_plugin: async (args) => pluginTools.create_plugin.handler(args)
+  create_plugin: async (args) => pluginTools.create_plugin.handler(args),
+  
+  // ═══════════════════════════════════════════════════════════════════════════
+  // v3.0 ENTERPRISE TOOLS
+  // ═══════════════════════════════════════════════════════════════════════════
+  
+  // Workflow Tools
+  create_workflow: async (args) => workflowTools.create_workflow.handler(args),
+  run_workflow: async (args) => workflowTools.run_workflow.handler(args),
+  edit_workflow: async (args) => workflowTools.edit_workflow.handler(args),
+  share_workflow: async (args) => workflowTools.share_workflow.handler(args),
+  workflow_templates: async (args) => workflowTools.workflow_templates.handler(args || {}),
+  
+  // Team Tools
+  create_team: async (args) => teamTools.create_team.handler(args),
+  invite_member: async (args) => teamTools.invite_member.handler(args),
+  share_settings: async (args) => teamTools.share_settings.handler(args),
+  team_templates: async (args) => teamTools.team_templates.handler(args),
+  activity_log: async (args) => teamTools.activity_log.handler(args),
+  list_teams: async () => teamTools.list_teams.handler(),
+  
+  // Cloud Tools
+  cloud_login: async (args) => cloudTools.cloud_login.handler(args),
+  sync_settings: async (args) => cloudTools.sync_settings.handler(args || {}),
+  sync_templates: async (args) => cloudTools.sync_templates.handler(args || {}),
+  sync_history: async (args) => cloudTools.sync_history.handler(args || {}),
+  
+  // Model Tools
+  add_model: async (args) => modelTools.add_model.handler(args),
+  switch_model: async (args) => modelTools.switch_model.handler(args),
+  model_benchmark: async (args) => modelTools.model_benchmark.handler(args || {}),
+  fine_tune: async (args) => modelTools.fine_tune.handler(args),
+  list_models: async () => modelTools.list_models.handler(),
+  
+  // Agent Tools
+  create_agent: async (args) => agentTools.create_agent.handler(args),
+  assign_task: async (args) => agentTools.assign_task.handler(args),
+  agent_status: async (args) => agentTools.agent_status.handler(args || {}),
+  agent_collaborate: async (args) => agentTools.agent_collaborate.handler(args),
+  list_agents: async () => agentTools.list_agents.handler()
 };
 
 
@@ -1941,7 +1987,7 @@ await server.connect(transport);
 // MCP SERVER SETUP
 // ==============================================================================
 const server = new Server(
-  { name: 'windsurf-autopilot', version: '2.6.0' },
+  { name: 'windsurf-autopilot', version: '3.0.0' },
   { capabilities: { tools: {}, resources: {} } }
 );
 
@@ -2967,7 +3013,46 @@ const toolDefinitions = [
   { name: 'install_plugin', description: 'Install autopilot plugin', inputSchema: { type: 'object', properties: { source: { type: 'string' }, name: { type: 'string' }, version: { type: 'string' }, force: { type: 'boolean' } }, required: ['source'] } },
   { name: 'list_plugins', description: 'List installed plugins', inputSchema: { type: 'object', properties: { includeTools: { type: 'boolean' } } } },
   { name: 'uninstall_plugin', description: 'Uninstall plugin', inputSchema: { type: 'object', properties: { name: { type: 'string' }, confirm: { type: 'boolean' } }, required: ['name'] } },
-  { name: 'create_plugin', description: 'Create plugin template', inputSchema: { type: 'object', properties: { name: { type: 'string' }, outputPath: { type: 'string' }, tools: { type: 'array' } }, required: ['name'] } }
+  { name: 'create_plugin', description: 'Create plugin template', inputSchema: { type: 'object', properties: { name: { type: 'string' }, outputPath: { type: 'string' }, tools: { type: 'array' } }, required: ['name'] } },
+  
+  // ═══════════════════════════════════════════════════════════════════════════
+  // v3.0 ENTERPRISE TOOLS
+  // ═══════════════════════════════════════════════════════════════════════════
+  
+  // Workflow Tools
+  { name: 'create_workflow', description: 'Create automation workflow', inputSchema: { type: 'object', properties: { name: { type: 'string' }, description: { type: 'string' }, steps: { type: 'array' }, variables: { type: 'object' } }, required: ['name', 'steps'] } },
+  { name: 'run_workflow', description: 'Execute saved workflow', inputSchema: { type: 'object', properties: { workflowId: { type: 'string' }, variables: { type: 'object' }, dryRun: { type: 'boolean' } }, required: ['workflowId'] } },
+  { name: 'edit_workflow', description: 'Modify existing workflow', inputSchema: { type: 'object', properties: { workflowId: { type: 'string' }, updates: { type: 'object' }, addStep: { type: 'object' }, removeStep: { type: 'string' } }, required: ['workflowId'] } },
+  { name: 'share_workflow', description: 'Export/import workflows', inputSchema: { type: 'object', properties: { action: { type: 'string', enum: ['export', 'import', 'list'] }, workflowId: { type: 'string' }, outputPath: { type: 'string' } }, required: ['action'] } },
+  { name: 'workflow_templates', description: 'Pre-built workflow templates', inputSchema: { type: 'object', properties: { action: { type: 'string', enum: ['list', 'use', 'preview'] }, templateName: { type: 'string' } } } },
+  
+  // Team Tools
+  { name: 'create_team', description: 'Create team workspace', inputSchema: { type: 'object', properties: { name: { type: 'string' }, description: { type: 'string' }, settings: { type: 'object' } }, required: ['name'] } },
+  { name: 'invite_member', description: 'Invite team member', inputSchema: { type: 'object', properties: { teamId: { type: 'string' }, email: { type: 'string' }, role: { type: 'string' } }, required: ['teamId', 'email'] } },
+  { name: 'share_settings', description: 'Share settings with team', inputSchema: { type: 'object', properties: { teamId: { type: 'string' }, action: { type: 'string' }, settingName: { type: 'string' }, settingValue: { type: 'object' } }, required: ['teamId'] } },
+  { name: 'team_templates', description: 'Shared team templates', inputSchema: { type: 'object', properties: { teamId: { type: 'string' }, action: { type: 'string' }, templateName: { type: 'string' } }, required: ['teamId'] } },
+  { name: 'activity_log', description: 'Team activity history', inputSchema: { type: 'object', properties: { teamId: { type: 'string' }, limit: { type: 'number' }, filter: { type: 'string' } }, required: ['teamId'] } },
+  { name: 'list_teams', description: 'List all teams', inputSchema: { type: 'object', properties: {} } },
+  
+  // Cloud Tools
+  { name: 'cloud_login', description: 'Authenticate with cloud', inputSchema: { type: 'object', properties: { provider: { type: 'string' }, apiKey: { type: 'string' }, email: { type: 'string' } } } },
+  { name: 'sync_settings', description: 'Sync settings to cloud', inputSchema: { type: 'object', properties: { direction: { type: 'string', enum: ['push', 'pull', 'merge'] } } } },
+  { name: 'sync_templates', description: 'Sync templates to cloud', inputSchema: { type: 'object', properties: { direction: { type: 'string' }, templateName: { type: 'string' } } } },
+  { name: 'sync_history', description: 'Sync history to cloud', inputSchema: { type: 'object', properties: { limit: { type: 'number' }, since: { type: 'string' } } } },
+  
+  // Model Tools
+  { name: 'add_model', description: 'Add custom AI model', inputSchema: { type: 'object', properties: { name: { type: 'string' }, type: { type: 'string', enum: ['ollama', 'lmstudio', 'openai', 'anthropic', 'custom'] }, endpoint: { type: 'string' }, apiKey: { type: 'string' } }, required: ['name', 'type'] } },
+  { name: 'switch_model', description: 'Switch AI model', inputSchema: { type: 'object', properties: { modelId: { type: 'string' } }, required: ['modelId'] } },
+  { name: 'model_benchmark', description: 'Benchmark AI models', inputSchema: { type: 'object', properties: { modelId: { type: 'string' }, testType: { type: 'string' } } } },
+  { name: 'fine_tune', description: 'Fine-tune AI model', inputSchema: { type: 'object', properties: { modelId: { type: 'string' }, datasetPath: { type: 'string' }, outputName: { type: 'string' } }, required: ['modelId', 'datasetPath'] } },
+  { name: 'list_models', description: 'List configured models', inputSchema: { type: 'object', properties: {} } },
+  
+  // Agent Tools
+  { name: 'create_agent', description: 'Create specialized agent', inputSchema: { type: 'object', properties: { name: { type: 'string' }, specialization: { type: 'string', enum: ['code', 'test', 'docs', 'review', 'deploy', 'custom'] }, tools: { type: 'array' } }, required: ['name', 'specialization'] } },
+  { name: 'assign_task', description: 'Assign task to agent', inputSchema: { type: 'object', properties: { agentId: { type: 'string' }, task: { type: 'string' }, priority: { type: 'string' } }, required: ['agentId', 'task'] } },
+  { name: 'agent_status', description: 'Check agent status', inputSchema: { type: 'object', properties: { agentId: { type: 'string' } } } },
+  { name: 'agent_collaborate', description: 'Multi-agent collaboration', inputSchema: { type: 'object', properties: { task: { type: 'string' }, agents: { type: 'array' }, strategy: { type: 'string' } }, required: ['task'] } },
+  { name: 'list_agents', description: 'List all agents', inputSchema: { type: 'object', properties: {} } }
 ];
 
 // Register tools
@@ -3039,7 +3124,7 @@ server.setRequestHandler(ReadResourceRequestSchema, async (request) => {
 async function main() {
   const transport = new StdioServerTransport();
   await server.connect(transport);
-  console.error('🚀 Windsurf Autopilot v2.6.0 - 95+ Tools, 97% Autopilot (Data & Persistence)');
+  console.error('🚀 Windsurf Autopilot v3.0.0 ENTERPRISE - 120+ Tools, 100% Technical Autopilot');
   console.error(`📂 Home: ${HOME}`);
   console.error(`💻 Platform: ${process.platform}`);
 }
