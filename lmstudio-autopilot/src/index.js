@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * LM Studio Autopilot MCP Server v2.2
+ * LM Studio Autopilot MCP Server v2.3
  * 
  * COMPLETE ZERO-CODE AUTOPILOT for local LLM users.
  * This server gives LM Studio AI FULL capability to:
@@ -31,6 +31,7 @@ const { execSync, exec, spawn } = require('child_process');
 // Import additional tools for v2.2 features
 const additionalTools = require('./additional-tools.js');
 const advancedTools = require('./advanced-tools.js');
+const autopilotIntel = require('./autopilot-intelligence.js');
 
 // ==============================================================================
 // Configuration
@@ -1654,6 +1655,48 @@ await server.connect(transport);
   complete_progress: async (args) => {
     logAction('complete_progress', args);
     return await advancedTools.completeProgress(args);
+  },
+
+  // ===========================================================================
+  // NEW v2.3 TOOLS - Autopilot Intelligence & Learning
+  // ===========================================================================
+  
+  // Autopilot Status Indicator
+  autopilot_status: async () => {
+    return autopilotIntel.getAutopilotStatus();
+  },
+  
+  // Learning & Memory
+  get_insights: async () => {
+    return autopilotIntel.getInsights();
+  },
+  
+  remember_preference: async ({ key, value }) => {
+    autopilotIntel.rememberPreference(key, value);
+    return { success: true, message: `Preference "${key}" saved.` };
+  },
+  
+  get_preference: async ({ key, defaultValue }) => {
+    const value = autopilotIntel.getPreference(key, defaultValue);
+    return { key, value, found: value !== defaultValue };
+  },
+  
+  save_project_context: async ({ projectPath, context }) => {
+    autopilotIntel.saveProjectContext(projectPath, context);
+    return { success: true, message: 'Project context saved.' };
+  },
+  
+  get_project_context: async ({ projectPath }) => {
+    const context = autopilotIntel.getProjectContext(projectPath);
+    return context || { found: false, message: 'No saved context for this project.' };
+  },
+  
+  get_suggestions: async ({ currentAction, projectPath }) => {
+    return autopilotIntel.getSuggestions(currentAction, projectPath);
+  },
+  
+  clear_learning_data: async () => {
+    return autopilotIntel.clearAllData();
   }
 };
 
@@ -1662,7 +1705,7 @@ await server.connect(transport);
 // MCP SERVER SETUP
 // ==============================================================================
 const server = new Server(
-  { name: 'lmstudio-autopilot', version: '2.2.0' },
+  { name: 'lmstudio-autopilot', version: '2.3.0' },
   { capabilities: { tools: {}, resources: {} } }
 );
 
@@ -2407,6 +2450,83 @@ const toolDefinitions = [
       },
       required: ['taskId']
     }
+  },
+  
+  // ═══════════════════════════════════════════════════════════════════════════
+  // v2.3 Tools - Autopilot Intelligence & Learning
+  // ═══════════════════════════════════════════════════════════════════════════
+  {
+    name: 'autopilot_status',
+    description: 'Get autopilot status with visual indicator (🤖 AUTO-PILOT ACTIVE). Shows if autopilot is working, session stats, and learning progress.',
+    inputSchema: { type: 'object', properties: {} }
+  },
+  {
+    name: 'get_insights',
+    description: 'Get AI learning insights - what the autopilot has learned from your interactions, common patterns, and suggestions.',
+    inputSchema: { type: 'object', properties: {} }
+  },
+  {
+    name: 'remember_preference',
+    description: 'Remember a user preference for future sessions. The autopilot learns and adapts to your workflow.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        key: { type: 'string', description: 'Preference name (e.g., "preferred_framework", "auto_commit")' },
+        value: { type: 'string', description: 'Preference value' }
+      },
+      required: ['key', 'value']
+    }
+  },
+  {
+    name: 'get_preference',
+    description: 'Get a remembered user preference.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        key: { type: 'string', description: 'Preference name' },
+        defaultValue: { type: 'string', description: 'Default if not found' }
+      },
+      required: ['key']
+    }
+  },
+  {
+    name: 'save_project_context',
+    description: 'Save project context to remember across sessions. AI will remember project state, tech stack, and your work.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        projectPath: { type: 'string', description: 'Path to the project' },
+        context: { type: 'object', description: 'Project context data to save' }
+      },
+      required: ['projectPath', 'context']
+    }
+  },
+  {
+    name: 'get_project_context',
+    description: 'Get saved project context from previous sessions.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        projectPath: { type: 'string', description: 'Path to the project' }
+      },
+      required: ['projectPath']
+    }
+  },
+  {
+    name: 'get_suggestions',
+    description: 'Get AI-powered suggestions based on learned patterns and current context.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        currentAction: { type: 'string', description: 'Current action being performed' },
+        projectPath: { type: 'string', description: 'Current project path' }
+      }
+    }
+  },
+  {
+    name: 'clear_learning_data',
+    description: 'Clear all learned data and reset autopilot memory. Use with caution.',
+    inputSchema: { type: 'object', properties: {} }
   }
 ];
 
@@ -2479,7 +2599,7 @@ server.setRequestHandler(ReadResourceRequestSchema, async (request) => {
 async function main() {
   const transport = new StdioServerTransport();
   await server.connect(transport);
-  console.error('🚀 LM Studio Autopilot MCP Server v2.2 running');
+  console.error('🚀 LM Studio Autopilot MCP Server v2.3 running');
   console.error(`📂 Home: ${HOME}`);
   console.error(`💻 Platform: ${process.platform}`);
 }
