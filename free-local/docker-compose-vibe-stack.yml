@@ -1,0 +1,205 @@
+version: '3.8'
+
+# =============================================================================
+# Windsurf Vibe Setup - Free Self-Hosted Services Stack
+# =============================================================================
+# This Docker Compose runs all the free, open-source services needed for
+# a complete local AI development environment. No paid APIs required.
+# =============================================================================
+
+services:
+  # ---------------------------------------------------------------------------
+  # SearXNG - Privacy-Respecting Search Engine (No API Key Required!)
+  # ---------------------------------------------------------------------------
+  searxng:
+    image: searxng/searxng:latest
+    container_name: searxng
+    ports:
+      - "8080:8080"
+    volumes:
+      - searxng_data:/etc/searxng
+    environment:
+      - SEARXNG_BASE_URL=http://localhost:8080
+    restart: unless-stopped
+    networks:
+      - vibe-network
+
+  # ---------------------------------------------------------------------------
+  # ChromaDB - Vector Database for RAG (Lightweight, Easy)
+  # ---------------------------------------------------------------------------
+  chromadb:
+    image: chromadb/chroma:latest
+    container_name: chromadb
+    ports:
+      - "8000:8000"
+    volumes:
+      - chroma_data:/chroma/chroma
+    environment:
+      - ANONYMIZED_TELEMETRY=False
+      - ALLOW_RESET=True
+    restart: unless-stopped
+    networks:
+      - vibe-network
+
+  # ---------------------------------------------------------------------------
+  # Qdrant - Alternative Vector Database (Rust-based, Fast)
+  # ---------------------------------------------------------------------------
+  qdrant:
+    image: qdrant/qdrant:latest
+    container_name: qdrant
+    ports:
+      - "6333:6333"
+      - "6334:6334"
+    volumes:
+      - qdrant_data:/qdrant/storage
+    environment:
+      - QDRANT__SERVICE__HTTP_PORT=6333
+      - QDRANT__SERVICE__GRPC_PORT=6334
+    restart: unless-stopped
+    networks:
+      - vibe-network
+
+  # ---------------------------------------------------------------------------
+  # n8n - Workflow Automation (Free Self-Hosted Zapier Alternative)
+  # ---------------------------------------------------------------------------
+  n8n:
+    image: n8nio/n8n:latest
+    container_name: n8n
+    ports:
+      - "5678:5678"
+    volumes:
+      - n8n_data:/home/node/.n8n
+    environment:
+      - N8N_BASIC_AUTH_ACTIVE=true
+      - N8N_BASIC_AUTH_USER=admin
+      - N8N_BASIC_AUTH_PASSWORD=changeme
+      - GENERIC_TIMEZONE=America/Phoenix
+      - N8N_SECURE_COOKIE=false
+    restart: unless-stopped
+    networks:
+      - vibe-network
+
+  # ---------------------------------------------------------------------------
+  # Ollama - Local LLM Server (GPU Accelerated)
+  # ---------------------------------------------------------------------------
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_models:/root/.ollama
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    restart: unless-stopped
+    networks:
+      - vibe-network
+
+  # ---------------------------------------------------------------------------
+  # Open WebUI - Chat Interface for Ollama (Beautiful UI)
+  # ---------------------------------------------------------------------------
+  open-webui:
+    image: ghcr.io/open-webui/open-webui:main
+    container_name: open-webui
+    ports:
+      - "3000:8080"
+    volumes:
+      - openwebui_data:/app/backend/data
+    environment:
+      - OLLAMA_BASE_URL=http://ollama:11434
+      - WEBUI_AUTH=false
+    depends_on:
+      - ollama
+    restart: unless-stopped
+    networks:
+      - vibe-network
+
+  # ---------------------------------------------------------------------------
+  # Redis - Caching & Message Queue
+  # ---------------------------------------------------------------------------
+  redis:
+    image: redis:alpine
+    container_name: redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes
+    restart: unless-stopped
+    networks:
+      - vibe-network
+
+  # ---------------------------------------------------------------------------
+  # PostgreSQL - General Purpose Database
+  # ---------------------------------------------------------------------------
+  postgres:
+    image: postgres:15-alpine
+    container_name: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=vibe
+      - POSTGRES_PASSWORD=vibepassword
+      - POSTGRES_DB=windsurf_vibe
+    restart: unless-stopped
+    networks:
+      - vibe-network
+
+  # ---------------------------------------------------------------------------
+  # Adminer - Database Management UI
+  # ---------------------------------------------------------------------------
+  adminer:
+    image: adminer:latest
+    container_name: adminer
+    ports:
+      - "8081:8080"
+    restart: unless-stopped
+    networks:
+      - vibe-network
+
+  # ---------------------------------------------------------------------------
+  # MinIO - S3-Compatible Object Storage (For File Storage)
+  # ---------------------------------------------------------------------------
+  minio-storage:
+    image: minio/minio:latest
+    container_name: minio-storage
+    ports:
+      - "9002:9000"
+      - "9003:9001"
+    volumes:
+      - minio_storage:/data
+    environment:
+      - MINIO_ROOT_USER=minioadmin
+      - MINIO_ROOT_PASSWORD=minioadmin
+    command: server /data --console-address ":9001"
+    restart: unless-stopped
+    networks:
+      - vibe-network
+
+# =============================================================================
+# Networks
+# =============================================================================
+networks:
+  vibe-network:
+    driver: bridge
+
+# =============================================================================
+# Volumes (Persistent Data)
+# =============================================================================
+volumes:
+  searxng_data:
+  chroma_data:
+  qdrant_data:
+  n8n_data:
+  ollama_models:
+  openwebui_data:
+  redis_data:
+  postgres_data:
+  minio_storage:

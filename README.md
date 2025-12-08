@@ -1,179 +1,233 @@
 <div align="center">
 
-# 🚀 Windsurf & LM Studio Autopilot
+<!-- ANIMATED HEADER -->
+<img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=6,11,20&height=200&section=header&text=🚀%20Windsurf%20Vibe%20Setup&fontSize=50&fontColor=fff&animation=twinkling&fontAlignY=35&desc=The%20Ultimate%20AI-Powered%20Development%20Autopilot&descSize=20&descAlignY=55" width="100%"/>
 
-## v3.2.0 VIBE CODER EXPERIENCE
+<!-- BADGES ROW 1 -->
+<p>
+<img src="https://img.shields.io/badge/version-4.0.0-blue?style=for-the-badge&logo=semantic-release" alt="Version"/>
+<img src="https://img.shields.io/badge/tools-300+-success?style=for-the-badge&logo=tools" alt="Tools"/>
+<img src="https://img.shields.io/badge/agents-100+-purple?style=for-the-badge&logo=robot" alt="Agents"/>
+<img src="https://img.shields.io/badge/autopilot-100%25++-gold?style=for-the-badge&logo=autoprefixer" alt="Autopilot"/>
+</p>
 
-[![Version](https://img.shields.io/badge/version-3.2.0-blue.svg)](https://github.com/Ghenghis/windsurf-vibe-setup/releases)
-[![Tools](https://img.shields.io/badge/tools-250+-success.svg)](#-complete-tool-reference-250-tools)
-[![Autopilot](https://img.shields.io/badge/autopilot-100%25++_Vibe_Coder-gold.svg)](#-capability-matrix)
-[![License](https://img.shields.io/badge/license-MIT-purple.svg)](LICENSE)
-[![Node](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen.svg)](https://nodejs.org/)
-[![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey.svg)](#-installation)
-[![MCP](https://img.shields.io/badge/MCP-compatible-orange.svg)](https://modelcontextprotocol.io/)
+<!-- BADGES ROW 2 -->
+<p>
+<img src="https://img.shields.io/badge/MCP-compatible-orange?style=for-the-badge&logo=protocol-buffers" alt="MCP"/>
+<img src="https://img.shields.io/badge/local_AI-100%25_free-green?style=for-the-badge&logo=ollama" alt="Local AI"/>
+<img src="https://img.shields.io/badge/GPU-optimized-red?style=for-the-badge&logo=nvidia" alt="GPU"/>
+<img src="https://img.shields.io/badge/license-MIT-purple?style=for-the-badge&logo=open-source-initiative" alt="License"/>
+</p>
+
+<!-- BADGES ROW 3 -->
+<p>
+<img src="https://img.shields.io/badge/Node.js-%3E%3D18-339933?style=flat-square&logo=node.js" alt="Node"/>
+<img src="https://img.shields.io/badge/Python-3.10+-3776AB?style=flat-square&logo=python" alt="Python"/>
+<img src="https://img.shields.io/badge/Windows-0078D6?style=flat-square&logo=windows" alt="Windows"/>
+<img src="https://img.shields.io/badge/macOS-000000?style=flat-square&logo=apple" alt="macOS"/>
+<img src="https://img.shields.io/badge/Linux-FCC624?style=flat-square&logo=linux&logoColor=black" alt="Linux"/>
+<img src="https://img.shields.io/badge/Docker-2496ED?style=flat-square&logo=docker&logoColor=white" alt="Docker"/>
+</p>
 
 ---
 
-### **100%++ VIBE CODER AUTOPILOT** • **250+ TOOLS** • **ANYONE CAN BUILD**
+### 🎯 **100+ AI AGENTS** • **300+ TOOLS** • **100% LOCAL & FREE** • **ZERO CODING REQUIRED**
 
-*The most comprehensive MCP (Model Context Protocol) server for AI-powered development.*
-*Works with both **Windsurf IDE** and **LM Studio**.*
+*Transform any AI assistant into an autonomous development powerhouse.*
 
-[Quick Start](#-quick-start) •
-[Installation](#-installation) •
-[Tools Reference](#-complete-tool-reference-250-tools) •
-[Documentation](#-documentation) •
-[Contributing](#-contributing)
+[🚀 Quick Start](#-quick-start) •
+[📦 Installation](#-installation) •
+[🤖 AI Agents](#-multi-agent-system) •
+[🛠️ Tools](#-complete-tool-reference) •
+[🆓 Free Local Setup](#-free--local-setup)
 
 </div>
 
 ---
 
-## 📋 Table of Contents
+## 🌟 What is Windsurf Vibe Setup?
 
-- [Overview](#-overview)
-- [Key Features](#-key-features)
-- [Quick Start](#-quick-start)
-- [Installation](#-installation)
-  - [Windsurf IDE Setup](#windsurf-ide-setup)
-  - [LM Studio Setup](#lm-studio-setup)
-- [Capability Matrix](#-capability-matrix)
-- [Complete Tool Reference](#-complete-tool-reference-250-tools)
-- [Architecture](#-architecture)
-- [AI/ML Features](#-aiml-features)
-- [Configuration](#-configuration)
-- [Documentation](#-documentation)
-- [Version History](#-version-history)
-- [Roadmap](#-roadmap)
-- [FAQ](#-faq)
-- [Contributing](#-contributing)
-- [License](#-license)
+**Windsurf Vibe Setup** is the most comprehensive MCP (Model Context Protocol) server ever built. It transforms AI assistants into fully autonomous development partners with **100+ specialized AI agents** and **300+ tools** that can:
+
+<div align="center">
+
+| 🏗️ **BUILD** | 🧪 **TEST** | 🚀 **DEPLOY** | 🔒 **SECURE** |
+|:---:|:---:|:---:|:---:|
+| Create entire projects | Run automated tests | Deploy anywhere | Audit & protect |
+| Generate any code | Unit, E2E, API tests | Vercel, Netlify, AWS | SAST, secrets scan |
+| Refactor intelligently | Visual regression | Docker, Kubernetes | Compliance checks |
+
+</div>
+
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                                                                             │
+│   "Create a full-stack e-commerce app with React, Node, PostgreSQL,        │
+│    authentication, Stripe payments, admin dashboard, and deploy to         │
+│    Vercel with CI/CD"                                                       │
+│                                                                             │
+│   → 12 AI agents collaborate automatically                                  │
+│   → Project created, tested, documented, deployed in minutes               │
+│   → Zero manual coding required                                             │
+│                                                                             │
+└─────────────────────────────────────────────────────────────────────────────┘
+```
 
 ---
 
-## 🌟 Overview
+## 🏆 Why Choose This Project?
 
-**Windsurf & LM Studio Autopilot** is a comprehensive MCP server that transforms AI assistants into fully autonomous development partners. Instead of just answering questions, the AI can now:
+<table>
+<tr>
+<td width="50%">
 
-- **Execute commands** directly on your system
-- **Create, read, write, and manage files** across your entire project
-- **Deploy applications** to cloud platforms with a single command
-- **Run CI/CD pipelines** automatically
-- **Perform security audits** and fix vulnerabilities
-- **Generate documentation** and tests
-- **Learn from your preferences** and improve over time
+### ✨ **Unmatched Capabilities**
 
-> 💡 **Think of it as giving your AI assistant hands to actually do the work, not just tell you what to do.**
+- 🤖 **100+ Specialized AI Agents** - Architects, coders, testers, security experts
+- 🛠️ **300+ MCP Tools** - Most comprehensive toolset available
+- 🎯 **Multi-Agent Orchestration** - Agents collaborate intelligently
+- 🧠 **Real-Time Learning** - Improves from every interaction
+- 🔄 **Full Automation** - Create → Test → Deploy in one command
 
-### Supported Platforms
+</td>
+<td width="50%">
 
-| Platform | Status | Server Name |
-|----------|--------|-------------|
-| **Windsurf IDE** | ✅ Full Support | `windsurf-autopilot` |
-| **LM Studio** | ✅ Full Support | `lmstudio-autopilot` |
-| **Other MCP Clients** | ✅ Compatible | Custom configuration |
+### 💎 **100% Free & Local**
+
+- 🆓 **No Paid Subscriptions** - Everything runs locally
+- 🔒 **Complete Privacy** - Your code never leaves your machine
+- ⚡ **GPU Optimized** - Leverages your RTX/Tesla GPUs
+- 📦 **254+ Local Models** - Via Ollama & LM Studio
+- 🌐 **Offline Capable** - Works without internet
+
+</td>
+</tr>
+</table>
 
 ---
 
-## ✨ Key Features
+## 🤖 Multi-Agent System
 
-### 🎯 Zero-Code Development
-```
-You say: "Create a React app with authentication"
-AI does: Creates project, installs deps, sets up auth, configures routes, adds tests
+<div align="center">
+
+### **100+ Specialized AI Agents Working Together**
+
+```mermaid
+graph TB
+    subgraph Orchestrator["🎯 Multi-Agent Orchestrator"]
+        Router[Task Router]
+        Coordinator[Agent Coordinator]
+        Supervisor[Supervisor]
+    end
+    
+    subgraph Architecture["🏗️ Architecture Agents (10)"]
+        A1[System Architect]
+        A2[API Architect]
+        A3[Database Architect]
+        A4[Cloud Architect]
+        A5[Security Architect]
+    end
+    
+    subgraph Coding["💻 Coding Agents (25)"]
+        C1[React Expert]
+        C2[Node.js Expert]
+        C3[Python Expert]
+        C4[TypeScript Expert]
+        C5[Full-Stack Expert]
+    end
+    
+    subgraph Testing["🧪 Testing Agents (15)"]
+        T1[Unit Test Expert]
+        T2[E2E Test Expert]
+        T3[Security Tester]
+        T4[Performance Tester]
+    end
+    
+    subgraph Security["🔒 Security Agents (12)"]
+        S1[Security Auditor]
+        S2[SAST Analyst]
+        S3[Secrets Scanner]
+        S4[Compliance Expert]
+    end
+    
+    subgraph DevOps["🚀 DevOps Agents (15)"]
+        D1[CI/CD Expert]
+        D2[Docker Expert]
+        D3[Kubernetes Expert]
+        D4[AWS/GCP Expert]
+    end
+    
+    subgraph ML["🧠 ML/AI Agents (15)"]
+        M1[Data Engineer]
+        M2[ML Ops Expert]
+        M3[Vector DB Expert]
+        M4[LLM Ops Expert]
+    end
+    
+    Router --> Architecture
+    Router --> Coding
+    Router --> Testing
+    Router --> Security
+    Router --> DevOps
+    Router --> ML
+    
+    Coordinator --> Router
+    Supervisor --> Coordinator
 ```
 
-### ☁️ One-Command Deployment
-```
-You say: "Deploy this to Vercel"
-AI does: Builds, configures, deploys, returns live URL
-```
+</div>
 
-### 🔒 Automated Security
-```
-You say: "Security audit"
-AI does: Runs npm audit, scans secrets, checks licenses, reports vulnerabilities
-```
+### Agent Categories
 
-### 🧠 Real-Time Learning
-```
-The AI learns from every interaction, remembers your preferences,
-and improves its suggestions based on your feedback.
-```
+| Category | Agents | Specializations |
+|----------|--------|-----------------|
+| 🏗️ **Architecture** | 10 | System Design, API, Database, Cloud, Security, ML, Mobile, IoT |
+| 💻 **Coding** | 25 | React, Vue, Angular, Node, Python, Go, Rust, Java, C#, TypeScript, Mobile |
+| 🧪 **Testing** | 15 | Unit, Integration, E2E, Performance, Security, Visual, Accessibility, Mutation |
+| 🔒 **Security** | 12 | SAST, DAST, Secrets, Dependencies, Compliance, Crypto, Auth, Container |
+| 🚀 **DevOps** | 15 | CI/CD, Docker, Kubernetes, Terraform, AWS, GCP, Azure, Monitoring |
+| 📚 **Documentation** | 10 | API Docs, README, Architecture, JSDoc, Tutorials, Diagrams |
+| 🧠 **ML/Data** | 15 | Data Engineering, ML Ops, Vector DB, LLM Ops, Fine-Tuning, Prompts |
+| ⚡ **Performance** | 8 | Frontend, Backend, Database, Network, Memory, Load Testing |
+| ✨ **Quality** | 8 | Code Review, Linting, Refactoring, Complexity, Tech Debt |
+| 🎯 **Orchestration** | 10 | Project Management, Task Routing, Workflow, Coordination |
 
 ---
 
 ## 🚀 Quick Start
 
-### 1. Clone the Repository
+### One-Line Installation
+
+```powershell
+# Windows (PowerShell)
+irm https://raw.githubusercontent.com/Ghenghis/windsurf-vibe-setup/main/free-local/setup-vibe-free-local.ps1 | iex
+```
+
+### Manual Installation
+
 ```bash
+# 1. Clone repository
 git clone https://github.com/Ghenghis/windsurf-vibe-setup.git
 cd windsurf-vibe-setup
-```
 
-### 2. Install Dependencies
-```bash
+# 2. Install dependencies
 npm install
 cd mcp-server && npm install && cd ..
+
+# 3. Install Ollama (for local AI)
+winget install Ollama.Ollama   # Windows
+brew install ollama            # macOS
+
+# 4. Pull recommended model
+ollama pull qwen2.5-coder:32b
+
+# 5. Configure Windsurf MCP
+# Add to ~/.codeium/windsurf/mcp_config.json (see below)
+
+# 6. Restart Windsurf IDE
 ```
 
-### 3. Configure Your IDE
-
-**For Windsurf:** Add to `~/.codeium/windsurf/mcp_config.json`
-**For LM Studio:** Add to LM Studio's MCP configuration
-
-```json
-{
-  "mcpServers": {
-    "windsurf-autopilot": {
-      "command": "node",
-      "args": ["/path/to/windsurf-vibe-setup/mcp-server/src/index.js"]
-    }
-  }
-}
-```
-
-### 4. Restart Your IDE
-
-**That's it!** Start giving commands like:
-- "Create a Next.js project"
-- "Deploy to Vercel"
-- "Run security audit"
-
----
-
-## 📦 Installation
-
-### Prerequisites
-
-- **Node.js** >= 18.0.0
-- **npm** >= 8.0.0
-- **Git**
-- **Windsurf IDE** or **LM Studio**
-
-### Windsurf IDE Setup
-
-<details>
-<summary><b>📘 Click to expand Windsurf installation</b></summary>
-
-#### Step 1: Clone and Install
-
-```bash
-git clone https://github.com/Ghenghis/windsurf-vibe-setup.git
-cd windsurf-vibe-setup
-npm install
-cd mcp-server && npm install && cd ..
-```
-
-#### Step 2: Locate Config File
-
-| OS | Path |
-|----|------|
-| **Windows** | `%USERPROFILE%\.codeium\windsurf\mcp_config.json` |
-| **macOS** | `~/.codeium/windsurf/mcp_config.json` |
-| **Linux** | `~/.codeium/windsurf/mcp_config.json` |
-
-#### Step 3: Add Configuration
+### MCP Configuration
 
 ```json
 {
@@ -187,59 +241,231 @@ cd mcp-server && npm install && cd ..
 }
 ```
 
-#### Step 4: Restart Windsurf
+---
 
-Close and reopen Windsurf IDE. The autopilot will be active.
+## 🆓 Free & Local Setup
 
-#### Step 5: Verify
+<div align="center">
 
-Ask the AI: "What's my autopilot status?"
+### **Run Enterprise-Grade AI Without Paying a Dime**
 
-</details>
+| Component | Free Alternative | Savings |
+|-----------|-----------------|---------|
+| OpenAI API | Ollama + Qwen2.5-Coder | **$20+/month** |
+| GitHub Copilot | Continue.dev + Local LLM | **$10/month** |
+| Pinecone | ChromaDB / Milvus | **$70+/month** |
+| Perplexity API | SearXNG (self-hosted) | **$20/month** |
+| Cloud Vector DB | Qdrant (local) | **$100+/month** |
 
-### LM Studio Setup
+**Total Potential Savings: $220+/month** 💰
 
-<details>
-<summary><b>📗 Click to expand LM Studio installation</b></summary>
+</div>
 
-#### Step 1: Clone and Install
+### Your Hardware Advantage
+
+```
+┌─────────────────────────────────────────────────────────────────────────┐
+│  🖥️  YOUR SYSTEM                    │  💪 CAPABILITY                    │
+├─────────────────────────────────────┼───────────────────────────────────┤
+│  RTX 3090 Ti (24GB VRAM)           │  Run 70B+ parameter models        │
+│  RTX 3060 Ti (8GB VRAM)            │  Secondary inference / embedding  │
+│  128GB System RAM                   │  Massive context windows          │
+│  4TB NVMe Storage                   │  Store 254+ local models          │
+│  AMD Ryzen 7 5800X3D                │  Fast CPU inference fallback     │
+└─────────────────────────────────────┴───────────────────────────────────┘
+```
+
+### Recommended Local Models
 
 ```bash
-git clone https://github.com/Ghenghis/windsurf-vibe-setup.git
-cd windsurf-vibe-setup
-npm install
-cd lmstudio-autopilot && npm install && cd ..
+# Coding (Primary)
+ollama pull qwen2.5-coder:32b    # Best for code, uses ~20GB VRAM
+ollama pull deepseek-coder-v2:16b # Fast alternative
+
+# Embeddings
+ollama pull nomic-embed-text     # For RAG/vector search
+
+# Autocomplete
+ollama pull starcoder2:3b        # Fast tab completion
+
+# Large Context
+ollama pull qwen2.5:72b          # For complex reasoning
+ollama pull llama3.1:70b         # Meta's best, tool-calling native
 ```
 
-#### Step 2: Configure LM Studio
+---
 
-Add the MCP server to your LM Studio configuration:
+## 🛠️ Complete Tool Reference (300+ Tools)
 
-```json
-{
-  "mcpServers": {
-    "lmstudio-autopilot": {
-      "command": "node",
-      "args": ["/path/to/windsurf-vibe-setup/lmstudio-autopilot/src/index.js"],
-      "disabled": false
-    }
-  }
-}
-```
+<details>
+<summary><b>🤖 Multi-Agent Tools (NEW in v4.0)</b></summary>
 
-#### Step 3: Data Storage Locations
-
-| OS | Path |
-|----|------|
-| **Windows** | `%APPDATA%\WindsurfAutopilot\` |
-| **macOS** | `~/.windsurf-autopilot/` |
-| **Linux** | `~/.windsurf-autopilot/` |
-
-#### Step 4: Restart LM Studio
-
-The autopilot tools will be available to your local LLM.
+| Tool | Description |
+|------|-------------|
+| `list_all_agents` | List all 100+ AI agents by category |
+| `agent_status` | Get orchestrator status and statistics |
+| `run_agent_task` | Execute task with intelligent agent selection |
+| `create_agent_crew` | Create specialized team for project type |
+| `call_architect` | Invoke System Architect for design decisions |
+| `call_code_reviewer` | Invoke Code Reviewer for quality analysis |
+| `call_security_auditor` | Invoke Security Auditor for vulnerability scan |
 
 </details>
+
+<details>
+<summary><b>🧠 Smart Assistance (v3.2)</b></summary>
+
+| Tool | Description | Example |
+|------|-------------|---------|
+| `explain_code` | ELI5 code explanations | "Explain this function" |
+| `suggest_next` | AI suggests next action | "What should I do next?" |
+| `dry_run` | Preview operations | "Preview this deployment" |
+| `simplify_output` | Human-readable output | "Simplify this error" |
+| `what_went_wrong` | Error explanations | "What went wrong?" |
+| `teach_me` | Interactive learning | "Teach me React hooks" |
+
+</details>
+
+<details>
+<summary><b>⚡ Quick Start Wizards (v3.2)</b></summary>
+
+| Tool | Description | Example |
+|------|-------------|---------|
+| `project_wizard` | Guided project setup | "Start project wizard" |
+| `quick_web_app` | Full-stack app | "Create web app MyApp" |
+| `quick_landing` | Landing page | "Make a landing page" |
+| `quick_api` | REST API | "Create API for users" |
+| `quick_mobile` | React Native app | "Create mobile app" |
+| `quick_chrome_ext` | Chrome extension | "Make Chrome extension" |
+
+</details>
+
+<details>
+<summary><b>☁️ Cloud Deployment (v2.5)</b></summary>
+
+| Tool | Description |
+|------|-------------|
+| `deploy_vercel` | Deploy to Vercel with zero config |
+| `deploy_netlify` | Deploy to Netlify (auto-detects framework) |
+| `deploy_railway` | Deploy to Railway.app |
+| `deploy_docker_hub` | Build and push Docker images |
+
+</details>
+
+<details>
+<summary><b>🔄 CI/CD Automation (v2.5)</b></summary>
+
+| Tool | Description |
+|------|-------------|
+| `setup_github_actions` | Create GitHub Actions workflow |
+| `setup_gitlab_ci` | Create GitLab CI/CD config |
+| `run_pipeline` | Trigger CI/CD pipeline |
+| `check_pipeline_status` | Check pipeline status |
+
+</details>
+
+<details>
+<summary><b>🔒 Security Tools (v2.5 - v3.1)</b></summary>
+
+| Tool | Description |
+|------|-------------|
+| `security_audit` | Full security scan |
+| `sast_scan` | Static Application Security Testing |
+| `scan_secrets` | Detect exposed credentials |
+| `sbom_generate` | Software Bill of Materials |
+| `dep_graph` | Dependency graph visualization |
+| `compliance_check` | SOC2/GDPR/HIPAA checklists |
+
+</details>
+
+<details>
+<summary><b>🧪 Testing Tools (v3.1)</b></summary>
+
+| Tool | Description |
+|------|-------------|
+| `run_e2e_tests` | Playwright/Cypress E2E testing |
+| `visual_regression` | Screenshot comparison tests |
+| `load_test` | k6/Artillery load testing |
+| `contract_test` | API contract testing (Pact) |
+| `mutation_test` | Mutation testing (Stryker) |
+
+</details>
+
+<details>
+<summary><b>📁 File Operations (Core)</b></summary>
+
+| Tool | Description |
+|------|-------------|
+| `read_file` | Read file contents |
+| `write_file` | Write/create files |
+| `edit_file` | Edit existing files |
+| `delete_file` | Delete files |
+| `list_directory` | List directory contents |
+| `search_files` | Search for files |
+| `bulk_rename` | Regex-based bulk renaming |
+| `find_replace_all` | Project-wide find/replace |
+
+</details>
+
+<details>
+<summary><b>🔧 Git Operations (Core)</b></summary>
+
+| Tool | Description |
+|------|-------------|
+| `git_status` | Check git status |
+| `git_commit` | Commit changes |
+| `git_push` | Push to remote |
+| `git_pull` | Pull from remote |
+| `git_clone` | Clone repository |
+| `git_branch` | Manage branches |
+
+</details>
+
+---
+
+## 🏗️ Architecture
+
+```
+windsurf-vibe-setup/
+├── 📦 mcp-server/                    # Main MCP Server
+│   ├── src/
+│   │   ├── index.js                  # Server entry point
+│   │   ├── ai-agents/                # 🆕 Multi-Agent System
+│   │   │   ├── agent-registry.js     # 100+ agent definitions
+│   │   │   └── orchestrator.js       # Agent orchestration
+│   │   ├── multi-agent-tools.js      # 🆕 Agent MCP tools
+│   │   ├── ultimate-tools.js         # v2.5 tools
+│   │   ├── realtime-ai-engine.js     # AI/ML engine
+│   │   ├── autopilot-intelligence.js # Learning system
+│   │   └── [30+ tool modules]        # All tool categories
+│   └── package.json
+│
+├── 📦 lmstudio-autopilot/            # LM Studio Integration
+│   └── src/                          # (mirrors mcp-server)
+│
+├── 🆓 free-local/                    # Free Local Setup
+│   ├── setup-vibe-free-local.ps1     # One-click installer
+│   ├── docker-compose-vibe-stack.yml # Full service stack
+│   ├── mcp_config_free_local.json    # Local MCP config
+│   ├── components/
+│   │   └── FreeLocalComparison.jsx   # Tool comparison UI
+│   └── scripts/
+│       ├── agent-crew.py             # CrewAI integration
+│       └── ai-orchestrator.js        # Agent orchestration
+│
+├── 📚 docs/                          # Documentation
+│   ├── ARCHITECTURE.md
+│   ├── MCP_SETUP_GUIDE.md
+│   └── TROUBLESHOOTING.md
+│
+├── 🧪 scripts/                       # Utility scripts
+│   ├── setup-windows.ps1
+│   ├── setup-unix.sh
+│   └── security-audit.js
+│
+└── 📋 templates/                     # Project templates
+    └── workspace-rules/
+```
 
 ---
 
@@ -253,1059 +479,144 @@ The autopilot tools will be available to your local LLM.
 ╚═══════════════════════════════════════════════════════════════════════════╝
 ```
 
-### What's Automated (100%++)
-
-| Category | Examples | Status |
-|----------|----------|--------|
-| **Project Creation** | React, Next.js, Vue, Python, Node, etc. | ✅ 100% |
-| **File Operations** | Read, write, edit, delete, search | ✅ 100% |
-| **Git Workflow** | Clone, commit, push, pull, branch, merge | ✅ 100% |
-| **Package Management** | npm, pip, yarn, pnpm | ✅ 100% |
-| **Command Execution** | Any terminal command | ✅ 100% |
-| **Cloud Deployment** | Vercel, Netlify, Railway, Docker Hub | ✅ 100% |
-| **CI/CD** | GitHub Actions, GitLab CI | ✅ 100% |
-| **Security** | Audits, secret scanning, license checks | ✅ 100% |
-| **Testing** | Unit tests, API tests, benchmarks | ✅ 100% |
-| **Documentation** | JSDoc, TypeDoc, README generation | ✅ 100% |
-| **Code Quality** | Linting, formatting, complexity analysis | ✅ 100% |
-| **Database** | Queries, migrations, seeding | ✅ 100% |
-| **Docker** | Build, run, compose | ✅ 100% |
-
-### What Requires Human Input (<1%)
-
-| Category | Reason |
-|----------|--------|
-| **Architectural Decisions** | Requires understanding of business context |
-| **Design Choices** | Aesthetic preferences are subjective |
-| **Third-Party Credentials** | Security - must be provided by user |
-| **Production Approvals** | Business/compliance requirements |
-| **Complex Business Logic** | Domain-specific knowledge |
+| Category | Capability | Automation Level |
+|----------|------------|------------------|
+| 🏗️ **Project Creation** | React, Next.js, Vue, Python, Node, etc. | ✅ 100% |
+| 📁 **File Operations** | Read, write, edit, delete, search | ✅ 100% |
+| 🔧 **Git Workflow** | Clone, commit, push, pull, branch, merge | ✅ 100% |
+| 📦 **Package Management** | npm, pip, yarn, pnpm | ✅ 100% |
+| 💻 **Command Execution** | Any terminal command | ✅ 100% |
+| ☁️ **Cloud Deployment** | Vercel, Netlify, Railway, Docker Hub | ✅ 100% |
+| 🔄 **CI/CD** | GitHub Actions, GitLab CI | ✅ 100% |
+| 🔒 **Security** | Audits, secret scanning, SAST/DAST | ✅ 100% |
+| 🧪 **Testing** | Unit, E2E, API, Performance, Visual | ✅ 100% |
+| 📚 **Documentation** | JSDoc, TypeDoc, README, API docs | ✅ 100% |
+| ✨ **Code Quality** | Linting, formatting, complexity | ✅ 100% |
+| 🗄️ **Database** | Queries, migrations, seeding | ✅ 100% |
+| 🐳 **Docker** | Build, run, compose | ✅ 100% |
+| 🤖 **Multi-Agent** | 100+ specialized agents | ✅ 100% |
+| 🧠 **ML/AI** | RAG, embeddings, vector DB | ✅ 100% |
 
 ---
 
-## 🛠 Complete Tool Reference (250+ Tools)
+## 🔄 Version History
 
-### v3.2 VIBE CODER EXPERIENCE - 39 New Tools
+### v4.0.0 - Multi-Agent Revolution (Current)
+- 🤖 **100+ Specialized AI Agents** across 10 categories
+- 🎯 **Intelligent Agent Orchestration** with automatic task routing
+- 🆓 **Complete Free Local Setup** with Ollama integration
+- 🧠 **ML/AI Agents** for data engineering and LLM operations
+- 📊 **Enhanced Documentation** with visual diagrams
 
-<details>
-<summary><b>🧠 Smart Assistance (6 tools)</b></summary>
+### v3.2.0 - Vibe Coder Experience
+- Smart assistance tools (explain_code, suggest_next, teach_me)
+- Quick start wizards for instant project creation
+- AI pair programming capabilities
+- Asset generation tools
 
-| Tool | Description | Example Command |
-|------|-------------|-----------------|
-| `explain_code` | ELI5 code explanations in plain English | "Explain this code to me" |
-| `suggest_next` | AI suggests next logical action | "What should I do next?" |
-| `dry_run` | Preview any operation without executing | "Preview this operation" |
-| `simplify_output` | Convert technical output to plain English | "Simplify this output" |
-| `what_went_wrong` | Human-readable error explanations | "What went wrong?" |
-| `teach_me` | Interactive learning for specific concepts | "Teach me about React hooks" |
+### v3.1.0 - Extended Integrations
+- Infrastructure as Code (Terraform, Kubernetes)
+- Advanced testing (E2E, visual regression, load testing)
+- Communications (Slack, Discord, Teams, email)
+- Package publishing (npm, PyPI, Docker)
 
-</details>
+### v3.0.0 - Enterprise Edition
+- Workflow automation
+- Team collaboration
+- Cloud sync
+- Multi-agent foundations
 
-<details>
-<summary><b>⚡ Quick Start Wizards (6 tools)</b></summary>
-
-| Tool | Description | Example Command |
-|------|-------------|-----------------|
-| `project_wizard` | Interactive guided project setup | "Start project wizard" |
-| `quick_web_app` | One-command full-stack app | "Create a web app called MyApp" |
-| `quick_landing` | One-command landing page with form | "Make a landing page" |
-| `quick_api` | One-command REST API | "Create an API for users" |
-| `quick_mobile` | One-command mobile app (React Native) | "Create a mobile app" |
-| `quick_chrome_ext` | One-command Chrome extension | "Make a Chrome extension" |
-
-</details>
-
-<details>
-<summary><b>🎨 Asset Generation (5 tools)</b></summary>
-
-| Tool | Description | Example Command |
-|------|-------------|-----------------|
-| `generate_logo` | AI logo generation with variations | "Generate a logo for MyApp" |
-| `generate_og_image` | Social preview images | "Create OG image" |
-| `optimize_assets` | Batch image optimization | "Optimize all images" |
-| `create_favicon` | Complete favicon suite (all sizes) | "Create favicons" |
-| `generate_screenshots` | App store screenshots | "Generate app screenshots" |
-
-</details>
-
-<details>
-<summary><b>🔗 No-Code Platform Integration (6 tools)</b></summary>
-
-| Tool | Description | Example Command |
-|------|-------------|-----------------|
-| `notion_sync` | Bidirectional Notion sync | "Sync with Notion" |
-| `airtable_ops` | Airtable CRUD operations | "Get data from Airtable" |
-| `google_sheets_sync` | Google Sheets integration | "Sync with Google Sheets" |
-| `zapier_trigger` | Trigger Zapier webhooks | "Trigger Zapier webhook" |
-| `make_scenario` | Make.com (Integromat) integration | "Run Make scenario" |
-| `n8n_workflow` | n8n workflow triggers | "Trigger n8n workflow" |
-
-</details>
-
-<details>
-<summary><b>💰 Business & Analytics (5 tools)</b></summary>
-
-| Tool | Description | Example Command |
-|------|-------------|-----------------|
-| `cost_estimate` | Preview cloud/API costs | "Estimate cloud costs" |
-| `usage_analytics` | Personal productivity metrics | "Show my analytics" |
-| `time_tracker` | Automatic time tracking per task | "Track my time" |
-| `roi_calculator` | Calculate project ROI | "Calculate ROI" |
-| `generate_invoice` | Generate project invoices | "Generate invoice" |
-
-</details>
-
-<details>
-<summary><b>🚀 Launch & Growth (5 tools)</b></summary>
-
-| Tool | Description | Example Command |
-|------|-------------|-----------------|
-| `seo_audit` | SEO analysis and fixes | "Run SEO audit" |
-| `lighthouse_report` | Performance/accessibility audit | "Run Lighthouse" |
-| `submit_to_directories` | Submit to Product Hunt, etc. | "Submit to directories" |
-| `social_preview` | Test social media cards | "Test social preview" |
-| `uptime_monitor` | Setup uptime monitoring | "Setup uptime monitor" |
-
-</details>
-
-<details>
-<summary><b>🤝 AI Pair Programming (6 tools)</b></summary>
-
-| Tool | Description | Example Command |
-|------|-------------|-----------------|
-| `pair_start` | Start AI pair programming session | "Start pair programming" |
-| `pair_suggest` | Get suggestions while coding | "Suggest improvements" |
-| `pair_review` | Real-time code review | "Review my code" |
-| `pair_explain` | Explain as you go | "Explain this decision" |
-| `pair_refactor` | Suggest refactors live | "Help me refactor" |
-| `voice_command` | Voice-controlled operations | "Voice command: create file" |
-
-</details>
 
 ---
 
-### v3.1 EXTENDED INTEGRATIONS - 36 New Tools
-
-<details>
-<summary><b>📦 Infrastructure as Code (5 tools)</b></summary>
-
-| Tool | Description | Example Command |
-|------|-------------|-----------------|
-| `terraform_init` | Initialize Terraform in project | "Initialize Terraform" |
-| `terraform_plan` | Preview infrastructure changes | "Plan Terraform changes" |
-| `terraform_apply` | Apply infrastructure changes | "Apply Terraform" |
-| `k8s_deploy` | Deploy to Kubernetes cluster | "Deploy to Kubernetes" |
-| `helm_install` | Install Helm charts | "Install Helm chart nginx" |
-
-</details>
-
-<details>
-<summary><b>🧪 Advanced Testing (5 tools)</b></summary>
-
-| Tool | Description | Example Command |
-|------|-------------|-----------------|
-| `run_e2e_tests` | Playwright/Cypress E2E testing | "Run E2E tests" |
-| `visual_regression` | Screenshot comparison tests | "Run visual regression" |
-| `load_test` | k6/Artillery load testing | "Run load test" |
-| `contract_test` | API contract testing (Pact) | "Run contract tests" |
-| `mutation_test` | Mutation testing (Stryker) | "Run mutation tests" |
-
-</details>
-
-<details>
-<summary><b>💬 Communications (5 tools)</b></summary>
-
-| Tool | Description | Example Command |
-|------|-------------|-----------------|
-| `slack_notify` | Slack webhook messages | "Notify Slack channel" |
-| `discord_notify` | Discord webhook messages | "Send Discord message" |
-| `teams_notify` | Microsoft Teams notifications | "Notify Teams" |
-| `email_send` | SMTP/SendGrid emails | "Send email notification" |
-| `sms_send` | Twilio SMS messages | "Send SMS alert" |
-
-</details>
-
-<details>
-<summary><b>📊 Project Management (5 tools)</b></summary>
-
-| Tool | Description | Example Command |
-|------|-------------|-----------------|
-| `jira_create_issue` | Create Jira tickets | "Create Jira bug ticket" |
-| `linear_create_task` | Create Linear tasks | "Create Linear task" |
-| `github_create_issue` | Create GitHub issues | "Create GitHub issue" |
-| `auto_changelog` | Generate changelog from commits | "Generate changelog" |
-| `create_release` | GitHub Release automation | "Create GitHub release" |
-
-</details>
-
-<details>
-<summary><b>🔐 Advanced Security (5 tools)</b></summary>
-
-| Tool | Description | Example Command |
-|------|-------------|-----------------|
-| `sast_scan` | Static Application Security Testing | "Run SAST scan" |
-| `sbom_generate` | Software Bill of Materials | "Generate SBOM" |
-| `dep_graph` | Dependency graph visualization | "Show dependency graph" |
-| `tech_debt_score` | Technical debt metrics | "Calculate tech debt" |
-| `compliance_check` | SOC2/GDPR/HIPAA checklists | "Check SOC2 compliance" |
-
-</details>
-
-<details>
-<summary><b>🛠️ Dev Environment (3 tools)</b></summary>
-
-| Tool | Description | Example Command |
-|------|-------------|-----------------|
-| `gen_devcontainer` | VS Code devcontainer config | "Generate devcontainer" |
-| `gen_codespace` | GitHub Codespaces config | "Setup Codespaces" |
-| `gen_gitpod` | Gitpod configuration | "Generate Gitpod config" |
-
-</details>
-
-<details>
-<summary><b>📦 Package Publishing (4 tools)</b></summary>
-
-| Tool | Description | Example Command |
-|------|-------------|-----------------|
-| `npm_publish` | Publish to npm registry | "Publish to npm" |
-| `pypi_publish` | Publish to PyPI | "Publish to PyPI" |
-| `docker_release` | Tag and push release images | "Release Docker image" |
-| `github_package` | GitHub Packages publish | "Publish to GitHub Packages" |
-
-</details>
-
-<details>
-<summary><b>📈 Observability (4 tools)</b></summary>
-
-| Tool | Description | Example Command |
-|------|-------------|-----------------|
-| `sentry_setup` | Configure Sentry error tracking | "Setup Sentry" |
-| `add_metrics` | Add Prometheus metrics | "Add metrics endpoint" |
-| `create_dashboard` | Generate Grafana dashboards | "Create Grafana dashboard" |
-| `setup_alerts` | Configure alerting rules | "Setup alerting" |
-
-</details>
-
----
-
-### v3.0 ENTERPRISE EDITION - 25 New Tools
-
-<details>
-<summary><b>🔄 Workflow Automation (5 tools)</b></summary>
-
-| Tool | Description | Example Command |
-|------|-------------|-----------------|
-| `create_workflow` | Create multi-step automation workflows | "Create a deploy workflow" |
-| `run_workflow` | Execute saved workflows | "Run my deploy workflow" |
-| `edit_workflow` | Modify existing workflows | "Edit workflow to add tests" |
-| `share_workflow` | Export/import workflows | "Export workflow as JSON" |
-| `workflow_templates` | Pre-built workflow templates | "List workflow templates" |
-
-</details>
-
-<details>
-<summary><b>👥 Team Collaboration (6 tools)</b></summary>
-
-| Tool | Description | Example Command |
-|------|-------------|-----------------|
-| `create_team` | Create team workspace | "Create team called Backend" |
-| `invite_member` | Invite team members | "Invite john@example.com" |
-| `share_settings` | Share configurations | "Share my ESLint config" |
-| `team_templates` | Shared project templates | "List team templates" |
-| `activity_log` | Team activity history | "Show team activity" |
-| `list_teams` | List all teams | "List my teams" |
-
-</details>
-
-<details>
-<summary><b>☁️ Cloud Sync (4 tools)</b></summary>
-
-| Tool | Description | Example Command |
-|------|-------------|-----------------|
-| `cloud_login` | Authenticate with cloud | "Login to cloud" |
-| `sync_settings` | Sync settings to cloud | "Sync my settings" |
-| `sync_templates` | Sync templates | "Sync templates to cloud" |
-| `sync_history` | Sync interaction history | "Backup history to cloud" |
-
-</details>
-
-<details>
-<summary><b>🤖 AI Models (5 tools)</b></summary>
-
-| Tool | Description | Example Command |
-|------|-------------|-----------------|
-| `add_model` | Add custom AI model | "Add Ollama model llama3" |
-| `switch_model` | Switch AI models | "Switch to GPT-4" |
-| `model_benchmark` | Benchmark performance | "Benchmark all models" |
-| `fine_tune` | Fine-tune on project | "Fine-tune on my codebase" |
-| `list_models` | List configured models | "List my models" |
-
-</details>
-
-<details>
-<summary><b>🕵️ Multi-Agent (5 tools)</b></summary>
-
-| Tool | Description | Example Command |
-|------|-------------|-----------------|
-| `create_agent` | Create specialized agent | "Create a code review agent" |
-| `assign_task` | Assign task to agent | "Assign testing to test agent" |
-| `agent_status` | Check agent status | "Show agent status" |
-| `agent_collaborate` | Multi-agent collaboration | "Collaborate on this feature" |
-| `list_agents` | List all agents | "List my agents" |
-
-</details>
-
-### v2.6 Data & Persistence - 21 New Tools
-
-<details>
-<summary><b>🗄️ Database (5 tools)</b></summary>
-
-| Tool | Description | Example Command |
-|------|-------------|-----------------|
-| `db_connect` | Connect to database | "Connect to SQLite db" |
-| `db_schema` | View/modify schema | "Show database schema" |
-| `db_backup` | Backup database | "Backup my database" |
-| `db_restore` | Restore from backup | "Restore database" |
-| `db_query_direct` | Execute SQL | "Run SELECT * FROM users" |
-
-</details>
-
-<details>
-<summary><b>🔍 Semantic Search (3 tools)</b></summary>
-
-| Tool | Description | Example Command |
-|------|-------------|-----------------|
-| `embed_text` | Generate embeddings | "Embed this text" |
-| `semantic_search` | Search by meaning | "Find code related to auth" |
-| `index_project` | Index for search | "Index this project" |
-
-</details>
-
-<details>
-<summary><b>💾 Context Persistence (5 tools)</b></summary>
-
-| Tool | Description | Example Command |
-|------|-------------|-----------------|
-| `save_context` | Save session context | "Save my context" |
-| `load_context` | Load previous context | "Load yesterday's context" |
-| `clear_context` | Clear context data | "Clear my history" |
-| `get_context` | View current context | "Show my context" |
-| `list_contexts` | List saved contexts | "List saved contexts" |
-
-</details>
-
-<details>
-<summary><b>🔙 Error Recovery (4 tools)</b></summary>
-
-| Tool | Description | Example Command |
-|------|-------------|-----------------|
-| `create_checkpoint` | Create rollback point | "Create checkpoint" |
-| `rollback` | Rollback to checkpoint | "Rollback to last checkpoint" |
-| `auto_recover` | Auto-fix errors | "Auto recover from this error" |
-| `list_checkpoints` | List checkpoints | "List my checkpoints" |
-
-</details>
-
-<details>
-<summary><b>🔌 Plugin System (4 tools)</b></summary>
-
-| Tool | Description | Example Command |
-|------|-------------|-----------------|
-| `install_plugin` | Install plugin | "Install eslint-plugin" |
-| `list_plugins` | List plugins | "List installed plugins" |
-| `uninstall_plugin` | Remove plugin | "Uninstall plugin" |
-| `create_plugin` | Create plugin template | "Create new plugin" |
-
-</details>
-
-### v2.5 ULTIMATE EDITION - 40 Tools
-
-<details>
-<summary><b>☁️ Cloud Deployment (4 tools)</b></summary>
-
-| Tool | Description | Example Command |
-|------|-------------|-----------------|
-| `deploy_vercel` | Deploy to Vercel with zero config | "Deploy this to Vercel" |
-| `deploy_netlify` | Deploy to Netlify (auto-detects framework) | "Deploy to Netlify production" |
-| `deploy_railway` | Deploy to Railway.app | "Deploy to Railway" |
-| `deploy_docker_hub` | Build and push Docker images | "Push to Docker Hub as myapp:latest" |
-
-</details>
-
-<details>
-<summary><b>🔄 CI/CD Automation (4 tools)</b></summary>
-
-| Tool | Description | Example Command |
-|------|-------------|-----------------|
-| `setup_github_actions` | Create complete GitHub Actions workflow | "Setup GitHub Actions for Node.js" |
-| `setup_gitlab_ci` | Create GitLab CI/CD configuration | "Setup GitLab CI" |
-| `run_pipeline` | Trigger CI/CD pipeline manually | "Run the pipeline" |
-| `check_pipeline_status` | Check recent pipeline runs | "Check pipeline status" |
-
-</details>
-
-<details>
-<summary><b>🔧 Code Operations (5 tools)</b></summary>
-
-| Tool | Description | Example Command |
-|------|-------------|-----------------|
-| `refactor_code` | Rename symbols, organize imports | "Refactor: rename userId to customerId" |
-| `generate_docs` | Generate JSDoc/TypeDoc/README | "Generate documentation" |
-| `code_review` | Automated code review with suggestions | "Review my code" |
-| `find_dead_code` | Detect unused exports and functions | "Find dead code" |
-| `analyze_complexity` | Cyclomatic complexity analysis | "Analyze complexity" |
-
-</details>
-
-<details>
-<summary><b>🔒 Security & Dependencies (4 tools)</b></summary>
-
-| Tool | Description | Example Command |
-|------|-------------|-----------------|
-| `security_audit` | Full security scan (npm audit + Snyk + secrets) | "Security audit" |
-| `update_dependencies` | Safe dependency updates (patch/minor/major) | "Update dependencies safely" |
-| `check_licenses` | License compliance checking | "Check licenses" |
-| `scan_secrets` | Detect exposed credentials in code | "Scan for secrets" |
-
-</details>
-
-<details>
-<summary><b>🌐 API Testing (3 tools)</b></summary>
-
-| Tool | Description | Example Command |
-|------|-------------|-----------------|
-| `test_api` | Automated endpoint testing | "Test my API" |
-| `mock_server` | Start a mock API server | "Start mock server on port 3001" |
-| `generate_api_docs` | Generate OpenAPI/Swagger documentation | "Generate API docs" |
-
-</details>
-
-<details>
-<summary><b>📁 Templates (3 tools)</b></summary>
-
-| Tool | Description | Example Command |
-|------|-------------|-----------------|
-| `save_template` | Save current project as reusable template | "Save as template called 'my-starter'" |
-| `list_templates` | List all available templates | "List templates" |
-| `use_template` | Create new project from template | "Use template my-starter" |
-
-</details>
-
-<details>
-<summary><b>🔔 Notifications (3 tools)</b></summary>
-
-| Tool | Description | Example Command |
-|------|-------------|-----------------|
-| `notify` | Desktop notification (cross-platform) | "Notify when build completes" |
-| `send_webhook` | Send HTTP webhook to any URL | "Send webhook to my Slack channel" |
-| `schedule_task` | Schedule a task for later execution | "Schedule deployment for 6pm" |
-
-</details>
-
-<details>
-<summary><b>📄 Advanced File Operations (4 tools)</b></summary>
-
-| Tool | Description | Example Command |
-|------|-------------|-----------------|
-| `file_diff` | Compare two files with unified diff | "Diff these two files" |
-| `file_merge` | Git merge with conflict resolution | "Merge feature branch into main" |
-| `bulk_rename` | Regex-based bulk file renaming | "Rename all .jsx files to .tsx" |
-| `find_replace_all` | Project-wide find and replace | "Replace 'oldApi' with 'newApi' everywhere" |
-
-</details>
-
-<details>
-<summary><b>📊 Logs & Monitoring (3 tools)</b></summary>
-
-| Tool | Description | Example Command |
-|------|-------------|-----------------|
-| `analyze_logs` | Pattern detection and anomaly analysis | "Analyze logs for errors" |
-| `tail_logs` | Tail log files with filtering | "Show last 100 lines of error.log" |
-| `search_logs` | Search across all log files | "Search logs for 'connection refused'" |
-
-</details>
-
-<details>
-<summary><b>⚡ Performance (3 tools)</b></summary>
-
-| Tool | Description | Example Command |
-|------|-------------|-----------------|
-| `benchmark_project` | Run build/test benchmarks | "Benchmark the build" |
-| `profile_app` | Application profiling guidance | "Profile the app" |
-| `analyze_bundle` | Bundle size analysis | "Analyze bundle size" |
-
-</details>
-
-<details>
-<summary><b>🏢 Workspace Management (4 tools)</b></summary>
-
-| Tool | Description | Example Command |
-|------|-------------|-----------------|
-| `switch_project` | Switch to a different project context | "Switch to project backend" |
-| `list_projects` | List all known projects | "List all my projects" |
-| `project_health` | Health check with scoring | "Project health check" |
-| `cleanup_project` | Remove temp files, caches, build artifacts | "Cleanup project" |
-
-</details>
-
----
-
-### v2.4 - Web Integration & AI Learning (11 tools)
-
-<details>
-<summary><b>🧠 AI/ML Learning Engine</b></summary>
-
-| Tool | Description |
-|------|-------------|
-| `ai_status` | Check AI engine status and statistics |
-| `record_interaction` | Record successful interactions for learning |
-| `learn_pattern` | Learn new patterns from examples |
-| `get_ai_preferences` | Get learned user preferences |
-| `record_feedback` | Submit feedback for reinforcement learning |
-| `get_ai_suggestions` | Get AI-powered proactive suggestions |
-
-</details>
-
-<details>
-<summary><b>🌐 Web Search & Knowledge</b></summary>
-
-| Tool | Description |
-|------|-------------|
-| `search_stackoverflow` | Search Stack Overflow for solutions |
-| `search_github` | Search GitHub repositories and code |
-| `search_npm` | Search npm packages |
-| `query_knowledge` | Query the local knowledge graph |
-| `find_similar` | Find similar past interactions (vector search) |
-
-</details>
-
----
-
-### v2.3 - Autopilot Intelligence (8 tools)
-
-<details>
-<summary><b>🤖 Autopilot Core</b></summary>
-
-| Tool | Description |
-|------|-------------|
-| `autopilot_status` | Get autopilot operational status |
-| `guide_task` | Get step-by-step guidance for tasks |
-| `get_status` | Get complete system status |
-| `get_history` | Get interaction history |
-| `start_progress` | Start progress tracking |
-| `update_progress` | Update progress status |
-| `get_progress` | Get current progress |
-| `complete_progress` | Mark progress complete |
-
-</details>
-
----
-
-### v2.2 - AI Decision Engine (16 tools)
-
-<details>
-<summary><b>🎯 AI Decision Making</b></summary>
-
-| Tool | Description |
-|------|-------------|
-| `decide_next_step` | AI decides the best next action |
-| `find_solution` | Find solutions from knowledge base |
-| `generate_code` | Generate code from description |
-| `generate_tests` | Generate test cases |
-
-</details>
-
-<details>
-<summary><b>🗄️ Database Operations</b></summary>
-
-| Tool | Description |
-|------|-------------|
-| `db_query` | Execute database queries |
-| `db_migrate` | Run database migrations |
-| `db_seed` | Seed database with data |
-
-</details>
-
-<details>
-<summary><b>💾 Backup & Recovery</b></summary>
-
-| Tool | Description |
-|------|-------------|
-| `backup_project` | Create project backup |
-| `restore_backup` | Restore from backup |
-| `list_backups` | List available backups |
-| `manage_env` | Manage environment variables |
-
-</details>
-
----
-
-### v2.1 - Intelligence Layer (16 tools)
-
-<details>
-<summary><b>🔍 Project Intelligence</b></summary>
-
-| Tool | Description |
-|------|-------------|
-| `analyze_project` | Deep project analysis |
-| `detect_tech_stack` | Auto-detect technologies used |
-| `analyze_error` | Intelligent error analysis |
-| `smart_retry` | Smart retry with fixes |
-
-</details>
-
-<details>
-<summary><b>🌐 HTTP & Downloads</b></summary>
-
-| Tool | Description |
-|------|-------------|
-| `http_request` | Make HTTP requests (GET, POST, etc.) |
-| `download_file` | Download files from URLs |
-
-</details>
-
-<details>
-<summary><b>✨ Code Quality</b></summary>
-
-| Tool | Description |
-|------|-------------|
-| `lint_code` | Run linter (ESLint, Pylint, etc.) |
-| `format_code` | Format code (Prettier, Black, etc.) |
-| `run_tests` | Run test suite |
-
-</details>
-
-<details>
-<summary><b>🐳 Docker Support</b></summary>
-
-| Tool | Description |
-|------|-------------|
-| `docker_status` | Check Docker status |
-| `docker_build` | Build Docker image |
-| `docker_run` | Run Docker container |
-| `docker_compose_up` | Start docker-compose services |
-
-</details>
-
-<details>
-<summary><b>⚙️ Process Management</b></summary>
-
-| Tool | Description |
-|------|-------------|
-| `start_server` | Start development server |
-| `stop_server` | Stop running server |
-| `list_running` | List running processes |
-
-</details>
-
----
-
-### v2.0 - Core Operations (20+ tools)
-
-<details>
-<summary><b>📁 File System</b></summary>
-
-| Tool | Description |
-|------|-------------|
-| `read_file` | Read file contents |
-| `write_file` | Write/create files |
-| `edit_file` | Edit existing files |
-| `delete_file` | Delete files |
-| `list_directory` | List directory contents |
-| `search_files` | Search for files by pattern |
-
-</details>
-
-<details>
-<summary><b>🔧 Git Operations</b></summary>
-
-| Tool | Description |
-|------|-------------|
-| `git_status` | Check git status |
-| `git_commit` | Commit changes |
-| `git_push` | Push to remote |
-| `git_pull` | Pull from remote |
-| `git_clone` | Clone repository |
-| `git_branch` | Manage branches |
-
-</details>
-
-<details>
-<summary><b>📦 Package Management</b></summary>
-
-| Tool | Description |
-|------|-------------|
-| `install_packages` | Install packages (npm, pip, etc.) |
-| `run_script` | Run package scripts |
-| `create_project` | Create new project from template |
-
-</details>
-
-<details>
-<summary><b>💻 Command Execution</b></summary>
-
-| Tool | Description |
-|------|-------------|
-| `execute_command` | Execute any terminal command |
-| `run_task` | Run multi-step tasks |
-| `continue_task` | Continue interrupted tasks |
-
-</details>
-
-<details>
-<summary><b>🔧 Environment</b></summary>
-
-| Tool | Description |
-|------|-------------|
-| `diagnose_environment` | Diagnose system environment |
-| `auto_fix` | Automatically fix common issues |
-
-</details>
-
----
-
-## 🏗 Architecture
-
-```
-windsurf-vibe-setup/
-├── mcp-server/                    # Windsurf MCP Server
-│   ├── src/
-│   │   ├── index.js               # Main server entry point
-│   │   ├── ultimate-tools.js      # v2.5 ULTIMATE tools (40 tools)
-│   │   ├── realtime-ai-engine.js  # AI/ML engine
-│   │   ├── autopilot-intelligence.js  # Learning system
-│   │   ├── advanced-tools.js      # v2.2 AI decision tools
-│   │   ├── additional-tools.js    # v2.1 intelligence tools
-│   │   ├── database-tools.js      # v2.6 database (5 tools)
-│   │   ├── embedding-tools.js     # v2.6 vector search (3 tools)
-│   │   ├── context-tools.js       # v2.6 context persistence (5 tools)
-│   │   ├── recovery-tools.js      # v2.6 error recovery (4 tools)
-│   │   ├── plugin-tools.js        # v2.6 plugin system (4 tools)
-│   │   ├── workflow-tools.js      # v3.0 workflows (5 tools)
-│   │   ├── team-tools.js          # v3.0 team collab (6 tools)
-│   │   ├── cloud-tools.js         # v3.0 cloud sync (4 tools)
-│   │   ├── model-tools.js         # v3.0 AI models (5 tools)
-│   │   ├── agent-tools.js         # v3.0 multi-agent (5 tools)
-│   │   ├── iac-tools.js           # v3.1 Terraform/K8s (5 tools)
-│   │   ├── testing-tools.js       # v3.1 advanced testing (5 tools)
-│   │   ├── comms-tools.js         # v3.1 communications (5 tools)
-│   │   ├── pm-tools.js            # v3.1 project mgmt (5 tools)
-│   │   ├── security-advanced-tools.js  # v3.1 SAST/SBOM (5 tools)
-│   │   ├── devenv-tools.js        # v3.1 dev environment (3 tools)
-│   │   ├── publish-tools.js       # v3.1 publishing (4 tools)
-│   │   ├── observability-tools.js # v3.1 observability (4 tools)
-│   │   ├── smart-assist-tools.js  # v3.2 smart assistance (6 tools)
-│   │   ├── wizard-tools.js        # v3.2 quick wizards (6 tools)
-│   │   ├── asset-tools.js         # v3.2 asset generation (5 tools)
-│   │   ├── nocode-tools.js        # v3.2 no-code integration (6 tools)
-│   │   ├── business-tools.js      # v3.2 business analytics (5 tools)
-│   │   ├── launch-tools.js        # v3.2 launch tools (5 tools)
-│   │   ├── pair-tools.js          # v3.2 AI pair programming (6 tools)
-│   │   └── health-tools.js        # Health check utilities
-│   └── package.json
-│
-├── lmstudio-autopilot/            # LM Studio MCP Server
-│   ├── src/                       # (Identical to mcp-server)
-│   │   └── ...
-│   └── package.json
-│
-├── docs/                          # Documentation
-│   ├── ARCHITECTURE.md            # System architecture
-│   ├── AUTOPILOT_STATUS.md        # Current status
-│   ├── MCP_SETUP_GUIDE.md         # Setup guide
-│   ├── QUICKSTART.md              # Quick start guide
-│   ├── TROUBLESHOOTING.md         # Common issues
-│   └── WORKFLOW.md                # Development workflow
-│
-├── scripts/                       # Utility scripts
-│   ├── setup.js                   # Automated setup
-│   ├── validate.js                # Validation checks
-│   └── ...
-│
-├── examples/                      # Example configurations
-│   ├── global_rules.md            # AI rules template
-│   └── README.md
-│
-└── Configuration Files
-    ├── package.json               # Root dependencies
-    ├── .eslintrc.json             # Linting rules
-    ├── .prettierrc.json           # Formatting rules
-    └── settings.json              # Project settings
-```
-
----
-
-## 🧠 AI/ML Features
-
-### Real-Time Learning Engine
-
-The autopilot includes a sophisticated AI/ML system that improves over time:
-
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                    AI/ML LEARNING PIPELINE                       │
-├─────────────────────────────────────────────────────────────────┤
-│                                                                  │
-│  User Interaction → Record → Analyze → Learn → Improve          │
-│         ↓              ↓         ↓        ↓        ↓            │
-│    [Commands]     [Storage]  [Patterns] [Model] [Suggestions]   │
-│                                                                  │
-└─────────────────────────────────────────────────────────────────┘
-```
-
-### Features
-
-| Feature | Description |
-|---------|-------------|
-| **Pattern Learning** | Learns from successful interactions |
-| **Preference Tracking** | Remembers your coding style preferences |
-| **Knowledge Graph** | Builds relationships between concepts |
-| **Vector Similarity** | Finds similar past solutions using TF-IDF |
-| **Web Integration** | Searches Stack Overflow, GitHub, npm |
-| **Feedback Loop** | Improves from user ratings |
-| **Context Persistence** | Maintains context across sessions |
-
-### Data Storage
-
-All learning data is stored locally:
-
-| OS | Location |
-|----|----------|
-| **Windows** | `%APPDATA%\WindsurfAutopilot\ai-engine\` |
-| **macOS** | `~/.windsurf-autopilot/ai-engine/` |
-| **Linux** | `~/.windsurf-autopilot/ai-engine/` |
-
-**Files:**
-- `interactions.json` - Interaction history
-- `knowledge-graph.json` - Learned concepts
-- `embeddings.json` - Vector embeddings
-- `feedback.json` - User feedback data
-- `web-cache.json` - Cached web searches
-
----
-
-## ⚙️ Configuration
-
-### Environment Variables
-
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `AUTOPILOT_LOG_LEVEL` | Logging level (debug/info/warn/error) | `info` |
-| `AUTOPILOT_DATA_DIR` | Data storage directory | Platform default |
-| `AUTOPILOT_DISABLE_LEARNING` | Disable AI learning | `false` |
-| `AUTOPILOT_DISABLE_WEB` | Disable web searches | `false` |
-
-### MCP Configuration Options
-
-```json
-{
-  "mcpServers": {
-    "windsurf-autopilot": {
-      "command": "node",
-      "args": ["/path/to/index.js"],
-      "disabled": false,
-      "env": {
-        "AUTOPILOT_LOG_LEVEL": "info"
-      }
-    }
-  }
-}
-```
-
----
-
-## 📚 Documentation
-
-| Document | Description |
-|----------|-------------|
-| [Quick Start Guide](docs/QUICKSTART.md) | Get started in 5 minutes |
-| [Architecture](docs/ARCHITECTURE.md) | System design and components |
-| [MCP Setup Guide](docs/MCP_SETUP_GUIDE.md) | Detailed MCP configuration |
-| [Troubleshooting](docs/TROUBLESHOOTING.md) | Common issues and solutions |
-| [Workflow Guide](docs/WORKFLOW.md) | Development workflows |
-| [Scripts Reference](docs/SCRIPTS_REFERENCE.md) | Available scripts |
-| [Autopilot Status](docs/AUTOPILOT_STATUS.md) | Current capabilities |
-| [Gap Analysis](GAP_ANALYSIS.md) | Feature completion status |
-| [Changelog](CHANGELOG.md) | Version history |
-| [Contributing](CONTRIBUTING.md) | How to contribute |
-| [Security](SECURITY.md) | Security policy |
-
----
-
-## 📈 Version History
-
-| Version | Date | Tools | Capability | Highlights |
-|---------|------|-------|------------|------------|
-| v1.0 | 2024-12-01 | 10 | 20% | Initial release |
-| v2.0 | 2024-12-05 | 20+ | 40% | Core operations, file system, git |
-| v2.1 | 2024-12-06 | 36+ | 65% | Intelligence layer, Docker, HTTP |
-| v2.2 | 2024-12-06 | 52+ | 75% | AI decision engine, database |
-| v2.3 | 2024-12-07 | 60+ | 80% | Autopilot intelligence, learning |
-| v2.4 | 2024-12-07 | 71+ | 85% | Web integration, knowledge graph |
-| v2.5 | 2024-12-08 | 80+ | 95% | ULTIMATE: Cloud, CI/CD, Security |
-| v2.6 | 2024-12-08 | 95+ | 97% | Data & Persistence Layer |
-| v3.0 | 2024-12-08 | 120+ | 100% | ENTERPRISE: Workflows, Teams, Agents |
-| v3.1 | 2024-12-08 | 156+ | 100%+ | Extended: IaC, Testing, Comms, PM |
-| **v3.2** | **2024-12-08** | **250+** | **100%++** | **VIBE CODER: Smart Assist, Wizards, Pair** |
-
----
-
-## 🗺 Roadmap
-
-### ✅ v2.6 (Complete)
-- [x] SQLite/PostgreSQL/MySQL database integration
-- [x] Vector embeddings with local TF-IDF
-- [x] Plugin system for custom tools
-- [x] Context persistence across sessions
-- [x] Error recovery with checkpoints
-
-### ✅ v3.0 (Complete)
-- [x] Visual workflow builder
-- [x] Team collaboration features
-- [x] Cloud sync for settings
-- [x] Custom AI model integration
-- [x] Multi-agent orchestration
-
-### ✅ v3.1 (Complete)
-- [x] Infrastructure as Code (Terraform, K8s, Helm)
-- [x] Advanced Testing (E2E, Visual, Load, Contract)
-- [x] Communications (Slack, Discord, Teams, Email)
-- [x] Project Management (Jira, Linear, GitHub)
-- [x] Advanced Security (SAST, SBOM, Compliance)
-- [x] Dev Environment (Devcontainer, Codespaces)
-- [x] Package Publishing (npm, PyPI, Docker)
-- [x] Observability (Sentry, Grafana, Alerts)
-
-### ✅ v3.2 (Complete - CURRENT)
-- [x] Smart Assistance (explain, suggest, dry-run)
-- [x] Quick Start Wizards (web, API, mobile, extension)
-- [x] Asset Generation (logo, favicon, screenshots)
-- [x] No-Code Integration (Notion, Zapier, n8n)
-- [x] Business Tools (cost, analytics, time tracking)
-- [x] AI Pair Programming (real-time collaboration)
-
-### 🔮 v4.0+ (Future Vision)
-- [ ] VS Code Extension
-- [ ] JetBrains Plugin
-- [ ] Mobile companion app
-- [ ] Voice commands
-- [ ] Real-time multi-user collaboration
-- [ ] Enterprise SSO integration
+## 🛣️ Roadmap
+
+- [x] 100+ Specialized AI Agents
+- [x] Multi-Agent Orchestration
+- [x] Free Local Setup with Ollama
+- [x] CrewAI Integration
+- [ ] LangGraph State Machine Agents
+- [ ] Voice Command Interface
+- [ ] Real-time Collaboration
+- [ ] Plugin Marketplace
+- [ ] Cloud Agent Sync
+- [ ] Mobile Companion App
 
 ---
 
 ## ❓ FAQ
 
 <details>
-<summary><b>Is my data sent to the cloud?</b></summary>
+<summary><b>Do I need paid API keys?</b></summary>
 
-No. All data is stored locally on your machine. The only external calls are optional web searches (Stack Overflow, GitHub, npm) which can be disabled.
-
+**No!** This project is designed to run 100% locally and free. Use Ollama with open-source models like Qwen2.5-Coder for the same capabilities as paid APIs.
 </details>
 
 <details>
-<summary><b>Does this work with other AI assistants?</b></summary>
+<summary><b>What GPU do I need?</b></summary>
 
-Yes! This is an MCP server, which is a standard protocol. Any MCP-compatible client can use these tools.
-
+- **8GB VRAM**: Run 7B-13B models
+- **16GB VRAM**: Run 32B models comfortably
+- **24GB VRAM**: Run 70B+ models (recommended: RTX 3090, 4090)
+- **No GPU**: CPU inference works but is slower
 </details>
 
 <details>
-<summary><b>Is it safe to let AI execute commands?</b></summary>
+<summary><b>Does it work with LM Studio?</b></summary>
 
-The autopilot follows safety guidelines and will ask for confirmation before destructive operations. You maintain full control.
-
+**Yes!** We have a dedicated `lmstudio-autopilot` server that works seamlessly with LM Studio's MCP integration.
 </details>
 
 <details>
-<summary><b>Can I add custom tools?</b></summary>
+<summary><b>Can I use cloud APIs too?</b></summary>
 
-Yes! The codebase is modular. See the [Contributing Guide](CONTRIBUTING.md) for details on adding new tools.
-
-</details>
-
-<details>
-<summary><b>What's the difference between Windsurf and LM Studio versions?</b></summary>
-
-They are functionally identical. The only difference is the default configuration paths for each platform.
-
-</details>
-
-<details>
-<summary><b>How do I update to a new version?</b></summary>
-
-```bash
-cd windsurf-vibe-setup
-git pull
-npm install
-cd mcp-server && npm install && cd ..
-# Restart your IDE
-```
-
+**Yes!** You can configure the agent system to use OpenAI, Anthropic, or any OpenAI-compatible API alongside local models.
 </details>
 
 ---
 
 ## 🤝 Contributing
 
-We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details.
-
-### Quick Steps
-
-1. **Fork** the repository
-2. **Create** a feature branch (`git checkout -b feature/amazing-feature`)
-3. **Commit** your changes (`git commit -m 'Add amazing feature'`)
-4. **Push** to the branch (`git push origin feature/amazing-feature`)
-5. **Open** a Pull Request
-
-### Development Setup
+We welcome contributions! See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
 ```bash
-# Clone your fork
+# Fork and clone
 git clone https://github.com/YOUR_USERNAME/windsurf-vibe-setup.git
-cd windsurf-vibe-setup
 
-# Install dependencies
-npm install
-cd mcp-server && npm install && cd ..
+# Create feature branch
+git checkout -b feature/amazing-feature
 
-# Run syntax check
-node --check mcp-server/src/index.js
+# Make changes and commit
+git commit -m "feat: add amazing feature"
 
-# Run linting
-npm run lint
+# Push and create PR
+git push origin feature/amazing-feature
 ```
 
 ---
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+MIT License - see [LICENSE](LICENSE) for details.
 
 ---
 
-## 🙏 Acknowledgments
+## ⭐ Star History
 
-- [Model Context Protocol](https://modelcontextprotocol.io/) - The foundation for AI tool integration
-- [Windsurf IDE](https://codeium.com/windsurf) - AI-powered development environment
-- [LM Studio](https://lmstudio.ai/) - Local LLM platform
-- All contributors and users who provide feedback
+<div align="center">
+
+If this project helps you, please consider giving it a ⭐!
+
+[![GitHub stars](https://img.shields.io/github/stars/Ghenghis/windsurf-vibe-setup?style=social)](https://github.com/Ghenghis/windsurf-vibe-setup)
+
+</div>
 
 ---
 
 <div align="center">
 
-## 🚀 Ready to Experience True Zero-Code Development?
+**Made with ❤️ for the Vibe Coding Community**
 
-**250+ Tools** • **100%++ Automated** • **Anyone Can Build Anything**
-
-[![Star](https://img.shields.io/github/stars/Ghenghis/windsurf-vibe-setup?style=social)](https://github.com/Ghenghis/windsurf-vibe-setup)
-[![Fork](https://img.shields.io/github/forks/Ghenghis/windsurf-vibe-setup?style=social)](https://github.com/Ghenghis/windsurf-vibe-setup/fork)
-
-[⬆ Back to Top](#-windsurf--lm-studio-autopilot)
-
----
-
-*Made with ❤️ for the vibe coding community*
+<img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=6,11,20&height=100&section=footer" width="100%"/>
 
 </div>

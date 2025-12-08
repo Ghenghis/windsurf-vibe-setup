@@ -1,7 +1,7 @@
 {
   "name": "windsurf-vibe-setup",
-  "version": "3.2.0",
-  "description": "Enterprise-grade Windsurf IDE configuration for vibe coding excellence",
+  "version": "4.0.0",
+  "description": "Enterprise-grade Windsurf IDE configuration with AI/ML automation - 250+ MCP tools",
   "author": "Ghenghis",
   "license": "MIT",
   "repository": {
@@ -42,6 +42,13 @@
     "metrics": "node scripts/collect-metrics.js",
     "audit:security": "node scripts/security-audit.js",
     "security": "npm run scan:secrets && npm run scan:deps && npm run audit:security",
+    "free-local:setup": "pwsh free-local/scripts/setup-all.ps1",
+    "free-local:health": "node free-local/scripts/ai-orchestrator.js health",
+    "free-local:start": "node free-local/scripts/ai-orchestrator.js start",
+    "free-local:stop": "node free-local/scripts/ai-orchestrator.js stop",
+    "free-local:daemon": "node free-local/scripts/health-daemon.js start",
+    "ai:run": "node free-local/scripts/ai-orchestrator.js run",
+    "ai:provision": "node free-local/scripts/ai-orchestrator.js provision",
     "test": "npm run lint && npm run validate:json && npm run scan:secrets",
     "prepare": "node -e \"try{require('husky').install()}catch(e){}\""
   },

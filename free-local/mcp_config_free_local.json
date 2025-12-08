@@ -1,0 +1,91 @@
+{
+  "mcpServers": {
+    "windsurf-autopilot": {
+      "command": "node",
+      "args": ["${WINDSURF_VIBE_PATH}/mcp-server/src/index.js"],
+      "disabled": false,
+      "env": {
+        "AUTOPILOT_LOG_LEVEL": "info",
+        "AUTOPILOT_DISABLE_WEB": "false"
+      }
+    },
+    
+    "filesystem": {
+      "command": "npx",
+      "args": [
+        "-y", 
+        "@modelcontextprotocol/server-filesystem",
+        "${HOME}/Projects",
+        "${HOME}/Documents"
+      ],
+      "disabled": false
+    },
+    
+    "git": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-git"],
+      "disabled": false
+    },
+    
+    "memory": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-memory"],
+      "disabled": false
+    },
+    
+    "sequential-thinking": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"],
+      "disabled": false
+    },
+    
+    "sqlite": {
+      "command": "uvx",
+      "args": [
+        "mcp-server-sqlite",
+        "--db-path",
+        "${HOME}/.windsurf-autopilot/autopilot.db"
+      ],
+      "disabled": false
+    },
+    
+    "fetch": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-fetch"],
+      "disabled": false
+    },
+    
+    "duckduckgo-search": {
+      "command": "uvx",
+      "args": ["duckduckgo-mcp-server"],
+      "disabled": false
+    },
+    
+    "playwright-browser": {
+      "command": "npx",
+      "args": ["-y", "@anthropic/mcp-server-playwright"],
+      "disabled": true
+    },
+    
+    "docker": {
+      "command": "npx",
+      "args": ["-y", "mcp-server-docker"],
+      "disabled": true
+    },
+    
+    "github": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "env": {
+        "GITHUB_TOKEN": "${GITHUB_TOKEN}"
+      },
+      "disabled": true
+    },
+    
+    "time": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-time"],
+      "disabled": false
+    }
+  }
+}

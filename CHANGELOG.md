@@ -7,6 +7,74 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [4.0.0] - 2024-12-09 - FREE & LOCAL AI AUTOMATION 🤖
+
+### 🎯 Focus: Complete AI/ML Automation with Zero Cloud Dependencies
+
+**MAJOR RELEASE** - Full AI-powered orchestration, multi-agent systems, and self-hosted services.
+
+### 🤖 Added - AI Orchestrator (`free-local/scripts/ai-orchestrator.js`)
+- **Auto-provisioning**: Automatically starts required services based on task
+- **Smart model selection**: Routes to optimal model (coding, reasoning, RAG)
+- **Task analysis**: Detects task type from natural language prompts
+- **Health monitoring**: Built-in service status checks
+- Commands: `run`, `analyze`, `provision`, `health`, `start`, `stop`
+
+### 👥 Added - CrewAI Agent Crew (`free-local/scripts/agent-crew.py`)
+- **Multi-agent orchestration**: Specialized agents working together
+- **6 AI Agents**: Architect, Coder, Tester, Reviewer, Researcher, DocWriter
+- **Local LLM powered**: All agents use Ollama models - no cloud APIs
+- **Sequential workflows**: Tasks flow between agents automatically
+
+### 💓 Added - Health Daemon (`free-local/scripts/health-daemon.js`)
+- **Continuous monitoring**: Checks all services every 30 seconds
+- **Auto-recovery**: Restarts failed services automatically
+- **GPU monitoring**: VRAM usage and temperature alerts
+- **Detailed logging**: Full audit trail of service health
+
+### 🚀 Added - One-Command Setup (`free-local/scripts/setup-all.ps1`)
+- **Complete installation**: Ollama, models, Docker services, Python deps
+- **Intelligent defaults**: Detects hardware and configures optimally
+- **Skip options**: `-SkipOllama`, `-SkipDocker`, `-MinimalModels`
+- **Auto-start**: Optional `-StartServices` flag
+
+### 🔧 Added - MCP Integration (`mcp-server/src/free-local-tools.js`)
+- **8 new MCP tools** for free-local services:
+  - `local_llm_query` - Query local Ollama models
+  - `local_llm_select` - Smart model selection
+  - `local_vector_store` - Store embeddings in ChromaDB
+  - `local_vector_search` - Search ChromaDB
+  - `local_web_search` - Search via SearXNG (no API key!)
+  - `local_service_status` - Check service health
+  - `local_service_start` - Start services
+  - `local_agent_run` - Run CrewAI agent crews
+
+### 🐳 Docker Stack Enhanced
+- **10+ services** in `docker-compose-vibe-stack.yml`
+- **GPU acceleration** for Ollama container
+- **Persistent volumes** for all data
+- **Unified network** for inter-service communication
+
+### 📦 New npm Scripts
+- `npm run free-local:setup` - One-command installation
+- `npm run free-local:health` - Health check
+- `npm run free-local:start` - Start all services
+- `npm run free-local:daemon` - Start health daemon
+- `npm run ai:run` - Run AI orchestrator
+- `npm run ai:provision` - Provision for task type
+
+### 📖 Documentation
+- **INTEGRATION_PLAN.md** - Comprehensive AI automation roadmap
+- **Updated README** - Full free-local module documentation
+- **Architecture diagrams** - Service layer visualization
+
+### 💰 Cost Savings
+- **$880+/month** potential savings vs cloud APIs
+- **100% privacy** - All processing on local hardware
+- **Zero API keys** required for core functionality
+
+---
+
 ## [3.2.0] - 2024-12-08 - VIBE CODER EXPERIENCE ✅ COMPLETE
 
 ### 🎯 Focus: Ultimate Seamless Experience for Non-Technical Users
