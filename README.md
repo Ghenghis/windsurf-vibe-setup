@@ -4,17 +4,18 @@
 > 
 > For vibe coders who describe what they want — and let AI do **everything**.
 
-[![Version](https://img.shields.io/badge/version-2.2.0-blue.svg)]()
+[![Version](https://img.shields.io/badge/version-2.4.0-blue.svg)]()
 [![Node](https://img.shields.io/badge/node-%3E%3D18.0.0-green.svg)]()
 [![License](https://img.shields.io/badge/license-MIT-purple.svg)]()
 [![MCP](https://img.shields.io/badge/MCP-Compatible-orange.svg)]()
-[![Tools](https://img.shields.io/badge/tools-46+-success.svg)]()
+[![Tools](https://img.shields.io/badge/tools-65+-success.svg)]()
+[![AI/ML](https://img.shields.io/badge/AI%2FML-Real--Time-ff69b4.svg)]()
 
 ---
 
 ## 🎯 What is This?
 
-**Windsurf Autopilot** is a comprehensive MCP server that gives Windsurf AI **complete autonomous control** over your development environment. You describe what you want in natural language — the AI handles everything else.
+**Windsurf Autopilot v2.4** is a comprehensive MCP server with **Real-Time AI/ML Learning** that gives Windsurf AI **complete autonomous control** over your development environment. The AI learns from every interaction, searches the web for solutions, and remembers your preferences.
 
 ### Before Autopilot
 ```
@@ -23,14 +24,17 @@ AI: "Here's the command to create a Next.js project: npx create-next-app..."
 You: *copies command, opens terminal, runs it, troubleshoots errors...*
 ```
 
-### With Autopilot v2.2
+### With Autopilot v2.4
 ```
 You: "Create me a website called portfolio"
-AI: ✅ Created Next.js project
+AI: 🤖 AUTO-PILOT ACTIVE
+    ✅ Created Next.js project
     ✅ Installed all dependencies
     ✅ Set up TypeScript + Tailwind
     ✅ Initialized Git repository
     ✅ Created initial commit
+    ✅ Learned your preference for Next.js
+    🧠 AI trained on 150+ patterns
     Ready to code! Just say "start the server"
 ```
 
@@ -70,13 +74,38 @@ AI: ✅ Created Next.js project
 | `restore_backup` | Restore from any backup |
 | `list_backups` | View all available backups |
 
-### 📊 Progress Tracking (NEW in v2.2)
+### 📊 Progress Tracking (v2.2)
 | Tool | What It Does |
 |------|--------------|
 | `start_progress` | Track multi-step task progress |
 | `update_progress` | Update step status |
 | `get_progress` | View current progress |
 | `complete_progress` | Mark tasks complete |
+
+### 🤖 Autopilot Status & Intelligence (NEW in v2.3)
+| Tool | What It Does |
+|------|--------------|
+| `autopilot_status` | Visual indicator (🤖 AUTO-PILOT ACTIVE) |
+| `get_insights` | See AI learning progress |
+| `remember_preference` | Save user preferences across sessions |
+| `get_preference` | Recall saved preferences |
+| `save_project_context` | Save project state |
+| `get_project_context` | Recall project state |
+| `get_suggestions` | Get AI recommendations |
+
+### 🧠 Real-Time AI/ML Engine (NEW in v2.4)
+| Tool | What It Does |
+|------|--------------|
+| `ai_learn` | Process interaction, learn immediately |
+| `ai_status` | AI engine status & stats |
+| `search_stackoverflow` | Search Stack Overflow (cached, learned) |
+| `search_github` | Search GitHub code examples |
+| `search_npm` | Search NPM packages |
+| `query_knowledge` | Query AI knowledge graph |
+| `find_similar` | Vector similarity search |
+| `record_feedback` | User ratings (reinforcement learning) |
+| `get_ai_suggestions` | Proactive AI suggestions |
+| `auto_learn_web` | Auto-learn from web resources |
 
 ### 🔍 Project Intelligence (v2.1)
 | Tool | What It Does |
@@ -135,11 +164,13 @@ AI: ✅ Created Next.js project
 ╠════════════════════════════════════════════════════════════════╣
 ║  v2.0 (Original)     ████████░░░░░░░░░░░░░░  40%              ║
 ║  v2.1 (Intelligence) ████████████░░░░░░░░░░  65%              ║
-║  v2.2 (AI Engine)    █████████████████████░  90%   ← Current  ║
-║  Target              ██████████████████████  95%              ║
+║  v2.2 (AI Engine)    █████████████████░░░░░  85%              ║
+║  v2.3 (Autopilot)    ██████████████████░░░░  90%              ║
+║  v2.4 (AI/ML)        █████████████████████░  98%   ← Current  ║
 ╚════════════════════════════════════════════════════════════════╝
 
-Total Tools: 46+
+Total Tools: 65+
+AI/ML: ✅ Real-Time Learning | Web Search | Knowledge Graph | Feedback
 ```
 
 ---
