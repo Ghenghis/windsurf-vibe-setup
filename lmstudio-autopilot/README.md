@@ -1,10 +1,32 @@
-# LM Studio Autopilot MCP Server v2.0
+# LM Studio Autopilot MCP Server v2.2
 
-> **Complete Zero-Code Autopilot** for local LLM users
+> **Complete Zero-Code Autopilot** for local LLM users (46+ tools, 90% autopilot)
 
 Runs **separately** from windsurf-autopilot — no conflicts when using both!
 
-## 🚀 v2.0 Features
+## 🚀 v2.2 Features (Same as windsurf-autopilot!)
+
+### 🧠 AI Decision Engine (NEW v2.2)
+- **decide_next_step** — AI autonomously analyzes and decides what to do
+- **find_solution** — Searches solution database for any problem
+- **generate_code** — Creates code from natural language
+- **generate_tests** — Auto-generates test files
+
+### 🗄️ Database Operations (NEW v2.2)
+- **db_query** — Run SQL queries (Prisma, SQLite, PostgreSQL)
+- **db_migrate** — Run migrations automatically
+- **db_seed** — Seed database with initial data
+
+### 💾 Backup & Recovery (NEW v2.2)
+- **backup_project** — Create timestamped backups
+- **restore_backup** — Restore from any backup
+- **list_backups** — View available backups
+
+### 📊 Progress Tracking (NEW v2.2)
+- **start_progress** — Track multi-step tasks
+- **update_progress** — Update step progress
+- **get_progress** — Get current status
+- **complete_progress** — Mark task complete
 
 ### Command Execution
 - **Execute ANY command** — npm, pip, git, shell commands
@@ -27,10 +49,16 @@ Runs **separately** from windsurf-autopilot — no conflicts when using both!
 - **Node.js** — Express server
 - **MCP Server** — Custom MCP server template
 
-### Task Orchestration
-- **Multi-step tasks** — Run complex workflows
-- **Error recovery** — Retry, skip, or abort failed steps
-- **History tracking** — See what happened
+### Intelligence Layer (v2.1)
+- **analyze_project** — Understands any project structure
+- **detect_tech_stack** — Auto-detects frameworks
+- **analyze_error** — Diagnoses errors, suggests fixes
+- **smart_retry** — Retries with intelligent strategies
+- **http_request** — Makes API requests
+- **lint_code/format_code** — Code quality
+- **run_tests** — Execute test suites
+- **start_server/stop_server** — Manage dev servers
+- **docker_status/build/run** — Full Docker support
 
 ## Setup in LM Studio
 

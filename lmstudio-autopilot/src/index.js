@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * LM Studio Autopilot MCP Server v2.0
+ * LM Studio Autopilot MCP Server v2.2
  * 
  * COMPLETE ZERO-CODE AUTOPILOT for local LLM users.
  * This server gives LM Studio AI FULL capability to:
@@ -27,6 +27,10 @@ const fs = require('fs');
 const path = require('path');
 const os = require('os');
 const { execSync, exec, spawn } = require('child_process');
+
+// Import additional tools for v2.2 features
+const additionalTools = require('./additional-tools.js');
+const advancedTools = require('./advanced-tools.js');
 
 // ==============================================================================
 // Configuration
@@ -1317,7 +1321,7 @@ await server.connect(transport);
           'Create MCP server structure',
           'Set up SDK dependencies',
           'Create example tool',
-          'Configure for Windsurf'
+          'Configure for LM Studio'
         ],
         tool: 'create_project',
         args: { type: 'mcp' },
@@ -1405,7 +1409,7 @@ await server.connect(transport);
     
     const status = {
       server: 'lmstudio-autopilot',
-      version: '2.0.0',
+      version: '2.2.0',
       platform: process.platform,
       nodeVersion: process.version,
       homeDir: HOME,
@@ -1480,6 +1484,176 @@ await server.connect(transport);
       currentTask: taskState.currentTask,
       lastError: taskState.lastError
     };
+  },
+
+  // ===========================================================================
+  // NEW v2.2 TOOLS - Project Intelligence, Error Analysis, HTTP, Quality, Testing
+  // ===========================================================================
+  
+  analyze_project: async (args) => {
+    logAction('analyze_project', args);
+    return await additionalTools.analyzeProject(args);
+  },
+  
+  detect_tech_stack: async (args) => {
+    logAction('detect_tech_stack', args);
+    return await additionalTools.detectTechStack(args);
+  },
+  
+  analyze_error: async (args) => {
+    logAction('analyze_error', args);
+    return await additionalTools.analyzeError(args);
+  },
+  
+  smart_retry: async (args) => {
+    logAction('smart_retry', args);
+    return await additionalTools.smartRetry(args);
+  },
+  
+  http_request: async (args) => {
+    logAction('http_request', args);
+    return await additionalTools.httpRequest(args);
+  },
+  
+  download_file: async (args) => {
+    logAction('download_file', args);
+    return await additionalTools.downloadFile(args);
+  },
+  
+  lint_code: async (args) => {
+    logAction('lint_code', args);
+    return await additionalTools.lintCode(args);
+  },
+  
+  format_code: async (args) => {
+    logAction('format_code', args);
+    return await additionalTools.formatCode(args);
+  },
+  
+  run_tests: async (args) => {
+    logAction('run_tests', args);
+    return await additionalTools.runTests(args);
+  },
+  
+  start_server: async (args) => {
+    logAction('start_server', args);
+    return await additionalTools.startServer(args);
+  },
+  
+  stop_server: async (args) => {
+    logAction('stop_server', args);
+    return await additionalTools.stopServer(args);
+  },
+  
+  list_running: async (args) => {
+    logAction('list_running', args);
+    return await additionalTools.listRunning(args);
+  },
+  
+  docker_status: async (args) => {
+    logAction('docker_status', args);
+    return await additionalTools.dockerStatus(args);
+  },
+  
+  docker_build: async (args) => {
+    logAction('docker_build', args);
+    return await additionalTools.dockerBuild(args);
+  },
+  
+  docker_run: async (args) => {
+    logAction('docker_run', args);
+    return await additionalTools.dockerRun(args);
+  },
+  
+  docker_compose_up: async (args) => {
+    logAction('docker_compose_up', args);
+    return await additionalTools.dockerComposeUp(args);
+  },
+
+  // ===========================================================================
+  // NEW v2.2 TOOLS - AI Decision Engine, Code Gen, Testing, DB, Env, Backup
+  // ===========================================================================
+  
+  // AI Decision Engine
+  decide_next_step: async (args) => {
+    logAction('decide_next_step', args);
+    return await advancedTools.decideNextStep(args);
+  },
+  
+  find_solution: async (args) => {
+    logAction('find_solution', args);
+    return await advancedTools.findSolution(args);
+  },
+  
+  // Code Generation
+  generate_code: async (args) => {
+    logAction('generate_code', args);
+    return await advancedTools.generateCode(args);
+  },
+  
+  // Test Generation
+  generate_tests: async (args) => {
+    logAction('generate_tests', args);
+    return await advancedTools.generateTests(args);
+  },
+  
+  // Database Operations
+  db_query: async (args) => {
+    logAction('db_query', args);
+    return await advancedTools.dbQuery(args);
+  },
+  
+  db_migrate: async (args) => {
+    logAction('db_migrate', args);
+    return await advancedTools.dbMigrate(args);
+  },
+  
+  db_seed: async (args) => {
+    logAction('db_seed', args);
+    return await advancedTools.dbSeed(args);
+  },
+  
+  // Environment Variables
+  manage_env: async (args) => {
+    logAction('manage_env', args);
+    return await advancedTools.manageEnv(args);
+  },
+  
+  // Backup & Recovery
+  backup_project: async (args) => {
+    logAction('backup_project', args);
+    return await advancedTools.backupProject(args);
+  },
+  
+  restore_backup: async (args) => {
+    logAction('restore_backup', args);
+    return await advancedTools.restoreBackup(args);
+  },
+  
+  list_backups: async (args) => {
+    logAction('list_backups', args);
+    return await advancedTools.listBackups(args);
+  },
+  
+  // Progress Tracking
+  start_progress: async (args) => {
+    logAction('start_progress', args);
+    return await advancedTools.startProgress(args);
+  },
+  
+  update_progress: async (args) => {
+    logAction('update_progress', args);
+    return await advancedTools.updateProgress(args);
+  },
+  
+  get_progress: async (args) => {
+    logAction('get_progress', args);
+    return await advancedTools.getProgress(args);
+  },
+  
+  complete_progress: async (args) => {
+    logAction('complete_progress', args);
+    return await advancedTools.completeProgress(args);
   }
 };
 
@@ -1488,7 +1662,7 @@ await server.connect(transport);
 // MCP SERVER SETUP
 // ==============================================================================
 const server = new Server(
-  { name: 'lmstudio-autopilot', version: '2.0.0' },
+  { name: 'lmstudio-autopilot', version: '2.2.0' },
   { capabilities: { tools: {}, resources: {} } }
 );
 
@@ -1813,6 +1987,426 @@ const toolDefinitions = [
         limit: { type: 'number', description: 'Max actions to return (default: 20)' }
       }
     }
+  },
+  // v2.2 Tools - Project Intelligence
+  {
+    name: 'analyze_project',
+    description: 'Analyze a project to understand its structure, tech stack, dependencies, and potential issues. Use this to understand any project.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        projectPath: { type: 'string', description: 'Path to the project directory' }
+      },
+      required: ['projectPath']
+    }
+  },
+  {
+    name: 'detect_tech_stack',
+    description: 'Detect the technology stack of a project (languages, frameworks, tools).',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        projectPath: { type: 'string', description: 'Path to the project' }
+      },
+      required: ['projectPath']
+    }
+  },
+  
+  // v2.2 Tools - Error Analysis
+  {
+    name: 'analyze_error',
+    description: 'Analyze an error message and suggest fixes. Understands common error patterns.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        error: { type: 'string', description: 'Error message to analyze' },
+        context: { type: 'string', description: 'Context about what was being done' },
+        projectPath: { type: 'string', description: 'Project path for context' }
+      },
+      required: ['error']
+    }
+  },
+  {
+    name: 'smart_retry',
+    description: 'Retry a command with intelligent strategies (retry, clear cache, reinstall, force).',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        command: { type: 'string', description: 'Command to retry' },
+        cwd: { type: 'string', description: 'Working directory' },
+        maxAttempts: { type: 'number', description: 'Max retry attempts (default: 3)' },
+        strategies: { type: 'array', items: { type: 'string' }, description: 'Strategies to try' }
+      },
+      required: ['command']
+    }
+  },
+  
+  // v2.2 Tools - HTTP
+  {
+    name: 'http_request',
+    description: 'Make HTTP requests (GET, POST, PUT, DELETE). Test APIs.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        url: { type: 'string', description: 'URL to request' },
+        method: { type: 'string', enum: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'], description: 'HTTP method' },
+        headers: { type: 'object', description: 'Request headers' },
+        body: { type: 'object', description: 'Request body (for POST/PUT)' },
+        timeout: { type: 'number', description: 'Timeout in ms' }
+      },
+      required: ['url']
+    }
+  },
+  {
+    name: 'download_file',
+    description: 'Download a file from a URL.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        url: { type: 'string', description: 'URL to download from' },
+        destPath: { type: 'string', description: 'Destination file path' },
+        overwrite: { type: 'boolean', description: 'Overwrite if exists' }
+      },
+      required: ['url', 'destPath']
+    }
+  },
+  
+  // v2.2 Tools - Code Quality
+  {
+    name: 'lint_code',
+    description: 'Run linters on a project (ESLint, Flake8, etc.). Optionally fix issues.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        projectPath: { type: 'string', description: 'Project path' },
+        fix: { type: 'boolean', description: 'Auto-fix issues' }
+      },
+      required: ['projectPath']
+    }
+  },
+  {
+    name: 'format_code',
+    description: 'Format code using Prettier, Black, or other formatters.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        projectPath: { type: 'string', description: 'Project path' }
+      },
+      required: ['projectPath']
+    }
+  },
+  
+  // v2.2 Tools - Testing
+  {
+    name: 'run_tests',
+    description: 'Run project tests (Jest, Vitest, Pytest, etc.).',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        projectPath: { type: 'string', description: 'Project path' },
+        testFile: { type: 'string', description: 'Specific test file' },
+        coverage: { type: 'boolean', description: 'Include coverage report' }
+      },
+      required: ['projectPath']
+    }
+  },
+  
+  // v2.2 Tools - Process Management
+  {
+    name: 'start_server',
+    description: 'Start a development server (npm run dev, npm start, etc.).',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        projectPath: { type: 'string', description: 'Project path' },
+        script: { type: 'string', description: 'Script to run (default: dev)' },
+        port: { type: 'number', description: 'Port number' }
+      },
+      required: ['projectPath']
+    }
+  },
+  {
+    name: 'stop_server',
+    description: 'Stop a running server.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        serverId: { type: 'string', description: 'Server ID from start_server' },
+        pid: { type: 'number', description: 'Process ID' }
+      }
+    }
+  },
+  {
+    name: 'list_running',
+    description: 'List all running servers started by autopilot.',
+    inputSchema: { type: 'object', properties: {} }
+  },
+  
+  // v2.2 Tools - Docker
+  {
+    name: 'docker_status',
+    description: 'Check Docker installation, running containers, and images.',
+    inputSchema: { type: 'object', properties: {} }
+  },
+  {
+    name: 'docker_build',
+    description: 'Build a Docker image from a Dockerfile.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        projectPath: { type: 'string', description: 'Project path with Dockerfile' },
+        tag: { type: 'string', description: 'Image tag' },
+        dockerfile: { type: 'string', description: 'Dockerfile name (default: Dockerfile)' }
+      },
+      required: ['projectPath']
+    }
+  },
+  {
+    name: 'docker_run',
+    description: 'Run a Docker container.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        image: { type: 'string', description: 'Image name' },
+        name: { type: 'string', description: 'Container name' },
+        ports: { type: 'array', items: { type: 'string' }, description: 'Port mappings (e.g., "3000:3000")' },
+        env: { type: 'object', description: 'Environment variables' },
+        detach: { type: 'boolean', description: 'Run in background (default: true)' }
+      },
+      required: ['image']
+    }
+  },
+  {
+    name: 'docker_compose_up',
+    description: 'Start services with docker-compose.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        projectPath: { type: 'string', description: 'Project path with docker-compose.yml' },
+        detach: { type: 'boolean', description: 'Run in background (default: true)' },
+        build: { type: 'boolean', description: 'Rebuild images' }
+      },
+      required: ['projectPath']
+    }
+  },
+  // ═══════════════════════════════════════════════════════════════════════════
+  // v2.2 Tools - AI Decision Engine
+  // ═══════════════════════════════════════════════════════════════════════════
+  {
+    name: 'decide_next_step',
+    description: 'AI autonomously decides what to do next based on project state, errors, and goals. Returns recommended actions that can be auto-executed.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        projectPath: { type: 'string', description: 'Project directory path' },
+        currentError: { type: 'string', description: 'Current error message if any' },
+        goal: { type: 'string', description: 'What the user wants to achieve' },
+        context: { type: 'object', description: 'Additional context' }
+      }
+    }
+  },
+  {
+    name: 'find_solution',
+    description: 'Find solutions for problems. Searches solution database and returns step-by-step fixes.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        problem: { type: 'string', description: 'Description of the problem' },
+        projectPath: { type: 'string', description: 'Project path for context' },
+        errorMessage: { type: 'string', description: 'Error message if available' }
+      },
+      required: ['problem']
+    }
+  },
+  
+  // ═══════════════════════════════════════════════════════════════════════════
+  // v2.2 Tools - Code Generation
+  // ═══════════════════════════════════════════════════════════════════════════
+  {
+    name: 'generate_code',
+    description: 'Generate code from natural language description. Creates React components, Express routes, FastAPI endpoints, TypeScript interfaces, hooks, tests, Dockerfiles, and more.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        description: { type: 'string', description: 'Natural language description of what to generate (e.g., "React component called UserProfile")' },
+        language: { type: 'string', description: 'Programming language (auto-detected if not specified)' },
+        type: { type: 'string', enum: ['react-component', 'express-route', 'fastapi-route', 'typescript-interface', 'react-hook', 'utility', 'test', 'dockerfile', 'docker-compose', 'github-actions'], description: 'Type of code to generate' },
+        outputPath: { type: 'string', description: 'File path to write the generated code' }
+      },
+      required: ['description']
+    }
+  },
+  
+  // ═══════════════════════════════════════════════════════════════════════════
+  // v2.2 Tools - Test Generation
+  // ═══════════════════════════════════════════════════════════════════════════
+  {
+    name: 'generate_tests',
+    description: 'Automatically generate test files for existing code. Analyzes exports and creates test scaffolding.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        filePath: { type: 'string', description: 'Path to the file to generate tests for' },
+        projectPath: { type: 'string', description: 'Project root for test output' },
+        testFramework: { type: 'string', enum: ['jest', 'vitest'], description: 'Test framework (default: jest)' }
+      },
+      required: ['filePath']
+    }
+  },
+  
+  // ═══════════════════════════════════════════════════════════════════════════
+  // v2.2 Tools - Database Operations
+  // ═══════════════════════════════════════════════════════════════════════════
+  {
+    name: 'db_query',
+    description: 'Run database queries. Supports Prisma, SQLite, and raw SQL.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        query: { type: 'string', description: 'SQL query to execute' },
+        database: { type: 'string', enum: ['sqlite', 'postgresql', 'mysql'], description: 'Database type' },
+        connectionString: { type: 'string', description: 'Database connection string' },
+        projectPath: { type: 'string', description: 'Project path (for Prisma projects)' }
+      },
+      required: ['query']
+    }
+  },
+  {
+    name: 'db_migrate',
+    description: 'Run database migrations. Auto-detects Prisma, Knex, or Django.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        projectPath: { type: 'string', description: 'Project path' },
+        name: { type: 'string', description: 'Migration name (default: migration)' }
+      },
+      required: ['projectPath']
+    }
+  },
+  {
+    name: 'db_seed',
+    description: 'Seed database with initial data. Auto-detects Prisma or Knex seed files.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        projectPath: { type: 'string', description: 'Project path' }
+      },
+      required: ['projectPath']
+    }
+  },
+  
+  // ═══════════════════════════════════════════════════════════════════════════
+  // v2.2 Tools - Environment Variables
+  // ═══════════════════════════════════════════════════════════════════════════
+  {
+    name: 'manage_env',
+    description: 'Manage .env files. List, get, set, delete variables. Validate against .env.example.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        projectPath: { type: 'string', description: 'Project path' },
+        action: { type: 'string', enum: ['list', 'get', 'set', 'delete', 'copy_example', 'validate'], description: 'Action to perform' },
+        key: { type: 'string', description: 'Variable name (for get/set/delete)' },
+        value: { type: 'string', description: 'Variable value (for set)' }
+      },
+      required: ['projectPath', 'action']
+    }
+  },
+  
+  // ═══════════════════════════════════════════════════════════════════════════
+  // v2.2 Tools - Backup & Recovery
+  // ═══════════════════════════════════════════════════════════════════════════
+  {
+    name: 'backup_project',
+    description: 'Create a backup of a project. Excludes node_modules, .git, etc.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        projectPath: { type: 'string', description: 'Project to backup' },
+        backupDir: { type: 'string', description: 'Backup destination directory (default: ~/Backups)' }
+      },
+      required: ['projectPath']
+    }
+  },
+  {
+    name: 'restore_backup',
+    description: 'Restore a project from backup.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        backupPath: { type: 'string', description: 'Path to the backup' },
+        targetPath: { type: 'string', description: 'Where to restore' },
+        overwrite: { type: 'boolean', description: 'Overwrite if target exists' }
+      },
+      required: ['backupPath', 'targetPath']
+    }
+  },
+  {
+    name: 'list_backups',
+    description: 'List available backups for a project.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        projectName: { type: 'string', description: 'Filter by project name' },
+        backupDir: { type: 'string', description: 'Backup directory to search' }
+      }
+    }
+  },
+  
+  // ═══════════════════════════════════════════════════════════════════════════
+  // v2.2 Tools - Progress Tracking
+  // ═══════════════════════════════════════════════════════════════════════════
+  {
+    name: 'start_progress',
+    description: 'Start tracking progress for a multi-step task.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        taskId: { type: 'string', description: 'Unique task ID (auto-generated if not provided)' },
+        taskName: { type: 'string', description: 'Name of the task' },
+        totalSteps: { type: 'number', description: 'Total number of steps' },
+        description: { type: 'string', description: 'Task description' }
+      },
+      required: ['taskName']
+    }
+  },
+  {
+    name: 'update_progress',
+    description: 'Update progress for a tracked task.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        taskId: { type: 'string', description: 'Task ID' },
+        stepName: { type: 'string', description: 'Name of completed step' },
+        stepNumber: { type: 'number', description: 'Current step number' },
+        status: { type: 'string', description: 'Status update' },
+        log: { type: 'string', description: 'Log message' }
+      },
+      required: ['taskId']
+    }
+  },
+  {
+    name: 'get_progress',
+    description: 'Get progress status for tasks.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        taskId: { type: 'string', description: 'Task ID (omit to get all tasks)' }
+      }
+    }
+  },
+  {
+    name: 'complete_progress',
+    description: 'Mark a task as complete.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        taskId: { type: 'string', description: 'Task ID' },
+        status: { type: 'string', description: 'Final status (default: completed)' },
+        summary: { type: 'string', description: 'Task summary' }
+      },
+      required: ['taskId']
+    }
   }
 ];
 
@@ -1885,7 +2479,7 @@ server.setRequestHandler(ReadResourceRequestSchema, async (request) => {
 async function main() {
   const transport = new StdioServerTransport();
   await server.connect(transport);
-  console.error('🚀 LM Studio Autopilot MCP Server v2.0 running');
+  console.error('🚀 LM Studio Autopilot MCP Server v2.2 running');
   console.error(`📂 Home: ${HOME}`);
   console.error(`💻 Platform: ${process.platform}`);
 }
