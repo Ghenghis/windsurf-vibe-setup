@@ -62,13 +62,39 @@ function fileExists(filePath) {
 
 function readJsonSafe(filePath) {
   try {
-    const content = fs.readFileSync(filePath, 'utf8');
-    // Handle JSONC
-    const stripped = content
-      .replace(/\/\/.*$/gm, '')
-      .replace(/\/\*[\s\S]*?\*\//g, '')
-      .replace(/,(\s*[}\]])/g, '$1');
-    return { success: true, data: JSON.parse(stripped) };
+    let content = fs.readFileSync(filePath, 'utf8');
+    
+    // Normalize line endings
+    content = content.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+    
+    // Handle JSONC (strip comments properly using state machine)
+    let result = '';
+    let i = 0;
+    while (i < content.length) {
+      if (content[i] === '"') {
+        result += content[i++];
+        while (i < content.length && content[i] !== '"') {
+          if (content[i] === '\\' && i + 1 < content.length) {
+            result += content[i++];
+          }
+          result += content[i++];
+        }
+        if (i < content.length) result += content[i++];
+      } else if (content[i] === '/' && content[i + 1] === '/') {
+        while (i < content.length && content[i] !== '\n') i++;
+      } else if (content[i] === '/' && content[i + 1] === '*') {
+        i += 2;
+        while (i < content.length && !(content[i] === '*' && content[i + 1] === '/')) i++;
+        i += 2;
+      } else {
+        result += content[i++];
+      }
+    }
+    
+    // Remove trailing commas
+    result = result.replace(/,(\s*[}\]])/g, '$1');
+    
+    return { success: true, data: JSON.parse(result) };
   } catch (e) {
     return { success: false, error: e.message };
   }
