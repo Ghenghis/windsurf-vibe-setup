@@ -56,7 +56,15 @@
     "update-docs": "node scripts/update-docs.js",
     "count-tools": "node -e \"const fs=require('fs'); const c=fs.readFileSync('./mcp-server/src/index.js','utf8'); console.log('Tool handlers:',c.match(/async \\\\(args\\\\) =>/g).length)\"",
     "optimize": "node scripts/optimize.js",
-    "self-enhance": "node scripts/self-enhance.js"
+    "self-enhance": "node scripts/self-enhance.js",
+    "vibe-mode": "node perpetual-harness.js",
+    "anonymous": "node perpetual-harness.js --anonymous",
+    "perpetual": "node perpetual-harness.js --perpetual",
+    "vibify-docs": "node scripts/vibify-docs.js",
+    "real-time": "node scripts/real-time-monitor.js",
+    "anonymous-stats": "node scripts/anonymous-stats.js",
+    "vibe-check": "node -e \"console.log('🌊 VIBE LEVEL: MAXIMUM!')\"",
+    "activate-all": "npm run vibe-mode & npm run anonymous & npm run perpetual"
   },
   "devDependencies": {
     "eslint": "^8.56.0",
