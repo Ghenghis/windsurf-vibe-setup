@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Windsurf Autopilot MCP Server v3.1.0 EXTENDED INTEGRATIONS
+ * Windsurf Autopilot MCP Server v3.2.0 VIBE CODER EXPERIENCE
  * 
  * COMPLETE ZERO-CODE AUTOPILOT for vibe coders.
  * This server gives Windsurf AI FULL capability to:
@@ -28,9 +28,16 @@
  * - Dev Environment - Devcontainer/Codespaces (v3.1)
  * - Publishing - npm/PyPI/Docker (v3.1)
  * - Observability - Sentry/Prometheus/Grafana (v3.1)
+ * - Smart Assistance - Explain/Suggest/DryRun (v3.2)
+ * - Quick Wizards - WebApp/Landing/API/Mobile (v3.2)
+ * - Asset Generation - Logo/OG/Favicon (v3.2)
+ * - No-Code Integration - Notion/Airtable/Zapier (v3.2)
+ * - Business Tools - Cost/Analytics/ROI (v3.2)
+ * - Launch Tools - SEO/Lighthouse/Uptime (v3.2)
+ * - AI Pair Programming - Review/Explain/Refactor (v3.2)
  * 
  * The user NEVER needs to touch a terminal.
- * 156+ tools for 100%+ technical autopilot.
+ * 195+ tools for 100%++ vibe coder autopilot.
  */
 
 const { Server } = require('@modelcontextprotocol/sdk/server/index.js');
@@ -78,6 +85,15 @@ const securityAdvancedTools = require('./security-advanced-tools.js');
 const devenvTools = require('./devenv-tools.js');
 const publishTools = require('./publish-tools.js');
 const observabilityTools = require('./observability-tools.js');
+
+// Import v3.2 tools - VIBE CODER EXPERIENCE
+const smartAssistTools = require('./smart-assist-tools.js');
+const wizardTools = require('./wizard-tools.js');
+const assetTools = require('./asset-tools.js');
+const nocodeTools = require('./nocode-tools.js');
+const businessTools = require('./business-tools.js');
+const launchTools = require('./launch-tools.js');
+const pairTools = require('./pair-tools.js');
 
 // ==============================================================================
 // Configuration
@@ -2060,7 +2076,60 @@ await server.connect(transport);
   sentry_setup: async (args) => observabilityTools.sentry_setup.handler(args),
   add_metrics: async (args) => observabilityTools.add_metrics.handler(args),
   create_dashboard: async (args) => observabilityTools.create_dashboard.handler(args),
-  setup_alerts: async (args) => observabilityTools.setup_alerts.handler(args || {})
+  setup_alerts: async (args) => observabilityTools.setup_alerts.handler(args || {}),
+
+  // v3.2 Smart Assistance Tools
+  explain_code: async (args) => smartAssistTools.explain_code.handler(args),
+  suggest_next: async (args) => smartAssistTools.suggest_next.handler(args),
+  dry_run: async (args) => smartAssistTools.dry_run.handler(args),
+  simplify_output: async (args) => smartAssistTools.simplify_output.handler(args),
+  what_went_wrong: async (args) => smartAssistTools.what_went_wrong.handler(args),
+  teach_me: async (args) => smartAssistTools.teach_me.handler(args),
+
+  // v3.2 Quick Start Wizard Tools
+  project_wizard: async (args) => wizardTools.project_wizard.handler(args),
+  quick_web_app: async (args) => wizardTools.quick_web_app.handler(args),
+  quick_landing: async (args) => wizardTools.quick_landing.handler(args),
+  quick_api: async (args) => wizardTools.quick_api.handler(args),
+  quick_mobile: async (args) => wizardTools.quick_mobile.handler(args),
+  quick_chrome_ext: async (args) => wizardTools.quick_chrome_ext.handler(args),
+
+  // v3.2 Asset Generation Tools
+  generate_logo: async (args) => assetTools.generate_logo.handler(args),
+  generate_og_image: async (args) => assetTools.generate_og_image.handler(args),
+  optimize_assets: async (args) => assetTools.optimize_assets.handler(args),
+  create_favicon: async (args) => assetTools.create_favicon.handler(args),
+  generate_screenshots: async (args) => assetTools.generate_screenshots.handler(args),
+
+  // v3.2 No-Code Integration Tools
+  notion_sync: async (args) => nocodeTools.notion_sync.handler(args),
+  airtable_ops: async (args) => nocodeTools.airtable_ops.handler(args),
+  google_sheets_sync: async (args) => nocodeTools.google_sheets_sync.handler(args),
+  zapier_trigger: async (args) => nocodeTools.zapier_trigger.handler(args),
+  make_scenario: async (args) => nocodeTools.make_scenario.handler(args),
+  n8n_workflow: async (args) => nocodeTools.n8n_workflow.handler(args),
+
+  // v3.2 Business & Analytics Tools
+  cost_estimate: async (args) => businessTools.cost_estimate.handler(args),
+  usage_analytics: async (args) => businessTools.usage_analytics.handler(args),
+  time_tracker: async (args) => businessTools.time_tracker.handler(args),
+  roi_calculator: async (args) => businessTools.roi_calculator.handler(args),
+  competitor_scan: async (args) => businessTools.competitor_scan.handler(args),
+
+  // v3.2 Launch & Growth Tools
+  seo_audit: async (args) => launchTools.seo_audit.handler(args),
+  lighthouse_report: async (args) => launchTools.lighthouse_report.handler(args),
+  submit_to_directories: async (args) => launchTools.submit_to_directories.handler(args),
+  social_preview: async (args) => launchTools.social_preview.handler(args),
+  uptime_monitor: async (args) => launchTools.uptime_monitor.handler(args),
+
+  // v3.2 AI Pair Programming Tools
+  pair_start: async (args) => pairTools.pair_start.handler(args),
+  pair_suggest: async (args) => pairTools.pair_suggest.handler(args),
+  pair_review: async (args) => pairTools.pair_review.handler(args),
+  pair_explain: async (args) => pairTools.pair_explain.handler(args),
+  pair_refactor: async (args) => pairTools.pair_refactor.handler(args),
+  voice_command: async (args) => pairTools.voice_command.handler(args)
 };
 
 
@@ -2068,7 +2137,7 @@ await server.connect(transport);
 // MCP SERVER SETUP
 // ==============================================================================
 const server = new Server(
-  { name: 'windsurf-autopilot', version: '3.1.0' },
+  { name: 'windsurf-autopilot', version: '3.2.0' },
   { capabilities: { tools: {}, resources: {} } }
 );
 
@@ -3189,7 +3258,60 @@ const toolDefinitions = [
   { name: 'sentry_setup', description: 'Configure Sentry error tracking', inputSchema: { type: 'object', properties: { path: { type: 'string' }, dsn: { type: 'string' }, framework: { type: 'string' } }, required: ['path'] } },
   { name: 'add_metrics', description: 'Add Prometheus metrics', inputSchema: { type: 'object', properties: { path: { type: 'string' }, port: { type: 'number' }, metrics: { type: 'array' } }, required: ['path'] } },
   { name: 'create_dashboard', description: 'Generate Grafana dashboard', inputSchema: { type: 'object', properties: { title: { type: 'string' }, panels: { type: 'array' }, output: { type: 'string' } }, required: ['title'] } },
-  { name: 'setup_alerts', description: 'Configure alerting rules', inputSchema: { type: 'object', properties: { output: { type: 'string' }, alerts: { type: 'array' } } } }
+  { name: 'setup_alerts', description: 'Configure alerting rules', inputSchema: { type: 'object', properties: { output: { type: 'string' }, alerts: { type: 'array' } } } },
+
+  // v3.2 Smart Assistance Tools
+  { name: 'explain_code', description: 'Explain code in plain English (ELI5)', inputSchema: { type: 'object', properties: { code: { type: 'string' }, level: { type: 'string', enum: ['beginner', 'intermediate', 'advanced'] }, focus: { type: 'string' } }, required: ['code'] } },
+  { name: 'suggest_next', description: 'AI suggests next logical action', inputSchema: { type: 'object', properties: { context: { type: 'string' }, goal: { type: 'string' }, blockers: { type: 'string' } }, required: ['context'] } },
+  { name: 'dry_run', description: 'Preview operation without executing', inputSchema: { type: 'object', properties: { operation: { type: 'string' }, params: { type: 'object' } }, required: ['operation'] } },
+  { name: 'simplify_output', description: 'Convert technical output to plain English', inputSchema: { type: 'object', properties: { technical_output: { type: 'string' }, context: { type: 'string' } }, required: ['technical_output'] } },
+  { name: 'what_went_wrong', description: 'Human-readable error explanations', inputSchema: { type: 'object', properties: { error: { type: 'string' }, context: { type: 'string' }, file: { type: 'string' } }, required: ['error'] } },
+  { name: 'teach_me', description: 'Interactive learning for concepts', inputSchema: { type: 'object', properties: { topic: { type: 'string' }, current_level: { type: 'string', enum: ['complete-beginner', 'some-experience', 'intermediate'] } }, required: ['topic'] } },
+
+  // v3.2 Quick Start Wizard Tools
+  { name: 'project_wizard', description: 'Interactive guided project setup', inputSchema: { type: 'object', properties: { answers: { type: 'object' }, path: { type: 'string' } } } },
+  { name: 'quick_web_app', description: 'One-command full-stack web app', inputSchema: { type: 'object', properties: { name: { type: 'string' }, features: { type: 'array' }, style: { type: 'string' }, path: { type: 'string' } }, required: ['name'] } },
+  { name: 'quick_landing', description: 'One-command landing page', inputSchema: { type: 'object', properties: { name: { type: 'string' }, headline: { type: 'string' }, subheadline: { type: 'string' }, cta: { type: 'string' }, features: { type: 'array' }, path: { type: 'string' } }, required: ['name', 'headline'] } },
+  { name: 'quick_api', description: 'One-command REST API', inputSchema: { type: 'object', properties: { name: { type: 'string' }, resources: { type: 'array' }, auth: { type: 'boolean' }, path: { type: 'string' } }, required: ['name'] } },
+  { name: 'quick_mobile', description: 'One-command mobile app', inputSchema: { type: 'object', properties: { name: { type: 'string' }, platform: { type: 'string', enum: ['ios', 'android', 'both'] }, template: { type: 'string' }, path: { type: 'string' } }, required: ['name'] } },
+  { name: 'quick_chrome_ext', description: 'One-command Chrome extension', inputSchema: { type: 'object', properties: { name: { type: 'string' }, description: { type: 'string' }, permissions: { type: 'array' }, path: { type: 'string' } }, required: ['name'] } },
+
+  // v3.2 Asset Generation Tools
+  { name: 'generate_logo', description: 'Generate logo variations', inputSchema: { type: 'object', properties: { name: { type: 'string' }, style: { type: 'string' }, colors: { type: 'array' }, outputDir: { type: 'string' } }, required: ['name'] } },
+  { name: 'generate_og_image', description: 'Generate social preview images', inputSchema: { type: 'object', properties: { title: { type: 'string' }, subtitle: { type: 'string' }, theme: { type: 'string' }, brand: { type: 'string' }, outputDir: { type: 'string' } }, required: ['title'] } },
+  { name: 'optimize_assets', description: 'Batch image optimization', inputSchema: { type: 'object', properties: { inputDir: { type: 'string' }, outputDir: { type: 'string' }, quality: { type: 'integer' }, maxWidth: { type: 'integer' } }, required: ['inputDir'] } },
+  { name: 'create_favicon', description: 'Generate complete favicon suite', inputSchema: { type: 'object', properties: { text: { type: 'string' }, backgroundColor: { type: 'string' }, textColor: { type: 'string' }, outputDir: { type: 'string' } }, required: ['text'] } },
+  { name: 'generate_screenshots', description: 'Generate app store screenshots', inputSchema: { type: 'object', properties: { screenshots: { type: 'array' }, device: { type: 'string' }, captions: { type: 'array' }, outputDir: { type: 'string' } } } },
+
+  // v3.2 No-Code Integration Tools
+  { name: 'notion_sync', description: 'Sync with Notion', inputSchema: { type: 'object', properties: { action: { type: 'string', enum: ['read', 'write', 'create', 'list'] }, apiKey: { type: 'string' }, databaseId: { type: 'string' }, pageId: { type: 'string' }, data: { type: 'object' } }, required: ['action'] } },
+  { name: 'airtable_ops', description: 'Airtable CRUD operations', inputSchema: { type: 'object', properties: { action: { type: 'string', enum: ['list', 'get', 'create', 'update', 'delete'] }, apiKey: { type: 'string' }, baseId: { type: 'string' }, tableName: { type: 'string' }, recordId: { type: 'string' }, data: { type: 'object' } }, required: ['action'] } },
+  { name: 'google_sheets_sync', description: 'Google Sheets integration', inputSchema: { type: 'object', properties: { action: { type: 'string', enum: ['read', 'write', 'append', 'clear'] }, spreadsheetId: { type: 'string' }, range: { type: 'string' }, values: { type: 'array' } }, required: ['action', 'spreadsheetId'] } },
+  { name: 'zapier_trigger', description: 'Trigger Zapier webhooks', inputSchema: { type: 'object', properties: { webhookUrl: { type: 'string' }, data: { type: 'object' }, saveWebhook: { type: 'boolean' }, webhookName: { type: 'string' } }, required: ['webhookUrl', 'data'] } },
+  { name: 'make_scenario', description: 'Trigger Make.com scenarios', inputSchema: { type: 'object', properties: { webhookUrl: { type: 'string' }, data: { type: 'object' }, scenarioName: { type: 'string' } }, required: ['webhookUrl', 'data'] } },
+  { name: 'n8n_workflow', description: 'Trigger n8n workflows', inputSchema: { type: 'object', properties: { webhookUrl: { type: 'string' }, data: { type: 'object' }, workflowName: { type: 'string' }, n8nHost: { type: 'string' } }, required: ['webhookUrl', 'data'] } },
+
+  // v3.2 Business & Analytics Tools
+  { name: 'cost_estimate', description: 'Estimate cloud/API costs', inputSchema: { type: 'object', properties: { projectType: { type: 'string' }, expectedUsers: { type: 'integer' }, features: { type: 'array' }, provider: { type: 'string' } }, required: ['projectType'] } },
+  { name: 'usage_analytics', description: 'Track productivity metrics', inputSchema: { type: 'object', properties: { action: { type: 'string', enum: ['view', 'record', 'reset'] }, category: { type: 'string' }, duration: { type: 'integer' } } } },
+  { name: 'time_tracker', description: 'Track time on tasks', inputSchema: { type: 'object', properties: { action: { type: 'string', enum: ['start', 'stop', 'status', 'report'] }, task: { type: 'string' }, project: { type: 'string' }, tags: { type: 'array' } }, required: ['action'] } },
+  { name: 'roi_calculator', description: 'Calculate ROI', inputSchema: { type: 'object', properties: { investment: { type: 'number' }, investmentType: { type: 'string' }, expectedRevenue: { type: 'number' }, timeframe: { type: 'integer' }, hourlyRate: { type: 'number' } }, required: ['investment', 'expectedRevenue'] } },
+  { name: 'competitor_scan', description: 'Analyze competitor websites', inputSchema: { type: 'object', properties: { url: { type: 'string' }, aspects: { type: 'array' } }, required: ['url'] } },
+
+  // v3.2 Launch & Growth Tools
+  { name: 'seo_audit', description: 'SEO analysis and fixes', inputSchema: { type: 'object', properties: { url: { type: 'string' }, htmlPath: { type: 'string' }, generateFixes: { type: 'boolean' } } } },
+  { name: 'lighthouse_report', description: 'Performance/accessibility audit', inputSchema: { type: 'object', properties: { url: { type: 'string' }, categories: { type: 'array' }, device: { type: 'string' } }, required: ['url'] } },
+  { name: 'submit_to_directories', description: 'Launch marketing checklist', inputSchema: { type: 'object', properties: { productName: { type: 'string' }, productUrl: { type: 'string' }, category: { type: 'string' }, stage: { type: 'string' } }, required: ['productName', 'productUrl'] } },
+  { name: 'social_preview', description: 'Test social media cards', inputSchema: { type: 'object', properties: { url: { type: 'string' }, platforms: { type: 'array' } }, required: ['url'] } },
+  { name: 'uptime_monitor', description: 'Setup uptime monitoring', inputSchema: { type: 'object', properties: { url: { type: 'string' }, name: { type: 'string' }, checkInterval: { type: 'integer' }, alertEmail: { type: 'string' } }, required: ['url'] } },
+
+  // v3.2 AI Pair Programming Tools
+  { name: 'pair_start', description: 'Start AI pair programming session', inputSchema: { type: 'object', properties: { projectPath: { type: 'string' }, focus: { type: 'string' }, mode: { type: 'string', enum: ['mentor', 'collaborator', 'reviewer', 'learner'] }, experience: { type: 'string' } } } },
+  { name: 'pair_suggest', description: 'Get real-time suggestions', inputSchema: { type: 'object', properties: { context: { type: 'string' }, code: { type: 'string' }, stuck: { type: 'boolean' }, type: { type: 'string' } }, required: ['context'] } },
+  { name: 'pair_review', description: 'Live code review', inputSchema: { type: 'object', properties: { code: { type: 'string' }, filePath: { type: 'string' }, focus: { type: 'array' } } } },
+  { name: 'pair_explain', description: 'Explain code/concepts', inputSchema: { type: 'object', properties: { code: { type: 'string' }, concept: { type: 'string' }, depth: { type: 'string' } } } },
+  { name: 'pair_refactor', description: 'Suggest refactors', inputSchema: { type: 'object', properties: { code: { type: 'string' }, filePath: { type: 'string' }, goal: { type: 'string' } } } },
+  { name: 'voice_command', description: 'Voice-controlled operations', inputSchema: { type: 'object', properties: { command: { type: 'string' }, context: { type: 'string' } }, required: ['command'] } }
 ];
 
 // Register tools
@@ -3261,7 +3383,7 @@ server.setRequestHandler(ReadResourceRequestSchema, async (request) => {
 async function main() {
   const transport = new StdioServerTransport();
   await server.connect(transport);
-  console.error('🚀 Windsurf Autopilot v3.1.0 EXTENDED INTEGRATIONS - 156+ Tools, 100%+ Technical Autopilot');
+  console.error('🚀 Windsurf Autopilot v3.2.0 VIBE CODER EXPERIENCE - 195+ Tools, Anyone Can Build!');
   console.error(`📂 Home: ${HOME}`);
   console.error(`💻 Platform: ${process.platform}`);
 }

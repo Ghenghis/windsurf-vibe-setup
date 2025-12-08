@@ -1,10 +1,10 @@
-# Windsurf Autopilot MCP Server v3.0.0 - ENTERPRISE EDITION
+# Windsurf Autopilot MCP Server v3.1.0 - EXTENDED INTEGRATIONS
 
-> **120+ Tools** | **100% Technical Autopilot** | **Enterprise Ready**
+> **156+ Tools** | **100%+ Technical Autopilot** | **Enterprise Ready**
 
 ## Overview
 
-This is the MCP (Model Context Protocol) server that powers Windsurf Autopilot. It provides 120+ tools for complete development automation.
+This is the MCP (Model Context Protocol) server that powers Windsurf Autopilot. It provides 156+ tools for complete development automation.
 
 ## Installation
 
@@ -48,35 +48,42 @@ Add to `~/.codeium/windsurf/mcp_config.json`:
 | `cloud-tools.js` | v3.0 cloud sync | 4 |
 | `model-tools.js` | v3.0 AI models | 5 |
 | `agent-tools.js` | v3.0 multi-agent | 5 |
+| `iac-tools.js` | v3.1 Terraform/K8s | 5 |
+| `testing-tools.js` | v3.1 E2E/visual | 5 |
+| `comms-tools.js` | v3.1 Slack/Discord | 5 |
+| `pm-tools.js` | v3.1 Jira/Linear | 5 |
+| `security-advanced-tools.js` | v3.1 SAST/SBOM | 5 |
+| `devenv-tools.js` | v3.1 devcontainer | 3 |
+| `publish-tools.js` | v3.1 npm/PyPI | 4 |
+| `observability-tools.js` | v3.1 Sentry/Grafana | 4 |
 
-## Tool Categories (120+)
+## Tool Categories (156+)
+
+### v3.1 Extended Integrations (36 tools)
+- 📦 Infrastructure as Code: terraform_init, terraform_plan, terraform_apply, k8s_deploy, helm_install
+- 🧪 Advanced Testing: run_e2e_tests, visual_regression, load_test, contract_test, mutation_test
+- 💬 Communications: slack_notify, discord_notify, teams_notify, email_send, sms_send
+- 📊 Project Management: jira_create_issue, linear_create_task, github_create_issue, auto_changelog, create_release
+- 🔐 Advanced Security: sast_scan, sbom_generate, dep_graph, tech_debt_score, compliance_check
+- 🛠️ Dev Environment: gen_devcontainer, gen_codespace, gen_gitpod
+- 📦 Package Publishing: npm_publish, pypi_publish, docker_release, github_package
+- 📈 Observability: sentry_setup, add_metrics, create_dashboard, setup_alerts
 
 ### v3.0 Enterprise (25 tools)
 - 🔄 Workflows: create, run, edit, share, templates
 - 👥 Teams: create, invite, share, templates, activity, list
-- ☁️ Cloud: login, sync_settings, sync_templates, sync_history
-- 🤖 Models: add, switch, benchmark, fine_tune, list
-- 🕵️ Agents: create, assign, status, collaborate, list
+- ☁️ Cloud Sync: login, sync_settings, sync_templates, sync_history
+- 🤖 AI Models: add, switch, benchmark, fine_tune, list
+- 🕵️ Multi-Agent: create, assign, status, collaborate, list
 
 ### v2.6 Data (21 tools)
-- 🗄️ Database: connect, schema, backup, restore, query
-- 🔍 Embeddings: embed, search, index
-- 💾 Context: save, load, clear, get, list
-- 🔙 Recovery: checkpoint, rollback, auto_recover, list
-- 🔌 Plugins: install, list, uninstall, create
+- 🗄️ Database, 🔍 Embeddings, 💾 Context, 🔙 Recovery, 🔌 Plugins
 
 ### v2.5 Ultimate (40 tools)
-- ☁️ Deploy: vercel, netlify, railway, docker_hub
-- 🔄 CI/CD: github_actions, gitlab_ci, run, status
-- 🔧 Code: refactor, docs, review, dead_code, complexity
-- 🔒 Security: audit, dependencies, licenses, secrets
-- And 24 more...
+- ☁️ Deploy, 🔄 CI/CD, 🔧 Code, 🔒 Security, and more
 
 ### Previous Versions (34+ tools)
-- Core operations, Git, Packages, Projects
-- Error handling, HTTP, Code quality, Docker
-- AI decisions, Database, Backup, Progress
-- Learning, Web search, Knowledge
+- Core operations, Git, Packages, Projects, AI, Learning
 
 ## Testing
 
@@ -88,17 +95,19 @@ node --check src/index.js
 node src/index.js
 ```
 
-## v3.1 Roadmap
+## v3.2 Roadmap (Coming Soon)
 
-Planned additions:
-- Infrastructure as Code (Terraform, K8s)
-- Advanced Testing (E2E, Visual, Load)
-- Communications (Slack, Discord, Teams)
-- Project Management (Jira, Linear)
-- And more...
+**VIBE CODER EXPERIENCE** - 39 new tools:
+- 🧠 Smart Assistance (explain_code, suggest_next, what_went_wrong)
+- ⚡ Quick Wizards (quick_web_app, quick_landing, quick_api)
+- 🎨 Asset Generation (generate_logo, optimize_assets)
+- 🔗 No-Code Integration (notion_sync, zapier_trigger)
+- 💰 Business Tools (cost_estimate, usage_analytics)
+- 🚀 Launch Tools (seo_audit, lighthouse_report)
+- 🤝 AI Pair Programming (pair_start, pair_suggest)
 
 ## Version
 
-- **Version**: 3.0.0 ENTERPRISE EDITION
-- **Tools**: 120+
-- **Autopilot**: 100% Technical
+- **Version**: 3.1.0 EXTENDED INTEGRATIONS
+- **Tools**: 156+
+- **Autopilot**: 100%+ Technical
