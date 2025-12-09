@@ -129,7 +129,6 @@
     "commander": "^11.1.0",
     "dockerode": "^4.0.2",
     "dotenv": "^16.4.5",
-    "duckdb": "^0.10.0",
     "express": "^4.21.2",
     "fs-extra": "^11.2.0",
     "glob": "^10.3.10",

@@ -113,6 +113,10 @@ const {
   registerTools: registerInterpreter,
 } = require('./open-interpreter-tools.js');
 
+// Import v4.3 tools - FAST API INTEGRATIONS (Free & Open Source)
+const FastAPIIntegrations = require('./fast-api-integrations.js');
+let fastAPIInstance = null;
+
 // ==============================================================================
 // Configuration
 // ==============================================================================
@@ -2261,13 +2265,77 @@ await server.connect(transport);
   pair_explain: async args => pairTools.pair_explain.handler(args),
   pair_refactor: async args => pairTools.pair_refactor.handler(args),
   voice_command: async args => pairTools.voice_command.handler(args),
+
+  // v4.3 FAST API INTEGRATIONS - Free & Open Source Tools
+  fastapi_init: async () => {
+    if (!fastAPIInstance) {
+      fastAPIInstance = new FastAPIIntegrations();
+      await fastAPIInstance.initializeAll();
+    }
+    const integrations = fastAPIInstance.getIntegrations();
+    return { 
+      success: true, 
+      integrations: Array.from(integrations.keys()),
+      message: 'FastAPI integrations initialized'
+    };
+  },
+  
+  fastapi_sandbox_exec: async args => {
+    if (!fastAPIInstance) {
+      fastAPIInstance = new FastAPIIntegrations();
+      await fastAPIInstance.initializeAll();
+    }
+    const sandbox = fastAPIInstance.getIntegrations().get('sandbox');
+    if (!sandbox) throw new Error('Sandbox not initialized');
+    return await sandbox.execute(args.code, args.language);
+  },
+  
+  fastapi_vector_search: async args => {
+    if (!fastAPIInstance) {
+      fastAPIInstance = new FastAPIIntegrations();
+      await fastAPIInstance.initializeAll();
+    }
+    const vectordb = fastAPIInstance.getIntegrations().get('vectordb');
+    if (!vectordb) throw new Error('VectorDB not initialized');
+    return await vectordb.search(args.query, args.collection, args.k);
+  },
+  
+  fastapi_cache_set: async args => {
+    if (!fastAPIInstance) {
+      fastAPIInstance = new FastAPIIntegrations();
+      await fastAPIInstance.initializeAll();
+    }
+    const cache = fastAPIInstance.getIntegrations().get('cache');
+    if (!cache) throw new Error('Cache not initialized');
+    return await cache.set(args.key, args.value, args.ttl);
+  },
+  
+  fastapi_cache_get: async args => {
+    if (!fastAPIInstance) {
+      fastAPIInstance = new FastAPIIntegrations();
+      await fastAPIInstance.initializeAll();
+    }
+    const cache = fastAPIInstance.getIntegrations().get('cache');
+    if (!cache) throw new Error('Cache not initialized');
+    return await cache.get(args.key);
+  },
+  
+  fastapi_llm_generate: async args => {
+    if (!fastAPIInstance) {
+      fastAPIInstance = new FastAPIIntegrations();
+      await fastAPIInstance.initializeAll();
+    }
+    const llm = fastAPIInstance.getIntegrations().get('llm');
+    if (!llm) throw new Error('LLM not initialized');
+    return await llm.generate(args.prompt, args.model);
+  },
 };
 
 // ==============================================================================
 // MCP SERVER SETUP
 // ==============================================================================
 const server = new Server(
-  { name: 'windsurf-autopilot', version: '3.2.0' },
+  { name: 'windsurf-autopilot', version: '4.3.0' },
   { capabilities: { tools: {}, resources: {} } }
 );
 
@@ -5213,6 +5281,77 @@ const toolDefinitions = [
       type: 'object',
       properties: { command: { type: 'string' }, context: { type: 'string' } },
       required: ['command'],
+    },
+  },
+  
+  // v4.3 FAST API INTEGRATIONS - Free & Open Source Tools
+  {
+    name: 'fastapi_init',
+    description: 'Initialize all FastAPI free & open source integrations (Redis, ChromaDB, Ollama, etc)',
+    inputSchema: {
+      type: 'object',
+      properties: {},
+    },
+  },
+  {
+    name: 'fastapi_sandbox_exec',
+    description: 'Execute code in secure Docker sandbox (via Microsandbox)',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        code: { type: 'string', description: 'Code to execute' },
+        language: { type: 'string', description: 'Programming language (javascript, python, etc)' },
+      },
+      required: ['code'],
+    },
+  },
+  {
+    name: 'fastapi_vector_search',
+    description: 'Search vector database using ChromaDB for semantic similarity',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        query: { type: 'string', description: 'Search query' },
+        collection: { type: 'string', description: 'Collection name (code, docs, errors, user)' },
+        k: { type: 'number', description: 'Number of results to return' },
+      },
+      required: ['query'],
+    },
+  },
+  {
+    name: 'fastapi_cache_set',
+    description: 'Set value in Redis cache for high-speed access',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        key: { type: 'string', description: 'Cache key' },
+        value: { type: 'object', description: 'Value to cache' },
+        ttl: { type: 'number', description: 'Time to live in seconds' },
+      },
+      required: ['key', 'value'],
+    },
+  },
+  {
+    name: 'fastapi_cache_get',
+    description: 'Get value from Redis cache',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        key: { type: 'string', description: 'Cache key' },
+      },
+      required: ['key'],
+    },
+  },
+  {
+    name: 'fastapi_llm_generate',
+    description: 'Generate text using local LLM via Ollama (no API keys needed)',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        prompt: { type: 'string', description: 'Prompt for the LLM' },
+        model: { type: 'string', description: 'Model to use (codellama:7b, mistral:7b, phi:latest)' },
+      },
+      required: ['prompt'],
     },
   },
 ];
