@@ -9,8 +9,8 @@ const WebSocket = require('ws');
 const express = require('express');
 const path = require('path');
 const { EventEmitter } = require('events');
-const { GPUCollectiveHiveMind } = require('./gpu-hive-mind');
-const { UnifiedVibeSystem } = require('./unified-system');
+const { GPUCollectiveHiveMind } = require('../gpu/gpu-hive-mind');
+const { UnifiedVibeSystem } = require('../unified-system');
 
 class RealTimeVibeServer extends EventEmitter {
   constructor() {
