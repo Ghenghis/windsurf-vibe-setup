@@ -64,7 +64,15 @@
     "real-time": "node scripts/real-time-monitor.js",
     "anonymous-stats": "node scripts/anonymous-stats.js",
     "vibe-check": "node -e \"console.log('🌊 VIBE LEVEL: MAXIMUM!')\"",
-    "activate-all": "npm run vibe-mode & npm run anonymous & npm run perpetual"
+    "activate-all": "npm run vibe-mode & npm run anonymous & npm run perpetual",
+    "unified": "node unified-system.js",
+    "unified-vibe": "node unified-system.js",
+    "start-all": "node activate-vibe.js",
+    "hive-mind": "node gpu-hive-mind.js",
+    "collective": "node gpu-hive-mind.js",
+    "gpu-vibe": "node gpu-hive-mind.js --gpu",
+    "benchmark-models": "node gpu-hive-mind.js --benchmark",
+    "download-models": "node gpu-hive-mind.js --download"
   },
   "devDependencies": {
     "eslint": "^8.56.0",
