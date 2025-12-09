@@ -8,8 +8,11 @@
 const { execSync } = require('child_process');
 const fs = require('fs-extra');
 const path = require('path');
-const chalk = require('chalk');
-const ora = require('ora');
+
+// Main async wrapper to handle ESM imports
+(async () => {
+  const chalk = (await import('chalk')).default;
+  const ora = (await import('ora')).default;
 
 class FastAPISetup {
   constructor() {
@@ -244,3 +247,5 @@ if (require.main === module) {
 }
 
 module.exports = FastAPISetup;
+
+})().catch(console.error); // Close async wrapper

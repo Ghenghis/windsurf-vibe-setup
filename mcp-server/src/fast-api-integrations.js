@@ -239,62 +239,88 @@ class FastAPIIntegrations {
   }
 
   /**
-   * 6. OLLAMA - Local LLM Integration (MIT License)
-   * Run LLMs locally without API keys
+   * 6. LOCAL LLMs - Ollama + LM Studio Integration
+   * Use existing Ollama and LM Studio instances
    */
-  async setupOllama() {
-    console.log('🤖 Setting up Ollama for local LLMs...');
+  async setupLocalLLMs() {
+    console.log('🤖 Setting up Local LLMs (Ollama + LM Studio)...');
     
-    // Check if Ollama is installed
+    const lmstudioUrl = process.env.LMSTUDIO_URL || 'http://192.168.0.3:1234';
+    const ollamaUrl = process.env.OLLAMA_URL || 'http://localhost:11434';
+    
+    // Check LM Studio first (preferred for Qwen model)
     try {
-      const response = await axios.get('http://localhost:11434/api/version');
-      console.log('Ollama version:', response.data.version);
-    } catch (error) {
-      console.log('Installing Ollama...');
-      // Auto-install via Docker
-      await this.docker.createContainer({
-        Image: 'ollama/ollama:latest',
-        name: 'vibe-ollama',
-        HostConfig: {
-          PortBindings: { '11434/tcp': [{ HostPort: '11434' }] },
-          Devices: [{
-            PathOnHost: '/dev/dri',
-            PathInContainer: '/dev/dri',
-            CgroupPermissions: 'rwm'
-          }]
+      const response = await axios.get(`${lmstudioUrl}/v1/models`);
+      console.log('✅ LM Studio connected at', lmstudioUrl);
+      
+      this.integrations.set('llm', {
+        generate: async (prompt, model = 'qwen2.5-14b-instruct-1m') => {
+          try {
+            // Try LM Studio first
+            const response = await axios.post(`${lmstudioUrl}/v1/chat/completions`, {
+              model,
+              messages: [
+                { role: 'system', content: 'You are VIBE, a consciousness-level AI assistant.' },
+                { role: 'user', content: prompt }
+              ],
+              temperature: 0.7,
+              max_tokens: 2000
+            });
+            return response.data.choices[0].message.content;
+          } catch (e) {
+            // Fallback to Ollama if LM Studio fails
+            console.log('Falling back to Ollama...');
+            const response = await axios.post(`${ollamaUrl}/api/generate`, {
+              model: 'codellama:7b',
+              prompt,
+              stream: false
+            });
+            return response.data.response;
+          }
+        },
+        embed: async (text, model = 'nomic-embed-text') => {
+          // Use Ollama for embeddings
+          try {
+            const response = await axios.post(`${ollamaUrl}/api/embeddings`, {
+              model,
+              prompt: text
+            });
+            return response.data.embedding;
+          } catch (e) {
+            console.log('Embedding generation failed:', e.message);
+            return null;
+          }
         }
-      }).then(c => c.start());
+      });
+      
+      console.log('✅ Using Qwen2.5-14B via LM Studio for generation');
+      console.log('✅ Using Ollama for embeddings');
+      return true;
+      
+    } catch (error) {
+      console.log('⚠️ LM Studio not available, using Ollama only');
+      
+      // Fallback to Ollama only
+      this.integrations.set('llm', {
+        generate: async (prompt, model = 'codellama:7b') => {
+          const response = await axios.post(`${ollamaUrl}/api/generate`, {
+            model,
+            prompt,
+            stream: false
+          });
+          return response.data.response;
+        },
+        embed: async (text, model = 'nomic-embed-text') => {
+          const response = await axios.post(`${ollamaUrl}/api/embeddings`, {
+            model,
+            prompt: text
+          });
+          return response.data.embedding;
+        }
+      });
+      
+      return true;
     }
-
-    // Pull models
-    const models = ['codellama:7b', 'mistral:7b', 'phi:latest'];
-    for (const model of models) {
-      try {
-        await axios.post('http://localhost:11434/api/pull', { name: model });
-      } catch (e) {
-        console.log(`Model ${model} might already exist`);
-      }
-    }
-
-    this.integrations.set('llm', {
-      generate: async (prompt, model = 'codellama:7b') => {
-        const response = await axios.post('http://localhost:11434/api/generate', {
-          model,
-          prompt,
-          stream: false
-        });
-        return response.data.response;
-      },
-      embed: async (text, model = 'mistral:7b') => {
-        const response = await axios.post('http://localhost:11434/api/embeddings', {
-          model,
-          prompt: text
-        });
-        return response.data.embedding;
-      }
-    });
-
-    return true;
   }
 
   /**
@@ -393,7 +419,7 @@ class FastAPIIntegrations {
       this.setupPlaywright(),
       this.setupRedis(),
       this.setupDuckDB(),
-      this.setupOllama(),
+      this.setupLocalLLMs(),  // Updated to use existing LLMs
       this.setupGitea(),
       this.setupMinio()
     ]);
