@@ -35,6 +35,7 @@ git pull origin main
 #### Step 1: Plan First (Don't Code Yet)
 
 Open Cascade (`Ctrl+L`) and say:
+
 ```
 Tell me your plan first; don't code.
 
@@ -58,6 +59,7 @@ Don't code yet.
 #### Step 3: Build Vertically
 
 Build one complete feature at a time:
+
 ```
 Let's start with just the login form. Create:
 1. The form component
@@ -72,11 +74,13 @@ Show me the code for the form first.
 #### Step 4: Review Before Applying
 
 When AI shows code:
+
 - **Read it** - Understand what it does
 - **Check for issues** - Security, edge cases
 - **Ask questions** - "What happens if the email is invalid?"
 
 Then say:
+
 ```
 Apply this change
 ```
@@ -84,6 +88,7 @@ Apply this change
 #### Step 5: Test Immediately
 
 After each change:
+
 ```powershell
 # Run the app
 npm run dev
@@ -93,6 +98,7 @@ npm run dev
 ```
 
 If something breaks:
+
 ```
 I'm getting this error: [paste error]
 The login form shows but submitting does nothing.
@@ -105,11 +111,13 @@ The login form shows but submitting does nothing.
 ### Be Specific
 
 **❌ Bad**:
+
 ```
 Make a website
 ```
 
 **✅ Good**:
+
 ```
 Create a landing page for a dog grooming business with:
 - Hero section with headline and CTA button
@@ -122,11 +130,13 @@ Create a landing page for a dog grooming business with:
 ### Provide Context
 
 **❌ Bad**:
+
 ```
 Add a button
 ```
 
 **✅ Good**:
+
 ```
 In the UserProfile component (src/components/UserProfile.tsx),
 add a "Save Changes" button that:
@@ -152,15 +162,15 @@ Review this authentication code for vulnerabilities.
 
 ## Keyboard Shortcuts
 
-| Action | Shortcut | When to Use |
-|--------|----------|-------------|
-| Open Cascade | `Ctrl+L` | Ask AI anything |
-| New Conversation | `Ctrl+Shift+L` | Start fresh topic |
-| Accept Suggestion | `Tab` | Accept AI autocomplete |
-| Fast Context | `Ctrl+Enter` | Faster AI responses |
-| Toggle Write/Chat | `Ctrl+.` | Switch AI modes |
-| Accept Diff | `Alt+Enter` | Apply code changes |
-| Reject Diff | `Alt+Shift+Backspace` | Discard changes |
+| Action            | Shortcut              | When to Use            |
+| ----------------- | --------------------- | ---------------------- |
+| Open Cascade      | `Ctrl+L`              | Ask AI anything        |
+| New Conversation  | `Ctrl+Shift+L`        | Start fresh topic      |
+| Accept Suggestion | `Tab`                 | Accept AI autocomplete |
+| Fast Context      | `Ctrl+Enter`          | Faster AI responses    |
+| Toggle Write/Chat | `Ctrl+.`              | Switch AI modes        |
+| Accept Diff       | `Alt+Enter`           | Apply code changes     |
+| Reject Diff       | `Alt+Shift+Backspace` | Discard changes        |
 
 ---
 
@@ -380,6 +390,7 @@ git push origin main
 ### 1. Use the "Rubber Duck" Method
 
 Explain the problem to AI like you would to a rubber duck:
+
 ```
 I'm trying to [goal], but [obstacle].
 I've already tried [what you did].
@@ -389,6 +400,7 @@ I think the issue might be [your theory].
 ### 2. Iterative Refinement
 
 Don't try to get perfect code in one prompt. Iterate:
+
 ```
 Good start, but can you:
 - Add error handling
@@ -399,6 +411,7 @@ Good start, but can you:
 ### 3. Save Good Prompts
 
 When a prompt works well, save it for reuse:
+
 ```powershell
 # Create a prompts folder
 New-Item -ItemType Directory -Path ".\prompts"
@@ -410,6 +423,7 @@ New-Item -ItemType Directory -Path ".\prompts"
 ### 4. Learn from AI
 
 Ask AI to explain its decisions:
+
 ```
 Why did you choose to use useReducer instead of useState here?
 ```

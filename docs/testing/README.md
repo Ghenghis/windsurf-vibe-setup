@@ -57,27 +57,28 @@ npm run benchmark
 
 ## Test Categories
 
-| Category | Test IDs | Description |
-|----------|----------|-------------|
-| **Editor** | EDITOR-001 to EDITOR-002 | Core editor performance and settings validation |
-| **FileSystem** | FS-001 to FS-003 | File watcher, search, and large file handling |
-| **Language** | LANG-001 to LANG-003 | Language server performance (Python, JS/TS, PowerShell) |
-| **Security** | SEC-001 to SEC-002 | Command deny list and exclusion security |
-| **Extension** | EXT-001 to EXT-004 | Extension functionality (Todo, Git, JSON, Markdown) |
+| Category       | Test IDs                 | Description                                             |
+| -------------- | ------------------------ | ------------------------------------------------------- |
+| **Editor**     | EDITOR-001 to EDITOR-002 | Core editor performance and settings validation         |
+| **FileSystem** | FS-001 to FS-003         | File watcher, search, and large file handling           |
+| **Language**   | LANG-001 to LANG-003     | Language server performance (Python, JS/TS, PowerShell) |
+| **Security**   | SEC-001 to SEC-002       | Command deny list and exclusion security                |
+| **Extension**  | EXT-001 to EXT-004       | Extension functionality (Todo, Git, JSON, Markdown)     |
 
 ## Performance Thresholds
 
-| Classification | Response Time | Indicator |
-|---------------|---------------|-----------|
-| 🟢 Optimal | < 100ms | No action required |
-| 🟡 Acceptable | 100-500ms | Monitor for degradation |
-| 🟠 Degraded | 500-2000ms | Investigation recommended |
-| 🔴 Critical | 2000-5000ms | Immediate action required |
-| ⛔ Failed | > 10000ms | Blocking issue |
+| Classification | Response Time | Indicator                 |
+| -------------- | ------------- | ------------------------- |
+| 🟢 Optimal     | < 100ms       | No action required        |
+| 🟡 Acceptable  | 100-500ms     | Monitor for degradation   |
+| 🟠 Degraded    | 500-2000ms    | Investigation recommended |
+| 🔴 Critical    | 2000-5000ms   | Immediate action required |
+| ⛔ Failed      | > 10000ms     | Blocking issue            |
 
 ## Output Files
 
 ### JSON Report
+
 ```json
 {
   "Metadata": {
@@ -103,7 +104,9 @@ npm run benchmark
 ```
 
 ### HTML Report
+
 Professional formatted report with:
+
 - Summary cards with status counts
 - Detailed test results table
 - Color-coded status indicators
@@ -113,13 +116,13 @@ Professional formatted report with:
 
 When tests exceed acceptable thresholds, the framework automatically analyzes potential causes:
 
-| Category | Code | Common Causes |
-|----------|------|---------------|
-| Extension Conflict | EXT-CONF | Multiple extensions competing for resources |
-| Language Server Overload | LANG-OVER | Large workspace indexing |
-| File Watcher Storm | FW-STORM | Too many file change events |
-| Memory Pressure | MEM-PRES | Insufficient RAM |
-| Disk I/O | DISK-IO | Slow storage operations |
+| Category                 | Code      | Common Causes                               |
+| ------------------------ | --------- | ------------------------------------------- |
+| Extension Conflict       | EXT-CONF  | Multiple extensions competing for resources |
+| Language Server Overload | LANG-OVER | Large workspace indexing                    |
+| File Watcher Storm       | FW-STORM  | Too many file change events                 |
+| Memory Pressure          | MEM-PRES  | Insufficient RAM                            |
+| Disk I/O                 | DISK-IO   | Slow storage operations                     |
 
 ## Directory Structure
 
@@ -206,18 +209,21 @@ jobs:
 ### Common Issues
 
 **Test fails with "Settings file not found"**
+
 ```powershell
 # Verify settings path
 Test-Path "$env:APPDATA\Windsurf\User\settings.json"
 ```
 
 **Language server tests timeout**
+
 ```powershell
 # Increase timeout or reduce test scope
 .\Run-WindsurfBenchmark.ps1 -TestCategory "FileSystem"
 ```
 
 **High variance between runs**
+
 - Close other applications
 - Ensure no background indexing
 - Run tests after IDE is fully initialized

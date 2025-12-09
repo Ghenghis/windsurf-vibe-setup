@@ -14,11 +14,11 @@ const crypto = require('crypto');
 
 const MEMORY_TYPES = {
   CONVERSATION: 'conversation',
-  PREFERENCE: 'preference', 
+  PREFERENCE: 'preference',
   KNOWLEDGE: 'knowledge',
   TASK: 'task',
   CODE: 'code',
-  RELATIONSHIP: 'relationship'
+  RELATIONSHIP: 'relationship',
 };
 
 class LocalMem0 {
@@ -27,13 +27,13 @@ class LocalMem0 {
     this.memories = new Map();
     this.relationships = new Map();
     this.index = new Map();
-    
+
     this.config = {
       maxMemories: options.maxMemories || 10000,
       embedModel: options.embedModel || 'nomic-embed-text',
-      ollamaUrl: options.ollamaUrl || 'http://localhost:11434'
+      ollamaUrl: options.ollamaUrl || 'http://localhost:11434',
     };
-    
+
     this.stats = { totalMemories: 0, totalRelationships: 0, lastSync: null };
     this.initialized = false;
   }
@@ -51,7 +51,7 @@ class LocalMem0 {
   async add(content, options = {}) {
     const memoryId = options.id || this.generateId();
     const timestamp = new Date().toISOString();
-    
+
     const memory = {
       id: memoryId,
       content,
@@ -64,9 +64,9 @@ class LocalMem0 {
       createdAt: timestamp,
       updatedAt: timestamp,
       accessCount: 0,
-      lastAccessed: null
+      lastAccessed: null,
     };
-    
+
     if (this.config.embedModel) {
       try {
         memory.embedding = await this.generateEmbedding(content);
@@ -74,12 +74,12 @@ class LocalMem0 {
         console.warn('Could not generate embedding:', error.message);
       }
     }
-    
+
     this.memories.set(memoryId, memory);
     this.indexMemory(memory);
     this.stats.totalMemories++;
     this.saveToDisk();
-    
+
     return memory;
   }
 
@@ -87,9 +87,9 @@ class LocalMem0 {
     const limit = options.limit || 10;
     const userId = options.userId || 'default';
     const type = options.type;
-    
+
     let results = [];
-    
+
     if (this.config.embedModel) {
       try {
         const queryEmbedding = await this.generateEmbedding(query);
@@ -100,18 +100,18 @@ class LocalMem0 {
     } else {
       results = this.keywordSearch(query, limit * 2);
     }
-    
+
     results = results.filter(m => {
       if (userId && m.userId !== userId) return false;
       if (type && m.type !== type) return false;
       return true;
     });
-    
+
     results.slice(0, limit).forEach(m => {
       m.accessCount++;
       m.lastAccessed = new Date().toISOString();
     });
-    
+
     return results.slice(0, limit);
   }
 
@@ -120,7 +120,7 @@ class LocalMem0 {
       const response = await fetch(`${this.config.ollamaUrl}/api/embeddings`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ model: this.config.embedModel, prompt: text })
+        body: JSON.stringify({ model: this.config.embedModel, prompt: text }),
       });
       const data = await response.json();
       return data.embedding;
@@ -142,7 +142,9 @@ class LocalMem0 {
 
   cosineSimilarity(a, b) {
     if (!a || !b || a.length !== b.length) return 0;
-    let dotProduct = 0, normA = 0, normB = 0;
+    let dotProduct = 0,
+      normA = 0,
+      normB = 0;
     for (let i = 0; i < a.length; i++) {
       dotProduct += a[i] * b[i];
       normA += a[i] * a[i];
@@ -154,13 +156,13 @@ class LocalMem0 {
   keywordSearch(query, limit) {
     const keywords = query.toLowerCase().split(/\s+/);
     const scored = [];
-    
+
     for (const [id, memory] of this.memories) {
       const content = memory.content.toLowerCase();
       const score = keywords.reduce((acc, kw) => acc + (content.includes(kw) ? 1 : 0), 0);
       if (score > 0) scored.push({ ...memory, similarity: score / keywords.length });
     }
-    
+
     return scored.sort((a, b) => b.similarity - a.similarity).slice(0, limit);
   }
 
@@ -170,7 +172,7 @@ class LocalMem0 {
       if (!this.index.has(word)) this.index.set(word, new Set());
       this.index.get(word).add(memory.id);
     });
-    
+
     memory.tags.forEach(tag => {
       if (!this.index.has(`tag:${tag}`)) this.index.set(`tag:${tag}`, new Set());
       this.index.get(`tag:${tag}`).add(memory.id);
@@ -184,15 +186,15 @@ class LocalMem0 {
   async update(memoryId, updates) {
     const memory = this.memories.get(memoryId);
     if (!memory) return null;
-    
+
     Object.assign(memory, updates, { updatedAt: new Date().toISOString() });
-    
+
     if (updates.content && this.config.embedModel) {
       try {
         memory.embedding = await this.generateEmbedding(updates.content);
       } catch {}
     }
-    
+
     this.saveToDisk();
     return memory;
   }
@@ -200,7 +202,7 @@ class LocalMem0 {
   async delete(memoryId) {
     const memory = this.memories.get(memoryId);
     if (!memory) return false;
-    
+
     this.memories.delete(memoryId);
     this.stats.totalMemories--;
     this.saveToDisk();
@@ -211,8 +213,11 @@ class LocalMem0 {
     const relId = `${fromId}->${toId}:${type}`;
     this.relationships.set(relId, {
       id: relId,
-      fromId, toId, type, metadata,
-      createdAt: new Date().toISOString()
+      fromId,
+      toId,
+      type,
+      metadata,
+      createdAt: new Date().toISOString(),
     });
     this.stats.totalRelationships++;
     return this.relationships.get(relId);
@@ -241,9 +246,9 @@ class LocalMem0 {
       memories: Array.from(this.memories.entries()),
       relationships: Array.from(this.relationships.entries()),
       stats: this.stats,
-      savedAt: new Date().toISOString()
+      savedAt: new Date().toISOString(),
     };
-    
+
     const filepath = path.join(this.storagePath, 'memories.json');
     fs.writeFileSync(filepath, JSON.stringify(data, null, 2));
     this.stats.lastSync = new Date().toISOString();
@@ -257,7 +262,7 @@ class LocalMem0 {
         this.memories = new Map(data.memories || []);
         this.relationships = new Map(data.relationships || []);
         this.stats = data.stats || this.stats;
-        
+
         // Rebuild index
         for (const [id, memory] of this.memories) {
           this.indexMemory(memory);
@@ -273,7 +278,7 @@ class LocalMem0 {
       ...this.stats,
       indexSize: this.index.size,
       memoriesCount: this.memories.size,
-      relationshipsCount: this.relationships.size
+      relationshipsCount: this.relationships.size,
     };
   }
 }

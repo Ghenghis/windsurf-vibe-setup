@@ -25,8 +25,10 @@ function safeExec(command, options = {}) {
       timeout: options.timeout || 60000,
       maxBuffer: 10 * 1024 * 1024,
       windowsHide: true,
-      ...options
-    }).toString().trim();
+      ...options,
+    })
+      .toString()
+      .trim();
     return { success: true, output, exitCode: 0 };
   } catch (e) {
     return {
@@ -34,7 +36,7 @@ function safeExec(command, options = {}) {
       error: e.message,
       output: e.stdout?.toString() || '',
       stderr: e.stderr?.toString() || '',
-      exitCode: e.status || 1
+      exitCode: e.status || 1,
     };
   }
 }
@@ -60,7 +62,7 @@ async function analyzeProject({ projectPath }) {
     dependencies: { production: [], development: [] },
     structure: { directories: [], files: [], totalFiles: 0 },
     issues: [],
-    suggestions: []
+    suggestions: [],
   };
 
   if (!fs.existsSync(projectPath)) {
@@ -80,7 +82,11 @@ async function analyzeProject({ projectPath }) {
     try {
       const entries = fs.readdirSync(dir, { withFileTypes: true });
       for (const entry of entries) {
-        if (entry.name === 'node_modules' || entry.name === '.git' || entry.name === '__pycache__') {
+        if (
+          entry.name === 'node_modules' ||
+          entry.name === '.git' ||
+          entry.name === '__pycache__'
+        ) {
           continue;
         }
         const fullPath = path.join(dir, entry.name);
@@ -106,10 +112,21 @@ async function analyzeProject({ projectPath }) {
 
   // Find entry points
   const entryPoints = [
-    'src/index.js', 'src/index.ts', 'src/main.js', 'src/main.ts',
-    'index.js', 'index.ts', 'main.py', 'app.py', 'src/main.py',
-    'src/App.jsx', 'src/App.tsx', 'pages/index.js', 'pages/index.tsx',
-    'app/page.tsx', 'app/page.js'
+    'src/index.js',
+    'src/index.ts',
+    'src/main.js',
+    'src/main.ts',
+    'index.js',
+    'index.ts',
+    'main.py',
+    'app.py',
+    'src/main.py',
+    'src/App.jsx',
+    'src/App.tsx',
+    'pages/index.js',
+    'pages/index.tsx',
+    'app/page.tsx',
+    'app/page.js',
   ];
 
   for (const entry of entryPoints) {
@@ -140,7 +157,8 @@ async function analyzeProject({ projectPath }) {
   if (fs.existsSync(reqPath)) {
     try {
       const content = fs.readFileSync(reqPath, 'utf8');
-      analysis.dependencies.production = content.split('\n')
+      analysis.dependencies.production = content
+        .split('\n')
         .map(l => l.trim().split(/[=<>]/)[0])
         .filter(l => l && !l.startsWith('#'));
     } catch {}
@@ -189,27 +207,34 @@ async function detectTechStack({ projectPath }) {
       const allDeps = { ...pkg.dependencies, ...pkg.devDependencies };
 
       if (allDeps.next) {
-        technologies.push('Next.js'); projectType = 'nextjs';
+        technologies.push('Next.js');
+        projectType = 'nextjs';
       }
       if (allDeps.react) {
-        technologies.push('React'); if (!projectType.includes('next')) {
+        technologies.push('React');
+        if (!projectType.includes('next')) {
           projectType = 'react';
         }
       }
       if (allDeps.vue) {
-        technologies.push('Vue.js'); projectType = 'vue';
+        technologies.push('Vue.js');
+        projectType = 'vue';
       }
       if (allDeps.angular) {
-        technologies.push('Angular'); projectType = 'angular';
+        technologies.push('Angular');
+        projectType = 'angular';
       }
       if (allDeps.express) {
-        technologies.push('Express'); projectType = 'node-backend';
+        technologies.push('Express');
+        projectType = 'node-backend';
       }
       if (allDeps.fastify) {
-        technologies.push('Fastify'); projectType = 'node-backend';
+        technologies.push('Fastify');
+        projectType = 'node-backend';
       }
       if (allDeps.nest) {
-        technologies.push('NestJS'); projectType = 'nestjs';
+        technologies.push('NestJS');
+        projectType = 'nestjs';
       }
       if (allDeps.typescript) {
         technologies.push('TypeScript');
@@ -238,18 +263,23 @@ async function detectTechStack({ projectPath }) {
 
     // Python
     'requirements.txt': () => {
-      const content = fs.readFileSync(path.join(projectPath, 'requirements.txt'), 'utf8').toLowerCase();
+      const content = fs
+        .readFileSync(path.join(projectPath, 'requirements.txt'), 'utf8')
+        .toLowerCase();
       technologies.push('Python');
       projectType = 'python';
 
       if (content.includes('fastapi')) {
-        technologies.push('FastAPI'); projectType = 'python-api';
+        technologies.push('FastAPI');
+        projectType = 'python-api';
       }
       if (content.includes('django')) {
-        technologies.push('Django'); projectType = 'django';
+        technologies.push('Django');
+        projectType = 'django';
       }
       if (content.includes('flask')) {
-        technologies.push('Flask'); projectType = 'flask';
+        technologies.push('Flask');
+        projectType = 'flask';
       }
       if (content.includes('pytorch') || content.includes('torch')) {
         technologies.push('PyTorch');
@@ -274,55 +304,74 @@ async function detectTechStack({ projectPath }) {
     },
 
     // Docker
-    'Dockerfile': () => {
-      technologies.push('Docker'); return true;
+    Dockerfile: () => {
+      technologies.push('Docker');
+      return true;
     },
     'docker-compose.yml': () => {
-      technologies.push('Docker Compose'); return true;
+      technologies.push('Docker Compose');
+      return true;
     },
     'docker-compose.yaml': () => {
-      technologies.push('Docker Compose'); return true;
+      technologies.push('Docker Compose');
+      return true;
     },
 
     // Config files
     'tsconfig.json': () => {
-      technologies.push('TypeScript'); return true;
+      technologies.push('TypeScript');
+      return true;
     },
     'tailwind.config.js': () => {
-      technologies.push('Tailwind CSS'); return true;
+      technologies.push('Tailwind CSS');
+      return true;
     },
     'tailwind.config.ts': () => {
-      technologies.push('Tailwind CSS'); return true;
+      technologies.push('Tailwind CSS');
+      return true;
     },
     '.eslintrc.json': () => {
-      technologies.push('ESLint'); return true;
+      technologies.push('ESLint');
+      return true;
     },
     '.prettierrc': () => {
-      technologies.push('Prettier'); return true;
+      technologies.push('Prettier');
+      return true;
     },
     'vite.config.js': () => {
-      technologies.push('Vite'); return true;
+      technologies.push('Vite');
+      return true;
     },
     'vite.config.ts': () => {
-      technologies.push('Vite'); return true;
+      technologies.push('Vite');
+      return true;
     },
     'webpack.config.js': () => {
-      technologies.push('Webpack'); return true;
+      technologies.push('Webpack');
+      return true;
     },
 
     // Other
     'Cargo.toml': () => {
-      technologies.push('Rust'); projectType = 'rust'; return true;
+      technologies.push('Rust');
+      projectType = 'rust';
+      return true;
     },
     'go.mod': () => {
-      technologies.push('Go'); projectType = 'go'; return true;
+      technologies.push('Go');
+      projectType = 'go';
+      return true;
     },
     'pom.xml': () => {
-      technologies.push('Java/Maven'); projectType = 'java'; return true;
+      technologies.push('Java/Maven');
+      projectType = 'java';
+      return true;
     },
     'build.gradle': () => {
-      technologies.push('Java/Gradle'); projectType = 'java'; return true;
-    }
+      technologies.push('Java/Gradle');
+      projectType = 'java';
+      return true;
+    },
   };
 
   for (const [file, check] of Object.entries(checks)) {
@@ -369,14 +418,15 @@ async function detectTechStack({ projectPath }) {
     technologies.push('Vue SFC');
   }
   if (extensions['.svelte']) {
-    technologies.push('Svelte'); projectType = 'svelte';
+    technologies.push('Svelte');
+    projectType = 'svelte';
   }
 
   return {
     success: true,
     projectType,
     technologies: [...new Set(technologies)],
-    fileTypes: extensions
+    fileTypes: extensions,
   };
 }
 
@@ -394,7 +444,7 @@ async function analyzeError({ error, context, projectPath }) {
     cause: null,
     fixes: [],
     canAutoFix: false,
-    autoFixCommand: null
+    autoFixCommand: null,
   };
 
   const errorLower = error.toLowerCase();
@@ -412,12 +462,12 @@ async function analyzeError({ error, context, projectPath }) {
           fixes: [
             moduleName ? `npm install ${moduleName}` : 'npm install',
             'Check import paths are correct',
-            'Verify package.json has the dependency'
+            'Verify package.json has the dependency',
           ],
           canAutoFix: !!moduleName,
-          autoFixCommand: moduleName ? `npm install ${moduleName}` : null
+          autoFixCommand: moduleName ? `npm install ${moduleName}` : null,
         };
-      }
+      },
     },
     {
       pattern: /enoent|no such file or directory/i,
@@ -429,11 +479,11 @@ async function analyzeError({ error, context, projectPath }) {
           fixes: [
             'Create the missing file/directory',
             'Check the file path is correct',
-            'Verify working directory'
+            'Verify working directory',
           ],
-          canAutoFix: false
+          canAutoFix: false,
         };
-      }
+      },
     },
     {
       pattern: /permission denied|eacces/i,
@@ -443,10 +493,10 @@ async function analyzeError({ error, context, projectPath }) {
         fixes: [
           'Run with administrator/sudo privileges',
           'Check file/folder permissions',
-          'Take ownership of the file/folder'
+          'Take ownership of the file/folder',
         ],
-        canAutoFix: false
-      })
+        canAutoFix: false,
+      }),
     },
     {
       pattern: /syntax error|unexpected token/i,
@@ -458,11 +508,11 @@ async function analyzeError({ error, context, projectPath }) {
           fixes: [
             'Check for missing brackets, quotes, or semicolons',
             'Validate JSON/JavaScript syntax',
-            'Use a linter to find the exact issue'
+            'Use a linter to find the exact issue',
           ],
-          canAutoFix: false
+          canAutoFix: false,
         };
-      }
+      },
     },
     {
       pattern: /eaddrinuse|port.*in use|address already in use/i,
@@ -475,14 +525,13 @@ async function analyzeError({ error, context, projectPath }) {
           fixes: [
             `Kill process using port ${port}`,
             'Use a different port',
-            'Check for other running servers'
+            'Check for other running servers',
           ],
           canAutoFix: true,
-          autoFixCommand: process.platform === 'win32'
-            ? `netstat -ano | findstr :${port}`
-            : `lsof -i :${port}`
+          autoFixCommand:
+            process.platform === 'win32' ? `netstat -ano | findstr :${port}` : `lsof -i :${port}`,
         };
-      }
+      },
     },
     {
       pattern: /npm err|npm error/i,
@@ -493,11 +542,11 @@ async function analyzeError({ error, context, projectPath }) {
           'Clear npm cache: npm cache clean --force',
           'Delete node_modules and reinstall: rm -rf node_modules && npm install',
           'Check network connection',
-          'Update npm: npm install -g npm@latest'
+          'Update npm: npm install -g npm@latest',
         ],
         canAutoFix: true,
-        autoFixCommand: 'npm cache clean --force && npm install'
-      })
+        autoFixCommand: 'npm cache clean --force && npm install',
+      }),
     },
     {
       pattern: /type error|typeerror/i,
@@ -507,10 +556,10 @@ async function analyzeError({ error, context, projectPath }) {
         fixes: [
           'Check variable types match expected types',
           'Add null/undefined checks',
-          'Use TypeScript for better type safety'
+          'Use TypeScript for better type safety',
         ],
-        canAutoFix: false
-      })
+        canAutoFix: false,
+      }),
     },
     {
       pattern: /reference error|is not defined/i,
@@ -522,11 +571,11 @@ async function analyzeError({ error, context, projectPath }) {
           fixes: [
             'Check variable is declared before use',
             'Verify import statements',
-            'Check for typos in variable names'
+            'Check for typos in variable names',
           ],
-          canAutoFix: false
+          canAutoFix: false,
         };
-      }
+      },
     },
     {
       pattern: /connection refused|econnrefused/i,
@@ -536,25 +585,21 @@ async function analyzeError({ error, context, projectPath }) {
         fixes: [
           'Verify the service is running',
           'Check the host and port are correct',
-          'Check firewall settings'
+          'Check firewall settings',
         ],
-        canAutoFix: false
-      })
+        canAutoFix: false,
+      }),
     },
     {
       pattern: /timeout|etimedout/i,
       type: 'timeout_error',
       analyze: () => ({
         cause: 'Operation timed out',
-        fixes: [
-          'Increase timeout value',
-          'Check network connectivity',
-          'Retry the operation'
-        ],
+        fixes: ['Increase timeout value', 'Check network connectivity', 'Retry the operation'],
         canAutoFix: true,
-        autoFixCommand: null // Retry logic
-      })
-    }
+        autoFixCommand: null, // Retry logic
+      }),
+    },
   ];
 
   for (const { pattern, type, analyze } of patterns) {
@@ -572,7 +617,7 @@ async function analyzeError({ error, context, projectPath }) {
     analysis.fixes = [
       'Check the full error message for details',
       'Search online for the error message',
-      'Review recent code changes'
+      'Review recent code changes',
     ];
   }
 
@@ -582,7 +627,12 @@ async function analyzeError({ error, context, projectPath }) {
 /**
  * Smart retry with different strategies
  */
-async function smartRetry({ command, cwd, maxAttempts = 3, strategies = ['retry', 'clear_cache', 'reinstall'] }) {
+async function smartRetry({
+  command,
+  cwd,
+  maxAttempts = 3,
+  strategies = ['retry', 'clear_cache', 'reinstall'],
+}) {
   const results = [];
 
   for (let attempt = 1; attempt <= maxAttempts; attempt++) {
@@ -622,7 +672,7 @@ async function smartRetry({ command, cwd, maxAttempts = 3, strategies = ['retry'
       strategy,
       success: result.success,
       output: result.output,
-      error: result.error
+      error: result.error,
     });
 
     if (result.success) {
@@ -630,7 +680,7 @@ async function smartRetry({ command, cwd, maxAttempts = 3, strategies = ['retry'
         success: true,
         attempts: attempt,
         strategy,
-        results
+        results,
       };
     }
   }
@@ -639,7 +689,7 @@ async function smartRetry({ command, cwd, maxAttempts = 3, strategies = ['retry'
     success: false,
     attempts: maxAttempts,
     message: 'All retry strategies failed',
-    results
+    results,
   };
 }
 
@@ -651,7 +701,7 @@ async function smartRetry({ command, cwd, maxAttempts = 3, strategies = ['retry'
  * Make HTTP requests
  */
 async function httpRequest({ url, method = 'GET', headers = {}, body = null, timeout = 30000 }) {
-  return new Promise((resolve) => {
+  return new Promise(resolve => {
     try {
       const urlObj = new URL(url);
       const lib = urlObj.protocol === 'https:' ? https : http;
@@ -663,9 +713,9 @@ async function httpRequest({ url, method = 'GET', headers = {}, body = null, tim
         method,
         headers: {
           'User-Agent': 'Windsurf-Autopilot/2.0',
-          ...headers
+          ...headers,
         },
-        timeout
+        timeout,
       };
 
       if (body && method !== 'GET') {
@@ -676,9 +726,9 @@ async function httpRequest({ url, method = 'GET', headers = {}, body = null, tim
         }
       }
 
-      const req = lib.request(options, (res) => {
+      const req = lib.request(options, res => {
         let data = '';
-        res.on('data', chunk => data += chunk);
+        res.on('data', chunk => (data += chunk));
         res.on('end', () => {
           let parsedBody = data;
           try {
@@ -691,12 +741,12 @@ async function httpRequest({ url, method = 'GET', headers = {}, body = null, tim
             success: res.statusCode >= 200 && res.statusCode < 300,
             statusCode: res.statusCode,
             headers: res.headers,
-            body: parsedBody
+            body: parsedBody,
           });
         });
       });
 
-      req.on('error', (e) => {
+      req.on('error', e => {
         resolve({ success: false, error: e.message });
       });
 
@@ -720,7 +770,7 @@ async function httpRequest({ url, method = 'GET', headers = {}, body = null, tim
  * Download file from URL
  */
 async function downloadFile({ url, destPath, overwrite = false }) {
-  return new Promise((resolve) => {
+  return new Promise(resolve => {
     try {
       if (fs.existsSync(destPath) && !overwrite) {
         return resolve({ success: false, error: 'File already exists' });
@@ -736,27 +786,29 @@ async function downloadFile({ url, destPath, overwrite = false }) {
 
       const file = fs.createWriteStream(destPath);
 
-      lib.get(url, (res) => {
-        if (res.statusCode === 301 || res.statusCode === 302) {
-          // Follow redirect
-          downloadFile({ url: res.headers.location, destPath, overwrite }).then(resolve);
-          return;
-        }
+      lib
+        .get(url, res => {
+          if (res.statusCode === 301 || res.statusCode === 302) {
+            // Follow redirect
+            downloadFile({ url: res.headers.location, destPath, overwrite }).then(resolve);
+            return;
+          }
 
-        res.pipe(file);
-        file.on('finish', () => {
-          file.close();
-          const stats = fs.statSync(destPath);
-          resolve({
-            success: true,
-            path: destPath,
-            size: stats.size
+          res.pipe(file);
+          file.on('finish', () => {
+            file.close();
+            const stats = fs.statSync(destPath);
+            resolve({
+              success: true,
+              path: destPath,
+              size: stats.size,
+            });
           });
+        })
+        .on('error', e => {
+          fs.unlink(destPath, () => {});
+          resolve({ success: false, error: e.message });
         });
-      }).on('error', (e) => {
-        fs.unlink(destPath, () => {});
-        resolve({ success: false, error: e.message });
-      });
     } catch (e) {
       resolve({ success: false, error: e.message });
     }
@@ -774,13 +826,15 @@ async function lintCode({ projectPath, fix = false }) {
   const results = { linters: [], issues: [], fixed: 0 };
 
   // Check for ESLint
-  const eslintConfig = ['.eslintrc.json', '.eslintrc.js', '.eslintrc', 'eslint.config.js']
-    .some(f => fs.existsSync(path.join(projectPath, f)));
+  const eslintConfig = ['.eslintrc.json', '.eslintrc.js', '.eslintrc', 'eslint.config.js'].some(f =>
+    fs.existsSync(path.join(projectPath, f))
+  );
 
-  const hasEslint = eslintConfig ||
+  const hasEslint =
+    eslintConfig ||
     (fs.existsSync(path.join(projectPath, 'package.json')) &&
-     JSON.parse(fs.readFileSync(path.join(projectPath, 'package.json'), 'utf8'))
-       .devDependencies?.eslint);
+      JSON.parse(fs.readFileSync(path.join(projectPath, 'package.json'), 'utf8')).devDependencies
+        ?.eslint);
 
   if (hasEslint) {
     const cmd = fix ? 'npx eslint . --fix' : 'npx eslint .';
@@ -788,21 +842,22 @@ async function lintCode({ projectPath, fix = false }) {
     results.linters.push({
       name: 'ESLint',
       success: result.success,
-      output: result.output || result.stderr
+      output: result.output || result.stderr,
     });
   }
 
   // Check for Python linters
-  if (fs.existsSync(path.join(projectPath, 'requirements.txt')) ||
-      fs.existsSync(path.join(projectPath, 'pyproject.toml'))) {
-
+  if (
+    fs.existsSync(path.join(projectPath, 'requirements.txt')) ||
+    fs.existsSync(path.join(projectPath, 'pyproject.toml'))
+  ) {
     // Try flake8
     const flake8 = safeExec('python -m flake8 .', { cwd: projectPath, timeout: 60000 });
     if (flake8.success || flake8.output) {
       results.linters.push({
         name: 'Flake8',
         success: flake8.exitCode === 0,
-        output: flake8.output || flake8.stderr
+        output: flake8.output || flake8.stderr,
       });
     }
 
@@ -812,7 +867,7 @@ async function lintCode({ projectPath, fix = false }) {
       results.linters.push({
         name: 'Black',
         success: black.success,
-        output: black.output || black.stderr
+        output: black.output || black.stderr,
       });
     }
   }
@@ -827,9 +882,11 @@ async function formatCode({ projectPath }) {
   const results = [];
 
   // Prettier
-  const hasPrettier = fs.existsSync(path.join(projectPath, 'node_modules', '.bin', 'prettier')) ||
+  const hasPrettier =
+    fs.existsSync(path.join(projectPath, 'node_modules', '.bin', 'prettier')) ||
     ['.prettierrc', '.prettierrc.json', 'prettier.config.js'].some(f =>
-      fs.existsSync(path.join(projectPath, f)));
+      fs.existsSync(path.join(projectPath, f))
+    );
 
   if (hasPrettier) {
     const result = safeExec('npx prettier --write .', { cwd: projectPath, timeout: 60000 });
@@ -868,7 +925,10 @@ async function runTests({ projectPath, testFile = null, coverage = false }) {
     } else if (deps.jest) {
       results.framework = 'Jest';
       cmd = coverage ? 'npx jest --coverage' : 'npx jest';
-    } else if (pkg.scripts?.test && pkg.scripts.test !== 'echo "Error: no test specified" && exit 1') {
+    } else if (
+      pkg.scripts?.test &&
+      pkg.scripts.test !== 'echo "Error: no test specified" && exit 1'
+    ) {
       results.framework = 'npm test';
       cmd = 'npm test';
     }
@@ -894,10 +954,11 @@ async function runTests({ projectPath, testFile = null, coverage = false }) {
   }
 
   // Python pytest
-  if (fs.existsSync(path.join(projectPath, 'requirements.txt')) ||
-      fs.existsSync(path.join(projectPath, 'pytest.ini')) ||
-      fs.existsSync(path.join(projectPath, 'tests'))) {
-
+  if (
+    fs.existsSync(path.join(projectPath, 'requirements.txt')) ||
+    fs.existsSync(path.join(projectPath, 'pytest.ini')) ||
+    fs.existsSync(path.join(projectPath, 'tests'))
+  ) {
     results.framework = 'Pytest';
     let cmd = coverage ? 'python -m pytest --cov' : 'python -m pytest';
     if (testFile) {
@@ -940,15 +1001,14 @@ async function startServer({ projectPath, script = 'dev', port = null }) {
 
   // Start the process
   const shell = process.platform === 'win32' ? 'cmd.exe' : '/bin/bash';
-  const shellArgs = process.platform === 'win32'
-    ? ['/c', `npm run ${script}`]
-    : ['-c', `npm run ${script}`];
+  const shellArgs =
+    process.platform === 'win32' ? ['/c', `npm run ${script}`] : ['-c', `npm run ${script}`];
 
   const proc = spawn(shell, shellArgs, {
     cwd: projectPath,
     stdio: ['ignore', 'pipe', 'pipe'],
     detached: true,
-    windowsHide: true
+    windowsHide: true,
   });
 
   const serverId = `server_${Date.now()}`;
@@ -957,7 +1017,7 @@ async function startServer({ projectPath, script = 'dev', port = null }) {
     pid: proc.pid,
     projectPath,
     script,
-    startedAt: new Date().toISOString()
+    startedAt: new Date().toISOString(),
   });
 
   // Give it a moment to start
@@ -969,7 +1029,7 @@ async function startServer({ projectPath, script = 'dev', port = null }) {
     pid: proc.pid,
     script,
     message: `Server started (PID: ${proc.pid})`,
-    hint: `Use stopServer with serverId "${serverId}" to stop`
+    hint: `Use stopServer with serverId "${serverId}" to stop`,
   };
 }
 
@@ -1011,7 +1071,7 @@ async function listRunning() {
       pid: info.pid,
       projectPath: info.projectPath,
       script: info.script,
-      startedAt: info.startedAt
+      startedAt: info.startedAt,
     });
   }
   return { success: true, servers };
@@ -1041,7 +1101,12 @@ async function dockerStatus() {
     version: docker.output,
     composeVersion: compose.output,
     runningContainers: running.success ? running.output.split('\n').filter(l => l) : [],
-    images: images.success ? images.output.split('\n').filter(l => l).slice(0, 20) : []
+    images: images.success
+      ? images.output
+          .split('\n')
+          .filter(l => l)
+          .slice(0, 20)
+      : [],
   };
 }
 
@@ -1063,7 +1128,7 @@ async function dockerBuild({ projectPath, tag = null, dockerfile = 'Dockerfile' 
     success: result.success,
     image: imageName,
     output: result.output,
-    error: result.error
+    error: result.error,
   };
 }
 
@@ -1091,7 +1156,7 @@ async function dockerRun({ image, name = null, ports = [], env = {}, detach = tr
   return {
     success: result.success,
     containerId: result.output?.trim(),
-    error: result.error
+    error: result.error,
   };
 }
 
@@ -1119,7 +1184,7 @@ async function dockerComposeUp({ projectPath, detach = true, build = false }) {
   return {
     success: result.success,
     output: result.output,
-    error: result.error
+    error: result.error,
   };
 }
 
@@ -1155,5 +1220,5 @@ module.exports = {
   dockerStatus,
   dockerBuild,
   dockerRun,
-  dockerComposeUp
+  dockerComposeUp,
 };

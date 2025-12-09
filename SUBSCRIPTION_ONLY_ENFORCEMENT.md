@@ -9,7 +9,9 @@
 ## 🛡️ How The Protection Works
 
 ### 1. Automatic API Key Detection
+
 The system actively scans for and BLOCKS these variables:
+
 - `ANTHROPIC_API_KEY` ❌
 - `OPENAI_API_KEY` ❌
 - `CLAUDE_API_KEY` ❌
@@ -17,7 +19,9 @@ The system actively scans for and BLOCKS these variables:
 - Any variable ending in `_API_KEY` ❌
 
 ### 2. Enforcement Points
+
 API keys are blocked at MULTIPLE levels:
+
 1. **Environment Check** - On startup
 2. **Configuration Check** - During initialization
 3. **Runtime Check** - Before any operations
@@ -41,12 +45,13 @@ Remove all API keys and use: claude setup-token
 
 ### Cost Comparison for 24-Hour Session
 
-| Method | Cost | What You Get |
-|--------|------|--------------|
-| **API Keys** | $500-5000 | Pay per token, surprise bills |
-| **Subscription** | $20 | Unlimited within fair use |
+| Method           | Cost      | What You Get                  |
+| ---------------- | --------- | ----------------------------- |
+| **API Keys**     | $500-5000 | Pay per token, surprise bills |
+| **Subscription** | $20       | Unlimited within fair use     |
 
 ### Real Example (Claude Opus)
+
 - **24-hour coding session**
 - **~10 million tokens used**
 - **API cost: $3,750** ❌
@@ -58,16 +63,17 @@ Remove all API keys and use: claude setup-token
 ## 🚀 Implementation Details
 
 ### Controller Level (`controller.js`)
+
 ```javascript
 async enforceSubscriptionOnly() {
   // Blocks ALL API keys
   const blockedVars = [
     'ANTHROPIC_API_KEY',
-    'OPENAI_API_KEY', 
+    'OPENAI_API_KEY',
     'CLAUDE_API_KEY',
     'API_KEY'
   ];
-  
+
   for (const varName of blockedVars) {
     if (process.env[varName]) {
       throw new Error('API keys blocked. Use Claude subscription only!');
@@ -77,12 +83,13 @@ async enforceSubscriptionOnly() {
 ```
 
 ### Client Level (`claude-subscription.js`)
+
 ```javascript
 getClientConfig(projectDir) {
   if (!this.token && !process.env.CLAUDE_TOKEN) {
     throw new Error('Claude token not set. Run setupToken() first');
   }
-  
+
   // NEVER accepts API keys, only subscription tokens
   return {
     apiKey: this.token || process.env.CLAUDE_TOKEN, // This is subscription token!
@@ -92,6 +99,7 @@ getClientConfig(projectDir) {
 ```
 
 ### Environment Level (`.env`)
+
 ```bash
 # 🚨 NO API KEYS ALLOWED! ONLY CLAUDE SUBSCRIPTION! 🚨
 # This system ONLY uses Claude subscription ($20/month)
@@ -110,11 +118,13 @@ CLAUDE_TOKEN=your_subscription_token_here
 ## ✅ How to Use Correctly
 
 ### Step 1: Get Claude Pro Subscription
+
 ```
 https://claude.ai/subscribe ($20/month)
 ```
 
 ### Step 2: Get Subscription Token
+
 ```bash
 claude setup-token
 # This opens browser for OAuth
@@ -122,11 +132,13 @@ claude setup-token
 ```
 
 ### Step 3: Save Token
+
 ```bash
 echo "CLAUDE_TOKEN=your_token" >> .env
 ```
 
 ### Step 4: Verify
+
 ```bash
 ./verify-subscription.sh
 # Should show: ✅ Using subscription - NO API charges!
@@ -139,18 +151,21 @@ echo "CLAUDE_TOKEN=your_token" >> .env
 ### If System Won't Start
 
 1. **Check for API keys:**
+
    ```bash
    env | grep API_KEY
    # Should return NOTHING
    ```
 
 2. **Remove any found:**
+
    ```bash
    unset ANTHROPIC_API_KEY
    unset OPENAI_API_KEY
    ```
 
 3. **Clean .env:**
+
    ```bash
    grep -v API_KEY .env > .env.tmp && mv .env.tmp .env
    ```
@@ -165,6 +180,7 @@ echo "CLAUDE_TOKEN=your_token" >> .env
 ## 📚 References
 
 This implementation is based on:
+
 - **Cole Medin's Tutorial**: https://youtube.com/watch?v=usQ2HBTTWxs
 - **Method**: Using `claude setup-token` instead of API keys
 - **Savings**: $480-4980 per 24-hour project

@@ -11,9 +11,10 @@ const https = require('https');
 const { execSync } = require('child_process');
 
 // Data directory
-const DATA_DIR = process.platform === 'win32'
-  ? path.join(process.env.APPDATA || '', 'WindsurfAutopilot')
-  : path.join(process.env.HOME || '', '.windsurf-autopilot');
+const DATA_DIR =
+  process.platform === 'win32'
+    ? path.join(process.env.APPDATA || '', 'WindsurfAutopilot')
+    : path.join(process.env.HOME || '', '.windsurf-autopilot');
 
 const PM_DIR = path.join(DATA_DIR, 'project-management');
 const CONFIG_FILE = path.join(PM_DIR, 'config.json');
@@ -47,18 +48,18 @@ function httpRequest(url, method, data, headers = {}) {
       headers: {
         'Content-Type': 'application/json',
         'User-Agent': 'Windsurf-Autopilot/3.1',
-        ...headers
-      }
+        ...headers,
+      },
     };
 
-    const req = https.request(options, (res) => {
+    const req = https.request(options, res => {
       let body = '';
-      res.on('data', chunk => body += chunk);
+      res.on('data', chunk => (body += chunk));
       res.on('end', () => {
         try {
           resolve({
             statusCode: res.statusCode,
-            data: body ? JSON.parse(body) : null
+            data: body ? JSON.parse(body) : null,
           });
         } catch {
           resolve({ statusCode: res.statusCode, data: body });
@@ -75,7 +76,6 @@ function httpRequest(url, method, data, headers = {}) {
 }
 
 const pmTools = {
-
   // Create Jira issue
   jira_create_issue: {
     name: 'jira_create_issue',
@@ -93,11 +93,11 @@ const pmTools = {
         // Auth
         domain: { type: 'string', description: 'Jira domain (e.g., company.atlassian.net)' },
         email: { type: 'string', description: 'Jira email' },
-        apiToken: { type: 'string', description: 'Jira API token' }
+        apiToken: { type: 'string', description: 'Jira API token' },
       },
-      required: ['project', 'summary']
+      required: ['project', 'summary'],
     },
-    handler: async (args) => {
+    handler: async args => {
       const config = loadConfig();
 
       const domain = args.domain || config.jiraDomain;
@@ -108,7 +108,7 @@ const pmTools = {
         return {
           success: false,
           error: 'Jira credentials not configured',
-          hint: 'Provide domain, email, and apiToken (get token from https://id.atlassian.com/manage-profile/security/api-tokens)'
+          hint: 'Provide domain, email, and apiToken (get token from https://id.atlassian.com/manage-profile/security/api-tokens)',
         };
       }
 
@@ -130,18 +130,20 @@ const pmTools = {
         fields: {
           project: { key: args.project },
           summary: args.summary,
-          issuetype: { name: args.type || 'Task' }
-        }
+          issuetype: { name: args.type || 'Task' },
+        },
       };
 
       if (args.description) {
         payload.fields.description = {
           type: 'doc',
           version: 1,
-          content: [{
-            type: 'paragraph',
-            content: [{ type: 'text', text: args.description }]
-          }]
+          content: [
+            {
+              type: 'paragraph',
+              content: [{ type: 'text', text: args.description }],
+            },
+          ],
         };
       }
       if (args.priority) {
@@ -155,12 +157,9 @@ const pmTools = {
       }
 
       try {
-        const response = await httpRequest(
-          `https://${domain}/rest/api/3/issue`,
-          'POST',
-          payload,
-          { 'Authorization': `Basic ${auth}` }
-        );
+        const response = await httpRequest(`https://${domain}/rest/api/3/issue`, 'POST', payload, {
+          Authorization: `Basic ${auth}`,
+        });
 
         if (response.statusCode === 201) {
           return {
@@ -168,19 +167,19 @@ const pmTools = {
             key: response.data.key,
             id: response.data.id,
             url: `https://${domain}/browse/${response.data.key}`,
-            message: `Created issue ${response.data.key}`
+            message: `Created issue ${response.data.key}`,
           };
         } else {
           return {
             success: false,
             statusCode: response.statusCode,
-            error: response.data?.errors || response.data
+            error: response.data?.errors || response.data,
           };
         }
       } catch (error) {
         return { success: false, error: error.message };
       }
-    }
+    },
   },
 
   // Create Linear task
@@ -193,14 +192,17 @@ const pmTools = {
         team: { type: 'string', description: 'Team key or ID' },
         title: { type: 'string', description: 'Issue title' },
         description: { type: 'string', description: 'Issue description (Markdown)' },
-        priority: { type: 'number', description: 'Priority (0=none, 1=urgent, 2=high, 3=medium, 4=low)' },
+        priority: {
+          type: 'number',
+          description: 'Priority (0=none, 1=urgent, 2=high, 3=medium, 4=low)',
+        },
         labels: { type: 'array', items: { type: 'string' }, description: 'Label names' },
         projectId: { type: 'string', description: 'Project ID' },
-        apiKey: { type: 'string', description: 'Linear API key' }
+        apiKey: { type: 'string', description: 'Linear API key' },
       },
-      required: ['title']
+      required: ['title'],
     },
-    handler: async (args) => {
+    handler: async args => {
       const config = loadConfig();
       const apiKey = args.apiKey || config.linearApiKey;
 
@@ -208,7 +210,7 @@ const pmTools = {
         return {
           success: false,
           error: 'Linear API key not configured',
-          hint: 'Get API key from https://linear.app/settings/api'
+          hint: 'Get API key from https://linear.app/settings/api',
         };
       }
 
@@ -239,8 +241,8 @@ const pmTools = {
           priority: args.priority,
           teamId: args.team,
           projectId: args.projectId,
-          labelIds: args.labels
-        }
+          labelIds: args.labels,
+        },
       };
 
       // Remove undefined values
@@ -255,7 +257,7 @@ const pmTools = {
           'https://api.linear.app/graphql',
           'POST',
           { query: mutation, variables },
-          { 'Authorization': apiKey }
+          { Authorization: apiKey }
         );
 
         if (response.data?.data?.issueCreate?.success) {
@@ -265,18 +267,18 @@ const pmTools = {
             id: issue.id,
             identifier: issue.identifier,
             url: issue.url,
-            message: `Created Linear issue ${issue.identifier}`
+            message: `Created Linear issue ${issue.identifier}`,
           };
         } else {
           return {
             success: false,
-            error: response.data?.errors || 'Failed to create issue'
+            error: response.data?.errors || 'Failed to create issue',
           };
         }
       } catch (error) {
         return { success: false, error: error.message };
       }
-    }
+    },
   },
 
   // Create GitHub issue
@@ -292,11 +294,11 @@ const pmTools = {
         labels: { type: 'array', items: { type: 'string' } },
         assignees: { type: 'array', items: { type: 'string' } },
         milestone: { type: 'number', description: 'Milestone number' },
-        token: { type: 'string', description: 'GitHub token' }
+        token: { type: 'string', description: 'GitHub token' },
       },
-      required: ['repo', 'title']
+      required: ['repo', 'title'],
     },
-    handler: async (args) => {
+    handler: async args => {
       const config = loadConfig();
       const token = args.token || config.githubToken || process.env.GITHUB_TOKEN;
 
@@ -304,7 +306,7 @@ const pmTools = {
         return {
           success: false,
           error: 'GitHub token not configured',
-          hint: 'Provide token or set GITHUB_TOKEN environment variable'
+          hint: 'Provide token or set GITHUB_TOKEN environment variable',
         };
       }
 
@@ -320,7 +322,7 @@ const pmTools = {
         body: args.body,
         labels: args.labels,
         assignees: args.assignees,
-        milestone: args.milestone
+        milestone: args.milestone,
       };
 
       // Remove undefined
@@ -335,7 +337,7 @@ const pmTools = {
           `https://api.github.com/repos/${owner}/${repo}/issues`,
           'POST',
           payload,
-          { 'Authorization': `Bearer ${token}` }
+          { Authorization: `Bearer ${token}` }
         );
 
         if (response.statusCode === 201) {
@@ -343,19 +345,19 @@ const pmTools = {
             success: true,
             number: response.data.number,
             url: response.data.html_url,
-            message: `Created GitHub issue #${response.data.number}`
+            message: `Created GitHub issue #${response.data.number}`,
           };
         } else {
           return {
             success: false,
             statusCode: response.statusCode,
-            error: response.data?.message || response.data
+            error: response.data?.message || response.data,
           };
         }
       } catch (error) {
         return { success: false, error: error.message };
       }
-    }
+    },
   },
 
   // Auto-generate changelog from commits
@@ -380,12 +382,12 @@ const pmTools = {
             refactor: 'Refactoring',
             docs: 'Documentation',
             test: 'Tests',
-            chore: 'Maintenance'
-          }
-        }
-      }
+            chore: 'Maintenance',
+          },
+        },
+      },
     },
-    handler: async (args) => {
+    handler: async args => {
       const repoPath = args.path || process.cwd();
       const from = args.from;
       const to = args.to || 'HEAD';
@@ -398,7 +400,7 @@ const pmTools = {
         refactor: 'Refactoring',
         docs: 'Documentation',
         test: 'Tests',
-        chore: 'Maintenance'
+        chore: 'Maintenance',
       };
 
       try {
@@ -411,20 +413,23 @@ const pmTools = {
         const logCmd = `git log ${range} --pretty=format:"%H|%s|%an|%ad" --date=short`;
         const logOutput = execSync(logCmd, { cwd: repoPath, encoding: 'utf8' });
 
-        const commits = logOutput.split('\n').filter(Boolean).map(line => {
-          const [hash, message, author, date] = line.split('|');
-          // Parse conventional commit
-          const match = message.match(/^(\w+)(?:\(([^)]+)\))?!?:\s*(.+)$/);
-          return {
-            hash: hash.slice(0, 7),
-            message,
-            author,
-            date,
-            type: match?.[1] || 'other',
-            scope: match?.[2] || null,
-            description: match?.[3] || message
-          };
-        });
+        const commits = logOutput
+          .split('\n')
+          .filter(Boolean)
+          .map(line => {
+            const [hash, message, author, date] = line.split('|');
+            // Parse conventional commit
+            const match = message.match(/^(\w+)(?:\(([^)]+)\))?!?:\s*(.+)$/);
+            return {
+              hash: hash.slice(0, 7),
+              message,
+              author,
+              date,
+              type: match?.[1] || 'other',
+              scope: match?.[2] || null,
+              description: match?.[3] || message,
+            };
+          });
 
         // Group by type
         const grouped = {};
@@ -439,13 +444,17 @@ const pmTools = {
         // Generate output
         let changelog;
         if (format === 'json') {
-          changelog = JSON.stringify({
-            from,
-            to,
-            generated: new Date().toISOString(),
-            sections: grouped,
-            totalCommits: commits.length
-          }, null, 2);
+          changelog = JSON.stringify(
+            {
+              from,
+              to,
+              generated: new Date().toISOString(),
+              sections: grouped,
+              totalCommits: commits.length,
+            },
+            null,
+            2
+          );
         } else {
           // Markdown format
           const date = new Date().toISOString().split('T')[0];
@@ -474,12 +483,12 @@ const pmTools = {
           sections: Object.keys(grouped),
           output: output || null,
           changelog: changelog.slice(0, 3000),
-          message: `Generated changelog with ${commits.length} commits`
+          message: `Generated changelog with ${commits.length} commits`,
         };
       } catch (error) {
         return { success: false, error: error.message };
       }
-    }
+    },
   },
 
   // Create GitHub release
@@ -499,20 +508,20 @@ const pmTools = {
         assets: {
           type: 'array',
           items: { type: 'string' },
-          description: 'Paths to assets to upload'
+          description: 'Paths to assets to upload',
         },
-        token: { type: 'string', description: 'GitHub token' }
+        token: { type: 'string', description: 'GitHub token' },
       },
-      required: ['repo', 'tag']
+      required: ['repo', 'tag'],
     },
-    handler: async (args) => {
+    handler: async args => {
       const config = loadConfig();
       const token = args.token || config.githubToken || process.env.GITHUB_TOKEN;
 
       if (!token) {
         return {
           success: false,
-          error: 'GitHub token not configured'
+          error: 'GitHub token not configured',
         };
       }
 
@@ -524,7 +533,7 @@ const pmTools = {
         body: args.notes || '',
         draft: args.draft || false,
         prerelease: args.prerelease || false,
-        generate_release_notes: args.generateNotes || false
+        generate_release_notes: args.generateNotes || false,
       };
 
       try {
@@ -532,7 +541,7 @@ const pmTools = {
           `https://api.github.com/repos/${owner}/${repo}/releases`,
           'POST',
           payload,
-          { 'Authorization': `Bearer ${token}` }
+          { Authorization: `Bearer ${token}` }
         );
 
         if (response.statusCode === 201) {
@@ -551,20 +560,20 @@ const pmTools = {
             prerelease: release.prerelease,
             assetsToUpload: assetCount,
             message: `Created release ${release.name}`,
-            hint: assetCount > 0 ? 'Use GitHub CLI or API to upload assets' : null
+            hint: assetCount > 0 ? 'Use GitHub CLI or API to upload assets' : null,
           };
         } else {
           return {
             success: false,
             statusCode: response.statusCode,
-            error: response.data?.message || response.data
+            error: response.data?.message || response.data,
           };
         }
       } catch (error) {
         return { success: false, error: error.message };
       }
-    }
-  }
+    },
+  },
 };
 
 module.exports = pmTools;

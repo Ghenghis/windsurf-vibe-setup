@@ -28,12 +28,12 @@ const generate_logo = {
       style: {
         type: 'string',
         enum: ['minimal', 'bold', 'geometric', 'playful', 'professional'],
-        default: 'minimal'
+        default: 'minimal',
       },
       colors: { type: 'array', items: { type: 'string' }, description: 'Brand colors (hex codes)' },
-      outputDir: { type: 'string', description: 'Where to save the logos' }
+      outputDir: { type: 'string', description: 'Where to save the logos' },
     },
-    required: ['name']
+    required: ['name'],
   },
   handler: async ({ name, style = 'minimal', colors = ['#3B82F6', '#1E40AF'], outputDir }) => {
     try {
@@ -42,7 +42,12 @@ const generate_logo = {
         fs.mkdirSync(targetDir, { recursive: true });
       }
 
-      const initials = name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
+      const initials = name
+        .split(' ')
+        .map(w => w[0])
+        .join('')
+        .toUpperCase()
+        .slice(0, 2);
       const primaryColor = colors[0] || '#3B82F6';
       const secondaryColor = colors[1] || '#1E40AF';
 
@@ -71,7 +76,7 @@ const generate_logo = {
 </svg>`,
         'logo-wordmark': `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 60">
   <text x="150" y="42" font-family="system-ui" font-size="36" font-weight="bold" fill="${primaryColor}" text-anchor="middle">${name}</text>
-</svg>`
+</svg>`,
       };
 
       const created = [];
@@ -86,7 +91,7 @@ const generate_logo = {
         logos: {
           icon: created[0],
           full: created[1],
-          wordmark: created[2]
+          wordmark: created[2],
         },
         colors: { primary: primaryColor, secondary: secondaryColor },
         style,
@@ -94,13 +99,13 @@ const generate_logo = {
         nextSteps: [
           'Open SVG files in browser to preview',
           'Use online converter for PNG/JPG if needed',
-          'Customize colors and fonts as desired'
-        ]
+          'Customize colors and fonts as desired',
+        ],
       };
     } catch (error) {
       return { success: false, error: error.message };
     }
-  }
+  },
 };
 
 /**
@@ -116,9 +121,9 @@ const generate_og_image = {
       subtitle: { type: 'string', description: 'Subtitle or description' },
       theme: { type: 'string', enum: ['light', 'dark', 'gradient'], default: 'gradient' },
       brand: { type: 'string', description: 'Brand name (bottom corner)' },
-      outputDir: { type: 'string', description: 'Where to save' }
+      outputDir: { type: 'string', description: 'Where to save' },
     },
-    required: ['title']
+    required: ['title'],
   },
   handler: async ({ title, subtitle = '', theme = 'gradient', brand = '', outputDir }) => {
     try {
@@ -130,7 +135,7 @@ const generate_og_image = {
       const themes = {
         light: { bg: '#ffffff', text: '#1a1a1a', accent: '#3B82F6' },
         dark: { bg: '#1a1a1a', text: '#ffffff', accent: '#60A5FA' },
-        gradient: { bg: 'url(#bgGrad)', text: '#ffffff', accent: '#ffffff' }
+        gradient: { bg: 'url(#bgGrad)', text: '#ffffff', accent: '#ffffff' },
       };
 
       const t = themes[theme];
@@ -162,13 +167,13 @@ const generate_og_image = {
         nextSteps: [
           'Convert SVG to PNG for broader compatibility',
           'Upload to your hosting/CDN',
-          'Add meta tag to your HTML'
-        ]
+          'Add meta tag to your HTML',
+        ],
       };
     } catch (error) {
       return { success: false, error: error.message };
     }
-  }
+  },
 };
 
 /**
@@ -183,9 +188,9 @@ const optimize_assets = {
       inputDir: { type: 'string', description: 'Folder containing images to optimize' },
       outputDir: { type: 'string', description: 'Where to save optimized images' },
       quality: { type: 'integer', minimum: 1, maximum: 100, default: 80 },
-      maxWidth: { type: 'integer', description: 'Maximum width in pixels' }
+      maxWidth: { type: 'integer', description: 'Maximum width in pixels' },
     },
-    required: ['inputDir']
+    required: ['inputDir'],
   },
   handler: async ({ inputDir, outputDir, quality = 80, maxWidth }) => {
     try {
@@ -199,9 +204,9 @@ const optimize_assets = {
       }
 
       const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.svg'];
-      const files = fs.readdirSync(inputDir).filter(f =>
-        imageExtensions.includes(path.extname(f).toLowerCase())
-      );
+      const files = fs
+        .readdirSync(inputDir)
+        .filter(f => imageExtensions.includes(path.extname(f).toLowerCase()));
 
       const results = [];
       let totalOriginal = 0;
@@ -223,7 +228,7 @@ const optimize_assets = {
           file,
           originalSize: `${(stats.size / 1024).toFixed(1)}KB`,
           optimizedSize: `${(newStats.size / 1024).toFixed(1)}KB`,
-          savings: '0%' // Would show actual savings with real optimization
+          savings: '0%', // Would show actual savings with real optimization
         });
       }
 
@@ -234,15 +239,15 @@ const optimize_assets = {
         summary: {
           totalOriginal: `${(totalOriginal / 1024).toFixed(1)}KB`,
           totalOptimized: `${(totalOptimized / 1024).toFixed(1)}KB`,
-          outputDir: targetDir
+          outputDir: targetDir,
         },
         message: `✨ Processed ${results.length} images`,
-        tip: 'For better optimization, install sharp: npm install sharp'
+        tip: 'For better optimization, install sharp: npm install sharp',
       };
     } catch (error) {
       return { success: false, error: error.message };
     }
-  }
+  },
 };
 
 /**
@@ -255,11 +260,15 @@ const create_favicon = {
     type: 'object',
     properties: {
       text: { type: 'string', description: 'Text/initials for the favicon' },
-      backgroundColor: { type: 'string', description: 'Background color (hex)', default: '#3B82F6' },
+      backgroundColor: {
+        type: 'string',
+        description: 'Background color (hex)',
+        default: '#3B82F6',
+      },
       textColor: { type: 'string', description: 'Text color (hex)', default: '#ffffff' },
-      outputDir: { type: 'string', description: 'Where to save favicons' }
+      outputDir: { type: 'string', description: 'Where to save favicons' },
     },
-    required: ['text']
+    required: ['text'],
   },
   handler: async ({ text, backgroundColor = '#3B82F6', textColor = '#ffffff', outputDir }) => {
     try {
@@ -279,10 +288,14 @@ const create_favicon = {
   <text x="50%" y="55%" dominant-baseline="middle" text-anchor="middle" font-family="system-ui" font-size="${fontSize}" font-weight="bold" fill="${textColor}">${initial}</text>
 </svg>`;
 
-        const filename = size === 180 ? 'apple-touch-icon.svg' :
-          size === 192 ? 'icon-192.svg' :
-            size === 512 ? 'icon-512.svg' :
-              `favicon-${size}x${size}.svg`;
+        const filename =
+          size === 180
+            ? 'apple-touch-icon.svg'
+            : size === 192
+              ? 'icon-192.svg'
+              : size === 512
+                ? 'icon-512.svg'
+                : `favicon-${size}x${size}.svg`;
 
         const filePath = path.join(targetDir, filename);
         fs.writeFileSync(filePath, svg);
@@ -295,11 +308,11 @@ const create_favicon = {
         short_name: text,
         icons: [
           { src: '/icon-192.svg', sizes: '192x192', type: 'image/svg+xml' },
-          { src: '/icon-512.svg', sizes: '512x512', type: 'image/svg+xml' }
+          { src: '/icon-512.svg', sizes: '512x512', type: 'image/svg+xml' },
         ],
         theme_color: backgroundColor,
         background_color: backgroundColor,
-        display: 'standalone'
+        display: 'standalone',
       };
       fs.writeFileSync(path.join(targetDir, 'manifest.json'), JSON.stringify(manifest, null, 2));
 
@@ -321,13 +334,13 @@ const create_favicon = {
         nextSteps: [
           'Add the HTML snippet to your <head>',
           'Convert SVGs to PNG/ICO if needed',
-          'Test with realfavicongenerator.net'
-        ]
+          'Test with realfavicongenerator.net',
+        ],
       };
     } catch (error) {
       return { success: false, error: error.message };
     }
-  }
+  },
 };
 
 /**
@@ -342,17 +355,21 @@ const generate_screenshots = {
       screenshots: {
         type: 'array',
         items: { type: 'string' },
-        description: 'Paths to screenshot images'
+        description: 'Paths to screenshot images',
       },
       device: {
         type: 'string',
         enum: ['iphone', 'android', 'ipad', 'desktop'],
-        default: 'iphone'
+        default: 'iphone',
       },
-      captions: { type: 'array', items: { type: 'string' }, description: 'Captions for each screenshot' },
-      outputDir: { type: 'string', description: 'Where to save' }
+      captions: {
+        type: 'array',
+        items: { type: 'string' },
+        description: 'Captions for each screenshot',
+      },
+      outputDir: { type: 'string', description: 'Where to save' },
     },
-    required: []
+    required: [],
   },
   handler: async ({ screenshots = [], device = 'iphone', captions = [], outputDir }) => {
     try {
@@ -366,7 +383,7 @@ const generate_screenshots = {
         iphone: { width: 1290, height: 2796, name: 'iPhone 14 Pro Max' },
         android: { width: 1440, height: 3120, name: 'Pixel 7 Pro' },
         ipad: { width: 2048, height: 2732, name: 'iPad Pro 12.9' },
-        desktop: { width: 2880, height: 1800, name: 'MacBook Pro' }
+        desktop: { width: 2880, height: 1800, name: 'MacBook Pro' },
       };
 
       const d = devices[device];
@@ -379,7 +396,7 @@ const generate_screenshots = {
         'Easy to use interface',
         'Powerful features',
         'Track your progress',
-        'Get started today'
+        'Get started today',
       ];
 
       for (let i = 0; i < screenshotCount; i++) {
@@ -411,17 +428,17 @@ const generate_screenshots = {
         nextSteps: [
           'Replace placeholder backgrounds with actual screenshots',
           'Convert to PNG for app store upload',
-          'Recommended: Use Figma or Sketch for more polished mockups'
+          'Recommended: Use Figma or Sketch for more polished mockups',
         ],
         appStoreRequirements: {
           iOS: '1290x2796 (6.7"), 1284x2778 (6.5"), 1242x2208 (5.5")',
-          android: '1080x1920 minimum, up to 3840x3840'
-        }
+          android: '1080x1920 minimum, up to 3840x3840',
+        },
       };
     } catch (error) {
       return { success: false, error: error.message };
     }
-  }
+  },
 };
 
 module.exports = {
@@ -429,5 +446,5 @@ module.exports = {
   generate_og_image,
   optimize_assets,
   create_favicon,
-  generate_screenshots
+  generate_screenshots,
 };

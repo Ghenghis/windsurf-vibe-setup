@@ -12,8 +12,15 @@ const path = require('path');
 const CONFIG = {
   rootDir: path.join(__dirname, '..'),
   excludeDirs: [
-    'node_modules', '.git', '.venv', 'venv', '__pycache__',
-    'dist', 'build', 'benchmark-results', 'security-reports'
+    'node_modules',
+    '.git',
+    '.venv',
+    'venv',
+    '__pycache__',
+    'dist',
+    'build',
+    'benchmark-results',
+    'security-reports',
   ],
   outputDir: path.join(__dirname, '..', 'metrics-reports'),
   extensions: {
@@ -26,8 +33,8 @@ const CONFIG = {
     json: 'JSON',
     md: 'Markdown',
     yml: 'YAML',
-    yaml: 'YAML'
-  }
+    yaml: 'YAML',
+  },
 };
 
 // Colors for terminal output
@@ -39,7 +46,7 @@ const colors = {
   green: '\x1b[32m',
   cyan: '\x1b[36m',
   gray: '\x1b[90m',
-  magenta: '\x1b[35m'
+  magenta: '\x1b[35m',
 };
 
 /**
@@ -62,7 +69,7 @@ function analyzeFile(filePath, ext) {
     functions: 0,
     classes: 0,
     imports: 0,
-    maxLineLength: 0
+    maxLineLength: 0,
   };
 
   let inBlockComment = false;
@@ -108,7 +115,11 @@ function analyzeFile(filePath, ext) {
         continue;
       }
     } else if (ext === 'ps1') {
-      if (trimmed.startsWith('#') && !trimmed.startsWith('#region') && !trimmed.startsWith('#endregion')) {
+      if (
+        trimmed.startsWith('#') &&
+        !trimmed.startsWith('#region') &&
+        !trimmed.startsWith('#endregion')
+      ) {
         metrics.commentLines++;
         continue;
       }
@@ -216,7 +227,7 @@ function aggregateMetrics(fileMetrics) {
     todos: 0,
     functions: 0,
     classes: 0,
-    imports: 0
+    imports: 0,
   };
 
   for (const metrics of fileMetrics) {
@@ -236,7 +247,7 @@ function aggregateMetrics(fileMetrics) {
         classes: 0,
         imports: 0,
         avgLineLength: 0,
-        maxLineLength: 0
+        maxLineLength: 0,
       };
     }
 
@@ -287,7 +298,7 @@ function generateReport(aggregated, fileMetrics) {
       .map(f => ({
         path: path.relative(CONFIG.rootDir, f.path),
         codeLines: f.codeLines,
-        complexity: f.complexity
+        complexity: f.complexity,
       })),
     mostComplex: fileMetrics
       .sort((a, b) => b.complexity - a.complexity)
@@ -295,7 +306,7 @@ function generateReport(aggregated, fileMetrics) {
       .map(f => ({
         path: path.relative(CONFIG.rootDir, f.path),
         complexity: f.complexity,
-        codeLines: f.codeLines
+        codeLines: f.codeLines,
       })),
     todoHotspots: fileMetrics
       .filter(f => f.todos > 0)
@@ -303,8 +314,8 @@ function generateReport(aggregated, fileMetrics) {
       .slice(0, 10)
       .map(f => ({
         path: path.relative(CONFIG.rootDir, f.path),
-        todos: f.todos
-      }))
+        todos: f.todos,
+      })),
   };
 
   const reportPath = path.join(CONFIG.outputDir, `metrics-${Date.now()}.json`);
@@ -356,16 +367,20 @@ function main() {
   // Display by language
   console.log(`${colors.bold}Metrics by Language:${colors.reset}`);
   console.log('-'.repeat(60));
-  console.log(`${'Language'.padEnd(15)} ${'Files'.padStart(6)} ${'Code'.padStart(8)} ${'Comments'.padStart(8)} ${'Complexity'.padStart(10)}`);
+  console.log(
+    `${'Language'.padEnd(15)} ${'Files'.padStart(6)} ${'Code'.padStart(8)} ${'Comments'.padStart(8)} ${'Complexity'.padStart(10)}`
+  );
   console.log('-'.repeat(60));
 
-  for (const [, data] of Object.entries(aggregated.byExtension).sort((a, b) => b[1].codeLines - a[1].codeLines)) {
+  for (const [, data] of Object.entries(aggregated.byExtension).sort(
+    (a, b) => b[1].codeLines - a[1].codeLines
+  )) {
     console.log(
       `${colors.cyan}${data.language.padEnd(15)}${colors.reset}` +
-      `${data.files.toString().padStart(6)} ` +
-      `${data.codeLines.toString().padStart(8)} ` +
-      `${data.commentLines.toString().padStart(8)} ` +
-      `${data.complexity.toString().padStart(10)}`
+        `${data.files.toString().padStart(6)} ` +
+        `${data.codeLines.toString().padStart(8)} ` +
+        `${data.commentLines.toString().padStart(8)} ` +
+        `${data.complexity.toString().padStart(10)}`
     );
   }
   console.log('-'.repeat(60));
@@ -375,10 +390,18 @@ function main() {
   console.log(`${colors.bold}Project Totals:${colors.reset}`);
   console.log(`  ${colors.cyan}Files:${colors.reset} ${aggregated.totals.files}`);
   console.log(`  ${colors.cyan}Size:${colors.reset} ${formatBytes(aggregated.totals.bytes)}`);
-  console.log(`  ${colors.cyan}Total Lines:${colors.reset} ${aggregated.totals.totalLines.toLocaleString()}`);
-  console.log(`  ${colors.cyan}Code Lines:${colors.reset} ${aggregated.totals.codeLines.toLocaleString()}`);
-  console.log(`  ${colors.cyan}Comment Lines:${colors.reset} ${aggregated.totals.commentLines.toLocaleString()}`);
-  console.log(`  ${colors.cyan}Blank Lines:${colors.reset} ${aggregated.totals.blankLines.toLocaleString()}`);
+  console.log(
+    `  ${colors.cyan}Total Lines:${colors.reset} ${aggregated.totals.totalLines.toLocaleString()}`
+  );
+  console.log(
+    `  ${colors.cyan}Code Lines:${colors.reset} ${aggregated.totals.codeLines.toLocaleString()}`
+  );
+  console.log(
+    `  ${colors.cyan}Comment Lines:${colors.reset} ${aggregated.totals.commentLines.toLocaleString()}`
+  );
+  console.log(
+    `  ${colors.cyan}Blank Lines:${colors.reset} ${aggregated.totals.blankLines.toLocaleString()}`
+  );
   console.log('');
   console.log(`  ${colors.cyan}Functions:${colors.reset} ${aggregated.totals.functions}`);
   console.log(`  ${colors.cyan}Classes:${colors.reset} ${aggregated.totals.classes}`);
@@ -388,14 +411,27 @@ function main() {
   console.log('');
 
   // Code quality indicators
-  const commentRatio = (aggregated.totals.commentLines / Math.max(aggregated.totals.codeLines, 1) * 100).toFixed(1);
-  const avgComplexity = (aggregated.totals.complexity / Math.max(aggregated.totals.files, 1)).toFixed(1);
+  const commentRatio = (
+    (aggregated.totals.commentLines / Math.max(aggregated.totals.codeLines, 1)) *
+    100
+  ).toFixed(1);
+  const avgComplexity = (
+    aggregated.totals.complexity / Math.max(aggregated.totals.files, 1)
+  ).toFixed(1);
 
   console.log(`${colors.bold}Quality Indicators:${colors.reset}`);
-  console.log(`  ${colors.cyan}Comment Ratio:${colors.reset} ${commentRatio}%` +
-    (parseFloat(commentRatio) < 10 ? ` ${colors.yellow}(consider adding more comments)${colors.reset}` : ''));
-  console.log(`  ${colors.cyan}Avg Complexity/File:${colors.reset} ${avgComplexity}` +
-    (parseFloat(avgComplexity) > 20 ? ` ${colors.yellow}(consider refactoring)${colors.reset}` : ''));
+  console.log(
+    `  ${colors.cyan}Comment Ratio:${colors.reset} ${commentRatio}%` +
+      (parseFloat(commentRatio) < 10
+        ? ` ${colors.yellow}(consider adding more comments)${colors.reset}`
+        : '')
+  );
+  console.log(
+    `  ${colors.cyan}Avg Complexity/File:${colors.reset} ${avgComplexity}` +
+      (parseFloat(avgComplexity) > 20
+        ? ` ${colors.yellow}(consider refactoring)${colors.reset}`
+        : '')
+  );
   console.log('');
 
   // Generate report

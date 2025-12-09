@@ -15,16 +15,23 @@ const { EventEmitter } = require('events');
 
 const SWARM_TEMPLATES = {
   'full-stack': [
-    'architect', 'frontend-coder', 'backend-coder', 'database', 
-    'security', 'tester', 'devops', 'docs', 'reviewer'
+    'architect',
+    'frontend-coder',
+    'backend-coder',
+    'database',
+    'security',
+    'tester',
+    'devops',
+    'docs',
+    'reviewer',
   ],
-  'api': ['architect', 'backend-coder', 'database', 'security', 'tester', 'docs'],
-  'frontend': ['architect', 'frontend-coder', 'ui-designer', 'tester', 'docs'],
-  'testing': ['test-architect', 'unit-tester', 'e2e-tester', 'performance-tester'],
-  'security': ['security-auditor', 'sast-analyst', 'secrets-scanner', 'compliance'],
-  'debugging': ['bug-hunter', 'log-analyzer', 'code-reviewer', 'tester'],
+  api: ['architect', 'backend-coder', 'database', 'security', 'tester', 'docs'],
+  frontend: ['architect', 'frontend-coder', 'ui-designer', 'tester', 'docs'],
+  testing: ['test-architect', 'unit-tester', 'e2e-tester', 'performance-tester'],
+  security: ['security-auditor', 'sast-analyst', 'secrets-scanner', 'compliance'],
+  debugging: ['bug-hunter', 'log-analyzer', 'code-reviewer', 'tester'],
   'code-review': ['security-auditor', 'performance', 'code-reviewer', 'docs'],
-  'default': ['architect', 'coder', 'tester', 'reviewer']
+  default: ['architect', 'coder', 'tester', 'reviewer'],
 };
 
 // ============================================================================
@@ -64,7 +71,11 @@ class CollectiveMemory {
   }
 
   getStats() {
-    return { patterns: this.patterns.size, solutions: this.solutions.size, experiences: this.experiences.length };
+    return {
+      patterns: this.patterns.size,
+      solutions: this.solutions.size,
+      experiences: this.experiences.length,
+    };
   }
 }
 
@@ -76,7 +87,7 @@ class ProviderManager {
   constructor() {
     this.providers = {
       ollama: { url: 'http://localhost:11434', status: 'unknown', models: [] },
-      lmstudio: { url: 'http://localhost:1234', status: 'unknown', models: [] }
+      lmstudio: { url: 'http://localhost:1234', status: 'unknown', models: [] },
     };
   }
 
@@ -88,7 +99,9 @@ class ProviderManager {
         this.providers.ollama.status = 'online';
         this.providers.ollama.models = data.models?.map(m => m.name) || [];
       }
-    } catch { this.providers.ollama.status = 'offline'; }
+    } catch {
+      this.providers.ollama.status = 'offline';
+    }
 
     try {
       const response = await fetch(`${this.providers.lmstudio.url}/v1/models`);
@@ -97,14 +110,22 @@ class ProviderManager {
         this.providers.lmstudio.status = 'online';
         this.providers.lmstudio.models = data.data?.map(m => m.id) || [];
       }
-    } catch { this.providers.lmstudio.status = 'offline'; }
+    } catch {
+      this.providers.lmstudio.status = 'offline';
+    }
     return this.getStatus();
   }
 
   getStatus() {
     return {
-      ollama: { status: this.providers.ollama.status, modelCount: this.providers.ollama.models.length },
-      lmstudio: { status: this.providers.lmstudio.status, modelCount: this.providers.lmstudio.models.length }
+      ollama: {
+        status: this.providers.ollama.status,
+        modelCount: this.providers.ollama.models.length,
+      },
+      lmstudio: {
+        status: this.providers.lmstudio.status,
+        modelCount: this.providers.lmstudio.models.length,
+      },
     };
   }
 

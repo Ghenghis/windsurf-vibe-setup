@@ -1,0 +1,338 @@
+# evolution API Reference
+
+## Overview
+
+This document provides the complete API reference for all evolution modules.
+
+## Modules
+
+### auto-enhancement-system
+
+- **Class**: `AutoEnhancementSystem`
+- **Methods**: 42
+- **Events**: 3
+- [Full Documentation](../modules/evolution/auto-enhancement-system.md)
+
+### collective-learning-synthesizer
+
+- **Class**: `CollectiveLearingSynthesizer`
+- **Methods**: 75
+- **Events**: 5
+- [Full Documentation](../modules/evolution/collective-learning-synthesizer.md)
+
+### module-spawner
+
+- **Class**: `ModuleSpawner`
+- **Methods**: 72
+- **Events**: 7
+- [Full Documentation](../modules/evolution/module-spawner.md)
+
+### project-evolution-engine
+
+- **Class**: `ProjectEvolutionEngine`
+- **Methods**: 82
+- **Events**: 5
+- [Full Documentation](../modules/evolution/project-evolution-engine.md)
+
+## Quick Reference
+
+### All Methods
+
+- `auto-enhancement-system.initialize()`
+- `auto-enhancement-system.if(this.config.autoEnhance)`
+- `auto-enhancement-system.scanModuleQuality()`
+- `auto-enhancement-system.for(const dir of moduleDirs)`
+- `auto-enhancement-system.for(const file of files)`
+- `auto-enhancement-system.catch(error)`
+- `auto-enhancement-system.assessModuleQuality(modulePath)`
+- `auto-enhancement-system.startAutoEnhancement()`
+- `auto-enhancement-system.enhanceCycle()`
+- `auto-enhancement-system.for(const module of batch)`
+- `auto-enhancement-system.selectEnhancementCandidates()`
+- `auto-enhancement-system.for(const [name, info] of this.moduleQuality)`
+- `auto-enhancement-system.if(info.quality.score < this.config.qualityThreshold)`
+- `auto-enhancement-system.if(a.priority !== b.priority)`
+- `auto-enhancement-system.enhanceModule(module)`
+- `auto-enhancement-system.if(result.improved)`
+- `auto-enhancement-system.if(content !== originalContent)`
+- `auto-enhancement-system.needsStrategy(module, strategyName)`
+- `auto-enhancement-system.switch(strategyName)`
+- `auto-enhancement-system.enhancePerformance(content, module)`
+- `auto-enhancement-system.enhanceErrorHandling(content, module)`
+- `auto-enhancement-system.catch(error)`
+- `auto-enhancement-system.enhanceMemoryManagement(content, module)`
+- `auto-enhancement-system.enhanceLogging(content, module)`
+- `auto-enhancement-system.enhanceDocumentation(content, module)`
+- `auto-enhancement-system.enhanceSecurity(content, module)`
+- `auto-enhancement-system.quickFix()`
+- `auto-enhancement-system.for(const [name, info] of this.moduleQuality)`
+- `auto-enhancement-system.if(info.quality.score < lowestScore)`
+- `auto-enhancement-system.if(mostCritical && lowestScore < 0.5)`
+- `auto-enhancement-system.backupModule(module)`
+- `auto-enhancement-system.learnFromEnhancement(enhancement)`
+- `auto-enhancement-system.if(improvement > 0)`
+- `auto-enhancement-system.for(const imp of enhancement.improvements)`
+- `auto-enhancement-system.calculateOverallQuality()`
+- `auto-enhancement-system.generateReport()`
+- `auto-enhancement-system.for(const [name, info] of this.moduleQuality)`
+- `auto-enhancement-system.saveEnhancementHistory()`
+- `auto-enhancement-system.loadEnhancementHistory()`
+- `auto-enhancement-system.catch(error)`
+- `auto-enhancement-system.getStatus()`
+- `auto-enhancement-system.shutdown()`
+- `collective-learning-synthesizer.initialize()`
+- `collective-learning-synthesizer.if(this.config.autoApply)`
+- `collective-learning-synthesizer.connectToModules()`
+- `collective-learning-synthesizer.for(const category of moduleCategories)`
+- `collective-learning-synthesizer.for(const file of files)`
+- `collective-learning-synthesizer.catch(error)`
+- `collective-learning-synthesizer.startSynthesis()`
+- `collective-learning-synthesizer.synthesizeLearning()`
+- `collective-learning-synthesizer.if(this.config.autoApply && synthesis.applications.length > 0)`
+- `collective-learning-synthesizer.gatherCollectiveLearning()`
+- `collective-learning-synthesizer.for(const [moduleName, connection] of this.connections.modules)`
+- `collective-learning-synthesizer.if(connection.connected)`
+- `collective-learning-synthesizer.queryModule(moduleName)`
+- `collective-learning-synthesizer.extractInsights(learnings)`
+- `collective-learning-synthesizer.if(learnings.errors.length > 5)`
+- `collective-learning-synthesizer.if(learnings.successes.length > 10)`
+- `collective-learning-synthesizer.for(const pattern of learnings.patterns)`
+- `collective-learning-synthesizer.for(const [pattern, frequency] of patternFrequency)`
+- `collective-learning-synthesizer.if(frequency > 3)`
+- `collective-learning-synthesizer.for(const insight of insights)`
+- `collective-learning-synthesizer.identifyPatterns(learnings)`
+- `collective-learning-synthesizer.if(learnings.errors.length > learnings.successes.length && currentHour > 18)`
+- `collective-learning-synthesizer.if(learnings.successes.length > 20)`
+- `collective-learning-synthesizer.for(const pattern of patterns)`
+- `collective-learning-synthesizer.generateApplications(insights, patterns)`
+- `collective-learning-synthesizer.for(const insight of insights)`
+- `collective-learning-synthesizer.if(insight.confidence > this.config.learningThreshold)`
+- `collective-learning-synthesizer.for(const pattern of patterns)`
+- `collective-learning-synthesizer.if(pattern.confidence > this.config.learningThreshold)`
+- `collective-learning-synthesizer.selectTargetModules(insight)`
+- `collective-learning-synthesizer.if(insight.type === 'error-trend')`
+- `collective-learning-synthesizer.for(const [name] of this.connections.modules)`
+- `collective-learning-synthesizer.if(insight.type === 'success-pattern')`
+- `collective-learning-synthesizer.for(const [name] of this.connections.modules)`
+- `collective-learning-synthesizer.calculatePriority(insight)`
+- `collective-learning-synthesizer.applyLearnings(applications)`
+- `collective-learning-synthesizer.for(const application of applications)`
+- `collective-learning-synthesizer.catch(error)`
+- `collective-learning-synthesizer.applyToModules(application)`
+- `collective-learning-synthesizer.for(const [moduleName, connection] of this.connections.modules)`
+- `collective-learning-synthesizer.for(const moduleName of targets)`
+- `collective-learning-synthesizer.applyToModule(moduleName, application)`
+- `collective-learning-synthesizer.switch(application.action)`
+- `collective-learning-synthesizer.if(modified !== content)`
+- `collective-learning-synthesizer.enhanceErrorHandling(content)`
+- `collective-learning-synthesizer.catch(error)`
+- `collective-learning-synthesizer.if(error.code === 'ECONNRESET')`
+- `collective-learning-synthesizer.replicatePattern(content, pattern)`
+- `collective-learning-synthesizer.optimizeForPattern(content, pattern)`
+- `collective-learning-synthesizer.adaptToPattern(content, pattern)`
+- `collective-learning-synthesizer.gatherQuickInsights()`
+- `collective-learning-synthesizer.if(recentErrors > 10)`
+- `collective-learning-synthesizer.if(performance < 0.7)`
+- `collective-learning-synthesizer.if(quickInsights.length > 0)`
+- `collective-learning-synthesizer.checkRecentErrors()`
+- `collective-learning-synthesizer.checkPerformance()`
+- `collective-learning-synthesizer.updateCollectiveIQ(synthesis)`
+- `collective-learning-synthesizer.shareKnowledge(moduleName, knowledge)`
+- `collective-learning-synthesizer.if(stream)`
+- `collective-learning-synthesizer.requestFeedback(moduleName, topic)`
+- `collective-learning-synthesizer.getCollectiveInsight(topic)`
+- `collective-learning-synthesizer.for(const [key, insight] of this.knowledge.insights)`
+- `collective-learning-synthesizer.if(relatedInsights.length === 0)`
+- `collective-learning-synthesizer.calculateConsensus(insights)`
+- `collective-learning-synthesizer.generateRecommendation(insights)`
+- `collective-learning-synthesizer.if(insights.length > 3)`
+- `collective-learning-synthesizer.if(insights.length > 1)`
+- `collective-learning-synthesizer.generateReport()`
+- `collective-learning-synthesizer.saveCollectiveKnowledge()`
+- `collective-learning-synthesizer.loadCollectiveKnowledge()`
+- `collective-learning-synthesizer.catch(error)`
+- `collective-learning-synthesizer.getStatus()`
+- `collective-learning-synthesizer.shutdown()`
+- `collective-learning-synthesizer.if(this.synthesisInterval)`
+- `collective-learning-synthesizer.if(this.quickInsightInterval)`
+- `module-spawner.initialize()`
+- `module-spawner.if(this.config.autoSpawn)`
+- `module-spawner.startAutoSpawning()`
+- `module-spawner.checkSpawnOpportunities()`
+- `module-spawner.for(const opportunity of opportunities)`
+- `module-spawner.if(opportunity.confidence > 0.7)`
+- `module-spawner.identifyOpportunities()`
+- `module-spawner.spawnModule(request)`
+- `module-spawner.if(this.config.testBeforeDeployment)`
+- `module-spawner.if(!testResult.success)`
+- `module-spawner.catch(error)`
+- `module-spawner.generateModuleName(request)`
+- `module-spawner.generateModuleCode(spawn, template)`
+- `module-spawner.if(spawn.type === 'analyzer')`
+- `module-spawner.if(spawn.type === 'optimizer')`
+- `module-spawner.if(spawn.type === 'connector')`
+- `module-spawner.toPascalCase(str)`
+- `module-spawner.getBasicTemplate()`
+- `module-spawner.initialize()`
+- `module-spawner.execute(input)`
+- `module-spawner.if(!this.state.initialized)`
+- `module-spawner.catch(error)`
+- `module-spawner.process(input)`
+- `module-spawner.getStatus()`
+- `module-spawner.shutdown()`
+- `module-spawner.getServiceTemplate()`
+- `module-spawner.process(input)`
+- `module-spawner.process(input)`
+- `module-spawner.callService(input)`
+- `module-spawner.processResponse(response)`
+- `module-spawner.getAnalyzerTemplate()`
+- `module-spawner.process(input)`
+- `module-spawner.process(input)`
+- `module-spawner.calculateMetrics(data)`
+- `module-spawner.assessComplexity(data)`
+- `module-spawner.generateInsights(data)`
+- `module-spawner.generateRecommendations(data)`
+- `module-spawner.getConnectorTemplate()`
+- `module-spawner.process(input)`
+- `module-spawner.process(input)`
+- `module-spawner.connect()`
+- `module-spawner.sendData(connection, data)`
+- `module-spawner.disconnect(connection)`
+- `module-spawner.getOptimizerTemplate()`
+- `module-spawner.process(input)`
+- `module-spawner.process(input)`
+- `module-spawner.measure(data)`
+- `module-spawner.optimize(data)`
+- `module-spawner.getMonitorTemplate()`
+- `module-spawner.process(input)`
+- `module-spawner.process(input)`
+- `module-spawner.if(alerts.length > 0)`
+- `module-spawner.collectMetrics()`
+- `module-spawner.checkAlerts(metrics)`
+- `module-spawner.addAnalyzerFunctionality(code)`
+- `module-spawner.addOptimizerFunctionality(code)`
+- `module-spawner.addConnectorFunctionality(code)`
+- `module-spawner.addLearningCapabilities(code)`
+- `module-spawner.learn(experience)`
+- `module-spawner.adapt()`
+- `module-spawner.if(this.learning && this.learning.length > 10)`
+- `module-spawner.testModule(spawn, code)`
+- `module-spawner.catch(error)`
+- `module-spawner.deployModule(spawn, code)`
+- `module-spawner.requestModule(description)`
+- `module-spawner.detectType(description)`
+- `module-spawner.loadSpawnHistory()`
+- `module-spawner.catch(error)`
+- `module-spawner.saveSpawnHistory()`
+- `module-spawner.getStatus()`
+- `module-spawner.shutdown()`
+- `module-spawner.if(this.spawnInterval)`
+- `project-evolution-engine.initialize()`
+- `project-evolution-engine.if(this.config.autoEvolve)`
+- `project-evolution-engine.scanProjectGenome()`
+- `project-evolution-engine.for(const dir of moduleDirs)`
+- `project-evolution-engine.for(const file of files)`
+- `project-evolution-engine.catch(error)`
+- `project-evolution-engine.analyzeComplexity(content)`
+- `project-evolution-engine.startEvolution()`
+- `project-evolution-engine.evolve()`
+- `project-evolution-engine.for(const opportunity of opportunities)`
+- `project-evolution-engine.if(strategy)`
+- `project-evolution-engine.collectLearning()`
+- `project-evolution-engine.if(this.collectiveLearning.insights.length > 1000)`
+- `project-evolution-engine.identifyOpportunities()`
+- `project-evolution-engine.for(const [name, module] of this.genome.modules)`
+- `project-evolution-engine.if(module.health < 0.7)`
+- `project-evolution-engine.if(daysSinceEvolved > 7)`
+- `project-evolution-engine.for(const feature of missingFeatures)`
+- `project-evolution-engine.if(this.state.fitness < 0.8)`
+- `project-evolution-engine.identifyMissingFeatures()`
+- `project-evolution-engine.for(const need of this.collectiveLearning.userNeeds)`
+- `project-evolution-engine.if(need.priority === 'high')`
+- `project-evolution-engine.for(const pattern of this.collectiveLearning.patterns)`
+- `project-evolution-engine.for(const [pattern, count] of patternCounts)`
+- `project-evolution-engine.if(count > 3)`
+- `project-evolution-engine.selectStrategy(opportunity)`
+- `project-evolution-engine.enhanceExistingModules(opportunity)`
+- `project-evolution-engine.if(enhanced !== content)`
+- `project-evolution-engine.addErrorHandling(code)`
+- `project-evolution-engine.for(let i = 0; i < lines.length; i++)`
+- `project-evolution-engine.push('    } catch (error)`
+- `project-evolution-engine.optimizeCode(code)`
+- `project-evolution-engine.addLearnedCapabilities(code)`
+- `project-evolution-engine.if(className)`
+- `project-evolution-engine.generateNewFeatures(opportunity)`
+- `project-evolution-engine.if(targetModule && featureCode)`
+- `project-evolution-engine.generateFeatureCode(featureName)`
+- `project-evolution-engine.handleError(error)`
+- `project-evolution-engine.canRecover(error)`
+- `project-evolution-engine.recover(error)`
+- `project-evolution-engine.initCache()`
+- `project-evolution-engine.getCached(key)`
+- `project-evolution-engine.setCached(key, value)`
+- `project-evolution-engine.measurePerformance(fn, name)`
+- `project-evolution-engine.if(duration > 1000)`
+- `project-evolution-engine.selectTargetModule(featureName)`
+- `project-evolution-engine.for(const [moduleName] of this.genome.modules)`
+- `project-evolution-engine.for(const keyword of keywords)`
+- `project-evolution-engine.insertFeature(content, featureCode)`
+- `project-evolution-engine.optimizeSystem(opportunity)`
+- `project-evolution-engine.for(const [name, module] of this.genome.modules)`
+- `project-evolution-engine.if(module.complexity.complexity > 10)`
+- `project-evolution-engine.if(result)`
+- `project-evolution-engine.optimizeModule(name, module)`
+- `project-evolution-engine.repairWeaknesses(opportunity)`
+- `project-evolution-engine.for(const [weakness, details] of this.genome.weaknesses)`
+- `project-evolution-engine.if(repair)`
+- `project-evolution-engine.repairWeakness(weakness, details)`
+- `project-evolution-engine.createInnovations(opportunity)`
+- `project-evolution-engine.if(moduleCode)`
+- `project-evolution-engine.generateInnovativeModule(innovation)`
+- `project-evolution-engine.execute()`
+- `project-evolution-engine.quickImprove()`
+- `project-evolution-engine.if(improvement.target)`
+- `project-evolution-engine.if(module)`
+- `project-evolution-engine.selectQuickTarget()`
+- `project-evolution-engine.for(const [name, module] of this.genome.modules)`
+- `project-evolution-engine.if(module.health < lowestHealth)`
+- `project-evolution-engine.checkHealth()`
+- `project-evolution-engine.if(health.overall < 0.7)`
+- `project-evolution-engine.calculateFitness()`
+- `project-evolution-engine.getEvolutionStatus()`
+- `project-evolution-engine.forceEvolve()`
+- `project-evolution-engine.saveEvolutionState()`
+- `project-evolution-engine.loadEvolutionHistory()`
+- `project-evolution-engine.if(files.length > 0)`
+- `project-evolution-engine.catch(error)`
+- `project-evolution-engine.getStatus()`
+- `project-evolution-engine.shutdown()`
+- `project-evolution-engine.if(this.evolutionInterval)`
+- `project-evolution-engine.if(this.improvementInterval)`
+- `project-evolution-engine.if(this.healthInterval)`
+
+### All Events
+
+- `auto-enhancement-system:initialized`
+- `auto-enhancement-system:cycleComplete`
+- `auto-enhancement-system:shutdown`
+- `collective-learning-synthesizer:initialized`
+- `collective-learning-synthesizer:synthesisComplete`
+- `collective-learning-synthesizer:quickInsights`
+- `collective-learning-synthesizer:knowledgeShared`
+- `collective-learning-synthesizer:shutdown`
+- `module-spawner:initialized`
+- `module-spawner:moduleSpawned`
+- `module-spawner:spawnFailed`
+- `module-spawner:success`
+- `module-spawner:error`
+- `module-spawner:shutdown`
+- `module-spawner:alert`
+- `project-evolution-engine:initialized`
+- `project-evolution-engine:evolved`
+- `project-evolution-engine:error`
+- `project-evolution-engine:healthCheck`
+- `project-evolution-engine:shutdown`
+
+---
+
+_API documentation auto-generated from source code_

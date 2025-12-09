@@ -9,12 +9,14 @@
 ## 💰 Why Subscription Only?
 
 ### ❌ NEVER Use API Keys (Expensive!)
+
 - API keys charge PER TOKEN
 - A 24-hour session can cost $500-$5000
 - You pay for EVERY request
 - Costs add up FAST
 
 ### ✅ ALWAYS Use Claude Subscription (Cheap!)
+
 - Fixed $20/month
 - UNLIMITED usage within fair use
 - Run for 24-48 hours for same $20
@@ -49,6 +51,7 @@ claude setup-token
 ```
 
 This will:
+
 1. Open your browser
 2. Ask you to log in to Claude
 3. Generate a token for your subscription
@@ -89,12 +92,14 @@ if (!token) {
 ### Automatic API Key Blocking
 
 The system automatically BLOCKS these environment variables:
+
 - ❌ `ANTHROPIC_API_KEY`
 - ❌ `OPENAI_API_KEY`
 - ❌ `CLAUDE_API_KEY`
 - ❌ `API_KEY`
 
 If ANY of these are found, the system will:
+
 1. **REFUSE to start**
 2. Show an error message
 3. Tell you to remove the API key
@@ -159,6 +164,7 @@ echo "✅ Setup complete! You're using subscription ($20/month)!"
 ## 🚫 What NOT to Do
 
 ### NEVER Do This:
+
 ```bash
 # ❌ WRONG - This will be BLOCKED!
 export ANTHROPIC_API_KEY=sk-ant-xxxxx
@@ -171,12 +177,13 @@ echo "ANTHROPIC_API_KEY=sk-ant-xxx" >> .env
 ```
 
 ### ALWAYS Do This:
+
 ```bash
 # ✅ CORRECT - Use subscription token
 export CLAUDE_TOKEN=your-subscription-token
 
 # ✅ CORRECT - This uses your $20/month subscription
-CLAUDE_TOKEN=your-token npm start  
+CLAUDE_TOKEN=your-token npm start
 
 # ✅ CORRECT - Save subscription token
 echo "CLAUDE_TOKEN=your-token" >> .env
@@ -186,28 +193,30 @@ echo "CLAUDE_TOKEN=your-token" >> .env
 
 ## 🎯 Quick Troubleshooting
 
-| Problem | Solution |
-|---------|----------|
-| "API key detected" error | Remove ALL API keys from .env and environment |
-| "Token not found" error | Run `claude setup-token` again |
-| "Claude CLI not found" | Install it: `npm install -g @anthropic-ai/claude-cli` |
-| "Unauthorized" error | Your subscription expired, renew at claude.ai |
-| Still using API credits | You have an API key somewhere - find and remove it! |
+| Problem                  | Solution                                              |
+| ------------------------ | ----------------------------------------------------- |
+| "API key detected" error | Remove ALL API keys from .env and environment         |
+| "Token not found" error  | Run `claude setup-token` again                        |
+| "Claude CLI not found"   | Install it: `npm install -g @anthropic-ai/claude-cli` |
+| "Unauthorized" error     | Your subscription expired, renew at claude.ai         |
+| Still using API credits  | You have an API key somewhere - find and remove it!   |
 
 ---
 
 ## 💡 Pro Tips
 
 1. **Check your setup regularly:**
+
    ```bash
    # This should show NO API keys
    env | grep API_KEY
-   
+
    # This should show your token
    echo $CLAUDE_TOKEN
    ```
 
 2. **Monitor usage:**
+
    - Go to https://claude.ai/settings
    - Check your subscription is active
    - No per-token charges should appear!
@@ -221,20 +230,21 @@ echo "CLAUDE_TOKEN=your-token" >> .env
 
 ## ✨ Benefits of Subscription-Only
 
-| Feature | API Keys | Subscription |
-|---------|----------|--------------|
-| **Monthly Cost** | $500-$5000+ | $20 flat |
-| **24-hour session** | $500+ | $0 extra |
-| **48-hour session** | $1000+ | $0 extra |
-| **Usage anxiety** | High | None |
-| **Bill surprises** | Common | Never |
-| **Rate limits** | Strict | Generous |
+| Feature             | API Keys    | Subscription |
+| ------------------- | ----------- | ------------ |
+| **Monthly Cost**    | $500-$5000+ | $20 flat     |
+| **24-hour session** | $500+       | $0 extra     |
+| **48-hour session** | $1000+      | $0 extra     |
+| **Usage anxiety**   | High        | None         |
+| **Bill surprises**  | Common      | Never        |
+| **Rate limits**     | Strict      | Generous     |
 
 ---
 
 ## 🎉 You're All Set!
 
 Once configured with your Claude subscription token:
+
 - ✅ Run unlimited 24-48 hour sessions
 - ✅ Build complex projects for $20/month
 - ✅ Never worry about token costs

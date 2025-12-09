@@ -18,9 +18,10 @@ const { execSync } = require('child_process');
 const crypto = require('crypto');
 
 // Plugin directory
-const PLUGIN_DIR = process.platform === 'win32'
-  ? path.join(process.env.APPDATA || '', 'WindsurfAutopilot', 'plugins')
-  : path.join(process.env.HOME || '', '.windsurf-autopilot', 'plugins');
+const PLUGIN_DIR =
+  process.platform === 'win32'
+    ? path.join(process.env.APPDATA || '', 'WindsurfAutopilot', 'plugins')
+    : path.join(process.env.HOME || '', '.windsurf-autopilot', 'plugins');
 
 // Ensure plugin directory exists
 if (!fs.existsSync(PLUGIN_DIR)) {
@@ -66,38 +67,38 @@ loadRegistry();
  * Plugin Tools Export
  */
 const pluginTools = {
-
   // ═══════════════════════════════════════════════════════════════════════════
   // TOOL: install_plugin
   // ═══════════════════════════════════════════════════════════════════════════
   install_plugin: {
     name: 'install_plugin',
-    description: 'Install a plugin from npm, GitHub, or a local path. Plugins add custom tools to the autopilot.',
+    description:
+      'Install a plugin from npm, GitHub, or a local path. Plugins add custom tools to the autopilot.',
     inputSchema: {
       type: 'object',
       properties: {
         source: {
           type: 'string',
-          description: 'Plugin source: npm package name, GitHub URL, or local path'
+          description: 'Plugin source: npm package name, GitHub URL, or local path',
         },
         name: {
           type: 'string',
-          description: 'Custom name for the plugin (auto-detected if not provided)'
+          description: 'Custom name for the plugin (auto-detected if not provided)',
         },
         version: {
           type: 'string',
           description: 'Version to install (for npm packages)',
-          default: 'latest'
+          default: 'latest',
         },
         force: {
           type: 'boolean',
           description: 'Force reinstall if already exists',
-          default: false
-        }
+          default: false,
+        },
       },
-      required: ['source']
+      required: ['source'],
     },
-    handler: async (args) => {
+    handler: async args => {
       const source = args.source;
 
       try {
@@ -115,7 +116,7 @@ const pluginTools = {
           if (fs.existsSync(pluginPath) && !args.force) {
             return {
               success: false,
-              error: `Plugin ${pluginName} already exists. Use force: true to reinstall.`
+              error: `Plugin ${pluginName} already exists. Use force: true to reinstall.`,
             };
           }
 
@@ -130,7 +131,6 @@ const pluginTools = {
           if (fs.existsSync(path.join(pluginPath, 'package.json'))) {
             execSync('npm install --production', { cwd: pluginPath, stdio: 'pipe' });
           }
-
         } else if (fs.existsSync(source)) {
           // Local path
           installType = 'local';
@@ -140,7 +140,7 @@ const pluginTools = {
           if (fs.existsSync(pluginPath) && !args.force) {
             return {
               success: false,
-              error: `Plugin ${pluginName} already exists. Use force: true to reinstall.`
+              error: `Plugin ${pluginName} already exists. Use force: true to reinstall.`,
             };
           }
 
@@ -151,7 +151,6 @@ const pluginTools = {
 
           fs.mkdirSync(pluginPath, { recursive: true });
           copyDir(source, pluginPath);
-
         } else {
           // Assume npm package
           installType = 'npm';
@@ -161,7 +160,7 @@ const pluginTools = {
           if (fs.existsSync(pluginPath) && !args.force) {
             return {
               success: false,
-              error: `Plugin ${pluginName} already exists. Use force: true to reinstall.`
+              error: `Plugin ${pluginName} already exists. Use force: true to reinstall.`,
             };
           }
 
@@ -169,18 +168,26 @@ const pluginTools = {
           fs.mkdirSync(pluginPath, { recursive: true });
 
           // Create minimal package.json
-          fs.writeFileSync(path.join(pluginPath, 'package.json'), JSON.stringify({
-            name: `autopilot-plugin-${pluginName}`,
-            version: '1.0.0',
-            dependencies: {
-              [source]: args.version || 'latest'
-            }
-          }, null, 2));
+          fs.writeFileSync(
+            path.join(pluginPath, 'package.json'),
+            JSON.stringify(
+              {
+                name: `autopilot-plugin-${pluginName}`,
+                version: '1.0.0',
+                dependencies: {
+                  [source]: args.version || 'latest',
+                },
+              },
+              null,
+              2
+            )
+          );
 
           execSync('npm install', { cwd: pluginPath, stdio: 'pipe' });
 
           // Create index.js that re-exports the package
-          fs.writeFileSync(path.join(pluginPath, 'index.js'),
+          fs.writeFileSync(
+            path.join(pluginPath, 'index.js'),
             `module.exports = require('${source}');`
           );
         }
@@ -195,8 +202,8 @@ const pluginTools = {
             error: `Invalid plugin structure: ${validation.error}`,
             expectedStructure: {
               required: ['index.js or main file'],
-              exports: ['name', 'tools (array)', 'optional: init(), cleanup()']
-            }
+              exports: ['name', 'tools (array)', 'optional: init(), cleanup()'],
+            },
           };
         }
 
@@ -211,7 +218,7 @@ const pluginTools = {
           installType,
           version: plugin.version || '1.0.0',
           installedAt: new Date().toISOString(),
-          tools: plugin.tools?.map(t => t.name) || []
+          tools: plugin.tools?.map(t => t.name) || [],
         });
         saveRegistry();
 
@@ -222,13 +229,12 @@ const pluginTools = {
           installType,
           version: plugin.version || '1.0.0',
           tools: plugin.tools?.map(t => ({ name: t.name, description: t.description })) || [],
-          message: `Plugin ${pluginName} installed successfully with ${plugin.tools?.length || 0} tools`
+          message: `Plugin ${pluginName} installed successfully with ${plugin.tools?.length || 0} tools`,
         };
-
       } catch (error) {
         return { success: false, error: error.message };
       }
-    }
+    },
   },
 
   // ═══════════════════════════════════════════════════════════════════════════
@@ -243,11 +249,11 @@ const pluginTools = {
         includeTools: {
           type: 'boolean',
           description: 'Include tool details',
-          default: true
-        }
-      }
+          default: true,
+        },
+      },
     },
-    handler: async (args) => {
+    handler: async args => {
       try {
         const plugins = [];
 
@@ -258,7 +264,7 @@ const pluginTools = {
             source: info.source,
             installType: info.installType,
             installedAt: info.installedAt,
-            toolCount: info.tools?.length || 0
+            toolCount: info.tools?.length || 0,
           };
 
           // Check if plugin is loaded
@@ -279,13 +285,12 @@ const pluginTools = {
           success: true,
           count: plugins.length,
           plugins,
-          pluginDirectory: PLUGIN_DIR
+          pluginDirectory: PLUGIN_DIR,
         };
-
       } catch (error) {
         return { success: false, error: error.message };
       }
-    }
+    },
   },
 
   // ═══════════════════════════════════════════════════════════════════════════
@@ -299,22 +304,22 @@ const pluginTools = {
       properties: {
         name: {
           type: 'string',
-          description: 'Plugin name to uninstall'
+          description: 'Plugin name to uninstall',
         },
         confirm: {
           type: 'boolean',
           description: 'Confirm uninstallation',
-          default: false
-        }
+          default: false,
+        },
       },
-      required: ['name']
+      required: ['name'],
     },
-    handler: async (args) => {
+    handler: async args => {
       if (!args.confirm) {
         return {
           success: false,
           error: 'Uninstallation requires confirmation',
-          message: 'Set confirm: true to proceed'
+          message: 'Set confirm: true to proceed',
         };
       }
 
@@ -326,7 +331,7 @@ const pluginTools = {
           return {
             success: false,
             error: `Plugin not found: ${pluginName}`,
-            availablePlugins: Array.from(pluginRegistry.keys())
+            availablePlugins: Array.from(pluginRegistry.keys()),
           };
         }
 
@@ -355,13 +360,12 @@ const pluginTools = {
         return {
           success: true,
           pluginName,
-          message: `Plugin ${pluginName} uninstalled successfully`
+          message: `Plugin ${pluginName} uninstalled successfully`,
         };
-
       } catch (error) {
         return { success: false, error: error.message };
       }
-    }
+    },
   },
 
   // ═══════════════════════════════════════════════════════════════════════════
@@ -375,21 +379,21 @@ const pluginTools = {
       properties: {
         name: {
           type: 'string',
-          description: 'Plugin name'
+          description: 'Plugin name',
         },
         outputPath: {
           type: 'string',
-          description: 'Where to create the plugin (default: current directory)'
+          description: 'Where to create the plugin (default: current directory)',
         },
         tools: {
           type: 'array',
           items: { type: 'string' },
-          description: 'Tool names to include in template'
-        }
+          description: 'Tool names to include in template',
+        },
       },
-      required: ['name']
+      required: ['name'],
     },
-    handler: async (args) => {
+    handler: async args => {
       try {
         const pluginName = args.name.replace(/[^a-zA-Z0-9-_]/g, '-');
         const outputPath = args.outputPath || process.cwd();
@@ -398,7 +402,7 @@ const pluginTools = {
         if (fs.existsSync(pluginPath)) {
           return {
             success: false,
-            error: `Directory already exists: ${pluginPath}`
+            error: `Directory already exists: ${pluginPath}`,
           };
         }
 
@@ -414,8 +418,8 @@ const pluginTools = {
           author: '',
           license: 'MIT',
           peerDependencies: {
-            '@modelcontextprotocol/sdk': '^1.0.0'
-          }
+            '@modelcontextprotocol/sdk': '^1.0.0',
+          },
         };
         fs.writeFileSync(
           path.join(pluginPath, 'package.json'),
@@ -424,7 +428,9 @@ const pluginTools = {
 
         // Create tool templates
         const toolNames = args.tools || ['example_tool'];
-        const toolTemplates = toolNames.map(name => `
+        const toolTemplates = toolNames
+          .map(
+            name => `
   // ═══════════════════════════════════════════════════════════════════════════
   // TOOL: ${name}
   // ═══════════════════════════════════════════════════════════════════════════
@@ -453,7 +459,9 @@ const pluginTools = {
         return { success: false, error: error.message };
       }
     }
-  }`).join(',\n');
+  }`
+          )
+          .join(',\n');
 
         // Create index.js
         const indexJs = `#!/usr/bin/env node
@@ -544,23 +552,38 @@ MIT
           message: `Plugin template created at ${pluginPath}`,
           nextSteps: [
             'Edit index.js to implement your tools',
-            `Run: install_plugin with source: "${pluginPath}"`
-          ]
+            `Run: install_plugin with source: "${pluginPath}"`,
+          ],
         };
-
       } catch (error) {
         return { success: false, error: error.message };
       }
-    }
+    },
   },
 
   // Get all tool definitions for registration
   getToolDefinitions: function () {
     return [
-      { name: this.install_plugin.name, description: this.install_plugin.description, inputSchema: this.install_plugin.inputSchema },
-      { name: this.list_plugins.name, description: this.list_plugins.description, inputSchema: this.list_plugins.inputSchema },
-      { name: this.uninstall_plugin.name, description: this.uninstall_plugin.description, inputSchema: this.uninstall_plugin.inputSchema },
-      { name: this.create_plugin.name, description: this.create_plugin.description, inputSchema: this.create_plugin.inputSchema }
+      {
+        name: this.install_plugin.name,
+        description: this.install_plugin.description,
+        inputSchema: this.install_plugin.inputSchema,
+      },
+      {
+        name: this.list_plugins.name,
+        description: this.list_plugins.description,
+        inputSchema: this.list_plugins.inputSchema,
+      },
+      {
+        name: this.uninstall_plugin.name,
+        description: this.uninstall_plugin.description,
+        inputSchema: this.uninstall_plugin.inputSchema,
+      },
+      {
+        name: this.create_plugin.name,
+        description: this.create_plugin.description,
+        inputSchema: this.create_plugin.inputSchema,
+      },
     ];
   },
 
@@ -583,7 +606,7 @@ MIT
         for (const tool of plugin.tools) {
           allTools.push({
             ...tool,
-            plugin: name
+            plugin: name,
           });
         }
       }
@@ -608,7 +631,7 @@ MIT
     }
 
     return { loaded, failed };
-  }
+  },
 };
 
 /**
@@ -654,7 +677,6 @@ function validatePlugin(pluginPath) {
     }
 
     return { valid: true };
-
   } catch (e) {
     return { valid: false, error: `Failed to load plugin: ${e.message}` };
   }
@@ -685,7 +707,7 @@ function loadPlugin(pluginPath) {
   if (plugin.init) {
     plugin.init({
       dataDir: path.join(PLUGIN_DIR, plugin.name, 'data'),
-      config: {}
+      config: {},
     });
   }
 

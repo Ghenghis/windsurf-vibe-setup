@@ -1,9 +1,11 @@
 # Machine Learning Project Rules
 
 ## Project Type
+
 This is a Machine Learning / AI research project.
 
 ## Tech Stack
+
 - Python 3.10+
 - PyTorch or TensorFlow
 - Hugging Face Transformers
@@ -13,6 +15,7 @@ This is a Machine Learning / AI research project.
 ## Code Standards
 
 ### File Structure
+
 ```
 project/
 ├── data/              # Data files (gitignored)
@@ -33,11 +36,13 @@ project/
 ```
 
 ### Naming Conventions
+
 - Experiments: descriptive names (`bert_base_finetune_v2`)
 - Models: architecture + size (`gpt2_small.py`)
 - Configs: experiment name + date
 
 ## Best Practices
+
 - Use configuration files (Hydra, YAML)
 - Log all hyperparameters
 - Set random seeds for reproducibility
@@ -46,18 +51,21 @@ project/
 - Version control data with DVC
 
 ## GPU Considerations
+
 - Check CUDA availability before training
 - Use `torch.cuda.empty_cache()` when needed
 - Set `PYTORCH_CUDA_ALLOC_CONF=max_split_size_mb:128`
 - Monitor GPU memory usage
 
 ## Experiment Tracking
+
 - Log metrics to W&B or MLflow
 - Save model configs with checkpoints
 - Document results in README
 - Keep a research log
 
 ## Don't Do
+
 - No hardcoded paths (use configs)
 - No training without validation
 - No pushing large files to git

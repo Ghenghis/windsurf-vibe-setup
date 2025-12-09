@@ -19,26 +19,26 @@ jobs:
   audit:
     name: Code Audit & Quality Check
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-        
+
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '18'
           cache: 'npm'
-      
+
       - name: Install dependencies
         run: |
           npm ci --prefer-offline --no-audit
-          
+
       - name: Run self-audit
         run: |
           node self-audit.js > audit-output.txt 2>&1
           cat audit-output.txt
-          
+
       - name: Upload audit report
         uses: actions/upload-artifact@v3
         with:
@@ -46,7 +46,7 @@ jobs:
           path: |
             AUDIT_REPORT.md
             audit-output.txt
-      
+
       - name: Check code quality score
         run: |
           SCORE=$(grep "Code Quality Score" AUDIT_REPORT.md | grep -oE "[0-9]+/100" | cut -d'/' -f1)
@@ -56,25 +56,25 @@ jobs:
             exit 1
           fi
           echo "✅ Code quality acceptable: $SCORE/100"
-  
+
   test-tools:
     name: Test Tool Functionality
     runs-on: ubuntu-latest
     needs: audit
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-        
+
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '18'
           cache: 'npm'
-      
+
       - name: Install dependencies
         run: npm ci --prefer-offline --no-audit
-      
+
       - name: Test harness initialization
         run: |
           node -e "
@@ -82,7 +82,7 @@ jobs:
           harness.config.enabled = true;
           console.log('Harness config:', harness.config);
           "
-      
+
       - name: Count actual tools
         run: |
           node -e "
@@ -91,7 +91,7 @@ jobs:
           const handlers = content.match(/async \(args\) =>/g) || [];
           console.log('Tool handlers found:', handlers.length);
           "
-      
+
       - name: Verify v4.x features
         run: |
           echo "Checking v4.x features..."
@@ -99,16 +99,16 @@ jobs:
           [ -f "mcp-server/src/hive-mind.js" ] && echo "✅ Hive Mind found" || echo "❌ Hive Mind missing"
           [ -f "mcp-server/src/open-interpreter-tools.js" ] && echo "✅ Open Interpreter found" || echo "❌ Open Interpreter missing"
           [ -d "mcp-server/src/harness" ] && echo "✅ Harness found" || echo "❌ Harness missing"
-  
+
   documentation:
     name: Documentation Validation
     runs-on: ubuntu-latest
     needs: audit
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-      
+
       - name: Check README files
         run: |
           echo "Checking documentation files..."
@@ -119,7 +119,7 @@ jobs:
             "HARNESS_INTEGRATION_COMPLETE.md"
             "SETUP_CLAUDE_SUBSCRIPTION.md"
           )
-          
+
           for file in "${FILES[@]}"; do
             if [ -f "$file" ]; then
               echo "✅ $file exists"
@@ -133,86 +133,86 @@ jobs:
               exit 1
             fi
           done
-      
+
       - name: Validate Markdown
         uses: DavidAnson/markdownlint-cli2-action@v13
         continue-on-error: true
         with:
           globs: '**/*.md'
-  
+
   self-repair:
     name: Self-Repair System
     runs-on: ubuntu-latest
     if: github.event_name == 'schedule' || github.event.inputs.repair == 'true'
     needs: [audit, test-tools, documentation]
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-      
+
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '18'
           cache: 'npm'
-      
+
       - name: Install dependencies
         run: npm ci --prefer-offline --no-audit
-      
+
       - name: Run self-repair
         run: |
           echo "🔧 Running self-repair..."
           node self-audit.js --fix
-          
+
       - name: Check for changes
         id: git-check
         run: |
           git diff --exit-code || echo "changes=true" >> $GITHUB_OUTPUT
-      
+
       - name: Create Pull Request
         if: steps.git-check.outputs.changes == 'true'
         uses: peter-evans/create-pull-request@v5
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          commit-message: "🔧 Self-repair: Auto-fixes and enhancements"
-          title: "🔧 Self-Repair: Automated fixes and improvements"
+          commit-message: '🔧 Self-repair: Auto-fixes and enhancements'
+          title: '🔧 Self-Repair: Automated fixes and improvements'
           body: |
             ## 🤖 Automated Self-Repair
-            
+
             This PR contains automated fixes identified by the self-repair system:
-            
+
             - Fixed missing files
             - Updated stubs
             - Corrected documentation
             - Performance optimizations
-            
+
             Please review the changes before merging.
-            
+
             ---
             *Generated by Self-Repair System*
           branch: self-repair/auto-fix
           delete-branch: true
-  
+
   performance:
     name: Performance Check
     runs-on: ubuntu-latest
     needs: audit
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-      
+
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '18'
           cache: 'npm'
-      
+
       - name: Install dependencies
         run: npm ci --prefer-offline --no-audit
-      
+
       - name: Measure load time
         run: |
           node -e "
@@ -225,7 +225,7 @@ jobs:
             process.exit(1);
           }
           "
-      
+
       - name: Check memory usage
         run: |
           node -e "

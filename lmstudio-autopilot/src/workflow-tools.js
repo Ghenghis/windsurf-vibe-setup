@@ -18,9 +18,10 @@ const path = require('path');
 const crypto = require('crypto');
 
 // Workflow storage directory
-const WORKFLOW_DIR = process.platform === 'win32'
-  ? path.join(process.env.APPDATA || '', 'WindsurfAutopilot', 'workflows')
-  : path.join(process.env.HOME || '', '.windsurf-autopilot', 'workflows');
+const WORKFLOW_DIR =
+  process.platform === 'win32'
+    ? path.join(process.env.APPDATA || '', 'WindsurfAutopilot', 'workflows')
+    : path.join(process.env.HOME || '', '.windsurf-autopilot', 'workflows');
 
 // Ensure workflow directory exists
 if (!fs.existsSync(WORKFLOW_DIR)) {
@@ -39,13 +40,22 @@ const builtInTemplates = {
       { tool: 'create_project', args: { type: '{{projectType}}', name: '{{projectName}}' } },
       { tool: 'install_packages', args: { packages: '{{packages}}' } },
       { tool: 'git_init', args: {} },
-      { tool: 'git_commit', args: { message: 'Initial commit' } }
+      { tool: 'git_commit', args: { message: 'Initial commit' } },
     ],
     variables: {
-      projectType: { type: 'string', required: true, description: 'Project type (react, nextjs, node, python)' },
+      projectType: {
+        type: 'string',
+        required: true,
+        description: 'Project type (react, nextjs, node, python)',
+      },
       projectName: { type: 'string', required: true, description: 'Project name' },
-      packages: { type: 'array', required: false, default: [], description: 'Additional packages to install' }
-    }
+      packages: {
+        type: 'array',
+        required: false,
+        default: [],
+        description: 'Additional packages to install',
+      },
+    },
   },
   'deploy-production': {
     name: 'Production Deployment',
@@ -54,11 +64,11 @@ const builtInTemplates = {
       { tool: 'run_tests', args: { projectPath: '{{projectPath}}' } },
       { tool: 'security_audit', args: { projectPath: '{{projectPath}}' } },
       { tool: 'create_checkpoint', args: { projectPath: '{{projectPath}}', name: 'pre-deploy' } },
-      { tool: 'deploy_vercel', args: { projectPath: '{{projectPath}}', prod: true } }
+      { tool: 'deploy_vercel', args: { projectPath: '{{projectPath}}', prod: true } },
     ],
     variables: {
-      projectPath: { type: 'string', required: true, description: 'Path to project' }
-    }
+      projectPath: { type: 'string', required: true, description: 'Path to project' },
+    },
   },
   'code-review': {
     name: 'Full Code Review',
@@ -67,11 +77,11 @@ const builtInTemplates = {
       { tool: 'code_review', args: { projectPath: '{{projectPath}}' } },
       { tool: 'analyze_complexity', args: { projectPath: '{{projectPath}}' } },
       { tool: 'find_dead_code', args: { projectPath: '{{projectPath}}' } },
-      { tool: 'security_audit', args: { projectPath: '{{projectPath}}' } }
+      { tool: 'security_audit', args: { projectPath: '{{projectPath}}' } },
     ],
     variables: {
-      projectPath: { type: 'string', required: true, description: 'Path to project' }
-    }
+      projectPath: { type: 'string', required: true, description: 'Path to project' },
+    },
   },
   'backup-restore': {
     name: 'Backup and Restore',
@@ -79,21 +89,20 @@ const builtInTemplates = {
     steps: [
       { tool: 'create_checkpoint', args: { projectPath: '{{projectPath}}' } },
       { tool: 'db_backup', args: { connectionId: '{{dbConnection}}' } },
-      { tool: 'save_context', args: { name: '{{contextName}}' } }
+      { tool: 'save_context', args: { name: '{{contextName}}' } },
     ],
     variables: {
       projectPath: { type: 'string', required: true },
       dbConnection: { type: 'string', required: false },
-      contextName: { type: 'string', required: false, default: 'auto-backup' }
-    }
-  }
+      contextName: { type: 'string', required: false, default: 'auto-backup' },
+    },
+  },
 };
 
 /**
  * Workflow Tools Export
  */
 const workflowTools = {
-
   // ═══════════════════════════════════════════════════════════════════════════
   // TOOL: create_workflow
   // ═══════════════════════════════════════════════════════════════════════════
@@ -105,11 +114,11 @@ const workflowTools = {
       properties: {
         name: {
           type: 'string',
-          description: 'Workflow name'
+          description: 'Workflow name',
         },
         description: {
           type: 'string',
-          description: 'What this workflow does'
+          description: 'What this workflow does',
         },
         steps: {
           type: 'array',
@@ -119,17 +128,24 @@ const workflowTools = {
               id: { type: 'string', description: 'Step ID (auto-generated if not provided)' },
               tool: { type: 'string', description: 'Tool to execute' },
               args: { type: 'object', description: 'Arguments for the tool' },
-              condition: { type: 'string', description: 'Condition to run this step (e.g., "{{prev.success}}")' },
-              onError: { type: 'string', enum: ['stop', 'continue', 'retry'], description: 'Error handling' },
-              retries: { type: 'number', description: 'Number of retries on failure' }
+              condition: {
+                type: 'string',
+                description: 'Condition to run this step (e.g., "{{prev.success}}")',
+              },
+              onError: {
+                type: 'string',
+                enum: ['stop', 'continue', 'retry'],
+                description: 'Error handling',
+              },
+              retries: { type: 'number', description: 'Number of retries on failure' },
             },
-            required: ['tool']
+            required: ['tool'],
           },
-          description: 'Workflow steps'
+          description: 'Workflow steps',
         },
         variables: {
           type: 'object',
-          description: 'Input variables for the workflow'
+          description: 'Input variables for the workflow',
         },
         triggers: {
           type: 'array',
@@ -137,15 +153,15 @@ const workflowTools = {
             type: 'object',
             properties: {
               type: { type: 'string', enum: ['manual', 'schedule', 'webhook', 'file_change'] },
-              config: { type: 'object' }
-            }
+              config: { type: 'object' },
+            },
           },
-          description: 'Workflow triggers'
-        }
+          description: 'Workflow triggers',
+        },
       },
-      required: ['name', 'steps']
+      required: ['name', 'steps'],
     },
-    handler: async (args) => {
+    handler: async args => {
       try {
         const workflowId = crypto.randomUUID().substring(0, 8);
         const workflow = {
@@ -161,10 +177,10 @@ const workflowTools = {
             args: step.args || {},
             condition: step.condition,
             onError: step.onError || 'stop',
-            retries: step.retries || 0
+            retries: step.retries || 0,
           })),
           variables: args.variables || {},
-          triggers: args.triggers || [{ type: 'manual' }]
+          triggers: args.triggers || [{ type: 'manual' }],
         };
 
         // Save workflow
@@ -177,13 +193,12 @@ const workflowTools = {
           workflowPath,
           name: workflow.name,
           stepCount: workflow.steps.length,
-          message: `Workflow "${workflow.name}" created with ${workflow.steps.length} steps`
+          message: `Workflow "${workflow.name}" created with ${workflow.steps.length} steps`,
         };
-
       } catch (error) {
         return { success: false, error: error.message };
       }
-    }
+    },
   },
 
   // ═══════════════════════════════════════════════════════════════════════════
@@ -197,23 +212,23 @@ const workflowTools = {
       properties: {
         workflowId: {
           type: 'string',
-          description: 'Workflow ID or name to run'
+          description: 'Workflow ID or name to run',
         },
         variables: {
           type: 'object',
-          description: 'Input variables for the workflow'
+          description: 'Input variables for the workflow',
         },
         dryRun: {
           type: 'boolean',
           description: 'Preview execution without running',
-          default: false
+          default: false,
         },
         startFromStep: {
           type: 'string',
-          description: 'Start from specific step ID'
-        }
+          description: 'Start from specific step ID',
+        },
       },
-      required: ['workflowId']
+      required: ['workflowId'],
     },
     handler: async (args, toolExecutor) => {
       try {
@@ -235,7 +250,9 @@ const workflowTools = {
           return {
             success: false,
             error: `Workflow not found: ${args.workflowId}`,
-            availableWorkflows: files.filter(f => f.endsWith('.json')).map(f => f.replace('.json', ''))
+            availableWorkflows: files
+              .filter(f => f.endsWith('.json'))
+              .map(f => f.replace('.json', '')),
           };
         }
 
@@ -252,7 +269,7 @@ const workflowTools = {
             success: false,
             error: 'Missing required variables',
             missingVariables: missingVars,
-            variableDefinitions: workflow.variables
+            variableDefinitions: workflow.variables,
           };
         }
 
@@ -271,7 +288,7 @@ const workflowTools = {
             id: step.id,
             tool: step.tool,
             args: substituteVariables(step.args, variables),
-            condition: step.condition
+            condition: step.condition,
           }));
 
           return {
@@ -280,7 +297,7 @@ const workflowTools = {
             workflowName: workflow.name,
             steps: preview,
             variables,
-            message: 'Dry run complete. Set dryRun: false to execute.'
+            message: 'Dry run complete. Set dryRun: false to execute.',
           };
         }
 
@@ -293,7 +310,7 @@ const workflowTools = {
           startedAt: new Date().toISOString(),
           status: 'running',
           results: [],
-          variables
+          variables,
         };
 
         runningWorkflows.set(runId, execution);
@@ -320,7 +337,7 @@ const workflowTools = {
                 stepId: step.id,
                 tool: step.tool,
                 skipped: true,
-                reason: 'Condition not met'
+                reason: 'Condition not met',
               });
               continue;
             }
@@ -340,7 +357,7 @@ const workflowTools = {
                 success: true,
                 message: `Executed ${step.tool}`,
                 args: resolvedArgs,
-                timestamp: new Date().toISOString()
+                timestamp: new Date().toISOString(),
               };
               break;
             } catch (e) {
@@ -361,7 +378,7 @@ const workflowTools = {
           execution.results.push({
             stepId: step.id,
             tool: step.tool,
-            ...stepResult
+            ...stepResult,
           });
 
           prevResult = stepResult;
@@ -386,13 +403,12 @@ const workflowTools = {
           stepsExecuted: execution.results.filter(r => !r.skipped).length,
           stepsSkipped: execution.results.filter(r => r.skipped).length,
           results: execution.results,
-          duration: new Date(execution.completedAt) - new Date(execution.startedAt) + 'ms'
+          duration: new Date(execution.completedAt) - new Date(execution.startedAt) + 'ms',
         };
-
       } catch (error) {
         return { success: false, error: error.message };
       }
-    }
+    },
   },
 
   // ═══════════════════════════════════════════════════════════════════════════
@@ -406,7 +422,7 @@ const workflowTools = {
       properties: {
         workflowId: {
           type: 'string',
-          description: 'Workflow ID to edit'
+          description: 'Workflow ID to edit',
         },
         updates: {
           type: 'object',
@@ -416,8 +432,8 @@ const workflowTools = {
             description: { type: 'string' },
             steps: { type: 'array' },
             variables: { type: 'object' },
-            triggers: { type: 'array' }
-          }
+            triggers: { type: 'array' },
+          },
         },
         addStep: {
           type: 'object',
@@ -425,17 +441,17 @@ const workflowTools = {
           properties: {
             tool: { type: 'string' },
             args: { type: 'object' },
-            position: { type: 'number' }
-          }
+            position: { type: 'number' },
+          },
         },
         removeStep: {
           type: 'string',
-          description: 'Step ID to remove'
-        }
+          description: 'Step ID to remove',
+        },
       },
-      required: ['workflowId']
+      required: ['workflowId'],
     },
-    handler: async (args) => {
+    handler: async args => {
       try {
         // Find workflow
         const files = fs.readdirSync(WORKFLOW_DIR);
@@ -469,7 +485,7 @@ const workflowTools = {
             id: `step_${workflow.steps.length + 1}`,
             tool: args.addStep.tool,
             args: args.addStep.args || {},
-            onError: 'stop'
+            onError: 'stop',
           };
 
           if (args.addStep.position !== undefined) {
@@ -496,13 +512,12 @@ const workflowTools = {
           name: workflow.name,
           version: workflow.version,
           stepCount: workflow.steps.length,
-          message: `Workflow "${workflow.name}" updated`
+          message: `Workflow "${workflow.name}" updated`,
         };
-
       } catch (error) {
         return { success: false, error: error.message };
       }
-    }
+    },
   },
 
   // ═══════════════════════════════════════════════════════════════════════════
@@ -517,28 +532,28 @@ const workflowTools = {
         action: {
           type: 'string',
           enum: ['export', 'import', 'list'],
-          description: 'Action to perform'
+          description: 'Action to perform',
         },
         workflowId: {
           type: 'string',
-          description: 'Workflow ID for export'
+          description: 'Workflow ID for export',
         },
         outputPath: {
           type: 'string',
-          description: 'Path for export file'
+          description: 'Path for export file',
         },
         importPath: {
           type: 'string',
-          description: 'Path to import from'
+          description: 'Path to import from',
         },
         importData: {
           type: 'object',
-          description: 'Workflow data to import directly'
-        }
+          description: 'Workflow data to import directly',
+        },
       },
-      required: ['action']
+      required: ['action'],
     },
-    handler: async (args) => {
+    handler: async args => {
       try {
         if (args.action === 'list') {
           const files = fs.readdirSync(WORKFLOW_DIR).filter(f => f.endsWith('.json'));
@@ -550,7 +565,7 @@ const workflowTools = {
               description: content.description,
               stepCount: content.steps?.length || 0,
               version: content.version,
-              createdAt: content.createdAt
+              createdAt: content.createdAt,
             };
           });
 
@@ -558,7 +573,7 @@ const workflowTools = {
             success: true,
             count: workflows.length,
             workflows,
-            directory: WORKFLOW_DIR
+            directory: WORKFLOW_DIR,
           };
         }
 
@@ -590,7 +605,7 @@ const workflowTools = {
             type: 'windsurf-workflow',
             version: '1.0',
             exportedAt: new Date().toISOString(),
-            workflow
+            workflow,
           };
 
           if (args.outputPath) {
@@ -599,14 +614,14 @@ const workflowTools = {
               success: true,
               exported: true,
               outputPath: args.outputPath,
-              workflowName: workflow.name
+              workflowName: workflow.name,
             };
           }
 
           return {
             success: true,
             exported: true,
-            data: exportData
+            data: exportData,
           };
         }
 
@@ -642,16 +657,15 @@ const workflowTools = {
             imported: true,
             workflowId: workflow.id,
             workflowName: workflow.name,
-            stepCount: workflow.steps?.length || 0
+            stepCount: workflow.steps?.length || 0,
           };
         }
 
         return { success: false, error: 'Invalid action' };
-
       } catch (error) {
         return { success: false, error: error.message };
       }
-    }
+    },
   },
 
   // ═══════════════════════════════════════════════════════════════════════════
@@ -667,19 +681,19 @@ const workflowTools = {
           type: 'string',
           enum: ['list', 'use', 'preview'],
           description: 'Action to perform',
-          default: 'list'
+          default: 'list',
         },
         templateName: {
           type: 'string',
-          description: 'Template name to use or preview'
+          description: 'Template name to use or preview',
         },
         variables: {
           type: 'object',
-          description: 'Variables for the template'
-        }
-      }
+          description: 'Variables for the template',
+        },
+      },
     },
-    handler: async (args) => {
+    handler: async args => {
       try {
         const action = args.action || 'list';
 
@@ -689,13 +703,13 @@ const workflowTools = {
             name: template.name,
             description: template.description,
             stepCount: template.steps.length,
-            variables: Object.keys(template.variables || {})
+            variables: Object.keys(template.variables || {}),
           }));
 
           return {
             success: true,
             count: templates.length,
-            templates
+            templates,
           };
         }
 
@@ -704,7 +718,7 @@ const workflowTools = {
             return {
               success: false,
               error: `Template not found: ${args.templateName}`,
-              availableTemplates: Object.keys(builtInTemplates)
+              availableTemplates: Object.keys(builtInTemplates),
             };
           }
 
@@ -715,8 +729,8 @@ const workflowTools = {
               name: template.name,
               description: template.description,
               steps: template.steps,
-              variables: template.variables
-            }
+              variables: template.variables,
+            },
           };
         }
 
@@ -725,7 +739,7 @@ const workflowTools = {
             return {
               success: false,
               error: `Template not found: ${args.templateName}`,
-              availableTemplates: Object.keys(builtInTemplates)
+              availableTemplates: Object.keys(builtInTemplates),
             };
           }
 
@@ -745,10 +759,10 @@ const workflowTools = {
               id: `step_${index + 1}`,
               tool: step.tool,
               args: step.args,
-              onError: 'stop'
+              onError: 'stop',
             })),
             variables: template.variables,
-            triggers: [{ type: 'manual' }]
+            triggers: [{ type: 'manual' }],
           };
 
           // Save workflow
@@ -764,33 +778,52 @@ const workflowTools = {
             requiredVariables: Object.entries(template.variables || {})
               .filter(([_, v]) => v.required)
               .map(([k, _]) => k),
-            message: `Created workflow from template "${template.name}"`
+            message: `Created workflow from template "${template.name}"`,
           };
         }
 
         return { success: false, error: 'Invalid action' };
-
       } catch (error) {
         return { success: false, error: error.message };
       }
-    }
+    },
   },
 
   // Get tool definitions
   getToolDefinitions: function () {
     return [
-      { name: this.create_workflow.name, description: this.create_workflow.description, inputSchema: this.create_workflow.inputSchema },
-      { name: this.run_workflow.name, description: this.run_workflow.description, inputSchema: this.run_workflow.inputSchema },
-      { name: this.edit_workflow.name, description: this.edit_workflow.description, inputSchema: this.edit_workflow.inputSchema },
-      { name: this.share_workflow.name, description: this.share_workflow.description, inputSchema: this.share_workflow.inputSchema },
-      { name: this.workflow_templates.name, description: this.workflow_templates.description, inputSchema: this.workflow_templates.inputSchema }
+      {
+        name: this.create_workflow.name,
+        description: this.create_workflow.description,
+        inputSchema: this.create_workflow.inputSchema,
+      },
+      {
+        name: this.run_workflow.name,
+        description: this.run_workflow.description,
+        inputSchema: this.run_workflow.inputSchema,
+      },
+      {
+        name: this.edit_workflow.name,
+        description: this.edit_workflow.description,
+        inputSchema: this.edit_workflow.inputSchema,
+      },
+      {
+        name: this.share_workflow.name,
+        description: this.share_workflow.description,
+        inputSchema: this.share_workflow.inputSchema,
+      },
+      {
+        name: this.workflow_templates.name,
+        description: this.workflow_templates.description,
+        inputSchema: this.workflow_templates.inputSchema,
+      },
     ];
   },
 
   getHandler: function (toolName) {
     const tool = this[toolName];
     return tool ? tool.handler : null;
-  }
+  },
 };
 
 // Helper: Substitute variables in object

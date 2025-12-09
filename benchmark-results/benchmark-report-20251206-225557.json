@@ -1,0 +1,1000 @@
+{
+  "Tests": [
+    {
+      "Variance": 34.0,
+      "DelayReasons": null,
+      "Timestamp": "2025-12-06 22:55:37",
+      "Max": 120.0,
+      "TestId": "FS-001",
+      "Category": "FileSystem",
+      "Runs": [
+        {
+          "Run": 1,
+          "Duration": 120,
+          "Success": true,
+          "Error": null,
+          "MemoryAfter": 16966016,
+          "MemoryBefore": 14639616,
+          "Output": {
+            "ExcludedViolations": 3,
+            "TestPath": "C:\\Users\\Admin\\civitai",
+            "Message": "3 violations found",
+            "PatternsChecked": 7
+          },
+          "MemoryDelta": 2326400
+        },
+        {
+          "Run": 2,
+          "Duration": 97,
+          "Success": true,
+          "Error": null,
+          "MemoryAfter": 19104112,
+          "MemoryBefore": 17531248,
+          "Output": {
+            "ExcludedViolations": 3,
+            "TestPath": "C:\\Users\\Admin\\civitai",
+            "Message": "3 violations found",
+            "PatternsChecked": 7
+          },
+          "MemoryDelta": 1572864
+        },
+        {
+          "Run": 3,
+          "Duration": 86,
+          "Success": true,
+          "Error": null,
+          "MemoryAfter": 20806464,
+          "MemoryBefore": 19144976,
+          "Output": {
+            "ExcludedViolations": 3,
+            "TestPath": "C:\\Users\\Admin\\civitai",
+            "Message": "3 violations found",
+            "PatternsChecked": 7
+          },
+          "MemoryDelta": 1661488
+        }
+      ],
+      "Average": 101.0,
+      "Min": 86.0,
+      "TestName": "File Watcher Exclusion Validation",
+      "Status": "Acceptable"
+    },
+    {
+      "Variance": 47.0,
+      "DelayReasons": null,
+      "Timestamp": "2025-12-06 22:55:38",
+      "Max": 473.0,
+      "TestId": "FS-002",
+      "Category": "FileSystem",
+      "Runs": [
+        {
+          "Run": 1,
+          "Duration": 426,
+          "Success": true,
+          "Error": null,
+          "MemoryAfter": 31372536,
+          "MemoryBefore": 22280768,
+          "Output": {
+            "MatchCount": 48,
+            "FilesSearched": 12
+          },
+          "MemoryDelta": 9091768
+        },
+        {
+          "Run": 2,
+          "Duration": 473,
+          "Success": true,
+          "Error": null,
+          "MemoryAfter": 39931048,
+          "MemoryBefore": 31414760,
+          "Output": {
+            "MatchCount": 48,
+            "FilesSearched": 12
+          },
+          "MemoryDelta": 8516288
+        },
+        {
+          "Run": 3,
+          "Duration": 438,
+          "Success": true,
+          "Error": null,
+          "MemoryAfter": 48533576,
+          "MemoryBefore": 39973624,
+          "Output": {
+            "MatchCount": 48,
+            "FilesSearched": 12
+          },
+          "MemoryDelta": 8559952
+        }
+      ],
+      "Average": 445.67,
+      "Min": 426.0,
+      "TestName": "Search Performance with Exclusions",
+      "Status": "Acceptable"
+    },
+    {
+      "Variance": 29.0,
+      "DelayReasons": null,
+      "Timestamp": "2025-12-06 22:55:40",
+      "Max": 53.0,
+      "TestId": "FS-003",
+      "Category": "FileSystem",
+      "Runs": [
+        {
+          "Run": 1,
+          "Duration": 24,
+          "Success": true,
+          "Error": null,
+          "MemoryAfter": 49877128,
+          "MemoryBefore": 48812168,
+          "Output": {
+            "Message": "Found 10 large files, 7 are binary model files",
+            "TestPath": "C:\\Users\\Admin\\civitai",
+            "Files": [
+              {
+                "Name": "databases_20251204_170643.zip",
+                "Extension": ".zip",
+                "SizeMB": 2.5,
+                "Path": "C:\\Users\\Admin\\civitai\\backups\\databases_20251204_170643.zip"
+              },
+              {
+                "Name": "databases_20251206_162158.zip",
+                "Extension": ".zip",
+                "SizeMB": 2.73,
+                "Path": "C:\\Users\\Admin\\civitai\\backups\\databases_20251206_162158.zip"
+              },
+              {
+                "Name": "databases_20251206_222159.zip",
+                "Extension": ".zip",
+                "SizeMB": 3.0,
+                "Path": "C:\\Users\\Admin\\civitai\\backups\\databases_20251206_222159.zip"
+              },
+              {
+                "Name": "CyberRealistic.safetensors",
+                "Extension": ".safetensors",
+                "SizeMB": 2033.85,
+                "Path": "C:\\Users\\Admin\\civitai\\checkpoints\\CyberRealistic.safetensors"
+              },
+              {
+                "Name": "juggernautXL_v9.safetensors",
+                "Extension": ".safetensors",
+                "SizeMB": 6776.19,
+                "Path": "C:\\Users\\Admin\\civitai\\checkpoints\\juggernautXL_v9.safetensors"
+              },
+              {
+                "Name": "NoobAI-XL-v1.0.safetensors",
+                "Extension": ".safetensors",
+                "SizeMB": 6616.63,
+                "Path": "C:\\Users\\Admin\\civitai\\checkpoints\\NoobAI-XL-v1.0.safetensors"
+              },
+              {
+                "Name": "ponyDiffusionV6XL_v6.safetensors",
+                "Extension": ".safetensors",
+                "SizeMB": 6616.63,
+                "Path": "C:\\Users\\Admin\\civitai\\checkpoints\\ponyDiffusionV6XL_v6.safetensors"
+              },
+              {
+                "Name": "RealisticVisionV5.safetensors",
+                "Extension": ".safetensors",
+                "SizeMB": 2033.83,
+                "Path": "C:\\Users\\Admin\\civitai\\checkpoints\\RealisticVisionV5.safetensors"
+              },
+              {
+                "Name": "sd_xl_base_1.0.safetensors",
+                "Extension": ".safetensors",
+                "SizeMB": 6616.67,
+                "Path": "C:\\Users\\Admin\\civitai\\checkpoints\\sd_xl_base_1.0.safetensors"
+              },
+              {
+                "Name": "sd_xl_refiner_1.0.safetensors",
+                "Extension": ".safetensors",
+                "SizeMB": 5794.51,
+                "Path": "C:\\Users\\Admin\\civitai\\checkpoints\\sd_xl_refiner_1.0.safetensors"
+              }
+            ],
+            "BinaryFilesFound": 7,
+            "LargeFilesFound": 10
+          },
+          "MemoryDelta": 1064960
+        },
+        {
+          "Run": 2,
+          "Duration": 27,
+          "Success": true,
+          "Error": null,
+          "MemoryAfter": 50687976,
+          "MemoryBefore": 49926216,
+          "Output": {
+            "Message": "Found 10 large files, 7 are binary model files",
+            "TestPath": "C:\\Users\\Admin\\civitai",
+            "Files": [
+              {
+                "Name": "databases_20251204_170643.zip",
+                "Extension": ".zip",
+                "SizeMB": 2.5,
+                "Path": "C:\\Users\\Admin\\civitai\\backups\\databases_20251204_170643.zip"
+              },
+              {
+                "Name": "databases_20251206_162158.zip",
+                "Extension": ".zip",
+                "SizeMB": 2.73,
+                "Path": "C:\\Users\\Admin\\civitai\\backups\\databases_20251206_162158.zip"
+              },
+              {
+                "Name": "databases_20251206_222159.zip",
+                "Extension": ".zip",
+                "SizeMB": 3.0,
+                "Path": "C:\\Users\\Admin\\civitai\\backups\\databases_20251206_222159.zip"
+              },
+              {
+                "Name": "CyberRealistic.safetensors",
+                "Extension": ".safetensors",
+                "SizeMB": 2033.85,
+                "Path": "C:\\Users\\Admin\\civitai\\checkpoints\\CyberRealistic.safetensors"
+              },
+              {
+                "Name": "juggernautXL_v9.safetensors",
+                "Extension": ".safetensors",
+                "SizeMB": 6776.19,
+                "Path": "C:\\Users\\Admin\\civitai\\checkpoints\\juggernautXL_v9.safetensors"
+              },
+              {
+                "Name": "NoobAI-XL-v1.0.safetensors",
+                "Extension": ".safetensors",
+                "SizeMB": 6616.63,
+                "Path": "C:\\Users\\Admin\\civitai\\checkpoints\\NoobAI-XL-v1.0.safetensors"
+              },
+              {
+                "Name": "ponyDiffusionV6XL_v6.safetensors",
+                "Extension": ".safetensors",
+                "SizeMB": 6616.63,
+                "Path": "C:\\Users\\Admin\\civitai\\checkpoints\\ponyDiffusionV6XL_v6.safetensors"
+              },
+              {
+                "Name": "RealisticVisionV5.safetensors",
+                "Extension": ".safetensors",
+                "SizeMB": 2033.83,
+                "Path": "C:\\Users\\Admin\\civitai\\checkpoints\\RealisticVisionV5.safetensors"
+              },
+              {
+                "Name": "sd_xl_base_1.0.safetensors",
+                "Extension": ".safetensors",
+                "SizeMB": 6616.67,
+                "Path": "C:\\Users\\Admin\\civitai\\checkpoints\\sd_xl_base_1.0.safetensors"
+              },
+              {
+                "Name": "sd_xl_refiner_1.0.safetensors",
+                "Extension": ".safetensors",
+                "SizeMB": 5794.51,
+                "Path": "C:\\Users\\Admin\\civitai\\checkpoints\\sd_xl_refiner_1.0.safetensors"
+              }
+            ],
+            "BinaryFilesFound": 7,
+            "LargeFilesFound": 10
+          },
+          "MemoryDelta": 761760
+        },
+        {
+          "Run": 3,
+          "Duration": 53,
+          "Success": true,
+          "Error": null,
+          "MemoryAfter": 8159856,
+          "MemoryBefore": 50729096,
+          "Output": {
+            "Message": "Found 10 large files, 7 are binary model files",
+            "TestPath": "C:\\Users\\Admin\\civitai",
+            "Files": [
+              {
+                "Name": "databases_20251204_170643.zip",
+                "Extension": ".zip",
+                "SizeMB": 2.5,
+                "Path": "C:\\Users\\Admin\\civitai\\backups\\databases_20251204_170643.zip"
+              },
+              {
+                "Name": "databases_20251206_162158.zip",
+                "Extension": ".zip",
+                "SizeMB": 2.73,
+                "Path": "C:\\Users\\Admin\\civitai\\backups\\databases_20251206_162158.zip"
+              },
+              {
+                "Name": "databases_20251206_222159.zip",
+                "Extension": ".zip",
+                "SizeMB": 3.0,
+                "Path": "C:\\Users\\Admin\\civitai\\backups\\databases_20251206_222159.zip"
+              },
+              {
+                "Name": "CyberRealistic.safetensors",
+                "Extension": ".safetensors",
+                "SizeMB": 2033.85,
+                "Path": "C:\\Users\\Admin\\civitai\\checkpoints\\CyberRealistic.safetensors"
+              },
+              {
+                "Name": "juggernautXL_v9.safetensors",
+                "Extension": ".safetensors",
+                "SizeMB": 6776.19,
+                "Path": "C:\\Users\\Admin\\civitai\\checkpoints\\juggernautXL_v9.safetensors"
+              },
+              {
+                "Name": "NoobAI-XL-v1.0.safetensors",
+                "Extension": ".safetensors",
+                "SizeMB": 6616.63,
+                "Path": "C:\\Users\\Admin\\civitai\\checkpoints\\NoobAI-XL-v1.0.safetensors"
+              },
+              {
+                "Name": "ponyDiffusionV6XL_v6.safetensors",
+                "Extension": ".safetensors",
+                "SizeMB": 6616.63,
+                "Path": "C:\\Users\\Admin\\civitai\\checkpoints\\ponyDiffusionV6XL_v6.safetensors"
+              },
+              {
+                "Name": "RealisticVisionV5.safetensors",
+                "Extension": ".safetensors",
+                "SizeMB": 2033.83,
+                "Path": "C:\\Users\\Admin\\civitai\\checkpoints\\RealisticVisionV5.safetensors"
+              },
+              {
+                "Name": "sd_xl_base_1.0.safetensors",
+                "Extension": ".safetensors",
+                "SizeMB": 6616.67,
+                "Path": "C:\\Users\\Admin\\civitai\\checkpoints\\sd_xl_base_1.0.safetensors"
+              },
+              {
+                "Name": "sd_xl_refiner_1.0.safetensors",
+                "Extension": ".safetensors",
+                "SizeMB": 5794.51,
+                "Path": "C:\\Users\\Admin\\civitai\\checkpoints\\sd_xl_refiner_1.0.safetensors"
+              }
+            ],
+            "BinaryFilesFound": 7,
+            "LargeFilesFound": 10
+          },
+          "MemoryDelta": -42569240
+        }
+      ],
+      "Average": 34.67,
+      "Min": 24.0,
+      "TestName": "Large File Detection and Handling",
+      "Status": "Optimal"
+    },
+    {
+      "Variance": 104.0,
+      "DelayReasons": null,
+      "Timestamp": "2025-12-06 22:55:42",
+      "Max": 284.0,
+      "TestId": "LANG-001",
+      "Category": "Language",
+      "Runs": [
+        {
+          "Run": 1,
+          "Duration": 284,
+          "Success": true,
+          "Error": null,
+          "MemoryAfter": 51681504,
+          "MemoryBefore": 8447696,
+          "Output": {
+            "FilesAnalyzed": 25,
+            "AverageLinesPerFile": 229.0,
+            "Classes": 18,
+            "ImportStatements": 168,
+            "Functions": 117,
+            "TotalLines": 5721,
+            "FileSize": 5721
+          },
+          "MemoryDelta": 43233808
+        },
+        {
+          "Run": 2,
+          "Duration": 217,
+          "Success": true,
+          "Error": null,
+          "MemoryAfter": 44156888,
+          "MemoryBefore": 51730848,
+          "Output": {
+            "FilesAnalyzed": 25,
+            "AverageLinesPerFile": 229.0,
+            "Classes": 18,
+            "ImportStatements": 168,
+            "Functions": 117,
+            "TotalLines": 5721,
+            "FileSize": 5721
+          },
+          "MemoryDelta": -7573960
+        },
+        {
+          "Run": 3,
+          "Duration": 180,
+          "Success": true,
+          "Error": null,
+          "MemoryAfter": 35605480,
+          "MemoryBefore": 44198008,
+          "Output": {
+            "FilesAnalyzed": 25,
+            "AverageLinesPerFile": 229.0,
+            "Classes": 18,
+            "ImportStatements": 168,
+            "Functions": 117,
+            "TotalLines": 5721,
+            "FileSize": 5721
+          },
+          "MemoryDelta": -8592528
+        }
+      ],
+      "Average": 227.0,
+      "Min": 180.0,
+      "TestName": "Python File Analysis Performance",
+      "Status": "Acceptable"
+    },
+    {
+      "Variance": 59.0,
+      "DelayReasons": "Performance within acceptable range but could be optimized",
+      "Timestamp": "2025-12-06 22:55:43",
+      "Max": 627.0,
+      "TestId": "LANG-002",
+      "Category": "Language",
+      "Runs": [
+        {
+          "Run": 1,
+          "Duration": 627,
+          "Success": true,
+          "Error": null,
+          "MemoryAfter": 46602896,
+          "MemoryBefore": 35893320,
+          "Output": {
+            "FilesAnalyzed": 4,
+            "ExportStatements": 4,
+            "ImportStatements": 11,
+            "Functions": 1,
+            "TotalLines": 184,
+            "FileSize": 184
+          },
+          "MemoryDelta": 10709576
+        },
+        {
+          "Run": 2,
+          "Duration": 568,
+          "Success": true,
+          "Error": null,
+          "MemoryAfter": 56673576,
+          "MemoryBefore": 46644016,
+          "Output": {
+            "FilesAnalyzed": 4,
+            "ExportStatements": 4,
+            "ImportStatements": 11,
+            "Functions": 1,
+            "TotalLines": 184,
+            "FileSize": 184
+          },
+          "MemoryDelta": 10029560
+        },
+        {
+          "Run": 3,
+          "Duration": 617,
+          "Success": true,
+          "Error": null,
+          "MemoryAfter": 16666088,
+          "MemoryBefore": 56722792,
+          "Output": {
+            "FilesAnalyzed": 4,
+            "ExportStatements": 4,
+            "ImportStatements": 11,
+            "Functions": 1,
+            "TotalLines": 184,
+            "FileSize": 184
+          },
+          "MemoryDelta": -40056704
+        }
+      ],
+      "Average": 604.0,
+      "Min": 568.0,
+      "TestName": "JavaScript/TypeScript Analysis Performance",
+      "Status": "Degraded"
+    },
+    {
+      "Variance": 17.0,
+      "DelayReasons": null,
+      "Timestamp": "2025-12-06 22:55:46",
+      "Max": 42.0,
+      "TestId": "LANG-003",
+      "Category": "Language",
+      "Runs": [
+        {
+          "Run": 1,
+          "Duration": 30,
+          "Success": true,
+          "Error": null,
+          "MemoryAfter": 18878736,
+          "MemoryBefore": 17011496,
+          "Output": {
+            "CmdletUsages": 808,
+            "TotalLines": 988,
+            "FilesAnalyzed": 8,
+            "Functions": 7
+          },
+          "MemoryDelta": 1867240
+        },
+        {
+          "Run": 2,
+          "Duration": 42,
+          "Success": true,
+          "Error": null,
+          "MemoryAfter": 20627792,
+          "MemoryBefore": 18919856,
+          "Output": {
+            "CmdletUsages": 808,
+            "TotalLines": 988,
+            "FilesAnalyzed": 8,
+            "Functions": 7
+          },
+          "MemoryDelta": 1707936
+        },
+        {
+          "Run": 3,
+          "Duration": 25,
+          "Success": true,
+          "Error": null,
+          "MemoryAfter": 22459360,
+          "MemoryBefore": 20751072,
+          "Output": {
+            "CmdletUsages": 808,
+            "TotalLines": 988,
+            "FilesAnalyzed": 8,
+            "Functions": 7
+          },
+          "MemoryDelta": 1708288
+        }
+      ],
+      "Average": 32.33,
+      "Min": 25.0,
+      "TestName": "PowerShell Script Analysis",
+      "Status": "Optimal"
+    },
+    {
+      "Variance": 17.0,
+      "DelayReasons": null,
+      "Timestamp": "2025-12-06 22:55:47",
+      "Max": 19.0,
+      "TestId": "SEC-001",
+      "Category": "Security",
+      "Runs": [
+        {
+          "Run": 1,
+          "Duration": 19,
+          "Success": true,
+          "Error": null,
+          "MemoryAfter": 23755936,
+          "MemoryBefore": 22738976,
+          "Output": {
+            "AllowListConfigured": true,
+            "DenyListCount": 18,
+            "DenyListConfigured": true,
+            "Status": "Pass",
+            "AllowListCount": 15,
+            "MissingBlocks": []
+          },
+          "MemoryDelta": 1016960
+        },
+        {
+          "Run": 2,
+          "Duration": 3,
+          "Success": true,
+          "Error": null,
+          "MemoryAfter": 24134768,
+          "MemoryBefore": 23797056,
+          "Output": {
+            "AllowListConfigured": true,
+            "DenyListCount": 18,
+            "DenyListConfigured": true,
+            "Status": "Pass",
+            "AllowListCount": 15,
+            "MissingBlocks": []
+          },
+          "MemoryDelta": 337712
+        },
+        {
+          "Run": 3,
+          "Duration": 2,
+          "Success": true,
+          "Error": null,
+          "MemoryAfter": 24514648,
+          "MemoryBefore": 24184112,
+          "Output": {
+            "AllowListConfigured": true,
+            "DenyListCount": 18,
+            "DenyListConfigured": true,
+            "Status": "Pass",
+            "AllowListCount": 15,
+            "MissingBlocks": []
+          },
+          "MemoryDelta": 330536
+        }
+      ],
+      "Average": 8.0,
+      "Min": 2.0,
+      "TestName": "Security Configuration Validation",
+      "Status": "Optimal"
+    },
+    {
+      "Variance": 16.0,
+      "DelayReasons": null,
+      "Timestamp": "2025-12-06 22:55:48",
+      "Max": 18.0,
+      "TestId": "SEC-002",
+      "Category": "Security",
+      "Runs": [
+        {
+          "Run": 1,
+          "Duration": 18,
+          "Success": true,
+          "Error": null,
+          "MemoryAfter": 25652000,
+          "MemoryBefore": 24835080,
+          "Output": {
+            "TotalExclusions": 41,
+            "FilesExcludeCount": 7,
+            "WatcherExcludeCount": 16,
+            "SearchExcludeCount": 18
+          },
+          "MemoryDelta": 816920
+        },
+        {
+          "Run": 2,
+          "Duration": 2,
+          "Success": true,
+          "Error": null,
+          "MemoryAfter": 26028568,
+          "MemoryBefore": 25693120,
+          "Output": {
+            "TotalExclusions": 41,
+            "FilesExcludeCount": 7,
+            "WatcherExcludeCount": 16,
+            "SearchExcludeCount": 18
+          },
+          "MemoryDelta": 335448
+        },
+        {
+          "Run": 3,
+          "Duration": 2,
+          "Success": true,
+          "Error": null,
+          "MemoryAfter": 26412040,
+          "MemoryBefore": 26077912,
+          "Output": {
+            "TotalExclusions": 41,
+            "FilesExcludeCount": 7,
+            "WatcherExcludeCount": 16,
+            "SearchExcludeCount": 18
+          },
+          "MemoryDelta": 334128
+        }
+      ],
+      "Average": 7.33,
+      "Min": 2.0,
+      "TestName": "File Exclusion Security Check",
+      "Status": "Optimal"
+    },
+    {
+      "Variance": 34.0,
+      "DelayReasons": null,
+      "Timestamp": "2025-12-06 22:55:49",
+      "Max": 491.0,
+      "TestId": "EXT-001",
+      "Category": "Extension",
+      "Runs": [
+        {
+          "Run": 1,
+          "Duration": 457,
+          "Success": true,
+          "Error": null,
+          "MemoryAfter": 35785264,
+          "MemoryBefore": 26691656,
+          "Output": {
+            "TotalTodos": 6,
+            "FilesScanned": 15
+          },
+          "MemoryDelta": 9093608
+        },
+        {
+          "Run": 2,
+          "Duration": 472,
+          "Success": true,
+          "Error": null,
+          "MemoryAfter": 44777464,
+          "MemoryBefore": 35826384,
+          "Output": {
+            "TotalTodos": 6,
+            "FilesScanned": 15
+          },
+          "MemoryDelta": 8951080
+        },
+        {
+          "Run": 3,
+          "Duration": 491,
+          "Success": true,
+          "Error": null,
+          "MemoryAfter": 53741400,
+          "MemoryBefore": 44818584,
+          "Output": {
+            "TotalTodos": 6,
+            "FilesScanned": 15
+          },
+          "MemoryDelta": 8922816
+        }
+      ],
+      "Average": 473.33,
+      "Min": 457.0,
+      "TestName": "Todo Pattern Detection",
+      "Status": "Acceptable"
+    },
+    {
+      "Variance": 220.0,
+      "DelayReasons": "Performance within acceptable range but could be optimized",
+      "Timestamp": "2025-12-06 22:55:52",
+      "Max": 626.0,
+      "TestId": "EXT-002",
+      "Category": "Extension",
+      "Runs": [
+        {
+          "Run": 1,
+          "Duration": 406,
+          "Success": true,
+          "Error": null,
+          "MemoryAfter": 54999744,
+          "MemoryBefore": 54233264,
+          "Output": {
+            "IsGitRepository": true,
+            "ModifiedFiles": 35,
+            "CurrentBranch": "main",
+            "Path": "C:\\Users\\Admin\\civitai"
+          },
+          "MemoryDelta": 766480
+        },
+        {
+          "Run": 2,
+          "Duration": 626,
+          "Success": true,
+          "Error": null,
+          "MemoryAfter": 55402816,
+          "MemoryBefore": 55040864,
+          "Output": {
+            "IsGitRepository": true,
+            "ModifiedFiles": 35,
+            "CurrentBranch": "main",
+            "Path": "C:\\Users\\Admin\\civitai"
+          },
+          "MemoryDelta": 361952
+        },
+        {
+          "Run": 3,
+          "Duration": 510,
+          "Success": true,
+          "Error": null,
+          "MemoryAfter": 55823240,
+          "MemoryBefore": 55452160,
+          "Output": {
+            "IsGitRepository": true,
+            "ModifiedFiles": 35,
+            "CurrentBranch": "main",
+            "Path": "C:\\Users\\Admin\\civitai"
+          },
+          "MemoryDelta": 371080
+        }
+      ],
+      "Average": 514.0,
+      "Min": 406.0,
+      "TestName": "Git Repository Status",
+      "Status": "Degraded"
+    },
+    {
+      "Variance": 6.0,
+      "DelayReasons": null,
+      "Timestamp": "2025-12-06 22:55:54",
+      "Max": 8.0,
+      "TestId": "EDITOR-001",
+      "Category": "Editor",
+      "Runs": [
+        {
+          "Run": 1,
+          "Duration": 8,
+          "Success": true,
+          "Error": null,
+          "MemoryAfter": 57604608,
+          "MemoryBefore": 56127528,
+          "Output": {
+            "Exists": true,
+            "KeyCount": 65,
+            "Valid": true,
+            "LineCount": 295,
+            "SizeKB": 10.08,
+            "Path": "C:\\Users\\Admin\\AppData\\Roaming\\Windsurf\\User\\settings.json"
+          },
+          "MemoryDelta": 1477080
+        },
+        {
+          "Run": 2,
+          "Duration": 3,
+          "Success": true,
+          "Error": null,
+          "MemoryAfter": 58833632,
+          "MemoryBefore": 57645728,
+          "Output": {
+            "Exists": true,
+            "KeyCount": 65,
+            "Valid": true,
+            "LineCount": 295,
+            "SizeKB": 10.08,
+            "Path": "C:\\Users\\Admin\\AppData\\Roaming\\Windsurf\\User\\settings.json"
+          },
+          "MemoryDelta": 1187904
+        },
+        {
+          "Run": 3,
+          "Duration": 2,
+          "Success": true,
+          "Error": null,
+          "MemoryAfter": 60066608,
+          "MemoryBefore": 58874752,
+          "Output": {
+            "Exists": true,
+            "KeyCount": 65,
+            "Valid": true,
+            "LineCount": 295,
+            "SizeKB": 10.08,
+            "Path": "C:\\Users\\Admin\\AppData\\Roaming\\Windsurf\\User\\settings.json"
+          },
+          "MemoryDelta": 1191856
+        }
+      ],
+      "Average": 4.33,
+      "Min": 2.0,
+      "TestName": "Settings.json Validation",
+      "Status": "Optimal"
+    },
+    {
+      "Variance": 22.0,
+      "DelayReasons": null,
+      "Timestamp": "2025-12-06 22:55:55",
+      "Max": 32.0,
+      "TestId": "EDITOR-002",
+      "Category": "Editor",
+      "Runs": [
+        {
+          "Run": 1,
+          "Duration": 32,
+          "Success": true,
+          "Error": null,
+          "MemoryAfter": 14309592,
+          "MemoryBefore": 60523752,
+          "Output": {
+            "IncludedFiles": 193,
+            "TopExtensions": [
+              {
+                "Extension": ".md",
+                "Count": 47
+              },
+              {
+                "Extension": ".db",
+                "Count": 29
+              },
+              {
+                "Extension": ".json",
+                "Count": 22
+              },
+              {
+                "Extension": ".txt",
+                "Count": 15
+              },
+              {
+                "Extension": ".py",
+                "Count": 12
+              }
+            ],
+            "FileCount": 193,
+            "ExcludedFiles": 7,
+            "TotalFiles": 200
+          },
+          "MemoryDelta": -46214160
+        },
+        {
+          "Run": 2,
+          "Duration": 10,
+          "Success": true,
+          "Error": null,
+          "MemoryAfter": 16736544,
+          "MemoryBefore": 14358936,
+          "Output": {
+            "IncludedFiles": 193,
+            "TopExtensions": [
+              {
+                "Extension": ".md",
+                "Count": 47
+              },
+              {
+                "Extension": ".db",
+                "Count": 29
+              },
+              {
+                "Extension": ".json",
+                "Count": 22
+              },
+              {
+                "Extension": ".txt",
+                "Count": 15
+              },
+              {
+                "Extension": ".py",
+                "Count": 12
+              }
+            ],
+            "FileCount": 193,
+            "ExcludedFiles": 7,
+            "TotalFiles": 200
+          },
+          "MemoryDelta": 2377608
+        },
+        {
+          "Run": 3,
+          "Duration": 10,
+          "Success": true,
+          "Error": null,
+          "MemoryAfter": 19162584,
+          "MemoryBefore": 16785888,
+          "Output": {
+            "IncludedFiles": 193,
+            "TopExtensions": [
+              {
+                "Extension": ".md",
+                "Count": 47
+              },
+              {
+                "Extension": ".db",
+                "Count": 29
+              },
+              {
+                "Extension": ".json",
+                "Count": 22
+              },
+              {
+                "Extension": ".txt",
+                "Count": 15
+              },
+              {
+                "Extension": ".py",
+                "Count": 12
+              }
+            ],
+            "FileCount": 193,
+            "ExcludedFiles": 7,
+            "TotalFiles": 200
+          },
+          "MemoryDelta": 2376696
+        }
+      ],
+      "Average": 17.33,
+      "Min": 10.0,
+      "TestName": "Workspace File Count Analysis",
+      "Status": "Optimal"
+    }
+  ],
+  "Metadata": {
+    "System": {
+      "CPU": "AMD Ryzen 7 5800X3D 8-Core Processor           ",
+      "OS": "Microsoft Windows NT 10.0.26100.0",
+      "PSVersion": "7.5.4",
+      "RAM": 127.92
+    },
+    "RunCount": 3,
+    "TestCategory": "All",
+    "Timestamp": "2025-12-06 22:55:36",
+    "Version": "1.0.0"
+  },
+  "Summary": {
+    "Critical": 0,
+    "Error": 0,
+    "Total": 12,
+    "Optimal": 6,
+    "Degraded": 2,
+    "Acceptable": 4,
+    "Failed": 0
+  }
+}

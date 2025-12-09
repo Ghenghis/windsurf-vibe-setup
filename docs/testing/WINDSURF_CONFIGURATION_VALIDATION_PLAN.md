@@ -41,15 +41,15 @@ This document defines a comprehensive validation plan for testing Windsurf IDE c
 
 ### In Scope
 
-| Category | Description |
-|----------|-------------|
-| Editor Performance | Autocomplete, formatting, syntax highlighting response times |
-| File Operations | Watch exclusions, search performance, file indexing |
-| Language Services | Python, JavaScript, TypeScript, PowerShell language server performance |
-| AI Features | Cascade response times, autocomplete suggestions, context retrieval |
-| Extension Integration | Todo Tree, Error Lens, GitLens, Peacock functionality |
-| Terminal Operations | GPU environment variables, session persistence |
-| Security Controls | Command deny list enforcement, safe execution policies |
+| Category              | Description                                                            |
+| --------------------- | ---------------------------------------------------------------------- |
+| Editor Performance    | Autocomplete, formatting, syntax highlighting response times           |
+| File Operations       | Watch exclusions, search performance, file indexing                    |
+| Language Services     | Python, JavaScript, TypeScript, PowerShell language server performance |
+| AI Features           | Cascade response times, autocomplete suggestions, context retrieval    |
+| Extension Integration | Todo Tree, Error Lens, GitLens, Peacock functionality                  |
+| Terminal Operations   | GPU environment variables, session persistence                         |
+| Security Controls     | Command deny list enforcement, safe execution policies                 |
 
 ### Out of Scope
 
@@ -59,13 +59,13 @@ This document defines a comprehensive validation plan for testing Windsurf IDE c
 
 ### Success Criteria
 
-| Metric | Target | Critical Threshold |
-|--------|--------|-------------------|
-| Editor Response Time | < 100ms | > 500ms |
-| File Search Response | < 200ms | > 1000ms |
-| Autocomplete Latency | < 150ms | > 300ms |
-| Format on Save | < 300ms | > 1000ms |
-| AI Suggestion Delay | < 2000ms | > 5000ms |
+| Metric               | Target   | Critical Threshold |
+| -------------------- | -------- | ------------------ |
+| Editor Response Time | < 100ms  | > 500ms            |
+| File Search Response | < 200ms  | > 1000ms           |
+| Autocomplete Latency | < 150ms  | > 300ms            |
+| Format on Save       | < 300ms  | > 1000ms           |
+| AI Suggestion Delay  | < 2000ms | > 5000ms           |
 
 ---
 
@@ -110,11 +110,11 @@ Required Extensions:
 
 ### Test Repositories
 
-| Repository | Purpose | Minimum Size |
-|------------|---------|--------------|
-| `c:\Users\Admin\civitai` | Primary test repository | 100+ files |
-| `c:\Users\Admin\Documents\GitHub\*` | Multi-repo testing | 10+ repositories |
-| `G:\Github\ComfyUI` | Large codebase testing | 1000+ files |
+| Repository                          | Purpose                 | Minimum Size     |
+| ----------------------------------- | ----------------------- | ---------------- |
+| `c:\Users\Admin\civitai`            | Primary test repository | 100+ files       |
+| `c:\Users\Admin\Documents\GitHub\*` | Multi-repo testing      | 10+ repositories |
+| `G:\Github\ComfyUI`                 | Large codebase testing  | 1000+ files      |
 
 ---
 
@@ -135,39 +135,39 @@ Run 3: Under load (multiple files open)
 ```javascript
 // Standard timing wrapper for all tests
 const measureExecution = async (testName, testFunction) => {
-    const results = [];
+  const results = [];
 
-    for (let run = 1; run <= 3; run++) {
-        const start = performance.now();
-        await testFunction();
-        const end = performance.now();
+  for (let run = 1; run <= 3; run++) {
+    const start = performance.now();
+    await testFunction();
+    const end = performance.now();
 
-        results.push({
-            run,
-            duration: end - start,
-            timestamp: new Date().toISOString()
-        });
-    }
+    results.push({
+      run,
+      duration: end - start,
+      timestamp: new Date().toISOString(),
+    });
+  }
 
-    return {
-        testName,
-        results,
-        average: results.reduce((a, b) => a + b.duration, 0) / 3,
-        variance: calculateVariance(results),
-        status: determineStatus(results)
-    };
+  return {
+    testName,
+    results,
+    average: results.reduce((a, b) => a + b.duration, 0) / 3,
+    variance: calculateVariance(results),
+    status: determineStatus(results),
+  };
 };
 ```
 
 ### Delay Classification
 
-| Classification | Response Time | Action Required |
-|---------------|---------------|-----------------|
-| Optimal | 0-100ms | None |
-| Acceptable | 101-300ms | Monitor |
-| Degraded | 301-1000ms | Investigate |
-| Critical | 1001-3000ms | Immediate fix required |
-| Failed | >3000ms | Blocking issue |
+| Classification | Response Time | Action Required        |
+| -------------- | ------------- | ---------------------- |
+| Optimal        | 0-100ms       | None                   |
+| Acceptable     | 101-300ms     | Monitor                |
+| Degraded       | 301-1000ms    | Investigate            |
+| Critical       | 1001-3000ms   | Immediate fix required |
+| Failed         | >3000ms       | Blocking issue         |
 
 ---
 
@@ -221,16 +221,14 @@ Category: Editor Core Performance
 Priority: Critical
 Execution Count: 3
 
-Objective:
-  Measure autocomplete popup response time in real Python files
+Objective: Measure autocomplete popup response time in real Python files
 
 Prerequisites:
   - Open c:\Users\Admin\civitai directory in Windsurf
   - Ensure Python language server is initialized
   - Wait for indexing to complete
 
-Test Procedure:
-  1. Open a Python file with 100+ lines
+Test Procedure: 1. Open a Python file with 100+ lines
   2. Position cursor after an import statement
   3. Type a partial module name (e.g., "os.pa")
   4. Measure time from keystroke to autocomplete popup appearance
@@ -260,16 +258,14 @@ Category: Editor Core Performance
 Priority: Critical
 Execution Count: 3
 
-Objective:
-  Validate format-on-save executes within acceptable time
+Objective: Validate format-on-save executes within acceptable time
 
 Prerequisites:
   - Black formatter extension installed
   - Prettier extension installed
   - Format on save enabled in settings
 
-Test Procedure:
-  1. Open unformatted Python file (50+ lines)
+Test Procedure: 1. Open unformatted Python file (50+ lines)
   2. Make a small edit (add whitespace)
   3. Save file (Ctrl+S)
   4. Measure time from save command to formatting complete
@@ -299,11 +295,9 @@ Category: Editor Core Performance
 Priority: Medium
 Execution Count: 3
 
-Objective:
-  Verify bracket colorization renders without lag in deeply nested code
+Objective: Verify bracket colorization renders without lag in deeply nested code
 
-Test Procedure:
-  1. Open file with deep nesting (5+ levels)
+Test Procedure: 1. Open file with deep nesting (5+ levels)
   2. Scroll through entire file
   3. Measure rendering lag
   4. Add/remove brackets and observe color updates
@@ -402,11 +396,9 @@ Category: Language Server Performance
 Priority: Critical
 Execution Count: 3
 
-Objective:
-  Measure Python language server startup and initialization time
+Objective: Measure Python language server startup and initialization time
 
-Test Procedure:
-  1. Close all Python files
+Test Procedure: 1. Close all Python files
   2. Restart Windsurf
   3. Open Python file immediately
   4. Measure time until IntelliSense is available
@@ -435,15 +427,13 @@ Category: Language Server Performance
 Priority: High
 Execution Count: 3
 
-Objective:
-  Validate linting diagnostics appear within acceptable time
+Objective: Validate linting diagnostics appear within acceptable time
 
 Prerequisites:
   - python.linting.enabled: true
   - python.linting.pylintEnabled: true
 
-Test Procedure:
-  1. Open Python file with intentional lint errors
+Test Procedure: 1. Open Python file with intentional lint errors
   2. Measure time until error squiggles appear
   3. Add new lint error and measure update time
   4. Fix error and measure clear time
@@ -462,16 +452,14 @@ Category: AI and Cascade Features
 Priority: High
 Execution Count: 3
 
-Objective:
-  Measure AI-powered autocomplete suggestion latency
+Objective: Measure AI-powered autocomplete suggestion latency
 
 Prerequisites:
   - windsurf.enableAutocomplete: true
   - windsurf.enableSupercomplete: true
-  - windsurf.autocompleteSpeed: "fast"
+  - windsurf.autocompleteSpeed: 'fast'
 
-Test Procedure:
-  1. Open code file with established context
+Test Procedure: 1. Open code file with established context
   2. Begin typing function implementation
   3. Measure time until AI suggestion appears
   4. Accept suggestion and verify correctness
@@ -496,19 +484,17 @@ Category: AI and Cascade Features
 Priority: High
 Execution Count: 3
 
-Objective:
-  Measure Fast Context codebase search performance
+Objective: Measure Fast Context codebase search performance
 
-Test Procedure:
-  1. Open Cascade panel
+Test Procedure: 1. Open Cascade panel
   2. Request code search for specific pattern
   3. Measure time to receive results
   4. Verify result accuracy
 
 Search Queries:
-  - "Find where authentication is handled"
-  - "Locate database connection setup"
-  - "Find all API endpoints"
+  - 'Find where authentication is handled'
+  - 'Locate database connection setup'
+  - 'Find all API endpoints'
 
 Expected Results:
   - Results within 3000ms
@@ -529,15 +515,13 @@ Category: Extension Functionality
 Priority: Medium
 Execution Count: 3
 
-Objective:
-  Validate Todo Tree scans workspace within acceptable time
+Objective: Validate Todo Tree scans workspace within acceptable time
 
 Prerequisites:
   - Todo Tree extension installed
   - todo-tree.general.tags configured
 
-Test Procedure:
-  1. Open workspace with TODO comments
+Test Procedure: 1. Open workspace with TODO comments
   2. Open Todo Tree panel
   3. Measure time to populate tree
   4. Add new TODO comment and measure update
@@ -569,15 +553,13 @@ Category: Extension Functionality
 Priority: Medium
 Execution Count: 3
 
-Objective:
-  Measure Error Lens inline error display response time
+Objective: Measure Error Lens inline error display response time
 
 Prerequisites:
   - errorLens.enabled: true
   - Language server active
 
-Test Procedure:
-  1. Open file with syntax errors
+Test Procedure: 1. Open file with syntax errors
   2. Measure time until inline errors display
   3. Fix error and measure clear time
   4. Add new error and measure display time
@@ -596,15 +578,13 @@ Category: Extension Functionality
 Priority: Medium
 Execution Count: 3
 
-Objective:
-  Validate GitLens blame information loads efficiently
+Objective: Validate GitLens blame information loads efficiently
 
 Prerequisites:
   - Repository with git history
   - gitlens.currentLine.enabled: true
 
-Test Procedure:
-  1. Open file with git history
+Test Procedure: 1. Open file with git history
   2. Measure time until blame info appears
   3. Navigate through file and measure updates
   4. Hover for detailed blame and measure popup time
@@ -623,25 +603,23 @@ Category: Security Controls
 Priority: Critical
 Execution Count: 3
 
-Objective:
-  Verify dangerous commands are blocked by deny list
+Objective: Verify dangerous commands are blocked by deny list
 
 Prerequisites:
   - windsurf.cascadeCommandsDenyList configured
 
-Test Procedure:
-  1. Attempt to execute each denied command via Cascade
+Test Procedure: 1. Attempt to execute each denied command via Cascade
   2. Verify command is blocked
   3. Check error message is appropriate
   4. Verify no partial execution occurred
 
 Denied Commands to Test:
-  - "rm -rf /"
-  - "rm -rf ~"
-  - "del /s /q"
-  - "DROP TABLE"
-  - "format"
-  - "shutdown"
+  - 'rm -rf /'
+  - 'rm -rf ~'
+  - 'del /s /q'
+  - 'DROP TABLE'
+  - 'format'
+  - 'shutdown'
 
 Expected Results:
   - All denied commands blocked
@@ -663,15 +641,13 @@ Category: Security Controls
 Priority: Critical
 Execution Count: 3
 
-Objective:
-  Validate auto-execution only applies to safe commands
+Objective: Validate auto-execution only applies to safe commands
 
 Prerequisites:
   - windsurf.cascadeCommandsAllowList configured
-  - windsurf.autoExecutionPolicy: "auto"
+  - windsurf.autoExecutionPolicy: 'auto'
 
-Test Procedure:
-  1. Request execution of allowed command (git status)
+Test Procedure: 1. Request execution of allowed command (git status)
   2. Verify auto-execution occurs
   3. Request execution of unlisted command
   4. Verify approval prompt appears
@@ -900,16 +876,16 @@ foreach ($test in $results.Tests) {
 
 ### Delay Root Cause Categories
 
-| Category | Code | Description | Investigation Method |
-|----------|------|-------------|---------------------|
-| Extension Conflict | EXT-CONF | Multiple extensions competing for resources | Disable extensions individually |
-| Language Server Overload | LANG-OVER | Language server processing large codebase | Check language server memory usage |
-| File Watcher Storm | FW-STORM | Too many file change events | Review watcher exclusions |
-| Indexing Bottleneck | IDX-SLOW | Initial indexing not complete | Wait for indexing, check exclusions |
-| Memory Pressure | MEM-PRES | Insufficient RAM for operations | Monitor memory usage |
-| Disk I/O | DISK-IO | Slow disk operations | Check disk type and usage |
-| Network Latency | NET-LAT | Remote operations delayed | Check network connectivity |
-| Configuration Error | CFG-ERR | Misconfigured setting | Validate settings.json |
+| Category                 | Code      | Description                                 | Investigation Method                |
+| ------------------------ | --------- | ------------------------------------------- | ----------------------------------- |
+| Extension Conflict       | EXT-CONF  | Multiple extensions competing for resources | Disable extensions individually     |
+| Language Server Overload | LANG-OVER | Language server processing large codebase   | Check language server memory usage  |
+| File Watcher Storm       | FW-STORM  | Too many file change events                 | Review watcher exclusions           |
+| Indexing Bottleneck      | IDX-SLOW  | Initial indexing not complete               | Wait for indexing, check exclusions |
+| Memory Pressure          | MEM-PRES  | Insufficient RAM for operations             | Monitor memory usage                |
+| Disk I/O                 | DISK-IO   | Slow disk operations                        | Check disk type and usage           |
+| Network Latency          | NET-LAT   | Remote operations delayed                   | Check network connectivity          |
+| Configuration Error      | CFG-ERR   | Misconfigured setting                       | Validate settings.json              |
 
 ### Investigation Procedure
 
@@ -971,19 +947,18 @@ Verification:
 Symptom: High CPU usage, slow file operations
 Root Cause: File watcher monitoring too many files
 
-Remediation Steps:
-  1. Review files.watcherExclude in settings.json
+Remediation Steps: 1. Review files.watcherExclude in settings.json
   2. Add large directories to exclusion list
   3. Add binary file patterns to exclusions
   4. Restart Windsurf
   5. Monitor CPU usage
 
 Additional Exclusions to Consider:
-  - "**/models/**": true
-  - "**/data/**": true
-  - "**/logs/**": true
-  - "**/.cache/**": true
-  - "**/tmp/**": true
+  - '**/models/**': true
+  - '**/data/**': true
+  - '**/logs/**': true
+  - '**/.cache/**': true
+  - '**/tmp/**': true
 
 Verification:
   - Run FS-001 test 3 times
@@ -997,21 +972,20 @@ Verification:
 Symptom: Slow search results, high memory usage
 Root Cause: Searching large or binary files
 
-Remediation Steps:
-  1. Review search.exclude in settings.json
+Remediation Steps: 1. Review search.exclude in settings.json
   2. Add binary file extensions to exclusions
   3. Add generated file directories to exclusions
   4. Set appropriate search.maxResults limit
   5. Restart Windsurf
 
 Binary Extensions to Exclude:
-  - "**/*.safetensors": true
-  - "**/*.ckpt": true
-  - "**/*.pt": true
-  - "**/*.pth": true
-  - "**/*.bin": true
-  - "**/*.h5": true
-  - "**/*.onnx": true
+  - '**/*.safetensors': true
+  - '**/*.ckpt': true
+  - '**/*.pt': true
+  - '**/*.pth': true
+  - '**/*.bin': true
+  - '**/*.h5': true
+  - '**/*.onnx': true
 
 Verification:
   - Run FS-002 test 3 times
@@ -1063,23 +1037,23 @@ Verification:
 
 ## Executive Summary
 
-| Metric | Value |
-|--------|-------|
-| Total Tests | [COUNT] |
-| Passed | [COUNT] |
-| Warnings | [COUNT] |
-| Failed | [COUNT] |
-| Average Response Time | [MS] |
+| Metric                | Value   |
+| --------------------- | ------- |
+| Total Tests           | [COUNT] |
+| Passed                | [COUNT] |
+| Warnings              | [COUNT] |
+| Failed                | [COUNT] |
+| Average Response Time | [MS]    |
 
 ## Detailed Results
 
 ### [TEST-ID]: [TEST NAME]
 
-| Run | Duration (ms) | Status | Notes |
-|-----|---------------|--------|-------|
-| 1 | [DURATION] | [STATUS] | [NOTES] |
-| 2 | [DURATION] | [STATUS] | [NOTES] |
-| 3 | [DURATION] | [STATUS] | [NOTES] |
+| Run | Duration (ms) | Status   | Notes   |
+| --- | ------------- | -------- | ------- |
+| 1   | [DURATION]    | [STATUS] | [NOTES] |
+| 2   | [DURATION]    | [STATUS] | [NOTES] |
+| 3   | [DURATION]    | [STATUS] | [NOTES] |
 
 **Average:** [AVG] ms
 **Variance:** [VAR] ms
@@ -1093,16 +1067,18 @@ Verification:
 
 ## Action Items
 
-| Priority | Action | Owner | Due Date |
-|----------|--------|-------|----------|
-| [P1-P3] | [ACTION] | [OWNER] | [DATE] |
+| Priority | Action   | Owner   | Due Date |
+| -------- | -------- | ------- | -------- |
+| [P1-P3]  | [ACTION] | [OWNER] | [DATE]   |
 
 ## Appendix
 
 ### System Information
+
 [DETAILED SYSTEM INFO]
 
 ### Configuration Snapshot
+
 [RELEVANT SETTINGS.JSON EXCERPT]
 ```
 
@@ -1112,26 +1088,26 @@ Verification:
 
 ### Appendix A: Test ID Reference
 
-| ID Range | Category |
-|----------|----------|
-| EDITOR-001 to EDITOR-015 | Editor Core Performance |
-| FS-001 to FS-010 | File System Operations |
-| LANG-001 to LANG-020 | Language Server Performance |
-| AI-001 to AI-010 | AI and Cascade Features |
-| EXT-001 to EXT-015 | Extension Functionality |
-| SEC-001 to SEC-005 | Security Controls |
-| REM-001 to REM-010 | Remediation Procedures |
+| ID Range                 | Category                    |
+| ------------------------ | --------------------------- |
+| EDITOR-001 to EDITOR-015 | Editor Core Performance     |
+| FS-001 to FS-010         | File System Operations      |
+| LANG-001 to LANG-020     | Language Server Performance |
+| AI-001 to AI-010         | AI and Cascade Features     |
+| EXT-001 to EXT-015       | Extension Functionality     |
+| SEC-001 to SEC-005       | Security Controls           |
+| REM-001 to REM-010       | Remediation Procedures      |
 
 ### Appendix B: Metric Thresholds Quick Reference
 
-| Operation | Optimal | Acceptable | Degraded | Critical |
-|-----------|---------|------------|----------|----------|
-| Autocomplete | <100ms | <200ms | <500ms | >500ms |
-| Format on Save | <200ms | <500ms | <1000ms | >1000ms |
-| File Search | <500ms | <1000ms | <2000ms | >2000ms |
-| Language Server Init | <3s | <5s | <10s | >10s |
-| AI Suggestion | <1s | <2s | <3s | >3s |
-| Extension Load | <1s | <2s | <5s | >5s |
+| Operation            | Optimal | Acceptable | Degraded | Critical |
+| -------------------- | ------- | ---------- | -------- | -------- |
+| Autocomplete         | <100ms  | <200ms     | <500ms   | >500ms   |
+| Format on Save       | <200ms  | <500ms     | <1000ms  | >1000ms  |
+| File Search          | <500ms  | <1000ms    | <2000ms  | >2000ms  |
+| Language Server Init | <3s     | <5s        | <10s     | >10s     |
+| AI Suggestion        | <1s     | <2s        | <3s      | >3s      |
+| Extension Load       | <1s     | <2s        | <5s      | >5s      |
 
 ### Appendix C: Required Extensions Checklist
 
@@ -1150,9 +1126,9 @@ Verification:
 
 ## Document Control
 
-| Version | Date | Author | Changes |
-|---------|------|--------|---------|
-| 1.0.0 | 2025-12-06 | Configuration Team | Initial release |
+| Version | Date       | Author             | Changes         |
+| ------- | ---------- | ------------------ | --------------- |
+| 1.0.0   | 2025-12-06 | Configuration Team | Initial release |
 
 ---
 

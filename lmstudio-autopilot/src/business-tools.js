@@ -26,21 +26,21 @@ const cost_estimate = {
       projectType: {
         type: 'string',
         enum: ['web-app', 'api', 'static-site', 'mobile-backend', 'full-stack'],
-        description: 'Type of project'
+        description: 'Type of project',
       },
       expectedUsers: { type: 'integer', description: 'Expected monthly active users' },
       features: {
         type: 'array',
         items: { type: 'string' },
-        description: 'Features: database, storage, auth, email, sms, ai'
+        description: 'Features: database, storage, auth, email, sms, ai',
       },
       provider: {
         type: 'string',
         enum: ['vercel', 'netlify', 'railway', 'aws', 'gcp', 'azure'],
-        description: 'Preferred cloud provider'
-      }
+        description: 'Preferred cloud provider',
+      },
     },
-    required: ['projectType']
+    required: ['projectType'],
   },
   handler: async ({ projectType, expectedUsers = 1000, features = [], provider }) => {
     try {
@@ -48,9 +48,9 @@ const cost_estimate = {
       const baseCosts = {
         'static-site': { hosting: 0, bandwidth: 0.01 },
         'web-app': { hosting: 0, bandwidth: 0.02, compute: 0.01 },
-        'api': { hosting: 5, bandwidth: 0.02, compute: 0.02 },
+        api: { hosting: 5, bandwidth: 0.02, compute: 0.02 },
         'mobile-backend': { hosting: 10, bandwidth: 0.03, compute: 0.03 },
-        'full-stack': { hosting: 15, bandwidth: 0.03, compute: 0.03 }
+        'full-stack': { hosting: 15, bandwidth: 0.03, compute: 0.03 },
       };
 
       const featureCosts = {
@@ -59,7 +59,7 @@ const cost_estimate = {
         auth: { monthly: 0, perUser: 0 },
         email: { monthly: 0, perEmail: 0.0001 },
         sms: { monthly: 0, perSMS: 0.01 },
-        ai: { monthly: 0, perRequest: 0.002 }
+        ai: { monthly: 0, perRequest: 0.002 },
       };
 
       const providerFreeTeirs = {
@@ -68,7 +68,7 @@ const cost_estimate = {
         railway: { hosting: '$5 credit', bandwidth: 'Included', note: 'Simple deployment' },
         aws: { hosting: 'Free tier 12mo', bandwidth: '15GB', note: 'Most flexible' },
         gcp: { hosting: 'Free tier', bandwidth: '1GB', note: 'Good for AI/ML' },
-        azure: { hosting: 'Free tier', bandwidth: '15GB', note: 'Enterprise focused' }
+        azure: { hosting: 'Free tier', bandwidth: '15GB', note: 'Enterprise focused' },
       };
 
       // Calculate estimates
@@ -76,11 +76,13 @@ const cost_estimate = {
       let monthlyEstimate = base.hosting;
       let perUserCost = base.bandwidth + (base.compute || 0);
 
-      const breakdown = [{
-        item: 'Base Hosting',
-        monthly: base.hosting,
-        note: 'Platform base cost'
-      }];
+      const breakdown = [
+        {
+          item: 'Base Hosting',
+          monthly: base.hosting,
+          note: 'Platform base cost',
+        },
+      ];
 
       features.forEach(feature => {
         const fc = featureCosts[feature];
@@ -91,12 +93,12 @@ const cost_estimate = {
             item: feature.charAt(0).toUpperCase() + feature.slice(1),
             monthly: fc.monthly,
             perUser: fc.perUser,
-            note: `${feature} service`
+            note: `${feature} service`,
           });
         }
       });
 
-      const totalMonthly = monthlyEstimate + (perUserCost * expectedUsers);
+      const totalMonthly = monthlyEstimate + perUserCost * expectedUsers;
 
       return {
         success: true,
@@ -104,26 +106,26 @@ const cost_estimate = {
           monthly: `$${totalMonthly.toFixed(2)}`,
           yearly: `$${(totalMonthly * 12).toFixed(2)}`,
           perUser: `$${perUserCost.toFixed(4)}/user`,
-          breakdown
+          breakdown,
         },
         freeTier: provider ? providerFreeTeirs[provider] : providerFreeTeirs.vercel,
         recommendations: [
           totalMonthly < 5 ? '✅ Your project can likely run free!' : null,
           totalMonthly < 20 ? '💡 Consider Vercel/Netlify free tier' : null,
           totalMonthly > 50 ? '💰 Consider reserved instances for savings' : null,
-          features.includes('ai') ? '🤖 AI costs can vary significantly based on usage' : null
+          features.includes('ai') ? '🤖 AI costs can vary significantly based on usage' : null,
         ].filter(Boolean),
         assumptions: {
           users: expectedUsers,
           avgRequestsPerUser: 100,
-          avgStoragePerUser: '10MB'
+          avgStoragePerUser: '10MB',
         },
-        message: `💰 Estimated cost: $${totalMonthly.toFixed(2)}/month for ${expectedUsers} users`
+        message: `💰 Estimated cost: $${totalMonthly.toFixed(2)}/month for ${expectedUsers} users`,
       };
     } catch (error) {
       return { success: false, error: error.message };
     }
-  }
+  },
 };
 
 /**
@@ -138,12 +140,12 @@ const usage_analytics = {
       action: {
         type: 'string',
         enum: ['view', 'record', 'reset'],
-        default: 'view'
+        default: 'view',
       },
       category: { type: 'string', description: 'Category to record (for record action)' },
-      duration: { type: 'integer', description: 'Duration in minutes (for record action)' }
+      duration: { type: 'integer', description: 'Duration in minutes (for record action)' },
     },
-    required: []
+    required: [],
   },
   handler: async ({ action = 'view', category, duration }) => {
     try {
@@ -153,7 +155,7 @@ const usage_analytics = {
         totalTime: 0,
         byCategory: {},
         streak: 0,
-        lastActive: null
+        lastActive: null,
       };
 
       if (fs.existsSync(analyticsFile)) {
@@ -164,7 +166,7 @@ const usage_analytics = {
         const session = {
           date: new Date().toISOString(),
           category,
-          duration
+          duration,
         };
         analytics.sessions.push(session);
         analytics.totalTime += duration;
@@ -173,7 +175,9 @@ const usage_analytics = {
 
         // Update streak
         const today = new Date().toDateString();
-        const lastDate = analytics.lastActive ? new Date(analytics.lastActive).toDateString() : null;
+        const lastDate = analytics.lastActive
+          ? new Date(analytics.lastActive).toDateString()
+          : null;
         if (lastDate !== today) {
           const yesterday = new Date(Date.now() - 86400000).toDateString();
           analytics.streak = lastDate === yesterday ? analytics.streak + 1 : 1;
@@ -189,8 +193,7 @@ const usage_analytics = {
 
       // Calculate insights
       const totalHours = (analytics.totalTime / 60).toFixed(1);
-      const topCategory = Object.entries(analytics.byCategory)
-        .sort(([, a], [, b]) => b - a)[0];
+      const topCategory = Object.entries(analytics.byCategory).sort(([, a], [, b]) => b - a)[0];
 
       return {
         success: true,
@@ -200,19 +203,19 @@ const usage_analytics = {
           streak: `${analytics.streak} days`,
           byCategory: analytics.byCategory,
           topCategory: topCategory ? { name: topCategory[0], minutes: topCategory[1] } : null,
-          lastActive: analytics.lastActive
+          lastActive: analytics.lastActive,
         },
         insights: [
           analytics.streak >= 7 ? '🔥 Great streak! Keep it up!' : null,
-          totalHours > 10 ? '💪 You\'ve been productive!' : null,
-          topCategory ? `📊 Most time spent on: ${topCategory[0]}` : null
+          totalHours > 10 ? "💪 You've been productive!" : null,
+          topCategory ? `📊 Most time spent on: ${topCategory[0]}` : null,
         ].filter(Boolean),
-        message: `📈 Total: ${totalHours} hours across ${analytics.sessions.length} sessions`
+        message: `📈 Total: ${totalHours} hours across ${analytics.sessions.length} sessions`,
       };
     } catch (error) {
       return { success: false, error: error.message };
     }
-  }
+  },
 };
 
 /**
@@ -227,20 +230,20 @@ const time_tracker = {
       action: {
         type: 'string',
         enum: ['start', 'stop', 'status', 'report'],
-        description: 'Timer action'
+        description: 'Timer action',
       },
       task: { type: 'string', description: 'Task name/description' },
       project: { type: 'string', description: 'Project name' },
-      tags: { type: 'array', items: { type: 'string' }, description: 'Tags for categorization' }
+      tags: { type: 'array', items: { type: 'string' }, description: 'Tags for categorization' },
     },
-    required: ['action']
+    required: ['action'],
   },
   handler: async ({ action, task, project, tags = [] }) => {
     try {
       const timerFile = path.join(DATA_DIR, 'time-tracker.json');
       let tracker = {
         current: null,
-        entries: []
+        entries: [],
       };
 
       if (fs.existsSync(timerFile)) {
@@ -254,7 +257,7 @@ const time_tracker = {
           tracker.entries.push({
             ...tracker.current,
             endTime: new Date().toISOString(),
-            duration: Math.round(elapsed / 60000)
+            duration: Math.round(elapsed / 60000),
           });
         }
 
@@ -262,7 +265,7 @@ const time_tracker = {
           task: task || 'Unnamed task',
           project: project || 'Default',
           tags,
-          startTime: new Date().toISOString()
+          startTime: new Date().toISOString(),
         };
         fs.writeFileSync(timerFile, JSON.stringify(tracker, null, 2));
 
@@ -270,7 +273,7 @@ const time_tracker = {
           success: true,
           status: 'started',
           timer: tracker.current,
-          message: `⏱️ Timer started for "${task || 'Unnamed task'}"`
+          message: `⏱️ Timer started for "${task || 'Unnamed task'}"`,
         };
       }
 
@@ -283,7 +286,7 @@ const time_tracker = {
         const entry = {
           ...tracker.current,
           endTime: new Date().toISOString(),
-          duration: Math.round(elapsed / 60000)
+          duration: Math.round(elapsed / 60000),
         };
         tracker.entries.push(entry);
         tracker.current = null;
@@ -293,7 +296,7 @@ const time_tracker = {
           success: true,
           status: 'stopped',
           entry,
-          message: `⏹️ Timer stopped. Duration: ${entry.duration} minutes`
+          message: `⏹️ Timer stopped. Duration: ${entry.duration} minutes`,
         };
       }
 
@@ -308,16 +311,16 @@ const time_tracker = {
           status: 'running',
           current: {
             ...tracker.current,
-            elapsed: Math.round(elapsed / 60000)
+            elapsed: Math.round(elapsed / 60000),
           },
-          message: `⏱️ Running: ${tracker.current.task} (${Math.round(elapsed / 60000)} min)`
+          message: `⏱️ Running: ${tracker.current.task} (${Math.round(elapsed / 60000)} min)`,
         };
       }
 
       if (action === 'report') {
         const today = new Date().toDateString();
-        const todayEntries = tracker.entries.filter(e =>
-          new Date(e.startTime).toDateString() === today
+        const todayEntries = tracker.entries.filter(
+          e => new Date(e.startTime).toDateString() === today
         );
         const todayMinutes = todayEntries.reduce((sum, e) => sum + e.duration, 0);
 
@@ -333,9 +336,9 @@ const time_tracker = {
             todayEntries: todayEntries.length,
             totalEntries: tracker.entries.length,
             totalTime: `${(tracker.entries.reduce((s, e) => s + e.duration, 0) / 60).toFixed(1)} hours`,
-            byProject
+            byProject,
           },
-          message: `📊 Today: ${(todayMinutes / 60).toFixed(1)} hours across ${todayEntries.length} tasks`
+          message: `📊 Today: ${(todayMinutes / 60).toFixed(1)} hours across ${todayEntries.length} tasks`,
         };
       }
 
@@ -343,7 +346,7 @@ const time_tracker = {
     } catch (error) {
       return { success: false, error: error.message };
     }
-  }
+  },
 };
 
 /**
@@ -359,16 +362,24 @@ const roi_calculator = {
       investmentType: { type: 'string', enum: ['money', 'hours'], default: 'money' },
       expectedRevenue: { type: 'number', description: 'Expected monthly revenue' },
       timeframe: { type: 'integer', description: 'Months to calculate', default: 12 },
-      hourlyRate: { type: 'number', description: 'Your hourly rate (if time investment)', default: 50 }
+      hourlyRate: {
+        type: 'number',
+        description: 'Your hourly rate (if time investment)',
+        default: 50,
+      },
     },
-    required: ['investment', 'expectedRevenue']
+    required: ['investment', 'expectedRevenue'],
   },
-  handler: async ({ investment, investmentType = 'money', expectedRevenue, timeframe = 12, hourlyRate = 50 }) => {
+  handler: async ({
+    investment,
+    investmentType = 'money',
+    expectedRevenue,
+    timeframe = 12,
+    hourlyRate = 50,
+  }) => {
     try {
       // Convert time to money if needed
-      const monetaryInvestment = investmentType === 'hours'
-        ? investment * hourlyRate
-        : investment;
+      const monetaryInvestment = investmentType === 'hours' ? investment * hourlyRate : investment;
 
       const totalRevenue = expectedRevenue * timeframe;
       const profit = totalRevenue - monetaryInvestment;
@@ -379,29 +390,38 @@ const roi_calculator = {
         success: true,
         calculation: {
           investment: `$${monetaryInvestment.toFixed(2)}`,
-          investmentBreakdown: investmentType === 'hours'
-            ? `${investment} hours × $${hourlyRate}/hr`
-            : 'Direct investment',
+          investmentBreakdown:
+            investmentType === 'hours'
+              ? `${investment} hours × $${hourlyRate}/hr`
+              : 'Direct investment',
           monthlyRevenue: `$${expectedRevenue.toFixed(2)}`,
           totalRevenue: `$${totalRevenue.toFixed(2)}`,
           profit: `$${profit.toFixed(2)}`,
           roi: `${roi}%`,
           breakEvenMonths,
-          timeframe: `${timeframe} months`
+          timeframe: `${timeframe} months`,
         },
         analysis: {
           profitable: profit > 0,
-          roiRating: roi > 100 ? '🚀 Excellent' : roi > 50 ? '👍 Good' : roi > 0 ? '📊 Moderate' : '⚠️ Negative',
-          breakEven: breakEvenMonths <= timeframe
-            ? `✅ Break even in ${breakEvenMonths} months`
-            : `⚠️ Won't break even in ${timeframe} months`
+          roiRating:
+            roi > 100
+              ? '🚀 Excellent'
+              : roi > 50
+                ? '👍 Good'
+                : roi > 0
+                  ? '📊 Moderate'
+                  : '⚠️ Negative',
+          breakEven:
+            breakEvenMonths <= timeframe
+              ? `✅ Break even in ${breakEvenMonths} months`
+              : `⚠️ Won't break even in ${timeframe} months`,
         },
-        message: `📈 ROI: ${roi}% | Break even: ${breakEvenMonths} months`
+        message: `📈 ROI: ${roi}% | Break even: ${breakEvenMonths} months`,
       };
     } catch (error) {
       return { success: false, error: error.message };
     }
-  }
+  },
 };
 
 /**
@@ -417,10 +437,10 @@ const competitor_scan = {
       aspects: {
         type: 'array',
         items: { type: 'string' },
-        description: 'What to analyze: tech, features, seo, performance'
-      }
+        description: 'What to analyze: tech, features, seo, performance',
+      },
     },
-    required: ['url']
+    required: ['url'],
   },
   handler: async ({ url, aspects = ['tech', 'features'] }) => {
     try {
@@ -434,7 +454,7 @@ const competitor_scan = {
       const analysis = {
         url: normalizedUrl,
         domain,
-        scannedAt: new Date().toISOString()
+        scannedAt: new Date().toISOString(),
       };
 
       if (aspects.includes('tech')) {
@@ -444,9 +464,9 @@ const competitor_scan = {
             'Check for /_next/ (Next.js)',
             'Check for /static/js/main (React CRA)',
             'Check X-Powered-By header',
-            'Look at script sources'
+            'Look at script sources',
           ],
-          tools: ['Wappalyzer', 'BuiltWith', 'WhatRuns']
+          tools: ['Wappalyzer', 'BuiltWith', 'WhatRuns'],
         };
       }
 
@@ -458,8 +478,8 @@ const competitor_scan = {
             'Pricing page',
             'API documentation',
             'Blog/Content',
-            'Support/Help center'
-          ]
+            'Support/Help center',
+          ],
         };
       }
 
@@ -471,8 +491,8 @@ const competitor_scan = {
             'Open Graph tags',
             'Structured data',
             'Sitemap.xml',
-            'Robots.txt'
-          ]
+            'Robots.txt',
+          ],
         };
       }
 
@@ -480,7 +500,7 @@ const competitor_scan = {
         analysis.performance = {
           note: 'Run through PageSpeed Insights',
           url: `https://pagespeed.web.dev/report?url=${encodeURIComponent(normalizedUrl)}`,
-          metrics: ['FCP', 'LCP', 'CLS', 'TTI']
+          metrics: ['FCP', 'LCP', 'CLS', 'TTI'],
         };
       }
 
@@ -491,14 +511,14 @@ const competitor_scan = {
           `Visit ${normalizedUrl} and note key features`,
           'Use browser DevTools Network tab for tech detection',
           `Check PageSpeed: ${analysis.performance?.url || 'N/A'}`,
-          'Sign up for their product to understand user flow'
+          'Sign up for their product to understand user flow',
         ],
-        message: `🔍 Analysis framework ready for ${domain}`
+        message: `🔍 Analysis framework ready for ${domain}`,
       };
     } catch (error) {
       return { success: false, error: error.message };
     }
-  }
+  },
 };
 
 module.exports = {
@@ -506,5 +526,5 @@ module.exports = {
   usage_analytics,
   time_tracker,
   roi_calculator,
-  competitor_scan
+  competitor_scan,
 };

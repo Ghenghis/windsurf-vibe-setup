@@ -13,9 +13,9 @@ const hiveTools = {
       properties: {
         task: { type: 'string', description: 'Task description' },
         size: { type: 'string', enum: ['auto', 'small', 'medium', 'large'], default: 'auto' },
-        priority: { type: 'string', enum: ['low', 'normal', 'high'], default: 'normal' }
+        priority: { type: 'string', enum: ['low', 'normal', 'high'], default: 'normal' },
       },
-      required: ['task']
+      required: ['task'],
     },
     handler: async ({ task, size = 'auto', priority = 'normal' }) => {
       const swarm = await hiveMind.spawnSwarm(task, { size, priority });
@@ -23,9 +23,9 @@ const hiveTools = {
         swarmId: swarm.id,
         status: swarm.status,
         agents: swarm.agents.map(a => ({ type: a.type, model: a.model })),
-        message: `🐝 Swarm spawned with ${swarm.agents.length} agents`
+        message: `🐝 Swarm spawned with ${swarm.agents.length} agents`,
       };
-    }
+    },
   },
 
   swarm_status: {
@@ -33,7 +33,7 @@ const hiveTools = {
     description: 'Get status of all active swarms or a specific swarm',
     inputSchema: {
       type: 'object',
-      properties: { swarmId: { type: 'string', description: 'Specific swarm ID' } }
+      properties: { swarmId: { type: 'string', description: 'Specific swarm ID' } },
     },
     handler: async ({ swarmId }) => {
       if (swarmId) {
@@ -42,9 +42,9 @@ const hiveTools = {
       }
       return {
         activeSwarms: hiveMind.swarms.size,
-        swarms: Array.from(hiveMind.swarms.values()).map(s => s.getStatus())
+        swarms: Array.from(hiveMind.swarms.values()).map(s => s.getStatus()),
       };
-    }
+    },
   },
 
   swarm_execute: {
@@ -53,13 +53,13 @@ const hiveTools = {
     inputSchema: {
       type: 'object',
       properties: { swarmId: { type: 'string' } },
-      required: ['swarmId']
+      required: ['swarmId'],
     },
     handler: async ({ swarmId }) => {
       const swarm = hiveMind.swarms.get(swarmId);
       if (!swarm) return { error: 'Swarm not found' };
       return await swarm.execute();
-    }
+    },
   },
 
   dissolve_swarm: {
@@ -68,12 +68,12 @@ const hiveTools = {
     inputSchema: {
       type: 'object',
       properties: { swarmId: { type: 'string' } },
-      required: ['swarmId']
+      required: ['swarmId'],
     },
     handler: async ({ swarmId }) => {
       hiveMind.swarms.delete(swarmId);
       return { dissolved: true, swarmId };
-    }
+    },
   },
 
   hive_status: {
@@ -83,7 +83,7 @@ const hiveTools = {
     handler: async () => {
       await hiveMind.providers.checkProviders();
       return hiveMind.getStatus();
-    }
+    },
   },
 
   hive_memory_store: {
@@ -94,11 +94,11 @@ const hiveTools = {
       properties: {
         key: { type: 'string' },
         data: { type: 'string' },
-        tags: { type: 'array', items: { type: 'string' } }
+        tags: { type: 'array', items: { type: 'string' } },
       },
-      required: ['key', 'data']
+      required: ['key', 'data'],
     },
-    handler: async ({ key, data, tags = [] }) => hiveMind.memory.store(key, data, { tags })
+    handler: async ({ key, data, tags = [] }) => hiveMind.memory.store(key, data, { tags }),
   },
 
   hive_memory_query: {
@@ -107,12 +107,12 @@ const hiveTools = {
     inputSchema: {
       type: 'object',
       properties: { query: { type: 'string' } },
-      required: ['query']
+      required: ['query'],
     },
     handler: async ({ query }) => {
       const results = await hiveMind.memory.query(query);
       return { results, count: results.length };
-    }
+    },
   },
 
   hive_learn: {
@@ -123,11 +123,12 @@ const hiveTools = {
       properties: {
         pattern: { type: 'string' },
         solution: { type: 'string' },
-        context: { type: 'string' }
+        context: { type: 'string' },
       },
-      required: ['pattern', 'solution']
+      required: ['pattern', 'solution'],
     },
-    handler: async ({ pattern, solution, context = '' }) => hiveMind.memory.learn(pattern, solution, context)
+    handler: async ({ pattern, solution, context = '' }) =>
+      hiveMind.memory.learn(pattern, solution, context),
   },
 
   hive_broadcast: {
@@ -137,28 +138,28 @@ const hiveTools = {
       type: 'object',
       properties: {
         message: { type: 'string' },
-        priority: { type: 'string', enum: ['info', 'warning', 'urgent'], default: 'info' }
+        priority: { type: 'string', enum: ['info', 'warning', 'urgent'], default: 'info' },
       },
-      required: ['message']
+      required: ['message'],
     },
     handler: async ({ message, priority = 'info' }) => {
       hiveMind.emit('broadcast', { message, priority });
       return { broadcast: true, recipients: hiveMind.swarms.size };
-    }
+    },
   },
 
   provider_status: {
     name: 'provider_status',
     description: 'Check LLM providers (Ollama, LM Studio)',
     inputSchema: { type: 'object', properties: {} },
-    handler: async () => hiveMind.providers.checkProviders()
+    handler: async () => hiveMind.providers.checkProviders(),
   },
 
   windsurf_sync: {
     name: 'windsurf_sync',
     description: 'Sync Hive Mind with Windsurf IDE',
     inputSchema: { type: 'object', properties: {} },
-    handler: async () => ({ synced: true, hiveStatus: hiveMind.getStatus() })
+    handler: async () => ({ synced: true, hiveStatus: hiveMind.getStatus() }),
   },
 
   ollama_pool: {
@@ -168,16 +169,16 @@ const hiveTools = {
       type: 'object',
       properties: {
         action: { type: 'string', enum: ['list', 'preload', 'unload'] },
-        model: { type: 'string' }
+        model: { type: 'string' },
       },
-      required: ['action']
+      required: ['action'],
     },
     handler: async ({ action, model }) => {
       await hiveMind.providers.checkProviders();
       if (action === 'list') return { models: hiveMind.providers.providers.ollama.models };
       return { action, model, message: `Model ${model} ${action}ed` };
-    }
-  }
+    },
+  },
 };
 
 module.exports = { hiveTools, hiveMind };

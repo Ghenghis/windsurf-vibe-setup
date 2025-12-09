@@ -1,9 +1,11 @@
 # Docker/Containerized Project Rules
 
 ## Project Type
+
 This is a containerized application using Docker.
 
 ## Tech Stack
+
 - Docker & Docker Compose
 - Multi-stage builds
 - Container orchestration (optional: K8s)
@@ -11,6 +13,7 @@ This is a containerized application using Docker.
 ## Code Standards
 
 ### File Structure
+
 ```
 project/
 ├── docker/
@@ -26,6 +29,7 @@ project/
 ```
 
 ### Dockerfile Best Practices
+
 ```dockerfile
 # Use specific version tags
 FROM node:20-alpine AS builder
@@ -60,6 +64,7 @@ CMD ["node", "dist/index.js"]
 ```
 
 ## Best Practices
+
 - Use multi-stage builds
 - Run as non-root user
 - Use specific image tags (not `latest`)
@@ -70,6 +75,7 @@ CMD ["node", "dist/index.js"]
 - Set resource limits
 
 ## Docker Compose
+
 - Use named volumes for persistence
 - Define networks explicitly
 - Use environment files
@@ -77,6 +83,7 @@ CMD ["node", "dist/index.js"]
 - Configure restart policies
 
 ## Security
+
 - Scan images for vulnerabilities
 - Don't store secrets in images
 - Use Docker secrets or env vars
@@ -84,6 +91,7 @@ CMD ["node", "dist/index.js"]
 - Drop unnecessary capabilities
 
 ## Don't Do
+
 - No `latest` tags in production
 - No secrets in Dockerfile
 - No running as root

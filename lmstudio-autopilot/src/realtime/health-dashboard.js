@@ -1,7 +1,7 @@
 /**
  * Health Monitoring Dashboard
  * Windsurf Vibe Setup v4.3.0
- * 
+ *
  * Real-time health monitoring and performance metrics dashboard
  * for the Hive Mind system and task queue.
  */
@@ -13,26 +13,26 @@ const EventEmitter = require('events');
 class HealthDashboard extends EventEmitter {
   constructor(config = {}) {
     super();
-    
+
     this.config = {
       port: config.port || 9090,
       refreshInterval: config.refreshInterval || 5000,
       historySize: config.historySize || 100,
-      ...config
+      ...config,
     };
-    
+
     this.server = null;
     this.metrics = {
       system: {
         cpu: [],
         memory: [],
-        uptime: 0
+        uptime: 0,
       },
       hiveMind: {
         swarms: 0,
         agents: 0,
         tasks: [],
-        responseTime: []
+        responseTime: [],
       },
       taskQueue: {
         queued: [],
@@ -42,75 +42,75 @@ class HealthDashboard extends EventEmitter {
           critical: [],
           high: [],
           normal: [],
-          low: []
-        }
+          low: [],
+        },
       },
       performance: {
         successRate: [],
         averageTime: [],
-        throughput: []
-      }
+        throughput: [],
+      },
     };
-    
+
     this.controllers = {
       hiveMind: null,
-      taskQueue: null
+      taskQueue: null,
     };
   }
-  
+
   // ═══════════════════════════════════════════════════════════════════════════
   // INITIALIZATION
   // ═══════════════════════════════════════════════════════════════════════════
-  
+
   async start(hiveMindController, taskQueue) {
     this.controllers.hiveMind = hiveMindController;
     this.controllers.taskQueue = taskQueue;
-    
+
     // Start metrics collection
     this.startMetricsCollection();
-    
+
     // Create HTTP server
     this.server = http.createServer((req, res) => {
       this.handleRequest(req, res);
     });
-    
+
     this.server.listen(this.config.port, () => {
       console.log(`📊 Health Dashboard running at http://localhost:${this.config.port}`);
       this.emit('started', { port: this.config.port });
     });
   }
-  
+
   async stop() {
     if (this.server) {
       this.server.close();
       this.server = null;
     }
-    
+
     if (this.metricsInterval) {
       clearInterval(this.metricsInterval);
       this.metricsInterval = null;
     }
-    
+
     console.log('📊 Health Dashboard stopped');
     this.emit('stopped');
   }
-  
+
   // ═══════════════════════════════════════════════════════════════════════════
   // METRICS COLLECTION
   // ═══════════════════════════════════════════════════════════════════════════
-  
+
   startMetricsCollection() {
     this.metricsInterval = setInterval(() => {
       this.collectMetrics();
     }, this.config.refreshInterval);
-    
+
     // Collect initial metrics
     this.collectMetrics();
   }
-  
+
   collectMetrics() {
     const timestamp = new Date();
-    
+
     // System metrics
     const memUsage = process.memoryUsage();
     this.addMetric('system.memory', {
@@ -118,113 +118,114 @@ class HealthDashboard extends EventEmitter {
       heapUsed: Math.round(memUsage.heapUsed / 1024 / 1024),
       heapTotal: Math.round(memUsage.heapTotal / 1024 / 1024),
       external: Math.round(memUsage.external / 1024 / 1024),
-      percentage: Math.round((memUsage.heapUsed / memUsage.heapTotal) * 100)
+      percentage: Math.round((memUsage.heapUsed / memUsage.heapTotal) * 100),
     });
-    
+
     this.addMetric('system.cpu', {
       timestamp,
-      usage: process.cpuUsage()
+      usage: process.cpuUsage(),
     });
-    
+
     this.metrics.system.uptime = process.uptime();
-    
+
     // Hive Mind metrics
     if (this.controllers.hiveMind) {
       const status = this.controllers.hiveMind.getStatus();
-      
+
       this.metrics.hiveMind.swarms = status.swarms;
       this.metrics.hiveMind.agents = status.agents;
-      
+
       this.addMetric('hiveMind.tasks', {
         timestamp,
         processed: status.metrics.tasksProcessed,
-        queue: status.tasksInQueue
+        queue: status.tasksInQueue,
       });
-      
+
       this.addMetric('hiveMind.responseTime', {
         timestamp,
-        average: status.metrics.averageResponseTime
+        average: status.metrics.averageResponseTime,
       });
-      
+
       this.addMetric('performance.successRate', {
         timestamp,
-        rate: status.metrics.successRate
+        rate: status.metrics.successRate,
       });
     }
-    
+
     // Task Queue metrics
     if (this.controllers.taskQueue) {
       const queueStatus = this.controllers.taskQueue.getStatus();
       const metrics = queueStatus.metrics;
-      
+
       this.addMetric('taskQueue.queued', {
         timestamp,
-        count: metrics.totalQueued
+        count: metrics.totalQueued,
       });
-      
+
       this.addMetric('taskQueue.processed', {
         timestamp,
-        count: metrics.totalProcessed
+        count: metrics.totalProcessed,
       });
-      
+
       this.addMetric('taskQueue.failed', {
         timestamp,
-        count: metrics.totalFailed
+        count: metrics.totalFailed,
       });
-      
+
       // Queue sizes
       Object.entries(metrics.queueSizes).forEach(([priority, size]) => {
         this.addMetric(`taskQueue.queueSizes.${priority}`, {
           timestamp,
-          size
+          size,
         });
       });
-      
+
       this.addMetric('performance.averageTime', {
         timestamp,
-        time: metrics.averageProcessingTime
+        time: metrics.averageProcessingTime,
       });
-      
+
       // Calculate throughput
-      const throughput = metrics.totalProcessed > 0 
-        ? (metrics.totalProcessed / (process.uptime() / 60)).toFixed(2)
-        : 0;
-      
+      const throughput =
+        metrics.totalProcessed > 0
+          ? (metrics.totalProcessed / (process.uptime() / 60)).toFixed(2)
+          : 0;
+
       this.addMetric('performance.throughput', {
         timestamp,
-        tasksPerMinute: throughput
+        tasksPerMinute: throughput,
       });
     }
   }
-  
+
   addMetric(path, value) {
     const parts = path.split('.');
     let target = this.metrics;
-    
+
     for (let i = 0; i < parts.length - 1; i++) {
       target = target[parts[i]];
     }
-    
+
     const key = parts[parts.length - 1];
     if (!Array.isArray(target[key])) {
       target[key] = [];
     }
-    
+
     target[key].push(value);
-    
+
     // Limit history size
     if (target[key].length > this.config.historySize) {
       target[key].shift();
     }
   }
-  
+
   // ═══════════════════════════════════════════════════════════════════════════
   // HTTP SERVER
   // ═══════════════════════════════════════════════════════════════════════════
-  
+
   handleRequest(req, res) {
     const url = req.url;
-    
+
     if (url === '/' || url === '/dashboard') {
       this.serveDashboardHTML(res);
     } else if (url === '/api/metrics') {
@@ -238,7 +239,7 @@ class HealthDashboard extends EventEmitter {
       res.end('Not Found');
     }
   }
-  
+
   serveDashboardHTML(res) {
     const html = `
 <!DOCTYPE html>
@@ -577,46 +578,45 @@ class HealthDashboard extends EventEmitter {
 </body>
 </html>
     `;
-    
+
     res.writeHead(200, { 'Content-Type': 'text/html' });
     res.end(html);
   }
-  
+
   serveMetrics(res) {
     res.writeHead(200, { 'Content-Type': 'application/json' });
     res.end(JSON.stringify(this.metrics, null, 2));
   }
-  
+
   serveStatus(res) {
     const status = this.getAggregatedStatus();
     res.writeHead(200, { 'Content-Type': 'application/json' });
     res.end(JSON.stringify(status, null, 2));
   }
-  
+
   serveHealth(res) {
     const health = this.getHealth();
-    const statusCode = health.status === 'healthy' ? 200 : 
-                      health.status === 'degraded' ? 503 : 500;
-    
+    const statusCode = health.status === 'healthy' ? 200 : health.status === 'degraded' ? 503 : 500;
+
     res.writeHead(statusCode, { 'Content-Type': 'application/json' });
     res.end(JSON.stringify(health, null, 2));
   }
-  
+
   // ═══════════════════════════════════════════════════════════════════════════
   // STATUS AGGREGATION
   // ═══════════════════════════════════════════════════════════════════════════
-  
+
   getAggregatedStatus() {
     const status = {
       system: {
         uptime: this.metrics.system.uptime,
-        memory: this.getLatestMetric('system.memory')
+        memory: this.getLatestMetric('system.memory'),
       },
       hiveMind: {},
       taskQueue: {},
-      performance: {}
+      performance: {},
     };
-    
+
     // Hive Mind status
     if (this.controllers.hiveMind) {
       const hmStatus = this.controllers.hiveMind.getStatus();
@@ -626,59 +626,59 @@ class HealthDashboard extends EventEmitter {
         tasksProcessed: hmStatus.metrics.tasksProcessed,
         averageResponseTime: hmStatus.metrics.averageResponseTime,
         idleAgents: this.controllers.hiveMind.getIdleAgentCount(),
-        busyAgents: this.controllers.hiveMind.getBusyAgentCount()
+        busyAgents: this.controllers.hiveMind.getBusyAgentCount(),
       };
     }
-    
+
     // Task Queue status
     if (this.controllers.taskQueue) {
       const tqStatus = this.controllers.taskQueue.getStatus();
       status.taskQueue = {
         ...tqStatus.metrics,
-        health: tqStatus.health
+        health: tqStatus.health,
       };
     }
-    
+
     // Performance metrics
     status.performance = {
       successRate: this.getLatestMetric('performance.successRate')?.rate || 100,
       averageTime: this.getLatestMetric('performance.averageTime')?.time || 0,
-      throughput: this.getLatestMetric('performance.throughput')?.tasksPerMinute || 0
+      throughput: this.getLatestMetric('performance.throughput')?.tasksPerMinute || 0,
     };
-    
+
     // Overall health
     status.health = this.getHealth();
-    
+
     return status;
   }
-  
+
   getLatestMetric(path) {
     const parts = path.split('.');
     let target = this.metrics;
-    
+
     for (const part of parts) {
       target = target[part];
       if (!target) return null;
     }
-    
+
     if (Array.isArray(target) && target.length > 0) {
       return target[target.length - 1];
     }
-    
+
     return target;
   }
-  
+
   getHealth() {
     let status = 'healthy';
     const issues = [];
-    
+
     // Check memory usage
     const memory = this.getLatestMetric('system.memory');
     if (memory && memory.percentage > 90) {
       status = 'degraded';
       issues.push('High memory usage');
     }
-    
+
     // Check task queue health
     if (this.controllers.taskQueue) {
       const queueHealth = this.controllers.taskQueue.getHealth();
@@ -687,17 +687,17 @@ class HealthDashboard extends EventEmitter {
         issues.push('Task queue issues');
       }
     }
-    
+
     // Check Hive Mind
     if (this.controllers.hiveMind && !this.controllers.hiveMind.isRunning) {
       status = 'unhealthy';
       issues.push('Hive Mind not running');
     }
-    
+
     return {
       status,
       issues,
-      timestamp: new Date()
+      timestamp: new Date(),
     };
   }
 }
@@ -708,21 +708,21 @@ const dashboard = new HealthDashboard();
 module.exports = {
   HealthDashboard,
   dashboard,
-  
+
   // Convenience functions
   async start(hiveMindController, taskQueue) {
     return dashboard.start(hiveMindController, taskQueue);
   },
-  
+
   async stop() {
     return dashboard.stop();
   },
-  
+
   getStatus() {
     return dashboard.getAggregatedStatus();
   },
-  
+
   getHealth() {
     return dashboard.getHealth();
-  }
+  },
 };

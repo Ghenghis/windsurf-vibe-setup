@@ -12,12 +12,33 @@ const path = require('path');
 const CONFIG = {
   rootDir: path.join(__dirname, '..'),
   excludeDirs: [
-    'node_modules', '.git', '.venv', 'venv', '__pycache__',
-    'benchmark-results', 'dist', 'build', 'obj', 'bin'
+    'node_modules',
+    '.git',
+    '.venv',
+    'venv',
+    '__pycache__',
+    'benchmark-results',
+    'dist',
+    'build',
+    'obj',
+    'bin',
   ],
   excludeFiles: ['package-lock.json', 'yarn.lock', 'pnpm-lock.yaml'],
-  extensions: ['.js', '.ts', '.py', '.ps1', '.json', '.yml', '.yaml', '.env', '.md', '.sh', '.bat', '.cmd'],
-  maxFileSize: 5 * 1024 * 1024 // 5MB
+  extensions: [
+    '.js',
+    '.ts',
+    '.py',
+    '.ps1',
+    '.json',
+    '.yml',
+    '.yaml',
+    '.env',
+    '.md',
+    '.sh',
+    '.bat',
+    '.cmd',
+  ],
+  maxFileSize: 5 * 1024 * 1024, // 5MB
 };
 
 // Secret patterns to detect
@@ -25,115 +46,115 @@ const SECRET_PATTERNS = [
   {
     name: 'AWS Access Key',
     pattern: /AKIA[0-9A-Z]{16}/g,
-    severity: 'critical'
+    severity: 'critical',
   },
   {
     name: 'AWS Secret Key',
     pattern: /[A-Za-z0-9/+=]{40}/g,
     context: /aws|secret|access/i,
-    severity: 'high'
+    severity: 'high',
   },
   {
     name: 'GitHub Token',
     pattern: /ghp_[A-Za-z0-9]{36}/g,
-    severity: 'critical'
+    severity: 'critical',
   },
   {
     name: 'GitHub OAuth',
     pattern: /gho_[A-Za-z0-9]{36}/g,
-    severity: 'critical'
+    severity: 'critical',
   },
   {
     name: 'GitHub Personal Access Token (Classic)',
     pattern: /github_pat_[A-Za-z0-9_]{22,}/g,
-    severity: 'critical'
+    severity: 'critical',
   },
   {
     name: 'OpenAI API Key',
     pattern: /sk-[A-Za-z0-9]{48}/g,
-    severity: 'critical'
+    severity: 'critical',
   },
   {
     name: 'Anthropic API Key',
     pattern: /sk-ant-[A-Za-z0-9-_]{90,}/g,
-    severity: 'critical'
+    severity: 'critical',
   },
   {
     name: 'Slack Token',
     pattern: /xox[baprs]-[0-9]{10,13}-[0-9]{10,13}[a-zA-Z0-9-]*/g,
-    severity: 'critical'
+    severity: 'critical',
   },
   {
     name: 'Stripe Secret Key',
     pattern: /sk_live_[A-Za-z0-9]{24,}/g,
-    severity: 'critical'
+    severity: 'critical',
   },
   {
     name: 'Stripe Publishable Key',
     pattern: /pk_live_[A-Za-z0-9]{24,}/g,
-    severity: 'medium'
+    severity: 'medium',
   },
   {
     name: 'Private Key Header',
     pattern: /-----BEGIN (RSA |EC |DSA |OPENSSH )?PRIVATE KEY-----/g,
-    severity: 'critical'
+    severity: 'critical',
   },
   {
     name: 'Generic API Key',
     pattern: /api[_-]?key\s*[:=]\s*['"][A-Za-z0-9]{20,}['"]/gi,
-    severity: 'high'
+    severity: 'high',
   },
   {
     name: 'Generic Secret',
     pattern: /secret\s*[:=]\s*['"][A-Za-z0-9]{16,}['"]/gi,
-    severity: 'high'
+    severity: 'high',
   },
   {
     name: 'Password in URL',
     pattern: /:\/\/[^:]+:[^@]+@/g,
-    severity: 'high'
+    severity: 'high',
   },
   {
     name: 'Hardcoded Password',
     pattern: /password\s*[:=]\s*['"][^'"]{8,}['"]/gi,
-    severity: 'high'
+    severity: 'high',
   },
   {
     name: 'Bearer Token',
     pattern: /bearer\s+[A-Za-z0-9._-]{20,}/gi,
-    severity: 'high'
+    severity: 'high',
   },
   {
     name: 'Base64 Encoded Credentials',
     pattern: /basic\s+[A-Za-z0-9+/=]{20,}/gi,
-    severity: 'medium'
+    severity: 'medium',
   },
   {
     name: 'Connection String',
     pattern: /(mongodb|postgresql|mysql|redis):\/\/[^'"\s]+/gi,
-    severity: 'high'
+    severity: 'high',
   },
   {
     name: 'Discord Token',
     pattern: /[MN][A-Za-z\d]{23,}\.[\w-]{6}\.[\w-]{27}/g,
-    severity: 'critical'
+    severity: 'critical',
   },
   {
     name: 'Telegram Bot Token',
     pattern: /\d{9,10}:[A-Za-z0-9_-]{35}/g,
-    severity: 'critical'
-  }
+    severity: 'critical',
+  },
 ];
 
 // False positive patterns to ignore
 const FALSE_POSITIVES = [
-  /\${[A-Z_]+}/,           // Environment variable placeholders
-  /process\.env\./,         // Environment variable access
-  /\$env:/i,               // PowerShell env vars
+  /\${[A-Z_]+}/, // Environment variable placeholders
+  /process\.env\./, // Environment variable access
+  /\$env:/i, // PowerShell env vars
   /example|sample|test|placeholder|your[_-]?/i,
-  /xxx+|yyy+|zzz+/i,       // Placeholder values
-  /1234567890/,            // Example numbers
-  /<[^>]+>/               // Placeholder tags
+  /xxx+|yyy+|zzz+/i, // Placeholder values
+  /1234567890/, // Example numbers
+  /<[^>]+>/, // Placeholder tags
 ];
 
 // Color codes for terminal output
@@ -144,7 +165,7 @@ const colors = {
   yellow: '\x1b[33m',
   green: '\x1b[32m',
   cyan: '\x1b[36m',
-  gray: '\x1b[90m'
+  gray: '\x1b[90m',
 };
 
 /**
@@ -164,8 +185,7 @@ function findFiles(dir, files = []) {
       } else if (entry.isFile()) {
         const ext = path.extname(entry.name).toLowerCase();
 
-        if (CONFIG.extensions.includes(ext) &&
-            !CONFIG.excludeFiles.includes(entry.name)) {
+        if (CONFIG.extensions.includes(ext) && !CONFIG.excludeFiles.includes(entry.name)) {
           try {
             const stats = fs.statSync(fullPath);
             if (stats.size <= CONFIG.maxFileSize) {
@@ -232,7 +252,7 @@ function scanFile(filePath) {
           file: filePath,
           line: lineNumber,
           match: match[0].substring(0, 20) + '...',
-          lineContent: lineContent.trim().substring(0, 80)
+          lineContent: lineContent.trim().substring(0, 80),
         });
       }
     }
@@ -272,12 +292,12 @@ function generateReport(findings, outputPath) {
       critical: findings.filter(f => f.severity === 'critical').length,
       high: findings.filter(f => f.severity === 'high').length,
       medium: findings.filter(f => f.severity === 'medium').length,
-      low: findings.filter(f => f.severity === 'low').length
+      low: findings.filter(f => f.severity === 'low').length,
     },
     findings: findings.map(f => ({
       ...f,
-      file: path.relative(CONFIG.rootDir, f.file)
-    }))
+      file: path.relative(CONFIG.rootDir, f.file),
+    })),
   };
 
   fs.writeFileSync(outputPath, JSON.stringify(report, null, 2));
@@ -318,7 +338,9 @@ function main() {
 
   // Display findings
   if (allFindings.length > 0) {
-    console.log(`${colors.red}${colors.bold}⚠ Found ${allFindings.length} potential secret(s)${colors.reset}`);
+    console.log(
+      `${colors.red}${colors.bold}⚠ Found ${allFindings.length} potential secret(s)${colors.reset}`
+    );
     console.log('');
 
     for (const finding of allFindings) {

@@ -11,8 +11,20 @@ const path = require('path');
 // Configuration
 const CONFIG = {
   rootDir: path.join(__dirname, '..'),
-  excludeDirs: ['node_modules', '.git', '.venv', 'venv', 'benchmark-results', 'obj', 'bin', '__pycache__', '.vs', 'dist', 'build'],
-  extensions: ['.json', '.jsonc']
+  excludeDirs: [
+    'node_modules',
+    '.git',
+    '.venv',
+    'venv',
+    'benchmark-results',
+    'obj',
+    'bin',
+    '__pycache__',
+    '.vs',
+    'dist',
+    'build',
+  ],
+  extensions: ['.json', '.jsonc'],
 };
 
 // Color codes for terminal output
@@ -21,7 +33,7 @@ const colors = {
   red: '\x1b[31m',
   yellow: '\x1b[33m',
   reset: '\x1b[0m',
-  bold: '\x1b[1m'
+  bold: '\x1b[1m',
 };
 
 /**
@@ -116,7 +128,7 @@ function validateJsonFile(filePath) {
     valid: false,
     error: null,
     lineCount: 0,
-    size: 0
+    size: 0,
   };
 
   try {
@@ -161,7 +173,7 @@ function main() {
 
   const results = {
     valid: [],
-    invalid: []
+    invalid: [],
   };
 
   for (const file of files) {

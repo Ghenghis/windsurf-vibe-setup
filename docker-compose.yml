@@ -4,7 +4,7 @@ services:
   chromadb:
     image: chromadb/chroma:latest
     ports:
-      - "8000:8000"
+      - '8000:8000'
     environment:
       - CHROMA_SERVER_AUTH_PROVIDER=chromadb.auth.token_authn.TokenAuthenticationServerProvider
       - CHROMA_SERVER_AUTH_CREDENTIALS_PROVIDER=chromadb.auth.token_authn.TokenConfigServerCredentialsProvider
@@ -16,7 +16,7 @@ services:
   redis:
     image: redis:alpine
     ports:
-      - "6379:6379"
+      - '6379:6379'
     command: redis-server --appendonly yes
     volumes:
       - ./data/redis:/data
@@ -24,7 +24,7 @@ services:
   postgres:
     image: postgres:15-alpine
     ports:
-      - "5432:5432"
+      - '5432:5432'
     environment:
       - POSTGRES_USER=windsurf
       - POSTGRES_PASSWORD=windsurf

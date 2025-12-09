@@ -25,7 +25,7 @@ const CONFIG = {
   ollama: {
     host: 'http://localhost:11434',
     defaultModel: 'qwen2.5-coder:32b',
-    embeddingModel: 'nomic-embed-text'
+    embeddingModel: 'nomic-embed-text',
   },
   services: {
     chromadb: { host: 'http://localhost:8000', docker: 'chromadb' },
@@ -34,18 +34,18 @@ const CONFIG = {
     redis: { host: 'redis://localhost:6379', docker: 'redis' },
     postgres: { host: 'postgresql://localhost:5432', docker: 'postgres' },
     n8n: { host: 'http://localhost:5678', docker: 'n8n' },
-    openwebui: { host: 'http://localhost:3000', docker: 'open-webui' }
+    openwebui: { host: 'http://localhost:3000', docker: 'open-webui' },
   },
   hardware: {
     primaryGpu: { name: 'RTX 3090 Ti', vram: 24576, index: 0 },
     secondaryGpu: { name: 'RTX 3060 Ti', vram: 8192, index: 1 },
-    totalRam: 131072 // 128GB
+    totalRam: 131072, // 128GB
   },
   paths: {
     composeFile: path.join(__dirname, '..', 'docker-compose-vibe-stack.yml'),
     logsDir: path.join(__dirname, '..', '..', 'logs', 'orchestrator'),
-    agentScript: path.join(__dirname, 'agent-crew.py')
-  }
+    agentScript: path.join(__dirname, 'agent-crew.py'),
+  },
 };
 
 // Ensure logs directory exists
@@ -56,21 +56,30 @@ if (!fs.existsSync(CONFIG.paths.logsDir)) {
 // ============================================================================
 // LOGGING
 // ============================================================================
-const LOG_FILE = path.join(CONFIG.paths.logsDir, `orchestrator-${new Date().toISOString().split('T')[0]}.log`);
+const LOG_FILE = path.join(
+  CONFIG.paths.logsDir,
+  `orchestrator-${new Date().toISOString().split('T')[0]}.log`
+);
 
 const log = {
   _write: (level, msg) => {
     const timestamp = new Date().toISOString();
     const line = `[${timestamp}] [${level}] ${msg}`;
     fs.appendFileSync(LOG_FILE, line + '\n');
-    const colors = { INFO: '\x1b[36m', SUCCESS: '\x1b[32m', WARN: '\x1b[33m', ERROR: '\x1b[31m', DEBUG: '\x1b[90m' };
+    const colors = {
+      INFO: '\x1b[36m',
+      SUCCESS: '\x1b[32m',
+      WARN: '\x1b[33m',
+      ERROR: '\x1b[31m',
+      DEBUG: '\x1b[90m',
+    };
     console.log(`${colors[level] || ''}[${level}]\x1b[0m ${msg}`);
   },
-  info: (msg) => log._write('INFO', msg),
-  success: (msg) => log._write('SUCCESS', msg),
-  warn: (msg) => log._write('WARN', msg),
-  error: (msg) => log._write('ERROR', msg),
-  debug: (msg) => process.env.DEBUG && log._write('DEBUG', msg)
+  info: msg => log._write('INFO', msg),
+  success: msg => log._write('SUCCESS', msg),
+  warn: msg => log._write('WARN', msg),
+  error: msg => log._write('ERROR', msg),
+  debug: msg => process.env.DEBUG && log._write('DEBUG', msg),
 };
 
 // ============================================================================
@@ -79,33 +88,42 @@ const log = {
 
 async function httpGet(url, timeout = 3000) {
   return new Promise((resolve, reject) => {
-    const req = http.get(url, { timeout }, (res) => {
+    const req = http.get(url, { timeout }, res => {
       let data = '';
-      res.on('data', chunk => data += chunk);
+      res.on('data', chunk => (data += chunk));
       res.on('end', () => resolve({ status: res.statusCode, data }));
     });
     req.on('error', reject);
-    req.on('timeout', () => { req.destroy(); reject(new Error('timeout')); });
+    req.on('timeout', () => {
+      req.destroy();
+      reject(new Error('timeout'));
+    });
   });
 }
 
 async function httpPost(url, body, timeout = 30000) {
   return new Promise((resolve, reject) => {
     const urlObj = new URL(url);
-    const req = http.request({
-      hostname: urlObj.hostname,
-      port: urlObj.port,
-      path: urlObj.pathname,
-      method: 'POST',
-      timeout,
-      headers: { 'Content-Type': 'application/json' }
-    }, (res) => {
-      let data = '';
-      res.on('data', chunk => data += chunk);
-      res.on('end', () => resolve({ status: res.statusCode, data }));
-    });
+    const req = http.request(
+      {
+        hostname: urlObj.hostname,
+        port: urlObj.port,
+        path: urlObj.pathname,
+        method: 'POST',
+        timeout,
+        headers: { 'Content-Type': 'application/json' },
+      },
+      res => {
+        let data = '';
+        res.on('data', chunk => (data += chunk));
+        res.on('end', () => resolve({ status: res.statusCode, data }));
+      }
+    );
     req.on('error', reject);
-    req.on('timeout', () => { req.destroy(); reject(new Error('timeout')); });
+    req.on('timeout', () => {
+      req.destroy();
+      reject(new Error('timeout'));
+    });
     req.write(JSON.stringify(body));
     req.end();
   });
@@ -134,7 +152,9 @@ async function checkServiceStatus(name) {
 
 function startDockerService(serviceName) {
   try {
-    execSync(`docker-compose -f "${CONFIG.paths.composeFile}" up -d ${serviceName}`, { stdio: 'pipe' });
+    execSync(`docker-compose -f "${CONFIG.paths.composeFile}" up -d ${serviceName}`, {
+      stdio: 'pipe',
+    });
     return true;
   } catch (err) {
     log.error(`Failed to start ${serviceName}: ${err.message}`);
@@ -144,7 +164,9 @@ function startDockerService(serviceName) {
 
 function stopDockerService(serviceName) {
   try {
-    execSync(`docker-compose -f "${CONFIG.paths.composeFile}" stop ${serviceName}`, { stdio: 'pipe' });
+    execSync(`docker-compose -f "${CONFIG.paths.composeFile}" stop ${serviceName}`, {
+      stdio: 'pipe',
+    });
     return true;
   } catch {
     return false;
@@ -157,80 +179,90 @@ function stopDockerService(serviceName) {
 
 const TASK_PATTERNS = {
   coding: {
-    keywords: ['code', 'function', 'class', 'implement', 'write', 'create', 'build', 'component', 'module'],
+    keywords: [
+      'code',
+      'function',
+      'class',
+      'implement',
+      'write',
+      'create',
+      'build',
+      'component',
+      'module',
+    ],
     services: ['ollama'],
     model: 'qwen2.5-coder:32b',
-    agents: ['coder']
+    agents: ['coder'],
   },
   debugging: {
     keywords: ['debug', 'fix', 'error', 'bug', 'issue', 'broken', 'wrong', 'crash', 'fail'],
     services: ['ollama'],
     model: 'qwen2.5-coder:32b',
-    agents: ['coder', 'reviewer']
+    agents: ['coder', 'reviewer'],
   },
   refactoring: {
     keywords: ['refactor', 'optimize', 'clean', 'improve', 'restructure', 'simplify'],
     services: ['ollama'],
     model: 'qwen2.5-coder:32b',
-    agents: ['coder', 'reviewer']
+    agents: ['coder', 'reviewer'],
   },
   architecture: {
     keywords: ['architect', 'design', 'structure', 'pattern', 'system', 'scale', 'microservice'],
     services: ['ollama'],
     model: 'llama3.1:70b',
-    agents: ['architect']
+    agents: ['architect'],
   },
   testing: {
     keywords: ['test', 'spec', 'coverage', 'unit', 'integration', 'e2e', 'jest', 'pytest'],
     services: ['ollama'],
     model: 'deepseek-coder-v2:16b',
-    agents: ['tester']
+    agents: ['tester'],
   },
   research: {
     keywords: ['search', 'find', 'research', 'look up', 'documentation', 'example', 'how to'],
     services: ['ollama', 'searxng'],
     model: 'deepseek-coder-v2:16b',
-    agents: ['researcher']
+    agents: ['researcher'],
   },
   rag: {
     keywords: ['context', 'embed', 'vector', 'retrieve', 'similar', 'knowledge', 'document'],
     services: ['ollama', 'chromadb'],
     model: 'nomic-embed-text',
-    agents: ['researcher']
+    agents: ['researcher'],
   },
   documentation: {
     keywords: ['document', 'readme', 'comment', 'explain', 'describe', 'api', 'spec'],
     services: ['ollama'],
     model: 'deepseek-coder-v2:16b',
-    agents: ['docwriter']
+    agents: ['docwriter'],
   },
   review: {
     keywords: ['review', 'audit', 'check', 'security', 'best practice', 'lint', 'quality'],
     services: ['ollama'],
     model: 'qwen2.5-coder:32b',
-    agents: ['reviewer']
-  }
+    agents: ['reviewer'],
+  },
 };
 
 function analyzeTask(prompt) {
   const lower = prompt.toLowerCase();
   const scores = {};
-  
+
   for (const [taskType, config] of Object.entries(TASK_PATTERNS)) {
     scores[taskType] = config.keywords.filter(kw => lower.includes(kw)).length;
   }
-  
+
   const sorted = Object.entries(scores).sort((a, b) => b[1] - a[1]);
   const bestMatch = sorted[0][1] > 0 ? sorted[0][0] : 'coding';
   const pattern = TASK_PATTERNS[bestMatch];
-  
+
   return {
     taskType: bestMatch,
     confidence: sorted[0][1] > 0 ? Math.min(sorted[0][1] / 3, 1) : 0.5,
     requiredServices: pattern.services,
     recommendedModel: pattern.model,
     suggestedAgents: pattern.agents,
-    allScores: scores
+    allScores: scores,
   };
 }
 
@@ -244,7 +276,7 @@ async function ensureServiceRunning(serviceName) {
     log.debug(`${serviceName} already running`);
     return true;
   }
-  
+
   log.info(`Starting ${serviceName}...`);
   if (startDockerService(serviceName)) {
     // Wait for service to be ready
@@ -257,7 +289,7 @@ async function ensureServiceRunning(serviceName) {
       }
     }
   }
-  
+
   log.error(`Failed to start ${serviceName}`);
   return false;
 }
@@ -268,10 +300,10 @@ async function ensureOllamaRunning() {
     log.debug('Ollama already running');
     return status;
   }
-  
+
   log.info('Starting Ollama...');
   spawn('ollama', ['serve'], { detached: true, stdio: 'ignore' }).unref();
-  
+
   // Wait for Ollama to start
   for (let i = 0; i < 30; i++) {
     await new Promise(r => setTimeout(r, 1000));
@@ -281,7 +313,7 @@ async function ensureOllamaRunning() {
       return check;
     }
   }
-  
+
   throw new Error('Failed to start Ollama');
 }
 
@@ -290,7 +322,7 @@ async function ensureModelLoaded(modelName) {
   if (!status.running) {
     await ensureOllamaRunning();
   }
-  
+
   // Check if model is available
   const hasModel = status.models?.some(m => m.name.includes(modelName.split(':')[0]));
   if (!hasModel) {
@@ -302,7 +334,7 @@ async function ensureModelLoaded(modelName) {
       log.warn(`Could not pull ${modelName}: ${err.message}`);
     }
   }
-  
+
   return true;
 }
 
@@ -314,18 +346,20 @@ async function orchestrate(prompt, options = {}) {
   log.info('═'.repeat(60));
   log.info('AI ORCHESTRATOR - Processing Request');
   log.info('═'.repeat(60));
-  
+
   // Step 1: Analyze the task
   const analysis = analyzeTask(prompt);
-  log.info(`Task Type: ${analysis.taskType} (confidence: ${(analysis.confidence * 100).toFixed(0)}%)`);
+  log.info(
+    `Task Type: ${analysis.taskType} (confidence: ${(analysis.confidence * 100).toFixed(0)}%)`
+  );
   log.info(`Model: ${analysis.recommendedModel}`);
   log.info(`Services: ${analysis.requiredServices.join(', ')}`);
   log.info(`Agents: ${analysis.suggestedAgents.join(', ')}`);
-  
+
   // Step 2: Provision required services
   log.info('');
   log.info('Provisioning services...');
-  
+
   for (const service of analysis.requiredServices) {
     if (service === 'ollama') {
       await ensureOllamaRunning();
@@ -334,11 +368,11 @@ async function orchestrate(prompt, options = {}) {
       await ensureServiceRunning(service);
     }
   }
-  
+
   // Step 3: Execute the request
   log.info('');
   log.info('Executing request...');
-  
+
   if (options.useAgents && analysis.suggestedAgents.length > 0) {
     // Use CrewAI agents
     return await executeWithAgents(prompt, analysis);
@@ -350,12 +384,16 @@ async function orchestrate(prompt, options = {}) {
 
 async function executeLlmQuery(prompt, model) {
   try {
-    const response = await httpPost(`${CONFIG.ollama.host}/api/generate`, {
-      model,
-      prompt,
-      stream: false
-    }, 120000); // 2 minute timeout
-    
+    const response = await httpPost(
+      `${CONFIG.ollama.host}/api/generate`,
+      {
+        model,
+        prompt,
+        stream: false,
+      },
+      120000
+    ); // 2 minute timeout
+
     const result = JSON.parse(response.data);
     log.success('LLM query completed');
     return {
@@ -363,7 +401,7 @@ async function executeLlmQuery(prompt, model) {
       model,
       response: result.response,
       tokens: result.eval_count,
-      duration: result.total_duration
+      duration: result.total_duration,
     };
   } catch (err) {
     log.error(`LLM query failed: ${err.message}`);
@@ -377,7 +415,7 @@ async function executeWithAgents(prompt, analysis) {
     log.warn('Agent script not found, falling back to direct LLM');
     return await executeLlmQuery(prompt, analysis.recommendedModel);
   }
-  
+
   try {
     const result = execSync(
       `python "${CONFIG.paths.agentScript}" --task "${prompt}" --agents ${analysis.suggestedAgents.join(',')}`,
@@ -399,9 +437,9 @@ async function fullHealthCheck() {
   console.log('\n' + '═'.repeat(60));
   console.log('  WINDSURF VIBE FREE-LOCAL HEALTH CHECK');
   console.log('═'.repeat(60) + '\n');
-  
+
   const results = { ollama: null, services: {}, gpu: null };
-  
+
   // Check Ollama
   const ollama = await checkOllamaStatus();
   results.ollama = ollama;
@@ -411,7 +449,7 @@ async function fullHealthCheck() {
   } else {
     console.log('❌ Ollama: Not running');
   }
-  
+
   // Check services
   console.log('\n📦 Docker Services:');
   for (const [name, config] of Object.entries(CONFIG.services)) {
@@ -420,22 +458,28 @@ async function fullHealthCheck() {
     const icon = status.running ? '✅' : '⬚';
     console.log(`   ${icon} ${name}: ${status.running ? 'Running' : 'Stopped'}`);
   }
-  
+
   // Check GPU
   console.log('\n🎮 GPU Status:');
   try {
-    const gpuInfo = execSync('nvidia-smi --query-gpu=name,memory.used,memory.total --format=csv,noheader,nounits', { encoding: 'utf8' });
-    const gpus = gpuInfo.trim().split('\n').map(line => {
-      const [name, used, total] = line.split(', ');
-      const percent = ((parseInt(used) / parseInt(total)) * 100).toFixed(0);
-      console.log(`   🖥️  ${name.trim()}: ${used}/${total} MB (${percent}%)`);
-      return { name: name.trim(), used: parseInt(used), total: parseInt(total) };
-    });
+    const gpuInfo = execSync(
+      'nvidia-smi --query-gpu=name,memory.used,memory.total --format=csv,noheader,nounits',
+      { encoding: 'utf8' }
+    );
+    const gpus = gpuInfo
+      .trim()
+      .split('\n')
+      .map(line => {
+        const [name, used, total] = line.split(', ');
+        const percent = ((parseInt(used) / parseInt(total)) * 100).toFixed(0);
+        console.log(`   🖥️  ${name.trim()}: ${used}/${total} MB (${percent}%)`);
+        return { name: name.trim(), used: parseInt(used), total: parseInt(total) };
+      });
     results.gpu = gpus;
   } catch {
     console.log('   ⚠️  Unable to query GPU');
   }
-  
+
   console.log('\n' + '═'.repeat(60) + '\n');
   return results;
 }
@@ -463,18 +507,18 @@ const command = args[0] || 'help';
         console.log('─'.repeat(60));
         console.log(result.response || JSON.stringify(result, null, 2));
         break;
-        
+
       case 'analyze':
         const taskPrompt = args.slice(1).join(' ') || 'Write a function';
         const analysis = analyzeTask(taskPrompt);
         console.log(JSON.stringify(analysis, null, 2));
         break;
-        
+
       case 'health':
       case 'status':
         await fullHealthCheck();
         break;
-        
+
       case 'provision':
         const taskType = args[1] || 'coding';
         const taskAnalysis = analyzeTask(taskType);
@@ -488,20 +532,20 @@ const command = args[0] || 'help';
         }
         log.success(`Provisioned for ${taskType}`);
         break;
-        
+
       case 'start':
         log.info('Starting all services...');
         await ensureOllamaRunning();
         execSync(`docker-compose -f "${CONFIG.paths.composeFile}" up -d`, { stdio: 'inherit' });
         log.success('All services started');
         break;
-        
+
       case 'stop':
         log.info('Stopping Docker services...');
         execSync(`docker-compose -f "${CONFIG.paths.composeFile}" down`, { stdio: 'inherit' });
         log.success('Services stopped');
         break;
-        
+
       default:
         console.log(`
 ╔═══════════════════════════════════════════════════════════════════════════╗

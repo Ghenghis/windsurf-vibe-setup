@@ -5,8 +5,9 @@
 This action plan transforms your Windsurf Vibe Setup into a **100% free, locally-hosted development autopilot** using open-source tools. No paid subscriptions, no cloud dependencies, complete privacy.
 
 **Your Hardware Advantage:**
+
 - RTX 3090 Ti (24GB VRAM) - Can run 70B+ parameter models
-- RTX 3060 Phoenix v2 (12GB VRAM) - Secondary inference / 32B models  
+- RTX 3060 Phoenix v2 (12GB VRAM) - Secondary inference / 32B models
 - Optional Tesla P40 GPUs - Additional compute
 - 128GB RAM - Massive context windows
 - 4TB NVMe - Local model storage
@@ -31,17 +32,18 @@ This setup positions you to run **enterprise-grade local AI** that rivals cloud 
 
 ### 1.1 Primary Local LLM Options (100% Free)
 
-| Tool | Best For | License | Your Hardware Fit |
-|------|----------|---------|-------------------|
-| **Ollama** | CLI + API, easy setup | MIT | ✅ Perfect |
-| **LM Studio** | GUI + fine-tuning | Free | ✅ Perfect |
-| **llama.cpp** | Raw performance | MIT | ✅ Perfect |
-| **vLLM** | Production serving | Apache 2.0 | ✅ Perfect |
-| **LocalAI** | OpenAI-compatible API | MIT | ✅ Perfect |
+| Tool          | Best For              | License    | Your Hardware Fit |
+| ------------- | --------------------- | ---------- | ----------------- |
+| **Ollama**    | CLI + API, easy setup | MIT        | ✅ Perfect        |
+| **LM Studio** | GUI + fine-tuning     | Free       | ✅ Perfect        |
+| **llama.cpp** | Raw performance       | MIT        | ✅ Perfect        |
+| **vLLM**      | Production serving    | Apache 2.0 | ✅ Perfect        |
+| **LocalAI**   | OpenAI-compatible API | MIT        | ✅ Perfect        |
 
 ### 1.2 Recommended Models for Your Hardware
 
 **Coding-Focused (Primary Use):**
+
 ```bash
 # Ollama commands
 ollama pull qwen2.5-coder:32b          # Best for code, fits 24GB VRAM
@@ -51,6 +53,7 @@ ollama pull starcoder2:15b             # Multi-language code
 ```
 
 **General Purpose + Tool Calling:**
+
 ```bash
 ollama pull qwen2.5:72b                # Flagship, your VRAM handles it
 ollama pull llama3.1:70b               # Meta's best, tool-calling native
@@ -59,6 +62,7 @@ ollama pull command-r:35b              # Excellent for RAG
 ```
 
 **Specialized:**
+
 ```bash
 ollama pull llava:34b                  # Vision + code
 ollama pull phi3:14b                   # Small but mighty
@@ -68,6 +72,7 @@ ollama pull gemma2:27b                 # Google's latest
 ### 1.3 Installation Steps
 
 **Step 1: Install Ollama**
+
 ```powershell
 # Windows (PowerShell as Admin)
 winget install Ollama.Ollama
@@ -76,6 +81,7 @@ winget install Ollama.Ollama
 ```
 
 **Step 2: Configure for GPU**
+
 ```bash
 # In WSL2 or Windows terminal
 ollama serve
@@ -85,6 +91,7 @@ ollama run qwen2.5-coder:32b "Hello, what GPU are you using?"
 ```
 
 **Step 3: Install LM Studio (GUI Alternative)**
+
 ```
 Download from: https://lmstudio.ai/
 - Supports GGUF models from HuggingFace
@@ -103,6 +110,7 @@ npm install -g @anthropic/mcp-host
 ```
 
 **Configuration (`local-mcp.json`):**
+
 ```json
 {
   "globalShortcut": "Ctrl+Space",
@@ -116,7 +124,7 @@ npm install -g @anthropic/mcp-host
       "args": ["mcp-server-sqlite", "--db-path", "C:\\Data\\projects.db"]
     },
     "git": {
-      "command": "npx", 
+      "command": "npx",
       "args": ["-y", "@modelcontextprotocol/server-git"]
     }
   }
@@ -124,6 +132,7 @@ npm install -g @anthropic/mcp-host
 ```
 
 **Run:**
+
 ```bash
 mcphost -m ollama:qwen2.5-coder:32b --config "C:\\path\\to\\local-mcp.json"
 ```
@@ -134,19 +143,20 @@ mcphost -m ollama:qwen2.5-coder:32b --config "C:\\path\\to\\local-mcp.json"
 
 ### 2.1 Official Anthropic MCP Servers (All Free, Open Source)
 
-| Server | Purpose | Install Command |
-|--------|---------|-----------------|
-| **Filesystem** | File read/write/search | `npx @modelcontextprotocol/server-filesystem` |
-| **Git** | Full git operations | `npx @modelcontextprotocol/server-git` |
-| **Fetch** | Web content retrieval | `npx @modelcontextprotocol/server-fetch` |
-| **SQLite** | Database operations | `uvx mcp-server-sqlite` |
-| **Memory** | Knowledge graph persistence | `npx @modelcontextprotocol/server-memory` |
-| **Sequential Thinking** | Step-by-step reasoning | `npx @modelcontextprotocol/server-sequential-thinking` |
-| **Time** | Timezone operations | `npx @modelcontextprotocol/server-time` |
+| Server                  | Purpose                     | Install Command                                        |
+| ----------------------- | --------------------------- | ------------------------------------------------------ |
+| **Filesystem**          | File read/write/search      | `npx @modelcontextprotocol/server-filesystem`          |
+| **Git**                 | Full git operations         | `npx @modelcontextprotocol/server-git`                 |
+| **Fetch**               | Web content retrieval       | `npx @modelcontextprotocol/server-fetch`               |
+| **SQLite**              | Database operations         | `uvx mcp-server-sqlite`                                |
+| **Memory**              | Knowledge graph persistence | `npx @modelcontextprotocol/server-memory`              |
+| **Sequential Thinking** | Step-by-step reasoning      | `npx @modelcontextprotocol/server-sequential-thinking` |
+| **Time**                | Timezone operations         | `npx @modelcontextprotocol/server-time`                |
 
 ### 2.2 Community MCP Servers (Free, High Value)
 
 **Development Tools:**
+
 ```json
 {
   "mcpServers": {
@@ -168,6 +178,7 @@ mcphost -m ollama:qwen2.5-coder:32b --config "C:\\path\\to\\local-mcp.json"
 ```
 
 **Web & Search (No API Keys Required):**
+
 ```json
 {
   "mcpServers": {
@@ -188,6 +199,7 @@ mcphost -m ollama:qwen2.5-coder:32b --config "C:\\path\\to\\local-mcp.json"
 ```
 
 **Browser Automation (Free):**
+
 ```json
 {
   "mcpServers": {
@@ -213,7 +225,7 @@ services:
     image: searxng/searxng:latest
     container_name: searxng
     ports:
-      - "8080:8080"
+      - '8080:8080'
     volumes:
       - ./searxng:/etc/searxng
     environment:
@@ -240,8 +252,12 @@ Create `~/.codeium/windsurf/mcp_config.json`:
     },
     "filesystem": {
       "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-filesystem", 
-               "C:\\Projects", "C:\\Users\\YourName\\Documents"]
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-filesystem",
+        "C:\\Projects",
+        "C:\\Users\\YourName\\Documents"
+      ]
     },
     "git": {
       "command": "npx",
@@ -256,7 +272,7 @@ Create `~/.codeium/windsurf/mcp_config.json`:
       "args": ["-y", "@modelcontextprotocol/server-memory"]
     },
     "duckduckgo": {
-      "command": "uvx", 
+      "command": "uvx",
       "args": ["duckduckgo-mcp-server"]
     },
     "docker": {
@@ -281,18 +297,19 @@ Create `~/.codeium/windsurf/mcp_config.json`:
 
 ### 3.1 Vector Database Comparison (All Free Self-Hosted)
 
-| Database | Best For | Memory | Docker | GPU Accel |
-|----------|----------|--------|--------|-----------|
-| **ChromaDB** | Quick prototyping, LangChain | Low | ✅ | ❌ |
-| **Milvus Lite** | Embedded, Python apps | Low | ❌ | ❌ |
-| **Milvus** | Production scale | High | ✅ | ✅ |
-| **Qdrant** | Rust-based, fast | Medium | ✅ | ❌ |
-| **Weaviate** | Semantic search | Medium | ✅ | ❌ |
-| **LanceDB** | Edge/embedded | Very Low | ❌ | ❌ |
+| Database        | Best For                     | Memory   | Docker | GPU Accel |
+| --------------- | ---------------------------- | -------- | ------ | --------- |
+| **ChromaDB**    | Quick prototyping, LangChain | Low      | ✅     | ❌        |
+| **Milvus Lite** | Embedded, Python apps        | Low      | ❌     | ❌        |
+| **Milvus**      | Production scale             | High     | ✅     | ✅        |
+| **Qdrant**      | Rust-based, fast             | Medium   | ✅     | ❌        |
+| **Weaviate**    | Semantic search              | Medium   | ✅     | ❌        |
+| **LanceDB**     | Edge/embedded                | Very Low | ❌     | ❌        |
 
 ### 3.2 Recommended: ChromaDB + Milvus Hybrid
 
 **ChromaDB for Development (Super Easy):**
+
 ```bash
 pip install chromadb
 
@@ -303,6 +320,7 @@ collection = client.create_collection("codebase")
 ```
 
 **Milvus for Production (Scales to Billions):**
+
 ```yaml
 # docker-compose-milvus.yml
 version: '3.5'
@@ -326,14 +344,14 @@ services:
       - minio_data:/minio_data
     command: minio server /minio_data --console-address ":9001"
     ports:
-      - "9001:9001"
-      - "9000:9000"
+      - '9001:9001'
+      - '9000:9000'
 
   milvus:
     image: milvusdb/milvus:v2.3-latest
     ports:
-      - "19530:19530"
-      - "9091:9091"
+      - '19530:19530'
+      - '9091:9091'
     depends_on:
       - etcd
       - minio
@@ -373,29 +391,29 @@ model = SentenceTransformer('BAAI/bge-large-en-v1.5')
 
 ### 4.1 Free Alternatives to Paid Services
 
-| Paid Service | Free Local Alternative | Setup Difficulty |
-|--------------|----------------------|------------------|
-| GitHub Copilot | Continue.dev + Ollama | Easy |
-| Cursor AI | VS Code + Continue + MCP | Easy |
-| Notion AI | Obsidian + Ollama MCP | Medium |
-| ChatGPT/Claude API | Ollama/LM Studio | Easy |
-| Pinecone | ChromaDB/Milvus | Easy |
-| Vercel AI | Self-hosted w/ Ollama | Medium |
-| OpenAI Embeddings | Sentence Transformers | Easy |
-| Firecrawl (cloud) | Playwright MCP | Easy |
+| Paid Service       | Free Local Alternative   | Setup Difficulty |
+| ------------------ | ------------------------ | ---------------- |
+| GitHub Copilot     | Continue.dev + Ollama    | Easy             |
+| Cursor AI          | VS Code + Continue + MCP | Easy             |
+| Notion AI          | Obsidian + Ollama MCP    | Medium           |
+| ChatGPT/Claude API | Ollama/LM Studio         | Easy             |
+| Pinecone           | ChromaDB/Milvus          | Easy             |
+| Vercel AI          | Self-hosted w/ Ollama    | Medium           |
+| OpenAI Embeddings  | Sentence Transformers    | Easy             |
+| Firecrawl (cloud)  | Playwright MCP           | Easy             |
 
 ### 4.2 Continue.dev Integration (Free Copilot Alternative)
 
 ```yaml
 # ~/.continue/config.yaml
 models:
-  - name: "Local Qwen Coder"
+  - name: 'Local Qwen Coder'
     provider: ollama
     model: qwen2.5-coder:32b
     apiBase: http://localhost:11434
-    
-  - name: "Fast Assistant"
-    provider: ollama  
+
+  - name: 'Fast Assistant'
+    provider: ollama
     model: deepseek-coder-v2:16b
     apiBase: http://localhost:11434
 
@@ -411,7 +429,7 @@ embeddingsProvider:
 mcpServers:
   - name: filesystem
     command: npx
-    args: ["-y", "@modelcontextprotocol/server-filesystem", "."]
+    args: ['-y', '@modelcontextprotocol/server-filesystem', '.']
 ```
 
 ### 4.3 Obsidian MCP Integration (Knowledge Base)
@@ -441,7 +459,7 @@ services:
   n8n:
     image: n8nio/n8n
     ports:
-      - "5678:5678"
+      - '5678:5678'
     environment:
       - N8N_BASIC_AUTH_ACTIVE=true
       - N8N_BASIC_AUTH_USER=admin
@@ -454,6 +472,7 @@ volumes:
 ```
 
 **n8n + Ollama Integration:**
+
 - HTTP Request node → `http://localhost:11434/api/generate`
 - Build automated workflows triggered by file changes, webhooks, etc.
 
@@ -463,13 +482,13 @@ volumes:
 
 ### 5.1 Free Multi-Agent Frameworks
 
-| Framework | Best For | License |
-|-----------|----------|---------|
-| **AutoGen** | Microsoft's agent framework | MIT |
-| **CrewAI** | Role-based agents | MIT |
-| **LangGraph** | State machine agents | MIT |
-| **AgentOps** | Agent monitoring | Apache 2.0 |
-| **OpenAgents** | Research agents | Apache 2.0 |
+| Framework      | Best For                    | License    |
+| -------------- | --------------------------- | ---------- |
+| **AutoGen**    | Microsoft's agent framework | MIT        |
+| **CrewAI**     | Role-based agents           | MIT        |
+| **LangGraph**  | State machine agents        | MIT        |
+| **AgentOps**   | Agent monitoring            | Apache 2.0 |
+| **OpenAgents** | Research agents             | Apache 2.0 |
 
 ### 5.2 CrewAI Integration (Included!)
 
@@ -525,6 +544,7 @@ result = agent.run("Create a new Python project with tests")
 ## Implementation Roadmap
 
 ### Week 1: Foundation
+
 ```
 Day 1-2: Install Ollama + download recommended models
 Day 3:   Configure LM Studio as backup/GUI option
@@ -532,7 +552,8 @@ Day 4:   Set up mcphost with basic MCP servers
 Day 5-7: Test windsurf-autopilot with local LLMs
 ```
 
-### Week 2: Enhanced Capabilities  
+### Week 2: Enhanced Capabilities
+
 ```
 Day 8-9:   Add SearXNG for private web search
 Day 10-11: Set up ChromaDB for RAG
@@ -540,6 +561,7 @@ Day 12-14: Integrate Continue.dev in VS Code/Windsurf
 ```
 
 ### Week 3: Production Features
+
 ```
 Day 15-16: Deploy Milvus for production vector store
 Day 17-18: Set up n8n for workflow automation
@@ -547,6 +569,7 @@ Day 19-21: Configure multi-agent setup with CrewAI
 ```
 
 ### Week 4: Integration & Polish
+
 ```
 Day 22-23: Connect Obsidian MCP for knowledge base
 Day 24-25: Optimize model selection for different tasks
@@ -558,6 +581,7 @@ Day 26-28: Document custom configurations
 ## Resource Requirements
 
 ### Disk Space Allocation
+
 ```
 Local LLM Models:     ~200-500GB (depending on model selection)
 Vector Databases:     ~50-100GB (scales with codebase size)
@@ -567,6 +591,7 @@ Total Recommended:    ~400-700GB
 ```
 
 ### VRAM Allocation Strategy
+
 ```
 Primary Model (RTX 3090 Ti - 24GB):
   - qwen2.5-coder:32b (~20GB) - Main coding assistant
@@ -579,6 +604,7 @@ Secondary (RTX 3060 12GB Phoenix v2):
 ```
 
 ### RAM Allocation
+
 ```
 System Reserve:       16GB
 Ollama Server:        8-16GB
@@ -627,6 +653,7 @@ python free-local/scripts/agent-crew.py --task "Design API" --agents architect,c
 ## Summary: What's Free vs. What Requires Payment
 
 ### ✅ 100% Free (This Plan)
+
 - Ollama + all open models
 - LM Studio
 - All official MCP servers
@@ -639,6 +666,7 @@ python free-local/scripts/agent-crew.py --task "Design API" --agents architect,c
 - Docker, Kubernetes tools
 
 ### ⚠️ Optional Paid Enhancements (NOT Required)
+
 - GitHub Copilot ($10/mo) - Continue.dev is free alternative
 - Cloud vector DBs - Self-hosted is free
 - OpenAI/Anthropic APIs - Local models are free
@@ -650,13 +678,13 @@ python free-local/scripts/agent-crew.py --task "Design API" --agents architect,c
 
 ## Included Scripts Reference
 
-| Script | Purpose | Command |
-|--------|---------|---------|
-| `setup-all.ps1` | One-command installer | `.\scripts\setup-all.ps1` |
-| `ai-orchestrator.js` | Task automation + provisioning | `node scripts/ai-orchestrator.js run "task"` |
-| `agent-crew.py` | Multi-agent workflows | `python scripts/agent-crew.py --task "task" --agents coder` |
-| `health-daemon.js` | Auto-healing monitor | `node scripts/health-daemon.js start` |
-| `model-router.js` | Smart model selection | Used by orchestrator |
+| Script               | Purpose                        | Command                                                     |
+| -------------------- | ------------------------------ | ----------------------------------------------------------- |
+| `setup-all.ps1`      | One-command installer          | `.\scripts\setup-all.ps1`                                   |
+| `ai-orchestrator.js` | Task automation + provisioning | `node scripts/ai-orchestrator.js run "task"`                |
+| `agent-crew.py`      | Multi-agent workflows          | `python scripts/agent-crew.py --task "task" --agents coder` |
+| `health-daemon.js`   | Auto-healing monitor           | `node scripts/health-daemon.js start`                       |
+| `model-router.js`    | Smart model selection          | Used by orchestrator                                        |
 
 ---
 
@@ -671,5 +699,5 @@ Your hardware is enterprise-grade. This setup will outperform most cloud solutio
 
 ---
 
-*Windsurf Vibe Setup v4.0.0 - Free & Local Edition*
-*Generated December 2025*
+_Windsurf Vibe Setup v4.0.0 - Free & Local Edition_
+_Generated December 2025_

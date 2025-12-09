@@ -46,7 +46,7 @@ const {
   CallToolRequestSchema,
   ListToolsRequestSchema,
   ListResourcesRequestSchema,
-  ReadResourceRequestSchema
+  ReadResourceRequestSchema,
 } = require('@modelcontextprotocol/sdk/types.js');
 
 const fs = require('fs');
@@ -100,10 +100,18 @@ const multiAgentTools = require('./multi-agent-tools.js');
 const freeLocalTools = require('./free-local-tools.js');
 
 // Import v4.1 tools - HIVE MIND SWARM
-const { hiveMindTools, hiveMindHandlers, registerTools: registerHiveMind } = require('./hive-mind.js');
+const {
+  hiveMindTools,
+  hiveMindHandlers,
+  registerTools: registerHiveMind,
+} = require('./hive-mind.js');
 
 // Import v4.2 tools - OPEN INTERPRETER
-const { openInterpreterTools, handlers: interpreterHandlers, registerTools: registerInterpreter } = require('./open-interpreter-tools.js');
+const {
+  openInterpreterTools,
+  handlers: interpreterHandlers,
+  registerTools: registerInterpreter,
+} = require('./open-interpreter-tools.js');
 
 // ==============================================================================
 // Configuration
@@ -120,7 +128,7 @@ const PATHS = {
   codeium: path.join(HOME, '.codeium', 'windsurf'),
   memories: path.join(HOME, '.codeium', 'windsurf', 'memories'),
   projects: path.join(HOME, 'Projects'),
-  projectRoot: path.resolve(__dirname, '..', '..')
+  projectRoot: path.resolve(__dirname, '..', '..'),
 };
 
 // Task state for multi-step operations
@@ -128,7 +136,7 @@ const taskState = {
   currentTask: null,
   history: [],
   lastError: null,
-  projectContext: {}
+  projectContext: {},
 };
 
 // ==============================================================================
@@ -143,11 +151,13 @@ function safeExec(command, options = {}) {
     encoding: 'utf8',
     timeout: options.timeout || 60000,
     maxBuffer: 10 * 1024 * 1024,
-    windowsHide: true
+    windowsHide: true,
   };
 
   try {
-    const output = execSync(command, { ...defaults, ...options }).toString().trim();
+    const output = execSync(command, { ...defaults, ...options })
+      .toString()
+      .trim();
     return { success: true, output, exitCode: 0 };
   } catch (e) {
     return {
@@ -155,7 +165,7 @@ function safeExec(command, options = {}) {
       error: e.message,
       output: e.stdout?.toString() || '',
       stderr: e.stderr?.toString() || '',
-      exitCode: e.status || 1
+      exitCode: e.status || 1,
     };
   }
 }
@@ -164,42 +174,42 @@ function safeExec(command, options = {}) {
  * Execute command asynchronously with streaming
  */
 function execAsync(command, options = {}) {
-  return new Promise((resolve) => {
+  return new Promise(resolve => {
     const shell = IS_WINDOWS ? 'cmd.exe' : '/bin/bash';
     const shellArgs = IS_WINDOWS ? ['/c', command] : ['-c', command];
 
     const proc = spawn(shell, shellArgs, {
       cwd: options.cwd || HOME,
       env: { ...process.env, ...options.env },
-      windowsHide: true
+      windowsHide: true,
     });
 
     let stdout = '';
     let stderr = '';
 
-    proc.stdout.on('data', (data) => {
+    proc.stdout.on('data', data => {
       stdout += data.toString();
     });
-    proc.stderr.on('data', (data) => {
+    proc.stderr.on('data', data => {
       stderr += data.toString();
     });
 
-    proc.on('close', (code) => {
+    proc.on('close', code => {
       resolve({
         success: code === 0,
         output: stdout.trim(),
         stderr: stderr.trim(),
-        exitCode: code
+        exitCode: code,
       });
     });
 
-    proc.on('error', (err) => {
+    proc.on('error', err => {
       resolve({
         success: false,
         error: err.message,
         output: stdout,
         stderr: stderr,
-        exitCode: 1
+        exitCode: 1,
       });
     });
 
@@ -211,7 +221,7 @@ function execAsync(command, options = {}) {
         error: 'Command timed out',
         output: stdout,
         stderr: stderr,
-        exitCode: 124
+        exitCode: 124,
       });
     }, options.timeout || 120000);
   });
@@ -305,7 +315,7 @@ function logAction(action, details) {
   const entry = {
     timestamp: new Date().toISOString(),
     action,
-    ...details
+    ...details,
   };
   taskState.history.push(entry);
   // Keep last 100 actions
@@ -331,7 +341,7 @@ const tools = {
       return {
         success: false,
         error: `Directory does not exist: ${workingDir}`,
-        suggestion: 'Create the directory first or use a valid path'
+        suggestion: 'Create the directory first or use a valid path',
       };
     }
 
@@ -343,19 +353,19 @@ const tools = {
         cwd: workingDir,
         detached: true,
         stdio: 'ignore',
-        windowsHide: true
+        windowsHide: true,
       });
       proc.unref();
       return {
         success: true,
         message: `Command started in background (PID: ${proc.pid})`,
-        pid: proc.pid
+        pid: proc.pid,
       };
     }
 
     const result = await execAsync(command, {
       cwd: workingDir,
-      timeout: timeout || 120000
+      timeout: timeout || 120000,
     });
 
     return {
@@ -364,7 +374,7 @@ const tools = {
       stderr: result.stderr,
       exitCode: result.exitCode,
       error: result.error,
-      cwd: workingDir
+      cwd: workingDir,
     };
   },
 
@@ -386,7 +396,7 @@ const tools = {
         content,
         size: stats.size,
         modified: stats.mtime.toISOString(),
-        lines: content.split('\n').length
+        lines: content.split('\n').length,
       };
     } catch (e) {
       return { success: false, error: e.message };
@@ -412,7 +422,7 @@ const tools = {
         success: true,
         path: filePath,
         size: Buffer.byteLength(content, 'utf8'),
-        message: append ? 'Content appended' : 'File written'
+        message: append ? 'Content appended' : 'File written',
       };
     } catch (e) {
       return { success: false, error: e.message };
@@ -440,7 +450,7 @@ const tools = {
         return {
           success: true,
           changed: false,
-          message: 'No changes made - pattern not found'
+          message: 'No changes made - pattern not found',
         };
       }
 
@@ -450,7 +460,7 @@ const tools = {
         success: true,
         changed: true,
         path: filePath,
-        message: 'File updated successfully'
+        message: 'File updated successfully',
       };
     } catch (e) {
       return { success: false, error: e.message };
@@ -517,7 +527,7 @@ const tools = {
           const item = {
             name: entry.name,
             path: relativePath,
-            type: entry.isDirectory() ? 'directory' : 'file'
+            type: entry.isDirectory() ? 'directory' : 'file',
           };
 
           if (!entry.isDirectory()) {
@@ -541,7 +551,7 @@ const tools = {
         success: true,
         path: dirPath,
         count: items.length,
-        items: items.slice(0, 200) // Limit output
+        items: items.slice(0, 200), // Limit output
       };
     } catch (e) {
       return { success: false, error: e.message };
@@ -614,7 +624,7 @@ const tools = {
               results.push({
                 path: fullPath,
                 name: entry.name,
-                matches: matchingLines
+                matches: matchingLines,
               });
             }
 
@@ -633,13 +643,12 @@ const tools = {
         pattern,
         contentPattern,
         count: results.length,
-        results
+        results,
       };
     } catch (e) {
       return { success: false, error: e.message };
     }
   },
-
 
   // ===========================================================================
   // 3. GIT OPERATIONS - Full version control
@@ -658,7 +667,7 @@ const tools = {
       branch: branch.success ? branch.output : 'unknown',
       remotes: remote.success ? remote.output : '',
       changes: status.success ? status.output.split('\n').filter(l => l) : [],
-      clean: status.success && !status.output.trim()
+      clean: status.success && !status.output.trim(),
     };
   },
 
@@ -678,7 +687,7 @@ const tools = {
     return {
       success: commitResult.success,
       output: commitResult.output,
-      error: commitResult.error
+      error: commitResult.error,
     };
   },
 
@@ -703,7 +712,7 @@ const tools = {
       success: result.success,
       output: result.output,
       stderr: result.stderr,
-      error: result.error
+      error: result.error,
     };
   },
 
@@ -724,7 +733,7 @@ const tools = {
     return {
       success: result.success,
       output: result.output,
-      error: result.error
+      error: result.error,
     };
   },
 
@@ -745,7 +754,7 @@ const tools = {
       success: result.success,
       output: result.output,
       error: result.error,
-      path: destPath || path.basename(url, '.git')
+      path: destPath || path.basename(url, '.git'),
     };
   },
 
@@ -767,8 +776,13 @@ const tools = {
     const result = safeExec('git branch -a', { cwd });
     return {
       success: result.success,
-      branches: result.success ? result.output.split('\n').map(b => b.trim()).filter(b => b) : [],
-      error: result.error
+      branches: result.success
+        ? result.output
+            .split('\n')
+            .map(b => b.trim())
+            .filter(b => b)
+        : [],
+      error: result.error,
     };
   },
 
@@ -784,9 +798,8 @@ const tools = {
     const hasRequirements = fileExists(path.join(cwd, 'requirements.txt'));
     const hasPyproject = fileExists(path.join(cwd, 'pyproject.toml'));
 
-    const detectedManager = manager ||
-      (hasPackageJson ? 'npm' :
-        hasRequirements || hasPyproject ? 'pip' : 'npm');
+    const detectedManager =
+      manager || (hasPackageJson ? 'npm' : hasRequirements || hasPyproject ? 'pip' : 'npm');
 
     let cmd;
     const pkgList = Array.isArray(packages) ? packages.join(' ') : packages;
@@ -818,7 +831,7 @@ const tools = {
       manager: detectedManager,
       packages: pkgList,
       output: result.output,
-      error: result.error
+      error: result.error,
     };
   },
 
@@ -841,14 +854,13 @@ const tools = {
           script,
           output: result.output,
           stderr: result.stderr,
-          error: result.error
+          error: result.error,
         };
       }
     }
 
     return { success: false, error: `Script "${script}" not found in package.json` };
   },
-
 
   // ===========================================================================
   // 5. PROJECT CREATION - Full project scaffolding
@@ -871,7 +883,7 @@ const tools = {
         // Create React project using Vite (faster than CRA)
         const result = safeExec(`npm create vite@latest ${name} -- --template react-ts`, {
           cwd: path.dirname(projectPath),
-          timeout: 120000
+          timeout: 120000,
         });
         if (result.success) {
           results.steps.push({ step: 'Created Vite React TypeScript project', success: true });
@@ -893,7 +905,7 @@ const tools = {
         results.steps.push({
           step: 'Created Next.js project',
           success: result.success,
-          error: result.error
+          error: result.error,
         });
         results.success = result.success;
         return 'Next.js project with TypeScript, Tailwind, App Router';
@@ -906,7 +918,8 @@ const tools = {
 
         // Create files
         const files = {
-          'requirements.txt': '# Dependencies\nfastapi>=0.100.0\nuvicorn>=0.22.0\npython-dotenv>=1.0.0\n',
+          'requirements.txt':
+            '# Dependencies\nfastapi>=0.100.0\nuvicorn>=0.22.0\npython-dotenv>=1.0.0\n',
           'src/__init__.py': '',
           'src/main.py': `"""${name} - Main Application"""
 from fastapi import FastAPI
@@ -939,7 +952,7 @@ def test_root():
 `,
           'README.md': `# ${name}\n\n## Setup\n\`\`\`bash\npip install -r requirements.txt\n\`\`\`\n\n## Run\n\`\`\`bash\nuvicorn src.main:app --reload\n\`\`\`\n`,
           '.gitignore': '__pycache__/\n*.py[cod]\n*$py.class\n.env\nvenv/\n.venv/\n*.egg-info/\n',
-          '.env.example': 'DEBUG=true\nAPI_KEY=your-key-here\n'
+          '.env.example': 'DEBUG=true\nAPI_KEY=your-key-here\n',
         };
 
         Object.entries(files).forEach(([filename, content]) => {
@@ -992,7 +1005,7 @@ module.exports = app;
 `,
           '.gitignore': 'node_modules/\n.env\n*.log\ndist/\n',
           '.env.example': 'PORT=3000\nNODE_ENV=development\n',
-          'README.md': `# ${name}\n\n## Install\n\`\`\`bash\nnpm install\n\`\`\`\n\n## Run\n\`\`\`bash\nnpm start\n\`\`\`\n`
+          'README.md': `# ${name}\n\n## Install\n\`\`\`bash\nnpm install\n\`\`\`\n\n## Run\n\`\`\`bash\nnpm start\n\`\`\`\n`,
         };
 
         Object.entries(files).forEach(([filename, content]) => {
@@ -1006,7 +1019,7 @@ module.exports = app;
         pkg.scripts = {
           start: 'node src/index.js',
           dev: 'node --watch src/index.js',
-          test: 'jest'
+          test: 'jest',
         };
         fs.writeFileSync(pkgPath, JSON.stringify(pkg, null, 2));
 
@@ -1025,7 +1038,12 @@ module.exports = app;
         fs.mkdirSync(path.join(projectPath, 'src'), { recursive: true });
 
         // Copy from this project's template
-        const templateSrc = path.join(PATHS.projectRoot, 'templates', 'workspace-rules', 'mcp-server.md');
+        const templateSrc = path.join(
+          PATHS.projectRoot,
+          'templates',
+          'workspace-rules',
+          'mcp-server.md'
+        );
         if (fileExists(templateSrc)) {
           fs.copyFileSync(templateSrc, path.join(projectPath, 'GUIDE.md'));
         }
@@ -1037,7 +1055,7 @@ module.exports = app;
           type: 'module',
           main: 'src/index.js',
           scripts: { start: 'node src/index.js' },
-          dependencies: { '@modelcontextprotocol/sdk': '^1.0.0' }
+          dependencies: { '@modelcontextprotocol/sdk': '^1.0.0' },
         };
         fs.writeFileSync(path.join(projectPath, 'package.json'), JSON.stringify(pkg, null, 2));
 
@@ -1093,7 +1111,7 @@ await server.connect(transport);
         safeExec('git init', { cwd: projectPath });
         results.steps.push({ step: 'Created empty project', success: true });
         return 'Empty project with git';
-      }
+      },
     };
 
     const templateFn = templates[type] || templates.empty;
@@ -1105,13 +1123,9 @@ await server.connect(transport);
       type,
       description,
       steps: results.steps,
-      nextSteps: [
-        `Open ${projectPath} in your editor`,
-        'Start building your project!'
-      ]
+      nextSteps: [`Open ${projectPath} in your editor`, 'Start building your project!'],
     };
   },
-
 
   // ===========================================================================
   // 6. TASK ORCHESTRATION - Multi-step autonomous tasks
@@ -1143,10 +1157,14 @@ await server.connect(transport);
         results.push({
           step: i + 1,
           description: step.description || step.command || step.tool,
-          ...result
+          ...result,
         });
 
-        taskState.currentTask.steps.push({ ...step, result, completedAt: new Date().toISOString() });
+        taskState.currentTask.steps.push({
+          ...step,
+          result,
+          completedAt: new Date().toISOString(),
+        });
 
         // Stop on failure unless step is marked as optional
         if (!result.success && !step.optional) {
@@ -1159,7 +1177,7 @@ await server.connect(transport);
             error: result.error,
             message: `Task failed at step ${i + 1}: ${step.description || ''}`,
             canContinue: true,
-            suggestion: 'Use continue_task to retry or skip this step'
+            suggestion: 'Use continue_task to retry or skip this step',
           };
         }
       } catch (e) {
@@ -1170,7 +1188,7 @@ await server.connect(transport);
           completedSteps: i,
           totalSteps: steps.length,
           results,
-          error: e.message
+          error: e.message,
         };
       }
     }
@@ -1182,7 +1200,7 @@ await server.connect(transport);
       completedSteps: steps.length,
       totalSteps: steps.length,
       results,
-      message: `Task "${task}" completed successfully!`
+      message: `Task "${task}" completed successfully!`,
     };
   },
 
@@ -1194,7 +1212,7 @@ await server.connect(transport);
         success: false,
         error: 'No active task to continue',
         lastError: taskState.lastError,
-        history: taskState.history.slice(-5)
+        history: taskState.history.slice(-5),
       };
     }
 
@@ -1207,7 +1225,7 @@ await server.connect(transport);
         success: true,
         action: 'retry',
         message: `Will retry step ${stepIndex + 1}`,
-        step: task.steps[stepIndex]
+        step: task.steps[stepIndex],
       };
     }
 
@@ -1218,7 +1236,7 @@ await server.connect(transport);
         success: true,
         action: 'skip',
         message: `Skipped step ${task.currentStep}, continuing...`,
-        nextStep: task.currentStep
+        nextStep: task.currentStep,
       };
     }
 
@@ -1242,7 +1260,12 @@ await server.connect(transport);
     // Check Node.js
     const nodeCheck = safeExec('node --version');
     if (!nodeCheck.success) {
-      issues.push({ severity: 'critical', issue: 'Node.js not installed', fix: 'install_nodejs', autoFix: false });
+      issues.push({
+        severity: 'critical',
+        issue: 'Node.js not installed',
+        fix: 'install_nodejs',
+        autoFix: false,
+      });
       status.healthy = false;
     } else {
       status.nodeVersion = nodeCheck.output;
@@ -1251,7 +1274,12 @@ await server.connect(transport);
     // Check npm
     const npmCheck = safeExec('npm --version');
     if (!npmCheck.success) {
-      issues.push({ severity: 'critical', issue: 'npm not available', fix: 'reinstall_node', autoFix: false });
+      issues.push({
+        severity: 'critical',
+        issue: 'npm not available',
+        fix: 'reinstall_node',
+        autoFix: false,
+      });
       status.healthy = false;
     } else {
       status.npmVersion = npmCheck.output;
@@ -1260,7 +1288,12 @@ await server.connect(transport);
     // Check Git
     const gitCheck = safeExec('git --version');
     if (!gitCheck.success) {
-      issues.push({ severity: 'warning', issue: 'Git not installed', fix: 'install_git', autoFix: false });
+      issues.push({
+        severity: 'warning',
+        issue: 'Git not installed',
+        fix: 'install_git',
+        autoFix: false,
+      });
     } else {
       status.gitVersion = gitCheck.output;
     }
@@ -1280,11 +1313,21 @@ await server.connect(transport);
     // Check Windsurf settings
     const settingsPath = path.join(PATHS.windsurfSettings, 'settings.json');
     if (!fileExists(settingsPath)) {
-      issues.push({ severity: 'warning', issue: 'Windsurf settings not configured', fix: 'setup_windsurf', autoFix: true });
+      issues.push({
+        severity: 'warning',
+        issue: 'Windsurf settings not configured',
+        fix: 'setup_windsurf',
+        autoFix: true,
+      });
     } else {
       const settings = readJsonSafe(settingsPath);
       if (!settings.success) {
-        issues.push({ severity: 'critical', issue: 'settings.json is corrupted', fix: 'repair_settings', autoFix: true });
+        issues.push({
+          severity: 'critical',
+          issue: 'settings.json is corrupted',
+          fix: 'repair_settings',
+          autoFix: true,
+        });
         status.healthy = false;
       } else {
         status.windsurfSettingsValid = true;
@@ -1294,11 +1337,21 @@ await server.connect(transport);
     // Check MCP config
     const mcpPath = path.join(PATHS.codeium, 'mcp_config.json');
     if (!fileExists(mcpPath)) {
-      issues.push({ severity: 'info', issue: 'MCP servers not configured', fix: 'setup_mcp', autoFix: true });
+      issues.push({
+        severity: 'info',
+        issue: 'MCP servers not configured',
+        fix: 'setup_mcp',
+        autoFix: true,
+      });
     } else {
       const mcp = readJsonSafe(mcpPath);
       if (!mcp.success) {
-        issues.push({ severity: 'critical', issue: 'mcp_config.json is corrupted', fix: 'repair_mcp', autoFix: true });
+        issues.push({
+          severity: 'critical',
+          issue: 'mcp_config.json is corrupted',
+          fix: 'repair_mcp',
+          autoFix: true,
+        });
         status.healthy = false;
       } else {
         status.mcpServers = Object.keys(mcp.data.mcpServers || {}).length;
@@ -1308,21 +1361,32 @@ await server.connect(transport);
     // Check global rules
     const rulesPath = path.join(PATHS.memories, 'global_rules.md');
     if (!fileExists(rulesPath)) {
-      issues.push({ severity: 'info', issue: 'AI global rules not set', fix: 'setup_rules', autoFix: true });
+      issues.push({
+        severity: 'info',
+        issue: 'AI global rules not set',
+        fix: 'setup_rules',
+        autoFix: true,
+      });
     }
 
     // Check Projects directory
     if (!fileExists(PATHS.projects)) {
-      issues.push({ severity: 'info', issue: 'Projects directory not found', fix: 'create_projects_dir', autoFix: true });
+      issues.push({
+        severity: 'info',
+        issue: 'Projects directory not found',
+        fix: 'create_projects_dir',
+        autoFix: true,
+      });
     }
 
     return {
       status,
       issues,
       autoFixable: issues.filter(i => i.autoFix).length,
-      summary: issues.length === 0
-        ? '✅ Environment is healthy! All systems operational.'
-        : `Found ${issues.length} issue(s). ${issues.filter(i => i.autoFix).length} can be auto-fixed.`
+      summary:
+        issues.length === 0
+          ? '✅ Environment is healthy! All systems operational.'
+          : `Found ${issues.length} issue(s). ${issues.filter(i => i.autoFix).length} can be auto-fixed.`,
     };
   },
 
@@ -1337,7 +1401,9 @@ await server.connect(transport);
           return { success: false, message: 'Source settings.json not found' };
         }
         const result = copyFileSafe(src, dest);
-        return result.success ? { success: true, message: 'Windsurf settings installed' } : { success: false, message: result.error };
+        return result.success
+          ? { success: true, message: 'Windsurf settings installed' }
+          : { success: false, message: result.error };
       },
 
       setup_mcp: async () => {
@@ -1347,7 +1413,9 @@ await server.connect(transport);
           return { success: false, message: 'Source mcp_config.json not found' };
         }
         const result = copyFileSafe(src, dest);
-        return result.success ? { success: true, message: 'MCP configuration installed' } : { success: false, message: result.error };
+        return result.success
+          ? { success: true, message: 'MCP configuration installed' }
+          : { success: false, message: result.error };
       },
 
       setup_rules: async () => {
@@ -1357,7 +1425,9 @@ await server.connect(transport);
           return { success: false, message: 'Source global_rules.md not found' };
         }
         const result = copyFileSafe(src, dest);
-        return result.success ? { success: true, message: 'AI global rules installed' } : { success: false, message: result.error };
+        return result.success
+          ? { success: true, message: 'AI global rules installed' }
+          : { success: false, message: result.error };
       },
 
       repair_settings: async () => {
@@ -1380,13 +1450,17 @@ await server.connect(transport);
 
       create_projects_dir: async () => {
         const result = writeFileSafe(path.join(PATHS.projects, '.keep'), '');
-        return result.success ? { success: true, message: 'Projects directory created' } : { success: false, message: result.error };
+        return result.success
+          ? { success: true, message: 'Projects directory created' }
+          : { success: false, message: result.error };
       },
 
       install_dependencies: async () => {
         const result = safeExec('npm install', { cwd: PATHS.projectRoot, timeout: 120000 });
-        return result.success ? { success: true, message: 'Dependencies installed' } : { success: false, message: result.error };
-      }
+        return result.success
+          ? { success: true, message: 'Dependencies installed' }
+          : { success: false, message: result.error };
+      },
     };
 
     if (all) {
@@ -1402,12 +1476,15 @@ await server.connect(transport);
     }
 
     if (!fixes[issue_type]) {
-      return { success: false, message: `Unknown fix type: ${issue_type}`, available: Object.keys(fixes) };
+      return {
+        success: false,
+        message: `Unknown fix type: ${issue_type}`,
+        available: Object.keys(fixes),
+      };
     }
 
     return await fixes[issue_type]();
   },
-
 
   // ===========================================================================
   // 8. COMPLETE SETUP - Full automated setup
@@ -1432,8 +1509,8 @@ await server.connect(transport);
       nextSteps: [
         'Restart Windsurf IDE',
         'Test by saying: "Check my status"',
-        'Create a project: "Make me a website called my-site"'
-      ]
+        'Create a project: "Make me a website called my-site"',
+      ],
     };
   },
 
@@ -1455,10 +1532,10 @@ await server.connect(transport);
           'Install Windsurf settings',
           'Configure MCP servers',
           'Set up AI rules',
-          'Install dependencies'
+          'Install dependencies',
         ],
         tool: 'complete_setup',
-        willDo: 'I will configure everything. You just need to restart Windsurf after.'
+        willDo: 'I will configure everything. You just need to restart Windsurf after.',
       },
 
       'website|web|react|nextjs|frontend': {
@@ -1468,11 +1545,11 @@ await server.connect(transport);
           'Create project directory',
           'Set up Next.js with TypeScript & Tailwind',
           'Initialize Git repository',
-          'Install all dependencies'
+          'Install all dependencies',
         ],
         tool: 'create_project',
         args: { type: 'nextjs' },
-        willDo: 'I will create a complete Next.js website. Just give me a name for it.'
+        willDo: 'I will create a complete Next.js website. Just give me a name for it.',
       },
 
       'api|backend|server|python|fastapi': {
@@ -1483,11 +1560,11 @@ await server.connect(transport);
           'Set up FastAPI with uvicorn',
           'Create example endpoints',
           'Set up tests',
-          'Initialize Git'
+          'Initialize Git',
         ],
         tool: 'create_project',
         args: { type: 'python' },
-        willDo: 'I will create a Python API project. Just give me a name.'
+        willDo: 'I will create a Python API project. Just give me a name.',
       },
 
       'mcp|plugin|extension|tool': {
@@ -1497,11 +1574,11 @@ await server.connect(transport);
           'Create MCP server structure',
           'Set up SDK dependencies',
           'Create example tool',
-          'Configure for Windsurf'
+          'Configure for Windsurf',
         ],
         tool: 'create_project',
         args: { type: 'mcp' },
-        willDo: 'I will create an MCP server template you can customize.'
+        willDo: 'I will create an MCP server template you can customize.',
       },
 
       'fix|repair|diagnose|problem|error|issue': {
@@ -1511,10 +1588,10 @@ await server.connect(transport);
           'Scan for issues',
           'Identify fixable problems',
           'Auto-repair what I can',
-          'Report what needs manual attention'
+          'Report what needs manual attention',
         ],
         tool: 'diagnose_environment',
-        willDo: 'I will find and fix issues automatically. Just say "fix it" after diagnosis.'
+        willDo: 'I will find and fix issues automatically. Just say "fix it" after diagnosis.',
       },
 
       'status|check|health|ready': {
@@ -1524,36 +1601,27 @@ await server.connect(transport);
           'Check installed tools',
           'Verify configurations',
           'Test connectivity',
-          'Report status'
+          'Report status',
         ],
         tool: 'get_status',
-        willDo: 'I will check your entire environment and tell you what\'s working.'
+        willDo: "I will check your entire environment and tell you what's working.",
       },
 
       'git|commit|push|version': {
         name: 'Git Operations',
         description: 'Manage version control',
-        steps: [
-          'Check current status',
-          'Stage changes',
-          'Create commit',
-          'Push to remote'
-        ],
+        steps: ['Check current status', 'Stage changes', 'Create commit', 'Push to remote'],
         tool: 'git_status',
-        willDo: 'I can help with Git. Tell me: commit, push, pull, or status.'
+        willDo: 'I can help with Git. Tell me: commit, push, pull, or status.',
       },
 
       'run|start|dev|serve': {
         name: 'Run Project',
         description: 'Start development server or run scripts',
-        steps: [
-          'Detect project type',
-          'Find available scripts',
-          'Start appropriate command'
-        ],
+        steps: ['Detect project type', 'Find available scripts', 'Start appropriate command'],
         tool: 'run_script',
-        willDo: 'I will start your project. What script should I run? (e.g., dev, start, build)'
-      }
+        willDo: 'I will start your project. What script should I run? (e.g., dev, start, build)',
+      },
     };
 
     // Find matching guide
@@ -1564,7 +1632,7 @@ await server.connect(transport);
           found: true,
           ...guide,
           message: `I can help with "${guide.name}". Here's what I'll do:`,
-          prompt: guide.willDo
+          prompt: guide.willDo,
         };
       }
     }
@@ -1573,7 +1641,7 @@ await server.connect(transport);
       found: false,
       message: "I'm not sure what you want to do. I can help with:",
       suggestions: Object.values(guides).map(g => ({ name: g.name, description: g.description })),
-      hint: 'Try saying something like: "set up my environment", "create a website", or "fix my issues"'
+      hint: 'Try saying something like: "set up my environment", "create a website", or "fix my issues"',
     };
   },
 
@@ -1591,7 +1659,7 @@ await server.connect(transport);
       homeDir: HOME,
       paths: PATHS,
       currentTask: taskState.currentTask,
-      lastActions: taskState.history.slice(-5)
+      lastActions: taskState.history.slice(-5),
     };
 
     // Check each component
@@ -1617,7 +1685,7 @@ await server.connect(transport);
 
     // Windsurf settings
     components.windsurfSettings = {
-      exists: fileExists(path.join(PATHS.windsurfSettings, 'settings.json'))
+      exists: fileExists(path.join(PATHS.windsurfSettings, 'settings.json')),
     };
 
     // MCP config
@@ -1627,7 +1695,7 @@ await server.connect(transport);
       components.mcpConfig = {
         exists: true,
         valid: mcp.success,
-        serverCount: mcp.success ? Object.keys(mcp.data.mcpServers || {}).length : 0
+        serverCount: mcp.success ? Object.keys(mcp.data.mcpServers || {}).length : 0,
       };
     } else {
       components.mcpConfig = { exists: false };
@@ -1635,7 +1703,7 @@ await server.connect(transport);
 
     // Global rules
     components.globalRules = {
-      exists: fileExists(path.join(PATHS.memories, 'global_rules.md'))
+      exists: fileExists(path.join(PATHS.memories, 'global_rules.md')),
     };
 
     // Projects directory
@@ -1645,7 +1713,8 @@ await server.connect(transport);
 
     // Overall readiness
     const critical = components.node.installed && components.npm.installed;
-    const recommended = components.git.installed && components.windsurfSettings.exists && components.mcpConfig.exists;
+    const recommended =
+      components.git.installed && components.windsurfSettings.exists && components.mcpConfig.exists;
 
     status.ready = critical;
     status.fullyConfigured = critical && recommended;
@@ -1658,7 +1727,7 @@ await server.connect(transport);
       status.action = 'Run complete_setup to finish configuration';
     } else {
       status.message = '✅ Fully operational! Ready for vibe coding.';
-      status.action = 'You\'re all set! Start creating!';
+      status.action = "You're all set! Start creating!";
     }
 
     return status;
@@ -1673,7 +1742,7 @@ await server.connect(transport);
       count: taskState.history.length,
       actions: taskState.history.slice(-(limit || 20)),
       currentTask: taskState.currentTask,
-      lastError: taskState.lastError
+      lastError: taskState.lastError,
     };
   },
 
@@ -1681,82 +1750,82 @@ await server.connect(transport);
   // NEW v2.2 TOOLS - Project Intelligence, Error Analysis, HTTP, Quality, Testing
   // ===========================================================================
 
-  analyze_project: async (args) => {
+  analyze_project: async args => {
     logAction('analyze_project', args);
     return await additionalTools.analyzeProject(args);
   },
 
-  detect_tech_stack: async (args) => {
+  detect_tech_stack: async args => {
     logAction('detect_tech_stack', args);
     return await additionalTools.detectTechStack(args);
   },
 
-  analyze_error: async (args) => {
+  analyze_error: async args => {
     logAction('analyze_error', args);
     return await additionalTools.analyzeError(args);
   },
 
-  smart_retry: async (args) => {
+  smart_retry: async args => {
     logAction('smart_retry', args);
     return await additionalTools.smartRetry(args);
   },
 
-  http_request: async (args) => {
+  http_request: async args => {
     logAction('http_request', args);
     return await additionalTools.httpRequest(args);
   },
 
-  download_file: async (args) => {
+  download_file: async args => {
     logAction('download_file', args);
     return await additionalTools.downloadFile(args);
   },
 
-  lint_code: async (args) => {
+  lint_code: async args => {
     logAction('lint_code', args);
     return await additionalTools.lintCode(args);
   },
 
-  format_code: async (args) => {
+  format_code: async args => {
     logAction('format_code', args);
     return await additionalTools.formatCode(args);
   },
 
-  run_tests: async (args) => {
+  run_tests: async args => {
     logAction('run_tests', args);
     return await additionalTools.runTests(args);
   },
 
-  start_server: async (args) => {
+  start_server: async args => {
     logAction('start_server', args);
     return await additionalTools.startServer(args);
   },
 
-  stop_server: async (args) => {
+  stop_server: async args => {
     logAction('stop_server', args);
     return await additionalTools.stopServer(args);
   },
 
-  list_running: async (args) => {
+  list_running: async args => {
     logAction('list_running', args);
     return await additionalTools.listRunning(args);
   },
 
-  docker_status: async (args) => {
+  docker_status: async args => {
     logAction('docker_status', args);
     return await additionalTools.dockerStatus(args);
   },
 
-  docker_build: async (args) => {
+  docker_build: async args => {
     logAction('docker_build', args);
     return await additionalTools.dockerBuild(args);
   },
 
-  docker_run: async (args) => {
+  docker_run: async args => {
     logAction('docker_run', args);
     return await additionalTools.dockerRun(args);
   },
 
-  docker_compose_up: async (args) => {
+  docker_compose_up: async args => {
     logAction('docker_compose_up', args);
     return await additionalTools.dockerComposeUp(args);
   },
@@ -1766,83 +1835,83 @@ await server.connect(transport);
   // ===========================================================================
 
   // AI Decision Engine
-  decide_next_step: async (args) => {
+  decide_next_step: async args => {
     logAction('decide_next_step', args);
     return await advancedTools.decideNextStep(args);
   },
 
-  find_solution: async (args) => {
+  find_solution: async args => {
     logAction('find_solution', args);
     return await advancedTools.findSolution(args);
   },
 
   // Code Generation
-  generate_code: async (args) => {
+  generate_code: async args => {
     logAction('generate_code', args);
     return await advancedTools.generateCode(args);
   },
 
   // Test Generation
-  generate_tests: async (args) => {
+  generate_tests: async args => {
     logAction('generate_tests', args);
     return await advancedTools.generateTests(args);
   },
 
   // Database Operations
-  db_query: async (args) => {
+  db_query: async args => {
     logAction('db_query', args);
     return await advancedTools.dbQuery(args);
   },
 
-  db_migrate: async (args) => {
+  db_migrate: async args => {
     logAction('db_migrate', args);
     return await advancedTools.dbMigrate(args);
   },
 
-  db_seed: async (args) => {
+  db_seed: async args => {
     logAction('db_seed', args);
     return await advancedTools.dbSeed(args);
   },
 
   // Environment Variables
-  manage_env: async (args) => {
+  manage_env: async args => {
     logAction('manage_env', args);
     return await advancedTools.manageEnv(args);
   },
 
   // Backup & Recovery
-  backup_project: async (args) => {
+  backup_project: async args => {
     logAction('backup_project', args);
     return await advancedTools.backupProject(args);
   },
 
-  restore_backup: async (args) => {
+  restore_backup: async args => {
     logAction('restore_backup', args);
     return await advancedTools.restoreBackup(args);
   },
 
-  list_backups: async (args) => {
+  list_backups: async args => {
     logAction('list_backups', args);
     return await advancedTools.listBackups(args);
   },
 
   // Progress Tracking
-  start_progress: async (args) => {
+  start_progress: async args => {
     logAction('start_progress', args);
     return await advancedTools.startProgress(args);
   },
 
-  update_progress: async (args) => {
+  update_progress: async args => {
     logAction('update_progress', args);
     return await advancedTools.updateProgress(args);
   },
 
-  get_progress: async (args) => {
+  get_progress: async args => {
     logAction('get_progress', args);
     return await advancedTools.getProgress(args);
   },
 
-  complete_progress: async (args) => {
+  complete_progress: async args => {
     logAction('complete_progress', args);
     return await advancedTools.completeProgress(args);
   },
@@ -1894,7 +1963,7 @@ await server.connect(transport);
   // ===========================================================================
 
   // Real-Time Learning
-  ai_learn: async (args) => {
+  ai_learn: async args => {
     return await realtimeAI.learnFromInteraction(args);
   },
 
@@ -1935,7 +2004,7 @@ await server.connect(transport);
   },
 
   // Proactive Suggestions
-  get_ai_suggestions: async (args) => {
+  get_ai_suggestions: async args => {
     return await realtimeAI.getProactiveSuggestions(args);
   },
 
@@ -1949,251 +2018,250 @@ await server.connect(transport);
   // ═══════════════════════════════════════════════════════════════════════════
 
   // Cloud Deployment
-  deploy_vercel: async (args) => ultimateTools.deployVercel(args),
-  deploy_netlify: async (args) => ultimateTools.deployNetlify(args),
-  deploy_railway: async (args) => ultimateTools.deployRailway(args),
-  deploy_docker_hub: async (args) => ultimateTools.deployDockerHub(args),
+  deploy_vercel: async args => ultimateTools.deployVercel(args),
+  deploy_netlify: async args => ultimateTools.deployNetlify(args),
+  deploy_railway: async args => ultimateTools.deployRailway(args),
+  deploy_docker_hub: async args => ultimateTools.deployDockerHub(args),
 
   // CI/CD
-  setup_github_actions: async (args) => ultimateTools.setupGitHubActions(args),
-  setup_gitlab_ci: async (args) => ultimateTools.setupGitLabCI(args),
-  run_pipeline: async (args) => ultimateTools.runPipeline(args),
-  check_pipeline_status: async (args) => ultimateTools.checkPipelineStatus(args),
+  setup_github_actions: async args => ultimateTools.setupGitHubActions(args),
+  setup_gitlab_ci: async args => ultimateTools.setupGitLabCI(args),
+  run_pipeline: async args => ultimateTools.runPipeline(args),
+  check_pipeline_status: async args => ultimateTools.checkPipelineStatus(args),
 
   // Code Operations
-  refactor_code: async (args) => ultimateTools.refactorCode(args),
-  generate_docs: async (args) => ultimateTools.generateDocs(args),
-  code_review: async (args) => ultimateTools.codeReview(args),
-  find_dead_code: async (args) => ultimateTools.findDeadCode(args),
-  analyze_complexity: async (args) => ultimateTools.analyzeComplexity(args),
+  refactor_code: async args => ultimateTools.refactorCode(args),
+  generate_docs: async args => ultimateTools.generateDocs(args),
+  code_review: async args => ultimateTools.codeReview(args),
+  find_dead_code: async args => ultimateTools.findDeadCode(args),
+  analyze_complexity: async args => ultimateTools.analyzeComplexity(args),
 
   // Security
-  security_audit: async (args) => ultimateTools.securityAudit(args),
-  update_dependencies: async (args) => ultimateTools.updateDependencies(args),
-  check_licenses: async (args) => ultimateTools.checkLicenses(args),
-  scan_secrets: async (args) => ultimateTools.scanSecrets(args),
+  security_audit: async args => ultimateTools.securityAudit(args),
+  update_dependencies: async args => ultimateTools.updateDependencies(args),
+  check_licenses: async args => ultimateTools.checkLicenses(args),
+  scan_secrets: async args => ultimateTools.scanSecrets(args),
 
   // API Testing
-  test_api: async (args) => ultimateTools.testApi(args),
-  mock_server: async (args) => ultimateTools.mockServer(args),
-  generate_api_docs: async (args) => ultimateTools.generateApiDocs(args),
+  test_api: async args => ultimateTools.testApi(args),
+  mock_server: async args => ultimateTools.mockServer(args),
+  generate_api_docs: async args => ultimateTools.generateApiDocs(args),
 
   // Templates
-  save_template: async (args) => ultimateTools.saveTemplate(args),
+  save_template: async args => ultimateTools.saveTemplate(args),
   list_templates: async () => ultimateTools.listTemplates(),
-  use_template: async (args) => ultimateTools.useTemplate(args),
+  use_template: async args => ultimateTools.useTemplate(args),
 
   // Notifications
-  notify: async (args) => ultimateTools.notify(args),
-  send_webhook: async (args) => ultimateTools.sendWebhook(args),
-  schedule_task: async (args) => ultimateTools.scheduleTask(args),
+  notify: async args => ultimateTools.notify(args),
+  send_webhook: async args => ultimateTools.sendWebhook(args),
+  schedule_task: async args => ultimateTools.scheduleTask(args),
 
   // File Operations
-  file_diff: async (args) => ultimateTools.fileDiff(args),
-  file_merge: async (args) => ultimateTools.fileMerge(args),
-  bulk_rename: async (args) => ultimateTools.bulkRename(args),
-  find_replace_all: async (args) => ultimateTools.findReplaceAll(args),
+  file_diff: async args => ultimateTools.fileDiff(args),
+  file_merge: async args => ultimateTools.fileMerge(args),
+  bulk_rename: async args => ultimateTools.bulkRename(args),
+  find_replace_all: async args => ultimateTools.findReplaceAll(args),
 
   // Logs
-  analyze_logs: async (args) => ultimateTools.analyzeLogs(args),
-  tail_logs: async (args) => ultimateTools.tailLogs(args),
-  search_logs: async (args) => ultimateTools.searchLogs(args),
+  analyze_logs: async args => ultimateTools.analyzeLogs(args),
+  tail_logs: async args => ultimateTools.tailLogs(args),
+  search_logs: async args => ultimateTools.searchLogs(args),
 
   // Performance
-  benchmark_project: async (args) => ultimateTools.benchmarkProject(args),
-  profile_app: async (args) => ultimateTools.profileApp(args),
-  analyze_bundle: async (args) => ultimateTools.analyzeBundle(args),
+  benchmark_project: async args => ultimateTools.benchmarkProject(args),
+  profile_app: async args => ultimateTools.profileApp(args),
+  analyze_bundle: async args => ultimateTools.analyzeBundle(args),
 
   // Workspace
-  switch_project: async (args) => ultimateTools.switchProject(args),
+  switch_project: async args => ultimateTools.switchProject(args),
   list_projects: async () => ultimateTools.listProjects(),
-  project_health: async (args) => ultimateTools.projectHealth(args),
-  cleanup_project: async (args) => ultimateTools.cleanupProject(args),
+  project_health: async args => ultimateTools.projectHealth(args),
+  cleanup_project: async args => ultimateTools.cleanupProject(args),
 
   // ═══════════════════════════════════════════════════════════════════════════
   // v2.6 DATA & PERSISTENCE TOOLS
   // ═══════════════════════════════════════════════════════════════════════════
 
   // Database Tools
-  db_connect: async (args) => databaseTools.db_connect.handler(args),
-  db_schema: async (args) => databaseTools.db_schema.handler(args),
-  db_backup: async (args) => databaseTools.db_backup.handler(args),
-  db_restore: async (args) => databaseTools.db_restore.handler(args),
-  db_query_direct: async (args) => databaseTools.db_query_direct.handler(args),
+  db_connect: async args => databaseTools.db_connect.handler(args),
+  db_schema: async args => databaseTools.db_schema.handler(args),
+  db_backup: async args => databaseTools.db_backup.handler(args),
+  db_restore: async args => databaseTools.db_restore.handler(args),
+  db_query_direct: async args => databaseTools.db_query_direct.handler(args),
 
   // Embedding Tools
-  embed_text: async (args) => embeddingTools.embed_text.handler(args),
-  semantic_search: async (args) => embeddingTools.semantic_search.handler(args),
-  index_project: async (args) => embeddingTools.index_project.handler(args),
+  embed_text: async args => embeddingTools.embed_text.handler(args),
+  semantic_search: async args => embeddingTools.semantic_search.handler(args),
+  index_project: async args => embeddingTools.index_project.handler(args),
 
   // Context Tools
-  save_context: async (args) => contextTools.save_context.handler(args),
-  load_context: async (args) => contextTools.load_context.handler(args),
-  clear_context: async (args) => contextTools.clear_context.handler(args),
-  get_context: async (args) => contextTools.get_context.handler(args),
+  save_context: async args => contextTools.save_context.handler(args),
+  load_context: async args => contextTools.load_context.handler(args),
+  clear_context: async args => contextTools.clear_context.handler(args),
+  get_context: async args => contextTools.get_context.handler(args),
   list_contexts: async () => contextTools.list_contexts.handler({}),
 
   // Recovery Tools
-  create_checkpoint: async (args) => recoveryTools.create_checkpoint.handler(args),
-  rollback: async (args) => recoveryTools.rollback.handler(args),
-  auto_recover: async (args) => recoveryTools.auto_recover.handler(args),
-  list_checkpoints: async (args) => recoveryTools.list_checkpoints.handler(args || {}),
+  create_checkpoint: async args => recoveryTools.create_checkpoint.handler(args),
+  rollback: async args => recoveryTools.rollback.handler(args),
+  auto_recover: async args => recoveryTools.auto_recover.handler(args),
+  list_checkpoints: async args => recoveryTools.list_checkpoints.handler(args || {}),
 
   // Plugin Tools
-  install_plugin: async (args) => pluginTools.install_plugin.handler(args),
-  list_plugins: async (args) => pluginTools.list_plugins.handler(args || {}),
-  uninstall_plugin: async (args) => pluginTools.uninstall_plugin.handler(args),
-  create_plugin: async (args) => pluginTools.create_plugin.handler(args),
+  install_plugin: async args => pluginTools.install_plugin.handler(args),
+  list_plugins: async args => pluginTools.list_plugins.handler(args || {}),
+  uninstall_plugin: async args => pluginTools.uninstall_plugin.handler(args),
+  create_plugin: async args => pluginTools.create_plugin.handler(args),
 
   // ═══════════════════════════════════════════════════════════════════════════
   // v3.0 ENTERPRISE TOOLS
   // ═══════════════════════════════════════════════════════════════════════════
 
   // Workflow Tools
-  create_workflow: async (args) => workflowTools.create_workflow.handler(args),
-  run_workflow: async (args) => workflowTools.run_workflow.handler(args),
-  edit_workflow: async (args) => workflowTools.edit_workflow.handler(args),
-  share_workflow: async (args) => workflowTools.share_workflow.handler(args),
-  workflow_templates: async (args) => workflowTools.workflow_templates.handler(args || {}),
+  create_workflow: async args => workflowTools.create_workflow.handler(args),
+  run_workflow: async args => workflowTools.run_workflow.handler(args),
+  edit_workflow: async args => workflowTools.edit_workflow.handler(args),
+  share_workflow: async args => workflowTools.share_workflow.handler(args),
+  workflow_templates: async args => workflowTools.workflow_templates.handler(args || {}),
 
   // Team Tools
-  create_team: async (args) => teamTools.create_team.handler(args),
-  invite_member: async (args) => teamTools.invite_member.handler(args),
-  share_settings: async (args) => teamTools.share_settings.handler(args),
-  team_templates: async (args) => teamTools.team_templates.handler(args),
-  activity_log: async (args) => teamTools.activity_log.handler(args),
+  create_team: async args => teamTools.create_team.handler(args),
+  invite_member: async args => teamTools.invite_member.handler(args),
+  share_settings: async args => teamTools.share_settings.handler(args),
+  team_templates: async args => teamTools.team_templates.handler(args),
+  activity_log: async args => teamTools.activity_log.handler(args),
   list_teams: async () => teamTools.list_teams.handler(),
 
   // Cloud Tools
-  cloud_login: async (args) => cloudTools.cloud_login.handler(args),
-  sync_settings: async (args) => cloudTools.sync_settings.handler(args || {}),
-  sync_templates: async (args) => cloudTools.sync_templates.handler(args || {}),
-  sync_history: async (args) => cloudTools.sync_history.handler(args || {}),
+  cloud_login: async args => cloudTools.cloud_login.handler(args),
+  sync_settings: async args => cloudTools.sync_settings.handler(args || {}),
+  sync_templates: async args => cloudTools.sync_templates.handler(args || {}),
+  sync_history: async args => cloudTools.sync_history.handler(args || {}),
 
   // Model Tools
-  add_model: async (args) => modelTools.add_model.handler(args),
-  switch_model: async (args) => modelTools.switch_model.handler(args),
-  model_benchmark: async (args) => modelTools.model_benchmark.handler(args || {}),
-  fine_tune: async (args) => modelTools.fine_tune.handler(args),
+  add_model: async args => modelTools.add_model.handler(args),
+  switch_model: async args => modelTools.switch_model.handler(args),
+  model_benchmark: async args => modelTools.model_benchmark.handler(args || {}),
+  fine_tune: async args => modelTools.fine_tune.handler(args),
   list_models: async () => modelTools.list_models.handler(),
 
   // Agent Tools
-  create_agent: async (args) => agentTools.create_agent.handler(args),
-  assign_task: async (args) => agentTools.assign_task.handler(args),
-  agent_status: async (args) => agentTools.agent_status.handler(args || {}),
-  agent_collaborate: async (args) => agentTools.agent_collaborate.handler(args),
+  create_agent: async args => agentTools.create_agent.handler(args),
+  assign_task: async args => agentTools.assign_task.handler(args),
+  agent_status: async args => agentTools.agent_status.handler(args || {}),
+  agent_collaborate: async args => agentTools.agent_collaborate.handler(args),
   list_agents: async () => agentTools.list_agents.handler(),
 
   // Health Tools
-  autopilot_health: async (args) => healthTools.autopilot_health.handler(args || {}),
+  autopilot_health: async args => healthTools.autopilot_health.handler(args || {}),
   tool_stats: async () => healthTools.tool_stats.handler(),
 
   // v3.1 Infrastructure as Code Tools
-  terraform_init: async (args) => iacTools.terraform_init.handler(args),
-  terraform_plan: async (args) => iacTools.terraform_plan.handler(args),
-  terraform_apply: async (args) => iacTools.terraform_apply.handler(args),
-  k8s_deploy: async (args) => iacTools.k8s_deploy.handler(args),
-  helm_install: async (args) => iacTools.helm_install.handler(args),
+  terraform_init: async args => iacTools.terraform_init.handler(args),
+  terraform_plan: async args => iacTools.terraform_plan.handler(args),
+  terraform_apply: async args => iacTools.terraform_apply.handler(args),
+  k8s_deploy: async args => iacTools.k8s_deploy.handler(args),
+  helm_install: async args => iacTools.helm_install.handler(args),
 
   // v3.1 Advanced Testing Tools
-  run_e2e_tests: async (args) => testingTools.run_e2e_tests.handler(args),
-  visual_regression: async (args) => testingTools.visual_regression.handler(args),
-  load_test: async (args) => testingTools.load_test.handler(args),
-  contract_test: async (args) => testingTools.contract_test.handler(args),
-  mutation_test: async (args) => testingTools.mutation_test.handler(args),
+  run_e2e_tests: async args => testingTools.run_e2e_tests.handler(args),
+  visual_regression: async args => testingTools.visual_regression.handler(args),
+  load_test: async args => testingTools.load_test.handler(args),
+  contract_test: async args => testingTools.contract_test.handler(args),
+  mutation_test: async args => testingTools.mutation_test.handler(args),
 
   // v3.1 Communications Tools
-  slack_notify: async (args) => commsTools.slack_notify.handler(args),
-  discord_notify: async (args) => commsTools.discord_notify.handler(args),
-  teams_notify: async (args) => commsTools.teams_notify.handler(args),
-  email_send: async (args) => commsTools.email_send.handler(args),
-  sms_send: async (args) => commsTools.sms_send.handler(args),
+  slack_notify: async args => commsTools.slack_notify.handler(args),
+  discord_notify: async args => commsTools.discord_notify.handler(args),
+  teams_notify: async args => commsTools.teams_notify.handler(args),
+  email_send: async args => commsTools.email_send.handler(args),
+  sms_send: async args => commsTools.sms_send.handler(args),
 
   // v3.1 Project Management Tools
-  jira_create_issue: async (args) => pmTools.jira_create_issue.handler(args),
-  linear_create_task: async (args) => pmTools.linear_create_task.handler(args),
-  github_create_issue: async (args) => pmTools.github_create_issue.handler(args),
-  auto_changelog: async (args) => pmTools.auto_changelog.handler(args || {}),
-  create_release: async (args) => pmTools.create_release.handler(args),
+  jira_create_issue: async args => pmTools.jira_create_issue.handler(args),
+  linear_create_task: async args => pmTools.linear_create_task.handler(args),
+  github_create_issue: async args => pmTools.github_create_issue.handler(args),
+  auto_changelog: async args => pmTools.auto_changelog.handler(args || {}),
+  create_release: async args => pmTools.create_release.handler(args),
 
   // v3.1 Advanced Security Tools
-  sast_scan: async (args) => securityAdvancedTools.sast_scan.handler(args),
-  sbom_generate: async (args) => securityAdvancedTools.sbom_generate.handler(args),
-  dep_graph: async (args) => securityAdvancedTools.dep_graph.handler(args),
-  tech_debt_score: async (args) => securityAdvancedTools.tech_debt_score.handler(args),
-  compliance_check: async (args) => securityAdvancedTools.compliance_check.handler(args),
+  sast_scan: async args => securityAdvancedTools.sast_scan.handler(args),
+  sbom_generate: async args => securityAdvancedTools.sbom_generate.handler(args),
+  dep_graph: async args => securityAdvancedTools.dep_graph.handler(args),
+  tech_debt_score: async args => securityAdvancedTools.tech_debt_score.handler(args),
+  compliance_check: async args => securityAdvancedTools.compliance_check.handler(args),
 
   // v3.1 Dev Environment Tools
-  gen_devcontainer: async (args) => devenvTools.gen_devcontainer.handler(args),
-  gen_codespace: async (args) => devenvTools.gen_codespace.handler(args),
-  gen_gitpod: async (args) => devenvTools.gen_gitpod.handler(args),
+  gen_devcontainer: async args => devenvTools.gen_devcontainer.handler(args),
+  gen_codespace: async args => devenvTools.gen_codespace.handler(args),
+  gen_gitpod: async args => devenvTools.gen_gitpod.handler(args),
 
   // v3.1 Publishing Tools
-  npm_publish: async (args) => publishTools.npm_publish.handler(args),
-  pypi_publish: async (args) => publishTools.pypi_publish.handler(args),
-  docker_release: async (args) => publishTools.docker_release.handler(args),
-  github_package: async (args) => publishTools.github_package.handler(args),
+  npm_publish: async args => publishTools.npm_publish.handler(args),
+  pypi_publish: async args => publishTools.pypi_publish.handler(args),
+  docker_release: async args => publishTools.docker_release.handler(args),
+  github_package: async args => publishTools.github_package.handler(args),
 
   // v3.1 Observability Tools
-  sentry_setup: async (args) => observabilityTools.sentry_setup.handler(args),
-  add_metrics: async (args) => observabilityTools.add_metrics.handler(args),
-  create_dashboard: async (args) => observabilityTools.create_dashboard.handler(args),
-  setup_alerts: async (args) => observabilityTools.setup_alerts.handler(args || {}),
+  sentry_setup: async args => observabilityTools.sentry_setup.handler(args),
+  add_metrics: async args => observabilityTools.add_metrics.handler(args),
+  create_dashboard: async args => observabilityTools.create_dashboard.handler(args),
+  setup_alerts: async args => observabilityTools.setup_alerts.handler(args || {}),
 
   // v3.2 Smart Assistance Tools
-  explain_code: async (args) => smartAssistTools.explain_code.handler(args),
-  suggest_next: async (args) => smartAssistTools.suggest_next.handler(args),
-  dry_run: async (args) => smartAssistTools.dry_run.handler(args),
-  simplify_output: async (args) => smartAssistTools.simplify_output.handler(args),
-  what_went_wrong: async (args) => smartAssistTools.what_went_wrong.handler(args),
-  teach_me: async (args) => smartAssistTools.teach_me.handler(args),
+  explain_code: async args => smartAssistTools.explain_code.handler(args),
+  suggest_next: async args => smartAssistTools.suggest_next.handler(args),
+  dry_run: async args => smartAssistTools.dry_run.handler(args),
+  simplify_output: async args => smartAssistTools.simplify_output.handler(args),
+  what_went_wrong: async args => smartAssistTools.what_went_wrong.handler(args),
+  teach_me: async args => smartAssistTools.teach_me.handler(args),
 
   // v3.2 Quick Start Wizard Tools
-  project_wizard: async (args) => wizardTools.project_wizard.handler(args),
-  quick_web_app: async (args) => wizardTools.quick_web_app.handler(args),
-  quick_landing: async (args) => wizardTools.quick_landing.handler(args),
-  quick_api: async (args) => wizardTools.quick_api.handler(args),
-  quick_mobile: async (args) => wizardTools.quick_mobile.handler(args),
-  quick_chrome_ext: async (args) => wizardTools.quick_chrome_ext.handler(args),
+  project_wizard: async args => wizardTools.project_wizard.handler(args),
+  quick_web_app: async args => wizardTools.quick_web_app.handler(args),
+  quick_landing: async args => wizardTools.quick_landing.handler(args),
+  quick_api: async args => wizardTools.quick_api.handler(args),
+  quick_mobile: async args => wizardTools.quick_mobile.handler(args),
+  quick_chrome_ext: async args => wizardTools.quick_chrome_ext.handler(args),
 
   // v3.2 Asset Generation Tools
-  generate_logo: async (args) => assetTools.generate_logo.handler(args),
-  generate_og_image: async (args) => assetTools.generate_og_image.handler(args),
-  optimize_assets: async (args) => assetTools.optimize_assets.handler(args),
-  create_favicon: async (args) => assetTools.create_favicon.handler(args),
-  generate_screenshots: async (args) => assetTools.generate_screenshots.handler(args),
+  generate_logo: async args => assetTools.generate_logo.handler(args),
+  generate_og_image: async args => assetTools.generate_og_image.handler(args),
+  optimize_assets: async args => assetTools.optimize_assets.handler(args),
+  create_favicon: async args => assetTools.create_favicon.handler(args),
+  generate_screenshots: async args => assetTools.generate_screenshots.handler(args),
 
   // v3.2 No-Code Integration Tools
-  notion_sync: async (args) => nocodeTools.notion_sync.handler(args),
-  airtable_ops: async (args) => nocodeTools.airtable_ops.handler(args),
-  google_sheets_sync: async (args) => nocodeTools.google_sheets_sync.handler(args),
-  zapier_trigger: async (args) => nocodeTools.zapier_trigger.handler(args),
-  make_scenario: async (args) => nocodeTools.make_scenario.handler(args),
-  n8n_workflow: async (args) => nocodeTools.n8n_workflow.handler(args),
+  notion_sync: async args => nocodeTools.notion_sync.handler(args),
+  airtable_ops: async args => nocodeTools.airtable_ops.handler(args),
+  google_sheets_sync: async args => nocodeTools.google_sheets_sync.handler(args),
+  zapier_trigger: async args => nocodeTools.zapier_trigger.handler(args),
+  make_scenario: async args => nocodeTools.make_scenario.handler(args),
+  n8n_workflow: async args => nocodeTools.n8n_workflow.handler(args),
 
   // v3.2 Business & Analytics Tools
-  cost_estimate: async (args) => businessTools.cost_estimate.handler(args),
-  usage_analytics: async (args) => businessTools.usage_analytics.handler(args),
-  time_tracker: async (args) => businessTools.time_tracker.handler(args),
-  roi_calculator: async (args) => businessTools.roi_calculator.handler(args),
-  competitor_scan: async (args) => businessTools.competitor_scan.handler(args),
+  cost_estimate: async args => businessTools.cost_estimate.handler(args),
+  usage_analytics: async args => businessTools.usage_analytics.handler(args),
+  time_tracker: async args => businessTools.time_tracker.handler(args),
+  roi_calculator: async args => businessTools.roi_calculator.handler(args),
+  competitor_scan: async args => businessTools.competitor_scan.handler(args),
 
   // v3.2 Launch & Growth Tools
-  seo_audit: async (args) => launchTools.seo_audit.handler(args),
-  lighthouse_report: async (args) => launchTools.lighthouse_report.handler(args),
-  submit_to_directories: async (args) => launchTools.submit_to_directories.handler(args),
-  social_preview: async (args) => launchTools.social_preview.handler(args),
-  uptime_monitor: async (args) => launchTools.uptime_monitor.handler(args),
+  seo_audit: async args => launchTools.seo_audit.handler(args),
+  lighthouse_report: async args => launchTools.lighthouse_report.handler(args),
+  submit_to_directories: async args => launchTools.submit_to_directories.handler(args),
+  social_preview: async args => launchTools.social_preview.handler(args),
+  uptime_monitor: async args => launchTools.uptime_monitor.handler(args),
 
   // v3.2 AI Pair Programming Tools
-  pair_start: async (args) => pairTools.pair_start.handler(args),
-  pair_suggest: async (args) => pairTools.pair_suggest.handler(args),
-  pair_review: async (args) => pairTools.pair_review.handler(args),
-  pair_explain: async (args) => pairTools.pair_explain.handler(args),
-  pair_refactor: async (args) => pairTools.pair_refactor.handler(args),
-  voice_command: async (args) => pairTools.voice_command.handler(args)
+  pair_start: async args => pairTools.pair_start.handler(args),
+  pair_suggest: async args => pairTools.pair_suggest.handler(args),
+  pair_review: async args => pairTools.pair_review.handler(args),
+  pair_explain: async args => pairTools.pair_explain.handler(args),
+  pair_refactor: async args => pairTools.pair_refactor.handler(args),
+  voice_command: async args => pairTools.voice_command.handler(args),
 };
-
 
 // ==============================================================================
 // MCP SERVER SETUP
@@ -2208,17 +2276,18 @@ const toolDefinitions = [
   // Command Execution
   {
     name: 'execute_command',
-    description: 'Execute ANY terminal command. Use this to run npm, pip, git, or any shell command for the user.',
+    description:
+      'Execute ANY terminal command. Use this to run npm, pip, git, or any shell command for the user.',
     inputSchema: {
       type: 'object',
       properties: {
         command: { type: 'string', description: 'Command to execute' },
         cwd: { type: 'string', description: 'Working directory (optional)' },
         timeout: { type: 'number', description: 'Timeout in ms (default: 120000)' },
-        background: { type: 'boolean', description: 'Run in background' }
+        background: { type: 'boolean', description: 'Run in background' },
       },
-      required: ['command']
-    }
+      required: ['command'],
+    },
   },
 
   // File Operations
@@ -2229,10 +2298,10 @@ const toolDefinitions = [
       type: 'object',
       properties: {
         path: { type: 'string', description: 'File path to read' },
-        encoding: { type: 'string', description: 'Encoding (default: utf8)' }
+        encoding: { type: 'string', description: 'Encoding (default: utf8)' },
       },
-      required: ['path']
-    }
+      required: ['path'],
+    },
   },
   {
     name: 'write_file',
@@ -2243,10 +2312,10 @@ const toolDefinitions = [
         path: { type: 'string', description: 'File path to write' },
         content: { type: 'string', description: 'Content to write' },
         append: { type: 'boolean', description: 'Append instead of overwrite' },
-        createDirs: { type: 'boolean', description: 'Create parent directories (default: true)' }
+        createDirs: { type: 'boolean', description: 'Create parent directories (default: true)' },
       },
-      required: ['path', 'content']
-    }
+      required: ['path', 'content'],
+    },
   },
   {
     name: 'edit_file',
@@ -2257,10 +2326,10 @@ const toolDefinitions = [
         path: { type: 'string', description: 'File path to edit' },
         find: { type: 'string', description: 'Text to find' },
         replace: { type: 'string', description: 'Replacement text' },
-        replaceAll: { type: 'boolean', description: 'Replace all occurrences' }
+        replaceAll: { type: 'boolean', description: 'Replace all occurrences' },
       },
-      required: ['path', 'find', 'replace']
-    }
+      required: ['path', 'find', 'replace'],
+    },
   },
   {
     name: 'delete_file',
@@ -2269,10 +2338,10 @@ const toolDefinitions = [
       type: 'object',
       properties: {
         path: { type: 'string', description: 'Path to delete' },
-        recursive: { type: 'boolean', description: 'Delete directories recursively' }
+        recursive: { type: 'boolean', description: 'Delete directories recursively' },
       },
-      required: ['path']
-    }
+      required: ['path'],
+    },
   },
   {
     name: 'list_directory',
@@ -2282,10 +2351,10 @@ const toolDefinitions = [
       properties: {
         path: { type: 'string', description: 'Directory path' },
         recursive: { type: 'boolean', description: 'Include subdirectories' },
-        pattern: { type: 'string', description: 'Filter by name pattern' }
+        pattern: { type: 'string', description: 'Filter by name pattern' },
       },
-      required: ['path']
-    }
+      required: ['path'],
+    },
   },
   {
     name: 'search_files',
@@ -2296,10 +2365,10 @@ const toolDefinitions = [
         path: { type: 'string', description: 'Directory to search' },
         pattern: { type: 'string', description: 'Filename pattern' },
         contentPattern: { type: 'string', description: 'Search file contents' },
-        fileExtensions: { type: 'string', description: 'File extensions (e.g., ".js,.ts")' }
+        fileExtensions: { type: 'string', description: 'File extensions (e.g., ".js,.ts")' },
       },
-      required: ['path']
-    }
+      required: ['path'],
+    },
   },
 
   // Git Operations
@@ -2309,9 +2378,9 @@ const toolDefinitions = [
     inputSchema: {
       type: 'object',
       properties: {
-        path: { type: 'string', description: 'Repository path' }
-      }
-    }
+        path: { type: 'string', description: 'Repository path' },
+      },
+    },
   },
   {
     name: 'git_commit',
@@ -2321,10 +2390,10 @@ const toolDefinitions = [
       properties: {
         path: { type: 'string', description: 'Repository path' },
         message: { type: 'string', description: 'Commit message' },
-        addAll: { type: 'boolean', description: 'Stage all changes (default: true)' }
+        addAll: { type: 'boolean', description: 'Stage all changes (default: true)' },
       },
-      required: ['message']
-    }
+      required: ['message'],
+    },
   },
   {
     name: 'git_push',
@@ -2335,9 +2404,9 @@ const toolDefinitions = [
         path: { type: 'string', description: 'Repository path' },
         remote: { type: 'string', description: 'Remote name (default: origin)' },
         branch: { type: 'string', description: 'Branch name' },
-        force: { type: 'boolean', description: 'Force push' }
-      }
-    }
+        force: { type: 'boolean', description: 'Force push' },
+      },
+    },
   },
   {
     name: 'git_pull',
@@ -2347,9 +2416,9 @@ const toolDefinitions = [
       properties: {
         path: { type: 'string', description: 'Repository path' },
         remote: { type: 'string', description: 'Remote name' },
-        branch: { type: 'string', description: 'Branch name' }
-      }
-    }
+        branch: { type: 'string', description: 'Branch name' },
+      },
+    },
   },
   {
     name: 'git_clone',
@@ -2359,10 +2428,10 @@ const toolDefinitions = [
       properties: {
         url: { type: 'string', description: 'Repository URL' },
         path: { type: 'string', description: 'Destination path' },
-        branch: { type: 'string', description: 'Branch to clone' }
+        branch: { type: 'string', description: 'Branch to clone' },
       },
-      required: ['url']
-    }
+      required: ['url'],
+    },
   },
   {
     name: 'git_branch',
@@ -2373,9 +2442,9 @@ const toolDefinitions = [
         path: { type: 'string', description: 'Repository path' },
         name: { type: 'string', description: 'Branch name' },
         checkout: { type: 'boolean', description: 'Create and checkout branch' },
-        delete: { type: 'boolean', description: 'Delete branch' }
-      }
-    }
+        delete: { type: 'boolean', description: 'Delete branch' },
+      },
+    },
   },
 
   // Package Management
@@ -2386,18 +2455,19 @@ const toolDefinitions = [
       type: 'object',
       properties: {
         packages: {
-          oneOf: [
-            { type: 'string' },
-            { type: 'array', items: { type: 'string' } }
-          ],
-          description: 'Package(s) to install'
+          oneOf: [{ type: 'string' }, { type: 'array', items: { type: 'string' } }],
+          description: 'Package(s) to install',
         },
         path: { type: 'string', description: 'Project path' },
-        manager: { type: 'string', enum: ['npm', 'yarn', 'pnpm', 'pip', 'pip3'], description: 'Package manager' },
-        dev: { type: 'boolean', description: 'Install as dev dependency' }
+        manager: {
+          type: 'string',
+          enum: ['npm', 'yarn', 'pnpm', 'pip', 'pip3'],
+          description: 'Package manager',
+        },
+        dev: { type: 'boolean', description: 'Install as dev dependency' },
       },
-      required: ['packages']
-    }
+      required: ['packages'],
+    },
   },
   {
     name: 'run_script',
@@ -2407,10 +2477,10 @@ const toolDefinitions = [
       properties: {
         script: { type: 'string', description: 'Script name (e.g., dev, build, test)' },
         path: { type: 'string', description: 'Project path' },
-        args: { type: 'string', description: 'Additional arguments' }
+        args: { type: 'string', description: 'Additional arguments' },
       },
-      required: ['script']
-    }
+      required: ['script'],
+    },
   },
 
   // Project Creation
@@ -2424,14 +2494,14 @@ const toolDefinitions = [
         type: {
           type: 'string',
           enum: ['react', 'nextjs', 'python', 'node', 'mcp', 'empty'],
-          description: 'Project type'
+          description: 'Project type',
         },
         path: { type: 'string', description: 'Parent directory (default: ~/Projects)' },
         template: { type: 'string', description: 'Template name' },
-        features: { type: 'array', items: { type: 'string' }, description: 'Additional features' }
+        features: { type: 'array', items: { type: 'string' }, description: 'Additional features' },
       },
-      required: ['name', 'type']
-    }
+      required: ['name', 'type'],
+    },
   },
 
   // Task Orchestration
@@ -2445,12 +2515,12 @@ const toolDefinitions = [
         steps: {
           type: 'array',
           items: { type: 'object' },
-          description: 'Array of steps to execute'
+          description: 'Array of steps to execute',
         },
-        context: { type: 'object', description: 'Context data' }
+        context: { type: 'object', description: 'Context data' },
       },
-      required: ['task', 'steps']
-    }
+      required: ['task', 'steps'],
+    },
   },
   {
     name: 'continue_task',
@@ -2461,19 +2531,19 @@ const toolDefinitions = [
         action: {
           type: 'string',
           enum: ['retry', 'skip', 'abort'],
-          description: 'Action to take'
+          description: 'Action to take',
         },
-        newStep: { type: 'object', description: 'Replacement step' }
+        newStep: { type: 'object', description: 'Replacement step' },
       },
-      required: ['action']
-    }
+      required: ['action'],
+    },
   },
 
   // Environment
   {
     name: 'diagnose_environment',
     description: 'Check the environment for issues. Finds problems and suggests fixes.',
-    inputSchema: { type: 'object', properties: {} }
+    inputSchema: { type: 'object', properties: {} },
   },
   {
     name: 'auto_fix',
@@ -2483,17 +2553,25 @@ const toolDefinitions = [
       properties: {
         issue_type: {
           type: 'string',
-          enum: ['setup_windsurf', 'setup_mcp', 'setup_rules', 'repair_settings', 'repair_mcp', 'create_projects_dir', 'install_dependencies'],
-          description: 'Specific issue to fix'
+          enum: [
+            'setup_windsurf',
+            'setup_mcp',
+            'setup_rules',
+            'repair_settings',
+            'repair_mcp',
+            'create_projects_dir',
+            'install_dependencies',
+          ],
+          description: 'Specific issue to fix',
         },
-        all: { type: 'boolean', description: 'Fix all auto-fixable issues' }
-      }
-    }
+        all: { type: 'boolean', description: 'Fix all auto-fixable issues' },
+      },
+    },
   },
   {
     name: 'complete_setup',
     description: 'Complete full Windsurf setup automatically. One command to configure everything.',
-    inputSchema: { type: 'object', properties: {} }
+    inputSchema: { type: 'object', properties: {} },
   },
 
   // Guidance
@@ -2503,17 +2581,17 @@ const toolDefinitions = [
     inputSchema: {
       type: 'object',
       properties: {
-        task: { type: 'string', description: 'What the user wants to do' }
+        task: { type: 'string', description: 'What the user wants to do' },
       },
-      required: ['task']
-    }
+      required: ['task'],
+    },
   },
 
   // Status
   {
     name: 'get_status',
     description: 'Get current system status, installed tools, and configuration state.',
-    inputSchema: { type: 'object', properties: {} }
+    inputSchema: { type: 'object', properties: {} },
   },
   {
     name: 'get_history',
@@ -2521,21 +2599,22 @@ const toolDefinitions = [
     inputSchema: {
       type: 'object',
       properties: {
-        limit: { type: 'number', description: 'Max actions to return (default: 20)' }
-      }
-    }
+        limit: { type: 'number', description: 'Max actions to return (default: 20)' },
+      },
+    },
   },
   // v2.2 Tools - Project Intelligence
   {
     name: 'analyze_project',
-    description: 'Analyze a project to understand its structure, tech stack, dependencies, and potential issues. Use this to understand any project.',
+    description:
+      'Analyze a project to understand its structure, tech stack, dependencies, and potential issues. Use this to understand any project.',
     inputSchema: {
       type: 'object',
       properties: {
-        projectPath: { type: 'string', description: 'Path to the project directory' }
+        projectPath: { type: 'string', description: 'Path to the project directory' },
       },
-      required: ['projectPath']
-    }
+      required: ['projectPath'],
+    },
   },
   {
     name: 'detect_tech_stack',
@@ -2543,10 +2622,10 @@ const toolDefinitions = [
     inputSchema: {
       type: 'object',
       properties: {
-        projectPath: { type: 'string', description: 'Path to the project' }
+        projectPath: { type: 'string', description: 'Path to the project' },
       },
-      required: ['projectPath']
-    }
+      required: ['projectPath'],
+    },
   },
 
   // v2.2 Tools - Error Analysis
@@ -2558,24 +2637,25 @@ const toolDefinitions = [
       properties: {
         error: { type: 'string', description: 'Error message to analyze' },
         context: { type: 'string', description: 'Context about what was being done' },
-        projectPath: { type: 'string', description: 'Project path for context' }
+        projectPath: { type: 'string', description: 'Project path for context' },
       },
-      required: ['error']
-    }
+      required: ['error'],
+    },
   },
   {
     name: 'smart_retry',
-    description: 'Retry a command with intelligent strategies (retry, clear cache, reinstall, force).',
+    description:
+      'Retry a command with intelligent strategies (retry, clear cache, reinstall, force).',
     inputSchema: {
       type: 'object',
       properties: {
         command: { type: 'string', description: 'Command to retry' },
         cwd: { type: 'string', description: 'Working directory' },
         maxAttempts: { type: 'number', description: 'Max retry attempts (default: 3)' },
-        strategies: { type: 'array', items: { type: 'string' }, description: 'Strategies to try' }
+        strategies: { type: 'array', items: { type: 'string' }, description: 'Strategies to try' },
       },
-      required: ['command']
-    }
+      required: ['command'],
+    },
   },
 
   // v2.2 Tools - HTTP
@@ -2586,13 +2666,17 @@ const toolDefinitions = [
       type: 'object',
       properties: {
         url: { type: 'string', description: 'URL to request' },
-        method: { type: 'string', enum: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'], description: 'HTTP method' },
+        method: {
+          type: 'string',
+          enum: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
+          description: 'HTTP method',
+        },
         headers: { type: 'object', description: 'Request headers' },
         body: { type: 'object', description: 'Request body (for POST/PUT)' },
-        timeout: { type: 'number', description: 'Timeout in ms' }
+        timeout: { type: 'number', description: 'Timeout in ms' },
       },
-      required: ['url']
-    }
+      required: ['url'],
+    },
   },
   {
     name: 'download_file',
@@ -2602,10 +2686,10 @@ const toolDefinitions = [
       properties: {
         url: { type: 'string', description: 'URL to download from' },
         destPath: { type: 'string', description: 'Destination file path' },
-        overwrite: { type: 'boolean', description: 'Overwrite if exists' }
+        overwrite: { type: 'boolean', description: 'Overwrite if exists' },
       },
-      required: ['url', 'destPath']
-    }
+      required: ['url', 'destPath'],
+    },
   },
 
   // v2.2 Tools - Code Quality
@@ -2616,10 +2700,10 @@ const toolDefinitions = [
       type: 'object',
       properties: {
         projectPath: { type: 'string', description: 'Project path' },
-        fix: { type: 'boolean', description: 'Auto-fix issues' }
+        fix: { type: 'boolean', description: 'Auto-fix issues' },
       },
-      required: ['projectPath']
-    }
+      required: ['projectPath'],
+    },
   },
   {
     name: 'format_code',
@@ -2627,10 +2711,10 @@ const toolDefinitions = [
     inputSchema: {
       type: 'object',
       properties: {
-        projectPath: { type: 'string', description: 'Project path' }
+        projectPath: { type: 'string', description: 'Project path' },
       },
-      required: ['projectPath']
-    }
+      required: ['projectPath'],
+    },
   },
 
   // v2.2 Tools - Testing
@@ -2642,10 +2726,10 @@ const toolDefinitions = [
       properties: {
         projectPath: { type: 'string', description: 'Project path' },
         testFile: { type: 'string', description: 'Specific test file' },
-        coverage: { type: 'boolean', description: 'Include coverage report' }
+        coverage: { type: 'boolean', description: 'Include coverage report' },
       },
-      required: ['projectPath']
-    }
+      required: ['projectPath'],
+    },
   },
 
   // v2.2 Tools - Process Management
@@ -2657,10 +2741,10 @@ const toolDefinitions = [
       properties: {
         projectPath: { type: 'string', description: 'Project path' },
         script: { type: 'string', description: 'Script to run (default: dev)' },
-        port: { type: 'number', description: 'Port number' }
+        port: { type: 'number', description: 'Port number' },
       },
-      required: ['projectPath']
-    }
+      required: ['projectPath'],
+    },
   },
   {
     name: 'stop_server',
@@ -2669,21 +2753,21 @@ const toolDefinitions = [
       type: 'object',
       properties: {
         serverId: { type: 'string', description: 'Server ID from start_server' },
-        pid: { type: 'number', description: 'Process ID' }
-      }
-    }
+        pid: { type: 'number', description: 'Process ID' },
+      },
+    },
   },
   {
     name: 'list_running',
     description: 'List all running servers started by autopilot.',
-    inputSchema: { type: 'object', properties: {} }
+    inputSchema: { type: 'object', properties: {} },
   },
 
   // v2.2 Tools - Docker
   {
     name: 'docker_status',
     description: 'Check Docker installation, running containers, and images.',
-    inputSchema: { type: 'object', properties: {} }
+    inputSchema: { type: 'object', properties: {} },
   },
   {
     name: 'docker_build',
@@ -2693,10 +2777,10 @@ const toolDefinitions = [
       properties: {
         projectPath: { type: 'string', description: 'Project path with Dockerfile' },
         tag: { type: 'string', description: 'Image tag' },
-        dockerfile: { type: 'string', description: 'Dockerfile name (default: Dockerfile)' }
+        dockerfile: { type: 'string', description: 'Dockerfile name (default: Dockerfile)' },
       },
-      required: ['projectPath']
-    }
+      required: ['projectPath'],
+    },
   },
   {
     name: 'docker_run',
@@ -2706,12 +2790,16 @@ const toolDefinitions = [
       properties: {
         image: { type: 'string', description: 'Image name' },
         name: { type: 'string', description: 'Container name' },
-        ports: { type: 'array', items: { type: 'string' }, description: 'Port mappings (e.g., "3000:3000")' },
+        ports: {
+          type: 'array',
+          items: { type: 'string' },
+          description: 'Port mappings (e.g., "3000:3000")',
+        },
         env: { type: 'object', description: 'Environment variables' },
-        detach: { type: 'boolean', description: 'Run in background (default: true)' }
+        detach: { type: 'boolean', description: 'Run in background (default: true)' },
       },
-      required: ['image']
-    }
+      required: ['image'],
+    },
   },
   {
     name: 'docker_compose_up',
@@ -2721,39 +2809,41 @@ const toolDefinitions = [
       properties: {
         projectPath: { type: 'string', description: 'Project path with docker-compose.yml' },
         detach: { type: 'boolean', description: 'Run in background (default: true)' },
-        build: { type: 'boolean', description: 'Rebuild images' }
+        build: { type: 'boolean', description: 'Rebuild images' },
       },
-      required: ['projectPath']
-    }
+      required: ['projectPath'],
+    },
   },
   // ═══════════════════════════════════════════════════════════════════════════
   // v2.2 Tools - AI Decision Engine
   // ═══════════════════════════════════════════════════════════════════════════
   {
     name: 'decide_next_step',
-    description: 'AI autonomously decides what to do next based on project state, errors, and goals. Returns recommended actions that can be auto-executed.',
+    description:
+      'AI autonomously decides what to do next based on project state, errors, and goals. Returns recommended actions that can be auto-executed.',
     inputSchema: {
       type: 'object',
       properties: {
         projectPath: { type: 'string', description: 'Project directory path' },
         currentError: { type: 'string', description: 'Current error message if any' },
         goal: { type: 'string', description: 'What the user wants to achieve' },
-        context: { type: 'object', description: 'Additional context' }
-      }
-    }
+        context: { type: 'object', description: 'Additional context' },
+      },
+    },
   },
   {
     name: 'find_solution',
-    description: 'Find solutions for problems. Searches solution database and returns step-by-step fixes.',
+    description:
+      'Find solutions for problems. Searches solution database and returns step-by-step fixes.',
     inputSchema: {
       type: 'object',
       properties: {
         problem: { type: 'string', description: 'Description of the problem' },
         projectPath: { type: 'string', description: 'Project path for context' },
-        errorMessage: { type: 'string', description: 'Error message if available' }
+        errorMessage: { type: 'string', description: 'Error message if available' },
       },
-      required: ['problem']
-    }
+      required: ['problem'],
+    },
   },
 
   // ═══════════════════════════════════════════════════════════════════════════
@@ -2761,17 +2851,40 @@ const toolDefinitions = [
   // ═══════════════════════════════════════════════════════════════════════════
   {
     name: 'generate_code',
-    description: 'Generate code from natural language description. Creates React components, Express routes, FastAPI endpoints, TypeScript interfaces, hooks, tests, Dockerfiles, and more.',
+    description:
+      'Generate code from natural language description. Creates React components, Express routes, FastAPI endpoints, TypeScript interfaces, hooks, tests, Dockerfiles, and more.',
     inputSchema: {
       type: 'object',
       properties: {
-        description: { type: 'string', description: 'Natural language description of what to generate (e.g., "React component called UserProfile")' },
-        language: { type: 'string', description: 'Programming language (auto-detected if not specified)' },
-        type: { type: 'string', enum: ['react-component', 'express-route', 'fastapi-route', 'typescript-interface', 'react-hook', 'utility', 'test', 'dockerfile', 'docker-compose', 'github-actions'], description: 'Type of code to generate' },
-        outputPath: { type: 'string', description: 'File path to write the generated code' }
+        description: {
+          type: 'string',
+          description:
+            'Natural language description of what to generate (e.g., "React component called UserProfile")',
+        },
+        language: {
+          type: 'string',
+          description: 'Programming language (auto-detected if not specified)',
+        },
+        type: {
+          type: 'string',
+          enum: [
+            'react-component',
+            'express-route',
+            'fastapi-route',
+            'typescript-interface',
+            'react-hook',
+            'utility',
+            'test',
+            'dockerfile',
+            'docker-compose',
+            'github-actions',
+          ],
+          description: 'Type of code to generate',
+        },
+        outputPath: { type: 'string', description: 'File path to write the generated code' },
       },
-      required: ['description']
-    }
+      required: ['description'],
+    },
   },
 
   // ═══════════════════════════════════════════════════════════════════════════
@@ -2779,16 +2892,21 @@ const toolDefinitions = [
   // ═══════════════════════════════════════════════════════════════════════════
   {
     name: 'generate_tests',
-    description: 'Automatically generate test files for existing code. Analyzes exports and creates test scaffolding.',
+    description:
+      'Automatically generate test files for existing code. Analyzes exports and creates test scaffolding.',
     inputSchema: {
       type: 'object',
       properties: {
         filePath: { type: 'string', description: 'Path to the file to generate tests for' },
         projectPath: { type: 'string', description: 'Project root for test output' },
-        testFramework: { type: 'string', enum: ['jest', 'vitest'], description: 'Test framework (default: jest)' }
+        testFramework: {
+          type: 'string',
+          enum: ['jest', 'vitest'],
+          description: 'Test framework (default: jest)',
+        },
       },
-      required: ['filePath']
-    }
+      required: ['filePath'],
+    },
   },
 
   // ═══════════════════════════════════════════════════════════════════════════
@@ -2801,12 +2919,16 @@ const toolDefinitions = [
       type: 'object',
       properties: {
         query: { type: 'string', description: 'SQL query to execute' },
-        database: { type: 'string', enum: ['sqlite', 'postgresql', 'mysql'], description: 'Database type' },
+        database: {
+          type: 'string',
+          enum: ['sqlite', 'postgresql', 'mysql'],
+          description: 'Database type',
+        },
         connectionString: { type: 'string', description: 'Database connection string' },
-        projectPath: { type: 'string', description: 'Project path (for Prisma projects)' }
+        projectPath: { type: 'string', description: 'Project path (for Prisma projects)' },
       },
-      required: ['query']
-    }
+      required: ['query'],
+    },
   },
   {
     name: 'db_migrate',
@@ -2815,10 +2937,10 @@ const toolDefinitions = [
       type: 'object',
       properties: {
         projectPath: { type: 'string', description: 'Project path' },
-        name: { type: 'string', description: 'Migration name (default: migration)' }
+        name: { type: 'string', description: 'Migration name (default: migration)' },
       },
-      required: ['projectPath']
-    }
+      required: ['projectPath'],
+    },
   },
   {
     name: 'db_seed',
@@ -2826,10 +2948,10 @@ const toolDefinitions = [
     inputSchema: {
       type: 'object',
       properties: {
-        projectPath: { type: 'string', description: 'Project path' }
+        projectPath: { type: 'string', description: 'Project path' },
       },
-      required: ['projectPath']
-    }
+      required: ['projectPath'],
+    },
   },
 
   // ═══════════════════════════════════════════════════════════════════════════
@@ -2837,17 +2959,22 @@ const toolDefinitions = [
   // ═══════════════════════════════════════════════════════════════════════════
   {
     name: 'manage_env',
-    description: 'Manage .env files. List, get, set, delete variables. Validate against .env.example.',
+    description:
+      'Manage .env files. List, get, set, delete variables. Validate against .env.example.',
     inputSchema: {
       type: 'object',
       properties: {
         projectPath: { type: 'string', description: 'Project path' },
-        action: { type: 'string', enum: ['list', 'get', 'set', 'delete', 'copy_example', 'validate'], description: 'Action to perform' },
+        action: {
+          type: 'string',
+          enum: ['list', 'get', 'set', 'delete', 'copy_example', 'validate'],
+          description: 'Action to perform',
+        },
         key: { type: 'string', description: 'Variable name (for get/set/delete)' },
-        value: { type: 'string', description: 'Variable value (for set)' }
+        value: { type: 'string', description: 'Variable value (for set)' },
       },
-      required: ['projectPath', 'action']
-    }
+      required: ['projectPath', 'action'],
+    },
   },
 
   // ═══════════════════════════════════════════════════════════════════════════
@@ -2860,10 +2987,13 @@ const toolDefinitions = [
       type: 'object',
       properties: {
         projectPath: { type: 'string', description: 'Project to backup' },
-        backupDir: { type: 'string', description: 'Backup destination directory (default: ~/Backups)' }
+        backupDir: {
+          type: 'string',
+          description: 'Backup destination directory (default: ~/Backups)',
+        },
       },
-      required: ['projectPath']
-    }
+      required: ['projectPath'],
+    },
   },
   {
     name: 'restore_backup',
@@ -2873,10 +3003,10 @@ const toolDefinitions = [
       properties: {
         backupPath: { type: 'string', description: 'Path to the backup' },
         targetPath: { type: 'string', description: 'Where to restore' },
-        overwrite: { type: 'boolean', description: 'Overwrite if target exists' }
+        overwrite: { type: 'boolean', description: 'Overwrite if target exists' },
       },
-      required: ['backupPath', 'targetPath']
-    }
+      required: ['backupPath', 'targetPath'],
+    },
   },
   {
     name: 'list_backups',
@@ -2885,9 +3015,9 @@ const toolDefinitions = [
       type: 'object',
       properties: {
         projectName: { type: 'string', description: 'Filter by project name' },
-        backupDir: { type: 'string', description: 'Backup directory to search' }
-      }
-    }
+        backupDir: { type: 'string', description: 'Backup directory to search' },
+      },
+    },
   },
 
   // ═══════════════════════════════════════════════════════════════════════════
@@ -2902,10 +3032,10 @@ const toolDefinitions = [
         taskId: { type: 'string', description: 'Unique task ID (auto-generated if not provided)' },
         taskName: { type: 'string', description: 'Name of the task' },
         totalSteps: { type: 'number', description: 'Total number of steps' },
-        description: { type: 'string', description: 'Task description' }
+        description: { type: 'string', description: 'Task description' },
       },
-      required: ['taskName']
-    }
+      required: ['taskName'],
+    },
   },
   {
     name: 'update_progress',
@@ -2917,10 +3047,10 @@ const toolDefinitions = [
         stepName: { type: 'string', description: 'Name of completed step' },
         stepNumber: { type: 'number', description: 'Current step number' },
         status: { type: 'string', description: 'Status update' },
-        log: { type: 'string', description: 'Log message' }
+        log: { type: 'string', description: 'Log message' },
       },
-      required: ['taskId']
-    }
+      required: ['taskId'],
+    },
   },
   {
     name: 'get_progress',
@@ -2928,9 +3058,9 @@ const toolDefinitions = [
     inputSchema: {
       type: 'object',
       properties: {
-        taskId: { type: 'string', description: 'Task ID (omit to get all tasks)' }
-      }
-    }
+        taskId: { type: 'string', description: 'Task ID (omit to get all tasks)' },
+      },
+    },
   },
   {
     name: 'complete_progress',
@@ -2940,10 +3070,10 @@ const toolDefinitions = [
       properties: {
         taskId: { type: 'string', description: 'Task ID' },
         status: { type: 'string', description: 'Final status (default: completed)' },
-        summary: { type: 'string', description: 'Task summary' }
+        summary: { type: 'string', description: 'Task summary' },
       },
-      required: ['taskId']
-    }
+      required: ['taskId'],
+    },
   },
 
   // ═══════════════════════════════════════════════════════════════════════════
@@ -2951,25 +3081,31 @@ const toolDefinitions = [
   // ═══════════════════════════════════════════════════════════════════════════
   {
     name: 'autopilot_status',
-    description: 'Get autopilot status with visual indicator (🤖 AUTO-PILOT ACTIVE). Shows if autopilot is working, session stats, and learning progress.',
-    inputSchema: { type: 'object', properties: {} }
+    description:
+      'Get autopilot status with visual indicator (🤖 AUTO-PILOT ACTIVE). Shows if autopilot is working, session stats, and learning progress.',
+    inputSchema: { type: 'object', properties: {} },
   },
   {
     name: 'get_insights',
-    description: 'Get AI learning insights - what the autopilot has learned from your interactions, common patterns, and suggestions.',
-    inputSchema: { type: 'object', properties: {} }
+    description:
+      'Get AI learning insights - what the autopilot has learned from your interactions, common patterns, and suggestions.',
+    inputSchema: { type: 'object', properties: {} },
   },
   {
     name: 'remember_preference',
-    description: 'Remember a user preference for future sessions. The autopilot learns and adapts to your workflow.',
+    description:
+      'Remember a user preference for future sessions. The autopilot learns and adapts to your workflow.',
     inputSchema: {
       type: 'object',
       properties: {
-        key: { type: 'string', description: 'Preference name (e.g., "preferred_framework", "auto_commit")' },
-        value: { type: 'string', description: 'Preference value' }
+        key: {
+          type: 'string',
+          description: 'Preference name (e.g., "preferred_framework", "auto_commit")',
+        },
+        value: { type: 'string', description: 'Preference value' },
       },
-      required: ['key', 'value']
-    }
+      required: ['key', 'value'],
+    },
   },
   {
     name: 'get_preference',
@@ -2978,22 +3114,23 @@ const toolDefinitions = [
       type: 'object',
       properties: {
         key: { type: 'string', description: 'Preference name' },
-        defaultValue: { type: 'string', description: 'Default if not found' }
+        defaultValue: { type: 'string', description: 'Default if not found' },
       },
-      required: ['key']
-    }
+      required: ['key'],
+    },
   },
   {
     name: 'save_project_context',
-    description: 'Save project context to remember across sessions. AI will remember project state, tech stack, and your work.',
+    description:
+      'Save project context to remember across sessions. AI will remember project state, tech stack, and your work.',
     inputSchema: {
       type: 'object',
       properties: {
         projectPath: { type: 'string', description: 'Path to the project' },
-        context: { type: 'object', description: 'Project context data to save' }
+        context: { type: 'object', description: 'Project context data to save' },
       },
-      required: ['projectPath', 'context']
-    }
+      required: ['projectPath', 'context'],
+    },
   },
   {
     name: 'get_project_context',
@@ -3001,10 +3138,10 @@ const toolDefinitions = [
     inputSchema: {
       type: 'object',
       properties: {
-        projectPath: { type: 'string', description: 'Path to the project' }
+        projectPath: { type: 'string', description: 'Path to the project' },
       },
-      required: ['projectPath']
-    }
+      required: ['projectPath'],
+    },
   },
   {
     name: 'get_suggestions',
@@ -3013,14 +3150,14 @@ const toolDefinitions = [
       type: 'object',
       properties: {
         currentAction: { type: 'string', description: 'Current action being performed' },
-        projectPath: { type: 'string', description: 'Current project path' }
-      }
-    }
+        projectPath: { type: 'string', description: 'Current project path' },
+      },
+    },
   },
   {
     name: 'clear_learning_data',
     description: 'Clear all learned data and reset autopilot memory. Use with caution.',
-    inputSchema: { type: 'object', properties: {} }
+    inputSchema: { type: 'object', properties: {} },
   },
 
   // ═══════════════════════════════════════════════════════════════════════════
@@ -3028,7 +3165,8 @@ const toolDefinitions = [
   // ═══════════════════════════════════════════════════════════════════════════
   {
     name: 'ai_learn',
-    description: 'Process an interaction in real-time and learn immediately. The AI extracts patterns, entities, and updates its knowledge graph.',
+    description:
+      'Process an interaction in real-time and learn immediately. The AI extracts patterns, entities, and updates its knowledge graph.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -3036,27 +3174,33 @@ const toolDefinitions = [
         params: { type: 'object', description: 'Parameters used' },
         success: { type: 'boolean', description: 'Whether it succeeded' },
         error: { type: 'string', description: 'Error message if failed' },
-        context: { type: 'object', description: 'Additional context' }
+        context: { type: 'object', description: 'Additional context' },
       },
-      required: ['action']
-    }
+      required: ['action'],
+    },
   },
   {
     name: 'ai_status',
-    description: 'Get comprehensive AI engine status - total interactions, concepts learned, knowledge graph size, and capabilities.',
-    inputSchema: { type: 'object', properties: {} }
+    description:
+      'Get comprehensive AI engine status - total interactions, concepts learned, knowledge graph size, and capabilities.',
+    inputSchema: { type: 'object', properties: {} },
   },
   {
     name: 'search_stackoverflow',
-    description: 'Search Stack Overflow for solutions to coding problems. Results are cached and learned from.',
+    description:
+      'Search Stack Overflow for solutions to coding problems. Results are cached and learned from.',
     inputSchema: {
       type: 'object',
       properties: {
         query: { type: 'string', description: 'Search query' },
-        tags: { type: 'array', items: { type: 'string' }, description: 'Filter by tags (e.g., ["javascript", "react"])' }
+        tags: {
+          type: 'array',
+          items: { type: 'string' },
+          description: 'Filter by tags (e.g., ["javascript", "react"])',
+        },
       },
-      required: ['query']
-    }
+      required: ['query'],
+    },
   },
   {
     name: 'search_github',
@@ -3065,10 +3209,10 @@ const toolDefinitions = [
       type: 'object',
       properties: {
         query: { type: 'string', description: 'Search query' },
-        language: { type: 'string', description: 'Filter by programming language' }
+        language: { type: 'string', description: 'Filter by programming language' },
       },
-      required: ['query']
-    }
+      required: ['query'],
+    },
   },
   {
     name: 'search_npm',
@@ -3076,329 +3220,2033 @@ const toolDefinitions = [
     inputSchema: {
       type: 'object',
       properties: {
-        query: { type: 'string', description: 'Package name or keyword' }
+        query: { type: 'string', description: 'Package name or keyword' },
       },
-      required: ['query']
-    }
+      required: ['query'],
+    },
   },
   {
     name: 'find_solution',
-    description: 'Find solution for an error by searching local knowledge base and web. Uses AI to rank solutions by success rate.',
+    description:
+      'Find solution for an error by searching local knowledge base and web. Uses AI to rank solutions by success rate.',
     inputSchema: {
       type: 'object',
       properties: {
-        error: { type: 'string', description: 'Error message to find solution for' }
+        error: { type: 'string', description: 'Error message to find solution for' },
       },
-      required: ['error']
-    }
+      required: ['error'],
+    },
   },
   {
     name: 'query_knowledge',
-    description: 'Query the AI knowledge graph for concepts, relationships, and facts learned from interactions.',
+    description:
+      'Query the AI knowledge graph for concepts, relationships, and facts learned from interactions.',
     inputSchema: {
       type: 'object',
       properties: {
-        query: { type: 'string', description: 'Search query for knowledge base' }
+        query: { type: 'string', description: 'Search query for knowledge base' },
       },
-      required: ['query']
-    }
+      required: ['query'],
+    },
   },
   {
     name: 'find_similar',
-    description: 'Find similar past interactions using vector similarity search. Useful for finding relevant past solutions.',
+    description:
+      'Find similar past interactions using vector similarity search. Useful for finding relevant past solutions.',
     inputSchema: {
       type: 'object',
       properties: {
         query: { type: 'string', description: 'Query to find similar items for' },
-        topK: { type: 'number', description: 'Number of results (default: 5)' }
+        topK: { type: 'number', description: 'Number of results (default: 5)' },
       },
-      required: ['query']
-    }
+      required: ['query'],
+    },
   },
   {
     name: 'record_feedback',
-    description: 'Record user feedback on an action. The AI uses this to improve future suggestions (reinforcement learning).',
+    description:
+      'Record user feedback on an action. The AI uses this to improve future suggestions (reinforcement learning).',
     inputSchema: {
       type: 'object',
       properties: {
         actionId: { type: 'string', description: 'ID of the action to rate' },
         rating: { type: 'number', description: 'Rating 1-5 (1=bad, 5=excellent)' },
-        comment: { type: 'string', description: 'Optional feedback comment' }
+        comment: { type: 'string', description: 'Optional feedback comment' },
       },
-      required: ['actionId', 'rating']
-    }
+      required: ['actionId', 'rating'],
+    },
   },
   {
     name: 'get_ai_suggestions',
-    description: 'Get proactive AI suggestions based on current context, learned patterns, and web knowledge.',
+    description:
+      'Get proactive AI suggestions based on current context, learned patterns, and web knowledge.',
     inputSchema: {
       type: 'object',
       properties: {
         projectPath: { type: 'string', description: 'Current project path' },
         currentAction: { type: 'string', description: 'Action being performed' },
-        error: { type: 'string', description: 'Current error if any' }
-      }
-    }
+        error: { type: 'string', description: 'Current error if any' },
+      },
+    },
   },
   {
     name: 'auto_learn_web',
-    description: 'Automatically fetch and learn from web resources (Stack Overflow, GitHub) for specified topics.',
+    description:
+      'Automatically fetch and learn from web resources (Stack Overflow, GitHub) for specified topics.',
     inputSchema: {
       type: 'object',
       properties: {
-        topics: { type: 'array', items: { type: 'string' }, description: 'Topics to learn about (e.g., ["react", "typescript"])' }
-      }
-    }
+        topics: {
+          type: 'array',
+          items: { type: 'string' },
+          description: 'Topics to learn about (e.g., ["react", "typescript"])',
+        },
+      },
+    },
   },
   // v2.5 ULTIMATE TOOLS
-  { name: 'deploy_vercel', description: 'Deploy to Vercel', inputSchema: { type: 'object', properties: { projectPath: { type: 'string' }, token: { type: 'string' }, prod: { type: 'boolean' } }, required: ['projectPath'] } },
-  { name: 'deploy_netlify', description: 'Deploy to Netlify', inputSchema: { type: 'object', properties: { projectPath: { type: 'string' }, token: { type: 'string' }, prod: { type: 'boolean' } }, required: ['projectPath'] } },
-  { name: 'deploy_railway', description: 'Deploy to Railway', inputSchema: { type: 'object', properties: { projectPath: { type: 'string' }, token: { type: 'string' } }, required: ['projectPath'] } },
-  { name: 'deploy_docker_hub', description: 'Push to Docker Hub', inputSchema: { type: 'object', properties: { imageName: { type: 'string' }, tag: { type: 'string' } }, required: ['imageName'] } },
-  { name: 'setup_github_actions', description: 'Create GitHub Actions CI', inputSchema: { type: 'object', properties: { projectPath: { type: 'string' }, type: { type: 'string' } }, required: ['projectPath'] } },
-  { name: 'setup_gitlab_ci', description: 'Create GitLab CI', inputSchema: { type: 'object', properties: { projectPath: { type: 'string' } }, required: ['projectPath'] } },
-  { name: 'run_pipeline', description: 'Trigger CI/CD pipeline', inputSchema: { type: 'object', properties: { projectPath: { type: 'string' } }, required: ['projectPath'] } },
-  { name: 'check_pipeline_status', description: 'Check pipeline status', inputSchema: { type: 'object', properties: { projectPath: { type: 'string' } } } },
-  { name: 'refactor_code', description: 'Auto-refactor code', inputSchema: { type: 'object', properties: { operation: { type: 'string' } }, required: ['operation'] } },
-  { name: 'generate_docs', description: 'Generate documentation', inputSchema: { type: 'object', properties: { projectPath: { type: 'string' } }, required: ['projectPath'] } },
-  { name: 'code_review', description: 'Automated code review', inputSchema: { type: 'object', properties: { projectPath: { type: 'string' } }, required: ['projectPath'] } },
-  { name: 'find_dead_code', description: 'Find unused code', inputSchema: { type: 'object', properties: { projectPath: { type: 'string' } }, required: ['projectPath'] } },
-  { name: 'analyze_complexity', description: 'Code complexity analysis', inputSchema: { type: 'object', properties: { projectPath: { type: 'string' } }, required: ['projectPath'] } },
-  { name: 'security_audit', description: 'Full security audit', inputSchema: { type: 'object', properties: { projectPath: { type: 'string' } }, required: ['projectPath'] } },
-  { name: 'update_dependencies', description: 'Update deps safely', inputSchema: { type: 'object', properties: { projectPath: { type: 'string' }, mode: { type: 'string' } }, required: ['projectPath'] } },
-  { name: 'check_licenses', description: 'License compliance', inputSchema: { type: 'object', properties: { projectPath: { type: 'string' } }, required: ['projectPath'] } },
-  { name: 'scan_secrets', description: 'Scan for secrets', inputSchema: { type: 'object', properties: { projectPath: { type: 'string' } }, required: ['projectPath'] } },
-  { name: 'test_api', description: 'API endpoint testing', inputSchema: { type: 'object', properties: { baseUrl: { type: 'string' } }, required: ['baseUrl'] } },
-  { name: 'mock_server', description: 'Start mock server', inputSchema: { type: 'object', properties: { port: { type: 'number' } } } },
-  { name: 'generate_api_docs', description: 'Generate OpenAPI docs', inputSchema: { type: 'object', properties: { projectPath: { type: 'string' } }, required: ['projectPath'] } },
-  { name: 'save_template', description: 'Save as template', inputSchema: { type: 'object', properties: { projectPath: { type: 'string' }, templateName: { type: 'string' } }, required: ['projectPath', 'templateName'] } },
-  { name: 'list_templates', description: 'List templates', inputSchema: { type: 'object', properties: {} } },
-  { name: 'use_template', description: 'Use template', inputSchema: { type: 'object', properties: { templateName: { type: 'string' } }, required: ['templateName'] } },
-  { name: 'notify', description: 'Desktop notification', inputSchema: { type: 'object', properties: { title: { type: 'string' }, message: { type: 'string' } }, required: ['title', 'message'] } },
-  { name: 'send_webhook', description: 'Send webhook', inputSchema: { type: 'object', properties: { url: { type: 'string' } }, required: ['url'] } },
-  { name: 'schedule_task', description: 'Schedule task', inputSchema: { type: 'object', properties: { taskName: { type: 'string' }, command: { type: 'string' } }, required: ['taskName', 'command'] } },
-  { name: 'file_diff', description: 'Compare files', inputSchema: { type: 'object', properties: { file1: { type: 'string' }, file2: { type: 'string' } }, required: ['file1', 'file2'] } },
-  { name: 'file_merge', description: 'Git merge', inputSchema: { type: 'object', properties: { projectPath: { type: 'string' }, source: { type: 'string' } }, required: ['projectPath', 'source'] } },
-  { name: 'bulk_rename', description: 'Bulk rename', inputSchema: { type: 'object', properties: { projectPath: { type: 'string' }, pattern: { type: 'string' }, replacement: { type: 'string' } }, required: ['projectPath', 'pattern', 'replacement'] } },
-  { name: 'find_replace_all', description: 'Find/replace all', inputSchema: { type: 'object', properties: { projectPath: { type: 'string' }, find: { type: 'string' }, replace: { type: 'string' } }, required: ['projectPath', 'find', 'replace'] } },
-  { name: 'analyze_logs', description: 'Analyze logs', inputSchema: { type: 'object', properties: { logPath: { type: 'string' } }, required: ['logPath'] } },
-  { name: 'tail_logs', description: 'Tail logs', inputSchema: { type: 'object', properties: { logPath: { type: 'string' } }, required: ['logPath'] } },
-  { name: 'search_logs', description: 'Search logs', inputSchema: { type: 'object', properties: { logDir: { type: 'string' }, pattern: { type: 'string' } }, required: ['logDir', 'pattern'] } },
-  { name: 'benchmark_project', description: 'Run benchmarks', inputSchema: { type: 'object', properties: { projectPath: { type: 'string' } }, required: ['projectPath'] } },
-  { name: 'profile_app', description: 'Profile app', inputSchema: { type: 'object', properties: { projectPath: { type: 'string' } }, required: ['projectPath'] } },
-  { name: 'analyze_bundle', description: 'Analyze bundle', inputSchema: { type: 'object', properties: { projectPath: { type: 'string' } }, required: ['projectPath'] } },
-  { name: 'switch_project', description: 'Switch project', inputSchema: { type: 'object', properties: { projectPath: { type: 'string' } }, required: ['projectPath'] } },
-  { name: 'list_projects', description: 'List projects', inputSchema: { type: 'object', properties: {} } },
-  { name: 'project_health', description: 'Project health', inputSchema: { type: 'object', properties: { projectPath: { type: 'string' } }, required: ['projectPath'] } },
-  { name: 'cleanup_project', description: 'Cleanup project', inputSchema: { type: 'object', properties: { projectPath: { type: 'string' } }, required: ['projectPath'] } },
+  {
+    name: 'deploy_vercel',
+    description: 'Deploy to Vercel',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        projectPath: { type: 'string' },
+        token: { type: 'string' },
+        prod: { type: 'boolean' },
+      },
+      required: ['projectPath'],
+    },
+  },
+  {
+    name: 'deploy_netlify',
+    description: 'Deploy to Netlify',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        projectPath: { type: 'string' },
+        token: { type: 'string' },
+        prod: { type: 'boolean' },
+      },
+      required: ['projectPath'],
+    },
+  },
+  {
+    name: 'deploy_railway',
+    description: 'Deploy to Railway',
+    inputSchema: {
+      type: 'object',
+      properties: { projectPath: { type: 'string' }, token: { type: 'string' } },
+      required: ['projectPath'],
+    },
+  },
+  {
+    name: 'deploy_docker_hub',
+    description: 'Push to Docker Hub',
+    inputSchema: {
+      type: 'object',
+      properties: { imageName: { type: 'string' }, tag: { type: 'string' } },
+      required: ['imageName'],
+    },
+  },
+  {
+    name: 'setup_github_actions',
+    description: 'Create GitHub Actions CI',
+    inputSchema: {
+      type: 'object',
+      properties: { projectPath: { type: 'string' }, type: { type: 'string' } },
+      required: ['projectPath'],
+    },
+  },
+  {
+    name: 'setup_gitlab_ci',
+    description: 'Create GitLab CI',
+    inputSchema: {
+      type: 'object',
+      properties: { projectPath: { type: 'string' } },
+      required: ['projectPath'],
+    },
+  },
+  {
+    name: 'run_pipeline',
+    description: 'Trigger CI/CD pipeline',
+    inputSchema: {
+      type: 'object',
+      properties: { projectPath: { type: 'string' } },
+      required: ['projectPath'],
+    },
+  },
+  {
+    name: 'check_pipeline_status',
+    description: 'Check pipeline status',
+    inputSchema: { type: 'object', properties: { projectPath: { type: 'string' } } },
+  },
+  {
+    name: 'refactor_code',
+    description: 'Auto-refactor code',
+    inputSchema: {
+      type: 'object',
+      properties: { operation: { type: 'string' } },
+      required: ['operation'],
+    },
+  },
+  {
+    name: 'generate_docs',
+    description: 'Generate documentation',
+    inputSchema: {
+      type: 'object',
+      properties: { projectPath: { type: 'string' } },
+      required: ['projectPath'],
+    },
+  },
+  {
+    name: 'code_review',
+    description: 'Automated code review',
+    inputSchema: {
+      type: 'object',
+      properties: { projectPath: { type: 'string' } },
+      required: ['projectPath'],
+    },
+  },
+  {
+    name: 'find_dead_code',
+    description: 'Find unused code',
+    inputSchema: {
+      type: 'object',
+      properties: { projectPath: { type: 'string' } },
+      required: ['projectPath'],
+    },
+  },
+  {
+    name: 'analyze_complexity',
+    description: 'Code complexity analysis',
+    inputSchema: {
+      type: 'object',
+      properties: { projectPath: { type: 'string' } },
+      required: ['projectPath'],
+    },
+  },
+  {
+    name: 'security_audit',
+    description: 'Full security audit',
+    inputSchema: {
+      type: 'object',
+      properties: { projectPath: { type: 'string' } },
+      required: ['projectPath'],
+    },
+  },
+  {
+    name: 'update_dependencies',
+    description: 'Update deps safely',
+    inputSchema: {
+      type: 'object',
+      properties: { projectPath: { type: 'string' }, mode: { type: 'string' } },
+      required: ['projectPath'],
+    },
+  },
+  {
+    name: 'check_licenses',
+    description: 'License compliance',
+    inputSchema: {
+      type: 'object',
+      properties: { projectPath: { type: 'string' } },
+      required: ['projectPath'],
+    },
+  },
+  {
+    name: 'scan_secrets',
+    description: 'Scan for secrets',
+    inputSchema: {
+      type: 'object',
+      properties: { projectPath: { type: 'string' } },
+      required: ['projectPath'],
+    },
+  },
+  {
+    name: 'test_api',
+    description: 'API endpoint testing',
+    inputSchema: {
+      type: 'object',
+      properties: { baseUrl: { type: 'string' } },
+      required: ['baseUrl'],
+    },
+  },
+  {
+    name: 'mock_server',
+    description: 'Start mock server',
+    inputSchema: { type: 'object', properties: { port: { type: 'number' } } },
+  },
+  {
+    name: 'generate_api_docs',
+    description: 'Generate OpenAPI docs',
+    inputSchema: {
+      type: 'object',
+      properties: { projectPath: { type: 'string' } },
+      required: ['projectPath'],
+    },
+  },
+  {
+    name: 'save_template',
+    description: 'Save as template',
+    inputSchema: {
+      type: 'object',
+      properties: { projectPath: { type: 'string' }, templateName: { type: 'string' } },
+      required: ['projectPath', 'templateName'],
+    },
+  },
+  {
+    name: 'list_templates',
+    description: 'List templates',
+    inputSchema: { type: 'object', properties: {} },
+  },
+  {
+    name: 'use_template',
+    description: 'Use template',
+    inputSchema: {
+      type: 'object',
+      properties: { templateName: { type: 'string' } },
+      required: ['templateName'],
+    },
+  },
+  {
+    name: 'notify',
+    description: 'Desktop notification',
+    inputSchema: {
+      type: 'object',
+      properties: { title: { type: 'string' }, message: { type: 'string' } },
+      required: ['title', 'message'],
+    },
+  },
+  {
+    name: 'send_webhook',
+    description: 'Send webhook',
+    inputSchema: { type: 'object', properties: { url: { type: 'string' } }, required: ['url'] },
+  },
+  {
+    name: 'schedule_task',
+    description: 'Schedule task',
+    inputSchema: {
+      type: 'object',
+      properties: { taskName: { type: 'string' }, command: { type: 'string' } },
+      required: ['taskName', 'command'],
+    },
+  },
+  {
+    name: 'file_diff',
+    description: 'Compare files',
+    inputSchema: {
+      type: 'object',
+      properties: { file1: { type: 'string' }, file2: { type: 'string' } },
+      required: ['file1', 'file2'],
+    },
+  },
+  {
+    name: 'file_merge',
+    description: 'Git merge',
+    inputSchema: {
+      type: 'object',
+      properties: { projectPath: { type: 'string' }, source: { type: 'string' } },
+      required: ['projectPath', 'source'],
+    },
+  },
+  {
+    name: 'bulk_rename',
+    description: 'Bulk rename',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        projectPath: { type: 'string' },
+        pattern: { type: 'string' },
+        replacement: { type: 'string' },
+      },
+      required: ['projectPath', 'pattern', 'replacement'],
+    },
+  },
+  {
+    name: 'find_replace_all',
+    description: 'Find/replace all',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        projectPath: { type: 'string' },
+        find: { type: 'string' },
+        replace: { type: 'string' },
+      },
+      required: ['projectPath', 'find', 'replace'],
+    },
+  },
+  {
+    name: 'analyze_logs',
+    description: 'Analyze logs',
+    inputSchema: {
+      type: 'object',
+      properties: { logPath: { type: 'string' } },
+      required: ['logPath'],
+    },
+  },
+  {
+    name: 'tail_logs',
+    description: 'Tail logs',
+    inputSchema: {
+      type: 'object',
+      properties: { logPath: { type: 'string' } },
+      required: ['logPath'],
+    },
+  },
+  {
+    name: 'search_logs',
+    description: 'Search logs',
+    inputSchema: {
+      type: 'object',
+      properties: { logDir: { type: 'string' }, pattern: { type: 'string' } },
+      required: ['logDir', 'pattern'],
+    },
+  },
+  {
+    name: 'benchmark_project',
+    description: 'Run benchmarks',
+    inputSchema: {
+      type: 'object',
+      properties: { projectPath: { type: 'string' } },
+      required: ['projectPath'],
+    },
+  },
+  {
+    name: 'profile_app',
+    description: 'Profile app',
+    inputSchema: {
+      type: 'object',
+      properties: { projectPath: { type: 'string' } },
+      required: ['projectPath'],
+    },
+  },
+  {
+    name: 'analyze_bundle',
+    description: 'Analyze bundle',
+    inputSchema: {
+      type: 'object',
+      properties: { projectPath: { type: 'string' } },
+      required: ['projectPath'],
+    },
+  },
+  {
+    name: 'switch_project',
+    description: 'Switch project',
+    inputSchema: {
+      type: 'object',
+      properties: { projectPath: { type: 'string' } },
+      required: ['projectPath'],
+    },
+  },
+  {
+    name: 'list_projects',
+    description: 'List projects',
+    inputSchema: { type: 'object', properties: {} },
+  },
+  {
+    name: 'project_health',
+    description: 'Project health',
+    inputSchema: {
+      type: 'object',
+      properties: { projectPath: { type: 'string' } },
+      required: ['projectPath'],
+    },
+  },
+  {
+    name: 'cleanup_project',
+    description: 'Cleanup project',
+    inputSchema: {
+      type: 'object',
+      properties: { projectPath: { type: 'string' } },
+      required: ['projectPath'],
+    },
+  },
 
   // ═══════════════════════════════════════════════════════════════════════════
   // v2.6 DATA & PERSISTENCE TOOLS
   // ═══════════════════════════════════════════════════════════════════════════
 
   // Database Tools
-  { name: 'db_connect', description: 'Connect to database (SQLite, PostgreSQL, MySQL)', inputSchema: { type: 'object', properties: { type: { type: 'string', enum: ['sqlite', 'postgres', 'mysql'] }, name: { type: 'string' }, host: { type: 'string' }, port: { type: 'number' }, user: { type: 'string' }, password: { type: 'string' } }, required: ['name'] } },
-  { name: 'db_schema', description: 'View/create/modify database schemas', inputSchema: { type: 'object', properties: { connectionId: { type: 'string' }, action: { type: 'string', enum: ['view', 'create', 'modify', 'drop'] }, table: { type: 'string' }, schema: { type: 'object' } }, required: ['connectionId', 'action'] } },
-  { name: 'db_backup', description: 'Backup database', inputSchema: { type: 'object', properties: { connectionId: { type: 'string' }, outputPath: { type: 'string' }, compress: { type: 'boolean' } }, required: ['connectionId'] } },
-  { name: 'db_restore', description: 'Restore database from backup', inputSchema: { type: 'object', properties: { connectionId: { type: 'string' }, backupPath: { type: 'string' }, confirm: { type: 'boolean' } }, required: ['connectionId', 'backupPath'] } },
-  { name: 'db_query_direct', description: 'Execute SQL query directly', inputSchema: { type: 'object', properties: { connectionId: { type: 'string' }, sql: { type: 'string' }, params: { type: 'array' } }, required: ['connectionId', 'sql'] } },
+  {
+    name: 'db_connect',
+    description: 'Connect to database (SQLite, PostgreSQL, MySQL)',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        type: { type: 'string', enum: ['sqlite', 'postgres', 'mysql'] },
+        name: { type: 'string' },
+        host: { type: 'string' },
+        port: { type: 'number' },
+        user: { type: 'string' },
+        password: { type: 'string' },
+      },
+      required: ['name'],
+    },
+  },
+  {
+    name: 'db_schema',
+    description: 'View/create/modify database schemas',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        connectionId: { type: 'string' },
+        action: { type: 'string', enum: ['view', 'create', 'modify', 'drop'] },
+        table: { type: 'string' },
+        schema: { type: 'object' },
+      },
+      required: ['connectionId', 'action'],
+    },
+  },
+  {
+    name: 'db_backup',
+    description: 'Backup database',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        connectionId: { type: 'string' },
+        outputPath: { type: 'string' },
+        compress: { type: 'boolean' },
+      },
+      required: ['connectionId'],
+    },
+  },
+  {
+    name: 'db_restore',
+    description: 'Restore database from backup',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        connectionId: { type: 'string' },
+        backupPath: { type: 'string' },
+        confirm: { type: 'boolean' },
+      },
+      required: ['connectionId', 'backupPath'],
+    },
+  },
+  {
+    name: 'db_query_direct',
+    description: 'Execute SQL query directly',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        connectionId: { type: 'string' },
+        sql: { type: 'string' },
+        params: { type: 'array' },
+      },
+      required: ['connectionId', 'sql'],
+    },
+  },
 
   // Embedding Tools
-  { name: 'embed_text', description: 'Generate vector embeddings from text', inputSchema: { type: 'object', properties: { text: { oneOf: [{ type: 'string' }, { type: 'array' }] }, model: { type: 'string' }, cache: { type: 'boolean' } }, required: ['text'] } },
-  { name: 'semantic_search', description: 'Search codebase using semantic similarity', inputSchema: { type: 'object', properties: { query: { type: 'string' }, projectPath: { type: 'string' }, topK: { type: 'number' }, threshold: { type: 'number' }, fileTypes: { type: 'array' } }, required: ['query', 'projectPath'] } },
-  { name: 'index_project', description: 'Index project for semantic search', inputSchema: { type: 'object', properties: { path: { type: 'string' }, fileTypes: { type: 'array' }, chunkSize: { type: 'number' }, incremental: { type: 'boolean' }, excludePatterns: { type: 'array' } }, required: ['path'] } },
+  {
+    name: 'embed_text',
+    description: 'Generate vector embeddings from text',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        text: { oneOf: [{ type: 'string' }, { type: 'array' }] },
+        model: { type: 'string' },
+        cache: { type: 'boolean' },
+      },
+      required: ['text'],
+    },
+  },
+  {
+    name: 'semantic_search',
+    description: 'Search codebase using semantic similarity',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        query: { type: 'string' },
+        projectPath: { type: 'string' },
+        topK: { type: 'number' },
+        threshold: { type: 'number' },
+        fileTypes: { type: 'array' },
+      },
+      required: ['query', 'projectPath'],
+    },
+  },
+  {
+    name: 'index_project',
+    description: 'Index project for semantic search',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        path: { type: 'string' },
+        fileTypes: { type: 'array' },
+        chunkSize: { type: 'number' },
+        incremental: { type: 'boolean' },
+        excludePatterns: { type: 'array' },
+      },
+      required: ['path'],
+    },
+  },
 
   // Context Tools
-  { name: 'save_context', description: 'Save current session context', inputSchema: { type: 'object', properties: { name: { type: 'string' }, includeHistory: { type: 'boolean' }, includePreferences: { type: 'boolean' }, project: { type: 'object' }, message: { type: 'string' }, task: { type: 'object' }, preference: { type: 'object' } } } },
-  { name: 'load_context', description: 'Load previous session context', inputSchema: { type: 'object', properties: { name: { type: 'string' }, merge: { type: 'boolean' }, loadHistory: { type: 'boolean' }, loadPreferences: { type: 'boolean' } } } },
-  { name: 'clear_context', description: 'Clear session context data', inputSchema: { type: 'object', properties: { target: { type: 'string', enum: ['all', 'history', 'tasks', 'preferences', 'memory', 'file'] }, name: { type: 'string' }, confirm: { type: 'boolean' } } } },
-  { name: 'get_context', description: 'Get current session context', inputSchema: { type: 'object', properties: { section: { type: 'string', enum: ['all', 'session', 'project', 'conversation', 'preferences', 'memory'] } } } },
-  { name: 'list_contexts', description: 'List all saved context files', inputSchema: { type: 'object', properties: {} } },
+  {
+    name: 'save_context',
+    description: 'Save current session context',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        name: { type: 'string' },
+        includeHistory: { type: 'boolean' },
+        includePreferences: { type: 'boolean' },
+        project: { type: 'object' },
+        message: { type: 'string' },
+        task: { type: 'object' },
+        preference: { type: 'object' },
+      },
+    },
+  },
+  {
+    name: 'load_context',
+    description: 'Load previous session context',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        name: { type: 'string' },
+        merge: { type: 'boolean' },
+        loadHistory: { type: 'boolean' },
+        loadPreferences: { type: 'boolean' },
+      },
+    },
+  },
+  {
+    name: 'clear_context',
+    description: 'Clear session context data',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        target: {
+          type: 'string',
+          enum: ['all', 'history', 'tasks', 'preferences', 'memory', 'file'],
+        },
+        name: { type: 'string' },
+        confirm: { type: 'boolean' },
+      },
+    },
+  },
+  {
+    name: 'get_context',
+    description: 'Get current session context',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        section: {
+          type: 'string',
+          enum: ['all', 'session', 'project', 'conversation', 'preferences', 'memory'],
+        },
+      },
+    },
+  },
+  {
+    name: 'list_contexts',
+    description: 'List all saved context files',
+    inputSchema: { type: 'object', properties: {} },
+  },
 
   // Recovery Tools
-  { name: 'create_checkpoint', description: 'Create rollback checkpoint', inputSchema: { type: 'object', properties: { name: { type: 'string' }, projectPath: { type: 'string' }, includeGit: { type: 'boolean' }, files: { type: 'array' }, description: { type: 'string' } }, required: ['projectPath'] } },
-  { name: 'rollback', description: 'Rollback to checkpoint', inputSchema: { type: 'object', properties: { checkpointName: { type: 'string' }, restoreGit: { type: 'boolean' }, files: { type: 'array' }, confirm: { type: 'boolean' } }, required: ['checkpointName'] } },
-  { name: 'auto_recover', description: 'Auto-recover from error', inputSchema: { type: 'object', properties: { error: { type: 'string' }, projectPath: { type: 'string' }, dryRun: { type: 'boolean' }, maxRetries: { type: 'number' } }, required: ['error'] } },
-  { name: 'list_checkpoints', description: 'List all checkpoints', inputSchema: { type: 'object', properties: { projectPath: { type: 'string' } } } },
+  {
+    name: 'create_checkpoint',
+    description: 'Create rollback checkpoint',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        name: { type: 'string' },
+        projectPath: { type: 'string' },
+        includeGit: { type: 'boolean' },
+        files: { type: 'array' },
+        description: { type: 'string' },
+      },
+      required: ['projectPath'],
+    },
+  },
+  {
+    name: 'rollback',
+    description: 'Rollback to checkpoint',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        checkpointName: { type: 'string' },
+        restoreGit: { type: 'boolean' },
+        files: { type: 'array' },
+        confirm: { type: 'boolean' },
+      },
+      required: ['checkpointName'],
+    },
+  },
+  {
+    name: 'auto_recover',
+    description: 'Auto-recover from error',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        error: { type: 'string' },
+        projectPath: { type: 'string' },
+        dryRun: { type: 'boolean' },
+        maxRetries: { type: 'number' },
+      },
+      required: ['error'],
+    },
+  },
+  {
+    name: 'list_checkpoints',
+    description: 'List all checkpoints',
+    inputSchema: { type: 'object', properties: { projectPath: { type: 'string' } } },
+  },
 
   // Plugin Tools
-  { name: 'install_plugin', description: 'Install autopilot plugin', inputSchema: { type: 'object', properties: { source: { type: 'string' }, name: { type: 'string' }, version: { type: 'string' }, force: { type: 'boolean' } }, required: ['source'] } },
-  { name: 'list_plugins', description: 'List installed plugins', inputSchema: { type: 'object', properties: { includeTools: { type: 'boolean' } } } },
-  { name: 'uninstall_plugin', description: 'Uninstall plugin', inputSchema: { type: 'object', properties: { name: { type: 'string' }, confirm: { type: 'boolean' } }, required: ['name'] } },
-  { name: 'create_plugin', description: 'Create plugin template', inputSchema: { type: 'object', properties: { name: { type: 'string' }, outputPath: { type: 'string' }, tools: { type: 'array' } }, required: ['name'] } },
+  {
+    name: 'install_plugin',
+    description: 'Install autopilot plugin',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        source: { type: 'string' },
+        name: { type: 'string' },
+        version: { type: 'string' },
+        force: { type: 'boolean' },
+      },
+      required: ['source'],
+    },
+  },
+  {
+    name: 'list_plugins',
+    description: 'List installed plugins',
+    inputSchema: { type: 'object', properties: { includeTools: { type: 'boolean' } } },
+  },
+  {
+    name: 'uninstall_plugin',
+    description: 'Uninstall plugin',
+    inputSchema: {
+      type: 'object',
+      properties: { name: { type: 'string' }, confirm: { type: 'boolean' } },
+      required: ['name'],
+    },
+  },
+  {
+    name: 'create_plugin',
+    description: 'Create plugin template',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        name: { type: 'string' },
+        outputPath: { type: 'string' },
+        tools: { type: 'array' },
+      },
+      required: ['name'],
+    },
+  },
 
   // ═══════════════════════════════════════════════════════════════════════════
   // v3.0 ENTERPRISE TOOLS
   // ═══════════════════════════════════════════════════════════════════════════
 
   // Workflow Tools
-  { name: 'create_workflow', description: 'Create automation workflow', inputSchema: { type: 'object', properties: { name: { type: 'string' }, description: { type: 'string' }, steps: { type: 'array' }, variables: { type: 'object' } }, required: ['name', 'steps'] } },
-  { name: 'run_workflow', description: 'Execute saved workflow', inputSchema: { type: 'object', properties: { workflowId: { type: 'string' }, variables: { type: 'object' }, dryRun: { type: 'boolean' } }, required: ['workflowId'] } },
-  { name: 'edit_workflow', description: 'Modify existing workflow', inputSchema: { type: 'object', properties: { workflowId: { type: 'string' }, updates: { type: 'object' }, addStep: { type: 'object' }, removeStep: { type: 'string' } }, required: ['workflowId'] } },
-  { name: 'share_workflow', description: 'Export/import workflows', inputSchema: { type: 'object', properties: { action: { type: 'string', enum: ['export', 'import', 'list'] }, workflowId: { type: 'string' }, outputPath: { type: 'string' } }, required: ['action'] } },
-  { name: 'workflow_templates', description: 'Pre-built workflow templates', inputSchema: { type: 'object', properties: { action: { type: 'string', enum: ['list', 'use', 'preview'] }, templateName: { type: 'string' } } } },
+  {
+    name: 'create_workflow',
+    description: 'Create automation workflow',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        name: { type: 'string' },
+        description: { type: 'string' },
+        steps: { type: 'array' },
+        variables: { type: 'object' },
+      },
+      required: ['name', 'steps'],
+    },
+  },
+  {
+    name: 'run_workflow',
+    description: 'Execute saved workflow',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        workflowId: { type: 'string' },
+        variables: { type: 'object' },
+        dryRun: { type: 'boolean' },
+      },
+      required: ['workflowId'],
+    },
+  },
+  {
+    name: 'edit_workflow',
+    description: 'Modify existing workflow',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        workflowId: { type: 'string' },
+        updates: { type: 'object' },
+        addStep: { type: 'object' },
+        removeStep: { type: 'string' },
+      },
+      required: ['workflowId'],
+    },
+  },
+  {
+    name: 'share_workflow',
+    description: 'Export/import workflows',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        action: { type: 'string', enum: ['export', 'import', 'list'] },
+        workflowId: { type: 'string' },
+        outputPath: { type: 'string' },
+      },
+      required: ['action'],
+    },
+  },
+  {
+    name: 'workflow_templates',
+    description: 'Pre-built workflow templates',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        action: { type: 'string', enum: ['list', 'use', 'preview'] },
+        templateName: { type: 'string' },
+      },
+    },
+  },
 
   // Team Tools
-  { name: 'create_team', description: 'Create team workspace', inputSchema: { type: 'object', properties: { name: { type: 'string' }, description: { type: 'string' }, settings: { type: 'object' } }, required: ['name'] } },
-  { name: 'invite_member', description: 'Invite team member', inputSchema: { type: 'object', properties: { teamId: { type: 'string' }, email: { type: 'string' }, role: { type: 'string' } }, required: ['teamId', 'email'] } },
-  { name: 'share_settings', description: 'Share settings with team', inputSchema: { type: 'object', properties: { teamId: { type: 'string' }, action: { type: 'string' }, settingName: { type: 'string' }, settingValue: { type: 'object' } }, required: ['teamId'] } },
-  { name: 'team_templates', description: 'Shared team templates', inputSchema: { type: 'object', properties: { teamId: { type: 'string' }, action: { type: 'string' }, templateName: { type: 'string' } }, required: ['teamId'] } },
-  { name: 'activity_log', description: 'Team activity history', inputSchema: { type: 'object', properties: { teamId: { type: 'string' }, limit: { type: 'number' }, filter: { type: 'string' } }, required: ['teamId'] } },
-  { name: 'list_teams', description: 'List all teams', inputSchema: { type: 'object', properties: {} } },
+  {
+    name: 'create_team',
+    description: 'Create team workspace',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        name: { type: 'string' },
+        description: { type: 'string' },
+        settings: { type: 'object' },
+      },
+      required: ['name'],
+    },
+  },
+  {
+    name: 'invite_member',
+    description: 'Invite team member',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        teamId: { type: 'string' },
+        email: { type: 'string' },
+        role: { type: 'string' },
+      },
+      required: ['teamId', 'email'],
+    },
+  },
+  {
+    name: 'share_settings',
+    description: 'Share settings with team',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        teamId: { type: 'string' },
+        action: { type: 'string' },
+        settingName: { type: 'string' },
+        settingValue: { type: 'object' },
+      },
+      required: ['teamId'],
+    },
+  },
+  {
+    name: 'team_templates',
+    description: 'Shared team templates',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        teamId: { type: 'string' },
+        action: { type: 'string' },
+        templateName: { type: 'string' },
+      },
+      required: ['teamId'],
+    },
+  },
+  {
+    name: 'activity_log',
+    description: 'Team activity history',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        teamId: { type: 'string' },
+        limit: { type: 'number' },
+        filter: { type: 'string' },
+      },
+      required: ['teamId'],
+    },
+  },
+  {
+    name: 'list_teams',
+    description: 'List all teams',
+    inputSchema: { type: 'object', properties: {} },
+  },
 
   // Cloud Tools
-  { name: 'cloud_login', description: 'Authenticate with cloud', inputSchema: { type: 'object', properties: { provider: { type: 'string' }, apiKey: { type: 'string' }, email: { type: 'string' } } } },
-  { name: 'sync_settings', description: 'Sync settings to cloud', inputSchema: { type: 'object', properties: { direction: { type: 'string', enum: ['push', 'pull', 'merge'] } } } },
-  { name: 'sync_templates', description: 'Sync templates to cloud', inputSchema: { type: 'object', properties: { direction: { type: 'string' }, templateName: { type: 'string' } } } },
-  { name: 'sync_history', description: 'Sync history to cloud', inputSchema: { type: 'object', properties: { limit: { type: 'number' }, since: { type: 'string' } } } },
+  {
+    name: 'cloud_login',
+    description: 'Authenticate with cloud',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        provider: { type: 'string' },
+        apiKey: { type: 'string' },
+        email: { type: 'string' },
+      },
+    },
+  },
+  {
+    name: 'sync_settings',
+    description: 'Sync settings to cloud',
+    inputSchema: {
+      type: 'object',
+      properties: { direction: { type: 'string', enum: ['push', 'pull', 'merge'] } },
+    },
+  },
+  {
+    name: 'sync_templates',
+    description: 'Sync templates to cloud',
+    inputSchema: {
+      type: 'object',
+      properties: { direction: { type: 'string' }, templateName: { type: 'string' } },
+    },
+  },
+  {
+    name: 'sync_history',
+    description: 'Sync history to cloud',
+    inputSchema: {
+      type: 'object',
+      properties: { limit: { type: 'number' }, since: { type: 'string' } },
+    },
+  },
 
   // Model Tools
-  { name: 'add_model', description: 'Add custom AI model', inputSchema: { type: 'object', properties: { name: { type: 'string' }, type: { type: 'string', enum: ['ollama', 'lmstudio', 'openai', 'anthropic', 'custom'] }, endpoint: { type: 'string' }, apiKey: { type: 'string' } }, required: ['name', 'type'] } },
-  { name: 'switch_model', description: 'Switch AI model', inputSchema: { type: 'object', properties: { modelId: { type: 'string' } }, required: ['modelId'] } },
-  { name: 'model_benchmark', description: 'Benchmark AI models', inputSchema: { type: 'object', properties: { modelId: { type: 'string' }, testType: { type: 'string' } } } },
-  { name: 'fine_tune', description: 'Fine-tune AI model', inputSchema: { type: 'object', properties: { modelId: { type: 'string' }, datasetPath: { type: 'string' }, outputName: { type: 'string' } }, required: ['modelId', 'datasetPath'] } },
-  { name: 'list_models', description: 'List configured models', inputSchema: { type: 'object', properties: {} } },
+  {
+    name: 'add_model',
+    description: 'Add custom AI model',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        name: { type: 'string' },
+        type: { type: 'string', enum: ['ollama', 'lmstudio', 'openai', 'anthropic', 'custom'] },
+        endpoint: { type: 'string' },
+        apiKey: { type: 'string' },
+      },
+      required: ['name', 'type'],
+    },
+  },
+  {
+    name: 'switch_model',
+    description: 'Switch AI model',
+    inputSchema: {
+      type: 'object',
+      properties: { modelId: { type: 'string' } },
+      required: ['modelId'],
+    },
+  },
+  {
+    name: 'model_benchmark',
+    description: 'Benchmark AI models',
+    inputSchema: {
+      type: 'object',
+      properties: { modelId: { type: 'string' }, testType: { type: 'string' } },
+    },
+  },
+  {
+    name: 'fine_tune',
+    description: 'Fine-tune AI model',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        modelId: { type: 'string' },
+        datasetPath: { type: 'string' },
+        outputName: { type: 'string' },
+      },
+      required: ['modelId', 'datasetPath'],
+    },
+  },
+  {
+    name: 'list_models',
+    description: 'List configured models',
+    inputSchema: { type: 'object', properties: {} },
+  },
 
   // Agent Tools
-  { name: 'create_agent', description: 'Create specialized agent', inputSchema: { type: 'object', properties: { name: { type: 'string' }, specialization: { type: 'string', enum: ['code', 'test', 'docs', 'review', 'deploy', 'custom'] }, tools: { type: 'array' } }, required: ['name', 'specialization'] } },
-  { name: 'assign_task', description: 'Assign task to agent', inputSchema: { type: 'object', properties: { agentId: { type: 'string' }, task: { type: 'string' }, priority: { type: 'string' } }, required: ['agentId', 'task'] } },
-  { name: 'agent_status', description: 'Check agent status', inputSchema: { type: 'object', properties: { agentId: { type: 'string' } } } },
-  { name: 'agent_collaborate', description: 'Multi-agent collaboration', inputSchema: { type: 'object', properties: { task: { type: 'string' }, agents: { type: 'array' }, strategy: { type: 'string' } }, required: ['task'] } },
-  { name: 'list_agents', description: 'List all agents', inputSchema: { type: 'object', properties: {} } },
+  {
+    name: 'create_agent',
+    description: 'Create specialized agent',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        name: { type: 'string' },
+        specialization: {
+          type: 'string',
+          enum: ['code', 'test', 'docs', 'review', 'deploy', 'custom'],
+        },
+        tools: { type: 'array' },
+      },
+      required: ['name', 'specialization'],
+    },
+  },
+  {
+    name: 'assign_task',
+    description: 'Assign task to agent',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        agentId: { type: 'string' },
+        task: { type: 'string' },
+        priority: { type: 'string' },
+      },
+      required: ['agentId', 'task'],
+    },
+  },
+  {
+    name: 'agent_status',
+    description: 'Check agent status',
+    inputSchema: { type: 'object', properties: { agentId: { type: 'string' } } },
+  },
+  {
+    name: 'agent_collaborate',
+    description: 'Multi-agent collaboration',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        task: { type: 'string' },
+        agents: { type: 'array' },
+        strategy: { type: 'string' },
+      },
+      required: ['task'],
+    },
+  },
+  {
+    name: 'list_agents',
+    description: 'List all agents',
+    inputSchema: { type: 'object', properties: {} },
+  },
 
   // Health Tools
-  { name: 'autopilot_health', description: 'Run comprehensive health check on the autopilot system', inputSchema: { type: 'object', properties: { verbose: { type: 'boolean', description: 'Show detailed output' } } } },
-  { name: 'tool_stats', description: 'Get statistics about available tools and capabilities', inputSchema: { type: 'object', properties: {} } },
+  {
+    name: 'autopilot_health',
+    description: 'Run comprehensive health check on the autopilot system',
+    inputSchema: {
+      type: 'object',
+      properties: { verbose: { type: 'boolean', description: 'Show detailed output' } },
+    },
+  },
+  {
+    name: 'tool_stats',
+    description: 'Get statistics about available tools and capabilities',
+    inputSchema: { type: 'object', properties: {} },
+  },
 
   // v3.1 Infrastructure as Code Tools
-  { name: 'terraform_init', description: 'Initialize Terraform in project', inputSchema: { type: 'object', properties: { path: { type: 'string' }, backend: { type: 'object' }, providers: { type: 'array' } }, required: ['path'] } },
-  { name: 'terraform_plan', description: 'Preview Terraform changes', inputSchema: { type: 'object', properties: { path: { type: 'string' }, vars: { type: 'object' }, destroy: { type: 'boolean' } }, required: ['path'] } },
-  { name: 'terraform_apply', description: 'Apply Terraform changes', inputSchema: { type: 'object', properties: { path: { type: 'string' }, vars: { type: 'object' }, autoApprove: { type: 'boolean' } }, required: ['path'] } },
-  { name: 'k8s_deploy', description: 'Deploy to Kubernetes', inputSchema: { type: 'object', properties: { manifest: { type: 'string' }, namespace: { type: 'string' }, wait: { type: 'boolean' } }, required: ['manifest'] } },
-  { name: 'helm_install', description: 'Install Helm chart', inputSchema: { type: 'object', properties: { release: { type: 'string' }, chart: { type: 'string' }, namespace: { type: 'string' }, values: { type: 'object' } }, required: ['release', 'chart'] } },
+  {
+    name: 'terraform_init',
+    description: 'Initialize Terraform in project',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        path: { type: 'string' },
+        backend: { type: 'object' },
+        providers: { type: 'array' },
+      },
+      required: ['path'],
+    },
+  },
+  {
+    name: 'terraform_plan',
+    description: 'Preview Terraform changes',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        path: { type: 'string' },
+        vars: { type: 'object' },
+        destroy: { type: 'boolean' },
+      },
+      required: ['path'],
+    },
+  },
+  {
+    name: 'terraform_apply',
+    description: 'Apply Terraform changes',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        path: { type: 'string' },
+        vars: { type: 'object' },
+        autoApprove: { type: 'boolean' },
+      },
+      required: ['path'],
+    },
+  },
+  {
+    name: 'k8s_deploy',
+    description: 'Deploy to Kubernetes',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        manifest: { type: 'string' },
+        namespace: { type: 'string' },
+        wait: { type: 'boolean' },
+      },
+      required: ['manifest'],
+    },
+  },
+  {
+    name: 'helm_install',
+    description: 'Install Helm chart',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        release: { type: 'string' },
+        chart: { type: 'string' },
+        namespace: { type: 'string' },
+        values: { type: 'object' },
+      },
+      required: ['release', 'chart'],
+    },
+  },
 
   // v3.1 Advanced Testing Tools
-  { name: 'run_e2e_tests', description: 'Run E2E tests with Playwright/Cypress', inputSchema: { type: 'object', properties: { framework: { type: 'string', enum: ['playwright', 'cypress'] }, spec: { type: 'string' }, browser: { type: 'string' } }, required: ['framework'] } },
-  { name: 'visual_regression', description: 'Screenshot comparison testing', inputSchema: { type: 'object', properties: { url: { type: 'string' }, name: { type: 'string' }, baseline: { type: 'string' } }, required: ['url', 'name'] } },
-  { name: 'load_test', description: 'Run load tests with k6/Artillery', inputSchema: { type: 'object', properties: { target: { type: 'string' }, vus: { type: 'number' }, duration: { type: 'string' } }, required: ['target'] } },
-  { name: 'contract_test', description: 'API contract testing', inputSchema: { type: 'object', properties: { provider: { type: 'string' }, pactFile: { type: 'string' }, openApiSpec: { type: 'string' } }, required: ['provider'] } },
-  { name: 'mutation_test', description: 'Run mutation testing with Stryker', inputSchema: { type: 'object', properties: { path: { type: 'string' }, files: { type: 'array' } }, required: ['path'] } },
+  {
+    name: 'run_e2e_tests',
+    description: 'Run E2E tests with Playwright/Cypress',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        framework: { type: 'string', enum: ['playwright', 'cypress'] },
+        spec: { type: 'string' },
+        browser: { type: 'string' },
+      },
+      required: ['framework'],
+    },
+  },
+  {
+    name: 'visual_regression',
+    description: 'Screenshot comparison testing',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        url: { type: 'string' },
+        name: { type: 'string' },
+        baseline: { type: 'string' },
+      },
+      required: ['url', 'name'],
+    },
+  },
+  {
+    name: 'load_test',
+    description: 'Run load tests with k6/Artillery',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        target: { type: 'string' },
+        vus: { type: 'number' },
+        duration: { type: 'string' },
+      },
+      required: ['target'],
+    },
+  },
+  {
+    name: 'contract_test',
+    description: 'API contract testing',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        provider: { type: 'string' },
+        pactFile: { type: 'string' },
+        openApiSpec: { type: 'string' },
+      },
+      required: ['provider'],
+    },
+  },
+  {
+    name: 'mutation_test',
+    description: 'Run mutation testing with Stryker',
+    inputSchema: {
+      type: 'object',
+      properties: { path: { type: 'string' }, files: { type: 'array' } },
+      required: ['path'],
+    },
+  },
 
   // v3.1 Communications Tools
-  { name: 'slack_notify', description: 'Send Slack notification', inputSchema: { type: 'object', properties: { webhookUrl: { type: 'string' }, message: { type: 'string' }, blocks: { type: 'array' } }, required: ['message'] } },
-  { name: 'discord_notify', description: 'Send Discord notification', inputSchema: { type: 'object', properties: { webhookUrl: { type: 'string' }, content: { type: 'string' }, embeds: { type: 'array' } }, required: ['content'] } },
-  { name: 'teams_notify', description: 'Send MS Teams notification', inputSchema: { type: 'object', properties: { webhookUrl: { type: 'string' }, title: { type: 'string' }, text: { type: 'string' } }, required: ['text'] } },
-  { name: 'email_send', description: 'Send email via SMTP/SendGrid', inputSchema: { type: 'object', properties: { to: { type: 'string' }, subject: { type: 'string' }, body: { type: 'string' }, provider: { type: 'string' } }, required: ['to', 'subject', 'body'] } },
-  { name: 'sms_send', description: 'Send SMS via Twilio', inputSchema: { type: 'object', properties: { to: { type: 'string' }, message: { type: 'string' } }, required: ['to', 'message'] } },
+  {
+    name: 'slack_notify',
+    description: 'Send Slack notification',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        webhookUrl: { type: 'string' },
+        message: { type: 'string' },
+        blocks: { type: 'array' },
+      },
+      required: ['message'],
+    },
+  },
+  {
+    name: 'discord_notify',
+    description: 'Send Discord notification',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        webhookUrl: { type: 'string' },
+        content: { type: 'string' },
+        embeds: { type: 'array' },
+      },
+      required: ['content'],
+    },
+  },
+  {
+    name: 'teams_notify',
+    description: 'Send MS Teams notification',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        webhookUrl: { type: 'string' },
+        title: { type: 'string' },
+        text: { type: 'string' },
+      },
+      required: ['text'],
+    },
+  },
+  {
+    name: 'email_send',
+    description: 'Send email via SMTP/SendGrid',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        to: { type: 'string' },
+        subject: { type: 'string' },
+        body: { type: 'string' },
+        provider: { type: 'string' },
+      },
+      required: ['to', 'subject', 'body'],
+    },
+  },
+  {
+    name: 'sms_send',
+    description: 'Send SMS via Twilio',
+    inputSchema: {
+      type: 'object',
+      properties: { to: { type: 'string' }, message: { type: 'string' } },
+      required: ['to', 'message'],
+    },
+  },
 
   // v3.1 Project Management Tools
-  { name: 'jira_create_issue', description: 'Create Jira issue', inputSchema: { type: 'object', properties: { project: { type: 'string' }, summary: { type: 'string' }, type: { type: 'string' }, description: { type: 'string' } }, required: ['project', 'summary'] } },
-  { name: 'linear_create_task', description: 'Create Linear task', inputSchema: { type: 'object', properties: { title: { type: 'string' }, team: { type: 'string' }, description: { type: 'string' } }, required: ['title'] } },
-  { name: 'github_create_issue', description: 'Create GitHub issue', inputSchema: { type: 'object', properties: { repo: { type: 'string' }, title: { type: 'string' }, body: { type: 'string' }, labels: { type: 'array' } }, required: ['repo', 'title'] } },
-  { name: 'auto_changelog', description: 'Generate changelog from commits', inputSchema: { type: 'object', properties: { path: { type: 'string' }, from: { type: 'string' }, to: { type: 'string' }, format: { type: 'string' } } } },
-  { name: 'create_release', description: 'Create GitHub release', inputSchema: { type: 'object', properties: { repo: { type: 'string' }, tag: { type: 'string' }, name: { type: 'string' }, notes: { type: 'string' } }, required: ['repo', 'tag'] } },
+  {
+    name: 'jira_create_issue',
+    description: 'Create Jira issue',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        project: { type: 'string' },
+        summary: { type: 'string' },
+        type: { type: 'string' },
+        description: { type: 'string' },
+      },
+      required: ['project', 'summary'],
+    },
+  },
+  {
+    name: 'linear_create_task',
+    description: 'Create Linear task',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        title: { type: 'string' },
+        team: { type: 'string' },
+        description: { type: 'string' },
+      },
+      required: ['title'],
+    },
+  },
+  {
+    name: 'github_create_issue',
+    description: 'Create GitHub issue',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        repo: { type: 'string' },
+        title: { type: 'string' },
+        body: { type: 'string' },
+        labels: { type: 'array' },
+      },
+      required: ['repo', 'title'],
+    },
+  },
+  {
+    name: 'auto_changelog',
+    description: 'Generate changelog from commits',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        path: { type: 'string' },
+        from: { type: 'string' },
+        to: { type: 'string' },
+        format: { type: 'string' },
+      },
+    },
+  },
+  {
+    name: 'create_release',
+    description: 'Create GitHub release',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        repo: { type: 'string' },
+        tag: { type: 'string' },
+        name: { type: 'string' },
+        notes: { type: 'string' },
+      },
+      required: ['repo', 'tag'],
+    },
+  },
 
   // v3.1 Advanced Security Tools
-  { name: 'sast_scan', description: 'Static Application Security Testing', inputSchema: { type: 'object', properties: { path: { type: 'string' }, tool: { type: 'string', enum: ['semgrep', 'codeql', 'eslint-security'] } }, required: ['path'] } },
-  { name: 'sbom_generate', description: 'Generate Software Bill of Materials', inputSchema: { type: 'object', properties: { path: { type: 'string' }, format: { type: 'string', enum: ['cyclonedx', 'spdx'] } }, required: ['path'] } },
-  { name: 'dep_graph', description: 'Generate dependency graph', inputSchema: { type: 'object', properties: { path: { type: 'string' }, format: { type: 'string', enum: ['json', 'dot', 'mermaid'] } }, required: ['path'] } },
-  { name: 'tech_debt_score', description: 'Calculate technical debt score', inputSchema: { type: 'object', properties: { path: { type: 'string' } }, required: ['path'] } },
-  { name: 'compliance_check', description: 'Check compliance (SOC2/GDPR/HIPAA)', inputSchema: { type: 'object', properties: { path: { type: 'string' }, framework: { type: 'string', enum: ['soc2', 'gdpr', 'hipaa', 'pci-dss'] } }, required: ['path', 'framework'] } },
+  {
+    name: 'sast_scan',
+    description: 'Static Application Security Testing',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        path: { type: 'string' },
+        tool: { type: 'string', enum: ['semgrep', 'codeql', 'eslint-security'] },
+      },
+      required: ['path'],
+    },
+  },
+  {
+    name: 'sbom_generate',
+    description: 'Generate Software Bill of Materials',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        path: { type: 'string' },
+        format: { type: 'string', enum: ['cyclonedx', 'spdx'] },
+      },
+      required: ['path'],
+    },
+  },
+  {
+    name: 'dep_graph',
+    description: 'Generate dependency graph',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        path: { type: 'string' },
+        format: { type: 'string', enum: ['json', 'dot', 'mermaid'] },
+      },
+      required: ['path'],
+    },
+  },
+  {
+    name: 'tech_debt_score',
+    description: 'Calculate technical debt score',
+    inputSchema: { type: 'object', properties: { path: { type: 'string' } }, required: ['path'] },
+  },
+  {
+    name: 'compliance_check',
+    description: 'Check compliance (SOC2/GDPR/HIPAA)',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        path: { type: 'string' },
+        framework: { type: 'string', enum: ['soc2', 'gdpr', 'hipaa', 'pci-dss'] },
+      },
+      required: ['path', 'framework'],
+    },
+  },
 
   // v3.1 Dev Environment Tools
-  { name: 'gen_devcontainer', description: 'Generate VS Code devcontainer', inputSchema: { type: 'object', properties: { path: { type: 'string' }, features: { type: 'array' }, services: { type: 'array' } }, required: ['path'] } },
-  { name: 'gen_codespace', description: 'Generate GitHub Codespaces config', inputSchema: { type: 'object', properties: { path: { type: 'string' }, machine: { type: 'string' }, prebuild: { type: 'boolean' } }, required: ['path'] } },
-  { name: 'gen_gitpod', description: 'Generate Gitpod configuration', inputSchema: { type: 'object', properties: { path: { type: 'string' }, tasks: { type: 'array' }, ports: { type: 'array' } }, required: ['path'] } },
+  {
+    name: 'gen_devcontainer',
+    description: 'Generate VS Code devcontainer',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        path: { type: 'string' },
+        features: { type: 'array' },
+        services: { type: 'array' },
+      },
+      required: ['path'],
+    },
+  },
+  {
+    name: 'gen_codespace',
+    description: 'Generate GitHub Codespaces config',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        path: { type: 'string' },
+        machine: { type: 'string' },
+        prebuild: { type: 'boolean' },
+      },
+      required: ['path'],
+    },
+  },
+  {
+    name: 'gen_gitpod',
+    description: 'Generate Gitpod configuration',
+    inputSchema: {
+      type: 'object',
+      properties: { path: { type: 'string' }, tasks: { type: 'array' }, ports: { type: 'array' } },
+      required: ['path'],
+    },
+  },
 
   // v3.1 Publishing Tools
-  { name: 'npm_publish', description: 'Publish to npm registry', inputSchema: { type: 'object', properties: { path: { type: 'string' }, tag: { type: 'string' }, bump: { type: 'string' } }, required: ['path'] } },
-  { name: 'pypi_publish', description: 'Publish to PyPI', inputSchema: { type: 'object', properties: { path: { type: 'string' }, repository: { type: 'string', enum: ['pypi', 'testpypi'] } }, required: ['path'] } },
-  { name: 'docker_release', description: 'Tag and push Docker release', inputSchema: { type: 'object', properties: { image: { type: 'string' }, tag: { type: 'string' }, platforms: { type: 'array' } }, required: ['image', 'tag'] } },
-  { name: 'github_package', description: 'Publish to GitHub Packages', inputSchema: { type: 'object', properties: { path: { type: 'string' }, type: { type: 'string', enum: ['npm', 'container'] }, repo: { type: 'string' } }, required: ['path', 'type', 'repo'] } },
+  {
+    name: 'npm_publish',
+    description: 'Publish to npm registry',
+    inputSchema: {
+      type: 'object',
+      properties: { path: { type: 'string' }, tag: { type: 'string' }, bump: { type: 'string' } },
+      required: ['path'],
+    },
+  },
+  {
+    name: 'pypi_publish',
+    description: 'Publish to PyPI',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        path: { type: 'string' },
+        repository: { type: 'string', enum: ['pypi', 'testpypi'] },
+      },
+      required: ['path'],
+    },
+  },
+  {
+    name: 'docker_release',
+    description: 'Tag and push Docker release',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        image: { type: 'string' },
+        tag: { type: 'string' },
+        platforms: { type: 'array' },
+      },
+      required: ['image', 'tag'],
+    },
+  },
+  {
+    name: 'github_package',
+    description: 'Publish to GitHub Packages',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        path: { type: 'string' },
+        type: { type: 'string', enum: ['npm', 'container'] },
+        repo: { type: 'string' },
+      },
+      required: ['path', 'type', 'repo'],
+    },
+  },
 
   // v3.1 Observability Tools
-  { name: 'sentry_setup', description: 'Configure Sentry error tracking', inputSchema: { type: 'object', properties: { path: { type: 'string' }, dsn: { type: 'string' }, framework: { type: 'string' } }, required: ['path'] } },
-  { name: 'add_metrics', description: 'Add Prometheus metrics', inputSchema: { type: 'object', properties: { path: { type: 'string' }, port: { type: 'number' }, metrics: { type: 'array' } }, required: ['path'] } },
-  { name: 'create_dashboard', description: 'Generate Grafana dashboard', inputSchema: { type: 'object', properties: { title: { type: 'string' }, panels: { type: 'array' }, output: { type: 'string' } }, required: ['title'] } },
-  { name: 'setup_alerts', description: 'Configure alerting rules', inputSchema: { type: 'object', properties: { output: { type: 'string' }, alerts: { type: 'array' } } } },
+  {
+    name: 'sentry_setup',
+    description: 'Configure Sentry error tracking',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        path: { type: 'string' },
+        dsn: { type: 'string' },
+        framework: { type: 'string' },
+      },
+      required: ['path'],
+    },
+  },
+  {
+    name: 'add_metrics',
+    description: 'Add Prometheus metrics',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        path: { type: 'string' },
+        port: { type: 'number' },
+        metrics: { type: 'array' },
+      },
+      required: ['path'],
+    },
+  },
+  {
+    name: 'create_dashboard',
+    description: 'Generate Grafana dashboard',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        title: { type: 'string' },
+        panels: { type: 'array' },
+        output: { type: 'string' },
+      },
+      required: ['title'],
+    },
+  },
+  {
+    name: 'setup_alerts',
+    description: 'Configure alerting rules',
+    inputSchema: {
+      type: 'object',
+      properties: { output: { type: 'string' }, alerts: { type: 'array' } },
+    },
+  },
 
   // v3.2 Smart Assistance Tools
-  { name: 'explain_code', description: 'Explain code in plain English (ELI5)', inputSchema: { type: 'object', properties: { code: { type: 'string' }, level: { type: 'string', enum: ['beginner', 'intermediate', 'advanced'] }, focus: { type: 'string' } }, required: ['code'] } },
-  { name: 'suggest_next', description: 'AI suggests next logical action', inputSchema: { type: 'object', properties: { context: { type: 'string' }, goal: { type: 'string' }, blockers: { type: 'string' } }, required: ['context'] } },
-  { name: 'dry_run', description: 'Preview operation without executing', inputSchema: { type: 'object', properties: { operation: { type: 'string' }, params: { type: 'object' } }, required: ['operation'] } },
-  { name: 'simplify_output', description: 'Convert technical output to plain English', inputSchema: { type: 'object', properties: { technical_output: { type: 'string' }, context: { type: 'string' } }, required: ['technical_output'] } },
-  { name: 'what_went_wrong', description: 'Human-readable error explanations', inputSchema: { type: 'object', properties: { error: { type: 'string' }, context: { type: 'string' }, file: { type: 'string' } }, required: ['error'] } },
-  { name: 'teach_me', description: 'Interactive learning for concepts', inputSchema: { type: 'object', properties: { topic: { type: 'string' }, current_level: { type: 'string', enum: ['complete-beginner', 'some-experience', 'intermediate'] } }, required: ['topic'] } },
+  {
+    name: 'explain_code',
+    description: 'Explain code in plain English (ELI5)',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        code: { type: 'string' },
+        level: { type: 'string', enum: ['beginner', 'intermediate', 'advanced'] },
+        focus: { type: 'string' },
+      },
+      required: ['code'],
+    },
+  },
+  {
+    name: 'suggest_next',
+    description: 'AI suggests next logical action',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        context: { type: 'string' },
+        goal: { type: 'string' },
+        blockers: { type: 'string' },
+      },
+      required: ['context'],
+    },
+  },
+  {
+    name: 'dry_run',
+    description: 'Preview operation without executing',
+    inputSchema: {
+      type: 'object',
+      properties: { operation: { type: 'string' }, params: { type: 'object' } },
+      required: ['operation'],
+    },
+  },
+  {
+    name: 'simplify_output',
+    description: 'Convert technical output to plain English',
+    inputSchema: {
+      type: 'object',
+      properties: { technical_output: { type: 'string' }, context: { type: 'string' } },
+      required: ['technical_output'],
+    },
+  },
+  {
+    name: 'what_went_wrong',
+    description: 'Human-readable error explanations',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        error: { type: 'string' },
+        context: { type: 'string' },
+        file: { type: 'string' },
+      },
+      required: ['error'],
+    },
+  },
+  {
+    name: 'teach_me',
+    description: 'Interactive learning for concepts',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        topic: { type: 'string' },
+        current_level: {
+          type: 'string',
+          enum: ['complete-beginner', 'some-experience', 'intermediate'],
+        },
+      },
+      required: ['topic'],
+    },
+  },
 
   // v3.2 Quick Start Wizard Tools
-  { name: 'project_wizard', description: 'Interactive guided project setup', inputSchema: { type: 'object', properties: { answers: { type: 'object' }, path: { type: 'string' } } } },
-  { name: 'quick_web_app', description: 'One-command full-stack web app', inputSchema: { type: 'object', properties: { name: { type: 'string' }, features: { type: 'array' }, style: { type: 'string' }, path: { type: 'string' } }, required: ['name'] } },
-  { name: 'quick_landing', description: 'One-command landing page', inputSchema: { type: 'object', properties: { name: { type: 'string' }, headline: { type: 'string' }, subheadline: { type: 'string' }, cta: { type: 'string' }, features: { type: 'array' }, path: { type: 'string' } }, required: ['name', 'headline'] } },
-  { name: 'quick_api', description: 'One-command REST API', inputSchema: { type: 'object', properties: { name: { type: 'string' }, resources: { type: 'array' }, auth: { type: 'boolean' }, path: { type: 'string' } }, required: ['name'] } },
-  { name: 'quick_mobile', description: 'One-command mobile app', inputSchema: { type: 'object', properties: { name: { type: 'string' }, platform: { type: 'string', enum: ['ios', 'android', 'both'] }, template: { type: 'string' }, path: { type: 'string' } }, required: ['name'] } },
-  { name: 'quick_chrome_ext', description: 'One-command Chrome extension', inputSchema: { type: 'object', properties: { name: { type: 'string' }, description: { type: 'string' }, permissions: { type: 'array' }, path: { type: 'string' } }, required: ['name'] } },
+  {
+    name: 'project_wizard',
+    description: 'Interactive guided project setup',
+    inputSchema: {
+      type: 'object',
+      properties: { answers: { type: 'object' }, path: { type: 'string' } },
+    },
+  },
+  {
+    name: 'quick_web_app',
+    description: 'One-command full-stack web app',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        name: { type: 'string' },
+        features: { type: 'array' },
+        style: { type: 'string' },
+        path: { type: 'string' },
+      },
+      required: ['name'],
+    },
+  },
+  {
+    name: 'quick_landing',
+    description: 'One-command landing page',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        name: { type: 'string' },
+        headline: { type: 'string' },
+        subheadline: { type: 'string' },
+        cta: { type: 'string' },
+        features: { type: 'array' },
+        path: { type: 'string' },
+      },
+      required: ['name', 'headline'],
+    },
+  },
+  {
+    name: 'quick_api',
+    description: 'One-command REST API',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        name: { type: 'string' },
+        resources: { type: 'array' },
+        auth: { type: 'boolean' },
+        path: { type: 'string' },
+      },
+      required: ['name'],
+    },
+  },
+  {
+    name: 'quick_mobile',
+    description: 'One-command mobile app',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        name: { type: 'string' },
+        platform: { type: 'string', enum: ['ios', 'android', 'both'] },
+        template: { type: 'string' },
+        path: { type: 'string' },
+      },
+      required: ['name'],
+    },
+  },
+  {
+    name: 'quick_chrome_ext',
+    description: 'One-command Chrome extension',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        name: { type: 'string' },
+        description: { type: 'string' },
+        permissions: { type: 'array' },
+        path: { type: 'string' },
+      },
+      required: ['name'],
+    },
+  },
 
   // v3.2 Asset Generation Tools
-  { name: 'generate_logo', description: 'Generate logo variations', inputSchema: { type: 'object', properties: { name: { type: 'string' }, style: { type: 'string' }, colors: { type: 'array' }, outputDir: { type: 'string' } }, required: ['name'] } },
-  { name: 'generate_og_image', description: 'Generate social preview images', inputSchema: { type: 'object', properties: { title: { type: 'string' }, subtitle: { type: 'string' }, theme: { type: 'string' }, brand: { type: 'string' }, outputDir: { type: 'string' } }, required: ['title'] } },
-  { name: 'optimize_assets', description: 'Batch image optimization', inputSchema: { type: 'object', properties: { inputDir: { type: 'string' }, outputDir: { type: 'string' }, quality: { type: 'integer' }, maxWidth: { type: 'integer' } }, required: ['inputDir'] } },
-  { name: 'create_favicon', description: 'Generate complete favicon suite', inputSchema: { type: 'object', properties: { text: { type: 'string' }, backgroundColor: { type: 'string' }, textColor: { type: 'string' }, outputDir: { type: 'string' } }, required: ['text'] } },
-  { name: 'generate_screenshots', description: 'Generate app store screenshots', inputSchema: { type: 'object', properties: { screenshots: { type: 'array' }, device: { type: 'string' }, captions: { type: 'array' }, outputDir: { type: 'string' } } } },
+  {
+    name: 'generate_logo',
+    description: 'Generate logo variations',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        name: { type: 'string' },
+        style: { type: 'string' },
+        colors: { type: 'array' },
+        outputDir: { type: 'string' },
+      },
+      required: ['name'],
+    },
+  },
+  {
+    name: 'generate_og_image',
+    description: 'Generate social preview images',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        title: { type: 'string' },
+        subtitle: { type: 'string' },
+        theme: { type: 'string' },
+        brand: { type: 'string' },
+        outputDir: { type: 'string' },
+      },
+      required: ['title'],
+    },
+  },
+  {
+    name: 'optimize_assets',
+    description: 'Batch image optimization',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        inputDir: { type: 'string' },
+        outputDir: { type: 'string' },
+        quality: { type: 'integer' },
+        maxWidth: { type: 'integer' },
+      },
+      required: ['inputDir'],
+    },
+  },
+  {
+    name: 'create_favicon',
+    description: 'Generate complete favicon suite',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        text: { type: 'string' },
+        backgroundColor: { type: 'string' },
+        textColor: { type: 'string' },
+        outputDir: { type: 'string' },
+      },
+      required: ['text'],
+    },
+  },
+  {
+    name: 'generate_screenshots',
+    description: 'Generate app store screenshots',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        screenshots: { type: 'array' },
+        device: { type: 'string' },
+        captions: { type: 'array' },
+        outputDir: { type: 'string' },
+      },
+    },
+  },
 
   // v3.2 No-Code Integration Tools
-  { name: 'notion_sync', description: 'Sync with Notion', inputSchema: { type: 'object', properties: { action: { type: 'string', enum: ['read', 'write', 'create', 'list'] }, apiKey: { type: 'string' }, databaseId: { type: 'string' }, pageId: { type: 'string' }, data: { type: 'object' } }, required: ['action'] } },
-  { name: 'airtable_ops', description: 'Airtable CRUD operations', inputSchema: { type: 'object', properties: { action: { type: 'string', enum: ['list', 'get', 'create', 'update', 'delete'] }, apiKey: { type: 'string' }, baseId: { type: 'string' }, tableName: { type: 'string' }, recordId: { type: 'string' }, data: { type: 'object' } }, required: ['action'] } },
-  { name: 'google_sheets_sync', description: 'Google Sheets integration', inputSchema: { type: 'object', properties: { action: { type: 'string', enum: ['read', 'write', 'append', 'clear'] }, spreadsheetId: { type: 'string' }, range: { type: 'string' }, values: { type: 'array' } }, required: ['action', 'spreadsheetId'] } },
-  { name: 'zapier_trigger', description: 'Trigger Zapier webhooks', inputSchema: { type: 'object', properties: { webhookUrl: { type: 'string' }, data: { type: 'object' }, saveWebhook: { type: 'boolean' }, webhookName: { type: 'string' } }, required: ['webhookUrl', 'data'] } },
-  { name: 'make_scenario', description: 'Trigger Make.com scenarios', inputSchema: { type: 'object', properties: { webhookUrl: { type: 'string' }, data: { type: 'object' }, scenarioName: { type: 'string' } }, required: ['webhookUrl', 'data'] } },
-  { name: 'n8n_workflow', description: 'Trigger n8n workflows', inputSchema: { type: 'object', properties: { webhookUrl: { type: 'string' }, data: { type: 'object' }, workflowName: { type: 'string' }, n8nHost: { type: 'string' } }, required: ['webhookUrl', 'data'] } },
+  {
+    name: 'notion_sync',
+    description: 'Sync with Notion',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        action: { type: 'string', enum: ['read', 'write', 'create', 'list'] },
+        apiKey: { type: 'string' },
+        databaseId: { type: 'string' },
+        pageId: { type: 'string' },
+        data: { type: 'object' },
+      },
+      required: ['action'],
+    },
+  },
+  {
+    name: 'airtable_ops',
+    description: 'Airtable CRUD operations',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        action: { type: 'string', enum: ['list', 'get', 'create', 'update', 'delete'] },
+        apiKey: { type: 'string' },
+        baseId: { type: 'string' },
+        tableName: { type: 'string' },
+        recordId: { type: 'string' },
+        data: { type: 'object' },
+      },
+      required: ['action'],
+    },
+  },
+  {
+    name: 'google_sheets_sync',
+    description: 'Google Sheets integration',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        action: { type: 'string', enum: ['read', 'write', 'append', 'clear'] },
+        spreadsheetId: { type: 'string' },
+        range: { type: 'string' },
+        values: { type: 'array' },
+      },
+      required: ['action', 'spreadsheetId'],
+    },
+  },
+  {
+    name: 'zapier_trigger',
+    description: 'Trigger Zapier webhooks',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        webhookUrl: { type: 'string' },
+        data: { type: 'object' },
+        saveWebhook: { type: 'boolean' },
+        webhookName: { type: 'string' },
+      },
+      required: ['webhookUrl', 'data'],
+    },
+  },
+  {
+    name: 'make_scenario',
+    description: 'Trigger Make.com scenarios',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        webhookUrl: { type: 'string' },
+        data: { type: 'object' },
+        scenarioName: { type: 'string' },
+      },
+      required: ['webhookUrl', 'data'],
+    },
+  },
+  {
+    name: 'n8n_workflow',
+    description: 'Trigger n8n workflows',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        webhookUrl: { type: 'string' },
+        data: { type: 'object' },
+        workflowName: { type: 'string' },
+        n8nHost: { type: 'string' },
+      },
+      required: ['webhookUrl', 'data'],
+    },
+  },
 
   // v3.2 Business & Analytics Tools
-  { name: 'cost_estimate', description: 'Estimate cloud/API costs', inputSchema: { type: 'object', properties: { projectType: { type: 'string' }, expectedUsers: { type: 'integer' }, features: { type: 'array' }, provider: { type: 'string' } }, required: ['projectType'] } },
-  { name: 'usage_analytics', description: 'Track productivity metrics', inputSchema: { type: 'object', properties: { action: { type: 'string', enum: ['view', 'record', 'reset'] }, category: { type: 'string' }, duration: { type: 'integer' } } } },
-  { name: 'time_tracker', description: 'Track time on tasks', inputSchema: { type: 'object', properties: { action: { type: 'string', enum: ['start', 'stop', 'status', 'report'] }, task: { type: 'string' }, project: { type: 'string' }, tags: { type: 'array' } }, required: ['action'] } },
-  { name: 'roi_calculator', description: 'Calculate ROI', inputSchema: { type: 'object', properties: { investment: { type: 'number' }, investmentType: { type: 'string' }, expectedRevenue: { type: 'number' }, timeframe: { type: 'integer' }, hourlyRate: { type: 'number' } }, required: ['investment', 'expectedRevenue'] } },
-  { name: 'competitor_scan', description: 'Analyze competitor websites', inputSchema: { type: 'object', properties: { url: { type: 'string' }, aspects: { type: 'array' } }, required: ['url'] } },
+  {
+    name: 'cost_estimate',
+    description: 'Estimate cloud/API costs',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        projectType: { type: 'string' },
+        expectedUsers: { type: 'integer' },
+        features: { type: 'array' },
+        provider: { type: 'string' },
+      },
+      required: ['projectType'],
+    },
+  },
+  {
+    name: 'usage_analytics',
+    description: 'Track productivity metrics',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        action: { type: 'string', enum: ['view', 'record', 'reset'] },
+        category: { type: 'string' },
+        duration: { type: 'integer' },
+      },
+    },
+  },
+  {
+    name: 'time_tracker',
+    description: 'Track time on tasks',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        action: { type: 'string', enum: ['start', 'stop', 'status', 'report'] },
+        task: { type: 'string' },
+        project: { type: 'string' },
+        tags: { type: 'array' },
+      },
+      required: ['action'],
+    },
+  },
+  {
+    name: 'roi_calculator',
+    description: 'Calculate ROI',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        investment: { type: 'number' },
+        investmentType: { type: 'string' },
+        expectedRevenue: { type: 'number' },
+        timeframe: { type: 'integer' },
+        hourlyRate: { type: 'number' },
+      },
+      required: ['investment', 'expectedRevenue'],
+    },
+  },
+  {
+    name: 'competitor_scan',
+    description: 'Analyze competitor websites',
+    inputSchema: {
+      type: 'object',
+      properties: { url: { type: 'string' }, aspects: { type: 'array' } },
+      required: ['url'],
+    },
+  },
 
   // v3.2 Launch & Growth Tools
-  { name: 'seo_audit', description: 'SEO analysis and fixes', inputSchema: { type: 'object', properties: { url: { type: 'string' }, htmlPath: { type: 'string' }, generateFixes: { type: 'boolean' } } } },
-  { name: 'lighthouse_report', description: 'Performance/accessibility audit', inputSchema: { type: 'object', properties: { url: { type: 'string' }, categories: { type: 'array' }, device: { type: 'string' } }, required: ['url'] } },
-  { name: 'submit_to_directories', description: 'Launch marketing checklist', inputSchema: { type: 'object', properties: { productName: { type: 'string' }, productUrl: { type: 'string' }, category: { type: 'string' }, stage: { type: 'string' } }, required: ['productName', 'productUrl'] } },
-  { name: 'social_preview', description: 'Test social media cards', inputSchema: { type: 'object', properties: { url: { type: 'string' }, platforms: { type: 'array' } }, required: ['url'] } },
-  { name: 'uptime_monitor', description: 'Setup uptime monitoring', inputSchema: { type: 'object', properties: { url: { type: 'string' }, name: { type: 'string' }, checkInterval: { type: 'integer' }, alertEmail: { type: 'string' } }, required: ['url'] } },
+  {
+    name: 'seo_audit',
+    description: 'SEO analysis and fixes',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        url: { type: 'string' },
+        htmlPath: { type: 'string' },
+        generateFixes: { type: 'boolean' },
+      },
+    },
+  },
+  {
+    name: 'lighthouse_report',
+    description: 'Performance/accessibility audit',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        url: { type: 'string' },
+        categories: { type: 'array' },
+        device: { type: 'string' },
+      },
+      required: ['url'],
+    },
+  },
+  {
+    name: 'submit_to_directories',
+    description: 'Launch marketing checklist',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        productName: { type: 'string' },
+        productUrl: { type: 'string' },
+        category: { type: 'string' },
+        stage: { type: 'string' },
+      },
+      required: ['productName', 'productUrl'],
+    },
+  },
+  {
+    name: 'social_preview',
+    description: 'Test social media cards',
+    inputSchema: {
+      type: 'object',
+      properties: { url: { type: 'string' }, platforms: { type: 'array' } },
+      required: ['url'],
+    },
+  },
+  {
+    name: 'uptime_monitor',
+    description: 'Setup uptime monitoring',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        url: { type: 'string' },
+        name: { type: 'string' },
+        checkInterval: { type: 'integer' },
+        alertEmail: { type: 'string' },
+      },
+      required: ['url'],
+    },
+  },
 
   // v3.2 AI Pair Programming Tools
-  { name: 'pair_start', description: 'Start AI pair programming session', inputSchema: { type: 'object', properties: { projectPath: { type: 'string' }, focus: { type: 'string' }, mode: { type: 'string', enum: ['mentor', 'collaborator', 'reviewer', 'learner'] }, experience: { type: 'string' } } } },
-  { name: 'pair_suggest', description: 'Get real-time suggestions', inputSchema: { type: 'object', properties: { context: { type: 'string' }, code: { type: 'string' }, stuck: { type: 'boolean' }, type: { type: 'string' } }, required: ['context'] } },
-  { name: 'pair_review', description: 'Live code review', inputSchema: { type: 'object', properties: { code: { type: 'string' }, filePath: { type: 'string' }, focus: { type: 'array' } } } },
-  { name: 'pair_explain', description: 'Explain code/concepts', inputSchema: { type: 'object', properties: { code: { type: 'string' }, concept: { type: 'string' }, depth: { type: 'string' } } } },
-  { name: 'pair_refactor', description: 'Suggest refactors', inputSchema: { type: 'object', properties: { code: { type: 'string' }, filePath: { type: 'string' }, goal: { type: 'string' } } } },
-  { name: 'voice_command', description: 'Voice-controlled operations', inputSchema: { type: 'object', properties: { command: { type: 'string' }, context: { type: 'string' } }, required: ['command'] } }
+  {
+    name: 'pair_start',
+    description: 'Start AI pair programming session',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        projectPath: { type: 'string' },
+        focus: { type: 'string' },
+        mode: { type: 'string', enum: ['mentor', 'collaborator', 'reviewer', 'learner'] },
+        experience: { type: 'string' },
+      },
+    },
+  },
+  {
+    name: 'pair_suggest',
+    description: 'Get real-time suggestions',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        context: { type: 'string' },
+        code: { type: 'string' },
+        stuck: { type: 'boolean' },
+        type: { type: 'string' },
+      },
+      required: ['context'],
+    },
+  },
+  {
+    name: 'pair_review',
+    description: 'Live code review',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        code: { type: 'string' },
+        filePath: { type: 'string' },
+        focus: { type: 'array' },
+      },
+    },
+  },
+  {
+    name: 'pair_explain',
+    description: 'Explain code/concepts',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        code: { type: 'string' },
+        concept: { type: 'string' },
+        depth: { type: 'string' },
+      },
+    },
+  },
+  {
+    name: 'pair_refactor',
+    description: 'Suggest refactors',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        code: { type: 'string' },
+        filePath: { type: 'string' },
+        goal: { type: 'string' },
+      },
+    },
+  },
+  {
+    name: 'voice_command',
+    description: 'Voice-controlled operations',
+    inputSchema: {
+      type: 'object',
+      properties: { command: { type: 'string' }, context: { type: 'string' } },
+      required: ['command'],
+    },
+  },
 ];
 
 // Register tools
 server.setRequestHandler(ListToolsRequestSchema, async () => ({
-  tools: toolDefinitions
+  tools: toolDefinitions,
 }));
 
 // Handle tool calls
-server.setRequestHandler(CallToolRequestSchema, async (request) => {
+server.setRequestHandler(CallToolRequestSchema, async request => {
   const { name, arguments: args } = request.params;
 
   if (!tools[name]) {
     return {
-      content: [{ type: 'text', text: JSON.stringify({ error: `Unknown tool: ${name}`, available: Object.keys(tools) }) }]
+      content: [
+        {
+          type: 'text',
+          text: JSON.stringify({ error: `Unknown tool: ${name}`, available: Object.keys(tools) }),
+        },
+      ],
     };
   }
 
   try {
     const result = await tools[name](args || {});
     return {
-      content: [{ type: 'text', text: JSON.stringify(result, null, 2) }]
+      content: [{ type: 'text', text: JSON.stringify(result, null, 2) }],
     };
   } catch (error) {
     return {
-      content: [{ type: 'text', text: JSON.stringify({ error: error.message, stack: error.stack }) }]
+      content: [
+        { type: 'text', text: JSON.stringify({ error: error.message, stack: error.stack }) },
+      ],
     };
   }
 });
@@ -3410,31 +5258,31 @@ server.setRequestHandler(ListResourcesRequestSchema, async () => ({
       uri: 'autopilot://status',
       name: 'System Status',
       description: 'Current environment status',
-      mimeType: 'application/json'
+      mimeType: 'application/json',
     },
     {
       uri: 'autopilot://history',
       name: 'Action History',
       description: 'Recent actions and task state',
-      mimeType: 'application/json'
-    }
-  ]
+      mimeType: 'application/json',
+    },
+  ],
 }));
 
-server.setRequestHandler(ReadResourceRequestSchema, async (request) => {
+server.setRequestHandler(ReadResourceRequestSchema, async request => {
   const uri = request.params.uri;
 
   if (uri === 'autopilot://status') {
     const status = await tools.get_status();
     return {
-      contents: [{ uri, mimeType: 'application/json', text: JSON.stringify(status, null, 2) }]
+      contents: [{ uri, mimeType: 'application/json', text: JSON.stringify(status, null, 2) }],
     };
   }
 
   if (uri === 'autopilot://history') {
     const history = await tools.get_history({ limit: 50 });
     return {
-      contents: [{ uri, mimeType: 'application/json', text: JSON.stringify(history, null, 2) }]
+      contents: [{ uri, mimeType: 'application/json', text: JSON.stringify(history, null, 2) }],
     };
   }
 
@@ -3445,12 +5293,14 @@ server.setRequestHandler(ReadResourceRequestSchema, async (request) => {
 async function main() {
   const transport = new StdioServerTransport();
   await server.connect(transport);
-  console.error('🚀 Windsurf Autopilot v3.2.0 VIBE CODER EXPERIENCE - 250+ tools, Anyone Can Build!');
+  console.error(
+    '🚀 Windsurf Autopilot v3.2.0 VIBE CODER EXPERIENCE - 250+ tools, Anyone Can Build!'
+  );
   console.error(`📂 Home: ${HOME}`);
   console.error(`💻 Platform: ${process.platform}`);
 }
 
-main().catch((err) => {
+main().catch(err => {
   console.error('Failed to start server:', err);
   process.exit(1);
 });

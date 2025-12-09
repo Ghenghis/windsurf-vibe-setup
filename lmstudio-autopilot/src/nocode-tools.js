@@ -27,14 +27,14 @@ const notion_sync = {
       action: {
         type: 'string',
         enum: ['read', 'write', 'create', 'list'],
-        description: 'Action to perform'
+        description: 'Action to perform',
       },
       apiKey: { type: 'string', description: 'Notion API key (or set NOTION_API_KEY env)' },
       databaseId: { type: 'string', description: 'Notion database ID' },
       pageId: { type: 'string', description: 'Notion page ID (for read/write)' },
-      data: { type: 'object', description: 'Data to write/create' }
+      data: { type: 'object', description: 'Data to write/create' },
     },
-    required: ['action']
+    required: ['action'],
   },
   handler: async ({ action, apiKey, databaseId, pageId, data }) => {
     try {
@@ -50,10 +50,10 @@ const notion_sync = {
               '2. Create a new integration',
               '3. Copy the API key',
               '4. Share your database with the integration',
-              '5. Use the API key here or set NOTION_API_KEY environment variable'
+              '5. Use the API key here or set NOTION_API_KEY environment variable',
             ],
-            docsUrl: 'https://developers.notion.com/docs/getting-started'
-          }
+            docsUrl: 'https://developers.notion.com/docs/getting-started',
+          },
         };
       }
 
@@ -61,20 +61,20 @@ const notion_sync = {
       const operations = {
         list: {
           message: 'Would list databases accessible to the integration',
-          example: 'notion_sync action=list'
+          example: 'notion_sync action=list',
         },
         read: {
           message: 'Would read page/database content',
-          requires: pageId ? 'pageId provided' : 'pageId required'
+          requires: pageId ? 'pageId provided' : 'pageId required',
         },
         write: {
           message: 'Would update page/database',
-          requires: data ? 'data provided' : 'data required'
+          requires: data ? 'data provided' : 'data required',
         },
         create: {
           message: 'Would create new page in database',
-          requires: databaseId ? 'databaseId provided' : 'databaseId required'
-        }
+          requires: databaseId ? 'databaseId provided' : 'databaseId required',
+        },
       };
 
       return {
@@ -85,14 +85,14 @@ const notion_sync = {
         example: {
           install: 'npm install @notionhq/client',
           usage: `const { Client } = require('@notionhq/client');
-const notion = new Client({ auth: process.env.NOTION_API_KEY });`
+const notion = new Client({ auth: process.env.NOTION_API_KEY });`,
         },
-        message: `📓 Notion ${action} operation prepared`
+        message: `📓 Notion ${action} operation prepared`,
       };
     } catch (error) {
       return { success: false, error: error.message };
     }
-  }
+  },
 };
 
 /**
@@ -107,15 +107,15 @@ const airtable_ops = {
       action: {
         type: 'string',
         enum: ['list', 'get', 'create', 'update', 'delete'],
-        description: 'CRUD action'
+        description: 'CRUD action',
       },
       apiKey: { type: 'string', description: 'Airtable API key' },
       baseId: { type: 'string', description: 'Airtable base ID' },
       tableName: { type: 'string', description: 'Table name' },
       recordId: { type: 'string', description: 'Record ID (for get/update/delete)' },
-      data: { type: 'object', description: 'Record data' }
+      data: { type: 'object', description: 'Record data' },
     },
-    required: ['action']
+    required: ['action'],
   },
   handler: async ({ action, apiKey, baseId, tableName, recordId, data }) => {
     try {
@@ -130,9 +130,9 @@ const airtable_ops = {
               '1. Go to https://airtable.com/create/tokens',
               '2. Create a personal access token',
               '3. Add scopes: data.records:read, data.records:write',
-              '4. Use here or set AIRTABLE_API_KEY env variable'
-            ]
-          }
+              '4. Use here or set AIRTABLE_API_KEY env variable',
+            ],
+          },
         };
       }
 
@@ -141,7 +141,7 @@ const airtable_ops = {
         get: `Get record ${recordId || 'ID required'}`,
         create: 'Create new record with provided data',
         update: `Update record ${recordId || 'ID required'}`,
-        delete: `Delete record ${recordId || 'ID required'}`
+        delete: `Delete record ${recordId || 'ID required'}`,
       };
 
       return {
@@ -152,14 +152,14 @@ const airtable_ops = {
         example: {
           install: 'npm install airtable',
           usage: `const Airtable = require('airtable');
-const base = new Airtable({apiKey: process.env.AIRTABLE_API_KEY}).base('${baseId || 'YOUR_BASE_ID'}');`
+const base = new Airtable({apiKey: process.env.AIRTABLE_API_KEY}).base('${baseId || 'YOUR_BASE_ID'}');`,
         },
-        message: `📊 Airtable ${action} operation prepared`
+        message: `📊 Airtable ${action} operation prepared`,
       };
     } catch (error) {
       return { success: false, error: error.message };
     }
-  }
+  },
 };
 
 /**
@@ -174,16 +174,22 @@ const google_sheets_sync = {
       action: {
         type: 'string',
         enum: ['read', 'write', 'append', 'clear'],
-        description: 'Action to perform'
+        description: 'Action to perform',
       },
       spreadsheetId: { type: 'string', description: 'Google Sheet ID from URL' },
       range: { type: 'string', description: 'Cell range (e.g., Sheet1!A1:D10)' },
       values: { type: 'array', description: 'Data to write (2D array)' },
-      credentialsPath: { type: 'string', description: 'Path to service account JSON' }
+      credentialsPath: { type: 'string', description: 'Path to service account JSON' },
     },
-    required: ['action', 'spreadsheetId']
+    required: ['action', 'spreadsheetId'],
   },
-  handler: async ({ action, spreadsheetId, range = 'Sheet1!A1:Z1000', values, credentialsPath }) => {
+  handler: async ({
+    action,
+    spreadsheetId,
+    range = 'Sheet1!A1:Z1000',
+    values,
+    credentialsPath,
+  }) => {
     try {
       const credsPath = credentialsPath || process.env.GOOGLE_APPLICATION_CREDENTIALS;
 
@@ -197,10 +203,10 @@ const google_sheets_sync = {
               '2. Create a service account',
               '3. Download the JSON key file',
               '4. Share the spreadsheet with the service account email',
-              '5. Set GOOGLE_APPLICATION_CREDENTIALS env to the JSON path'
+              '5. Set GOOGLE_APPLICATION_CREDENTIALS env to the JSON path',
             ],
-            docsUrl: 'https://developers.google.com/sheets/api/quickstart'
-          }
+            docsUrl: 'https://developers.google.com/sheets/api/quickstart',
+          },
         };
       }
 
@@ -208,7 +214,7 @@ const google_sheets_sync = {
         read: `Read data from ${range}`,
         write: `Write data to ${range}`,
         append: 'Append rows after existing data',
-        clear: `Clear cells in ${range}`
+        clear: `Clear cells in ${range}`,
       };
 
       return {
@@ -219,14 +225,14 @@ const google_sheets_sync = {
         example: {
           install: 'npm install googleapis',
           usage: `const { google } = require('googleapis');
-const sheets = google.sheets({ version: 'v4', auth });`
+const sheets = google.sheets({ version: 'v4', auth });`,
         },
-        message: `📑 Google Sheets ${action} operation prepared`
+        message: `📑 Google Sheets ${action} operation prepared`,
       };
     } catch (error) {
       return { success: false, error: error.message };
     }
-  }
+  },
 };
 
 /**
@@ -241,9 +247,9 @@ const zapier_trigger = {
       webhookUrl: { type: 'string', description: 'Zapier webhook URL' },
       data: { type: 'object', description: 'Data to send to Zapier' },
       saveWebhook: { type: 'boolean', description: 'Save webhook URL for future use' },
-      webhookName: { type: 'string', description: 'Name for saved webhook' }
+      webhookName: { type: 'string', description: 'Name for saved webhook' },
     },
-    required: ['webhookUrl', 'data']
+    required: ['webhookUrl', 'data'],
   },
   handler: async ({ webhookUrl, data, saveWebhook, webhookName }) => {
     try {
@@ -257,9 +263,9 @@ const zapier_trigger = {
               '2. Choose "Webhooks by Zapier" as trigger',
               '3. Select "Catch Hook"',
               '4. Copy the webhook URL',
-              '5. Use that URL here'
-            ]
-          }
+              '5. Use that URL here',
+            ],
+          },
         };
       }
 
@@ -282,14 +288,14 @@ const zapier_trigger = {
         dataSent: data,
         note: 'Webhook trigger simulated. In production, data would be POSTed.',
         example: {
-          curl: `curl -X POST "${webhookUrl}" -H "Content-Type: application/json" -d '${JSON.stringify(data)}'`
+          curl: `curl -X POST "${webhookUrl}" -H "Content-Type: application/json" -d '${JSON.stringify(data)}'`,
         },
-        message: `⚡ Zapier webhook triggered with ${Object.keys(data).length} fields`
+        message: `⚡ Zapier webhook triggered with ${Object.keys(data).length} fields`,
       };
     } catch (error) {
       return { success: false, error: error.message };
     }
-  }
+  },
 };
 
 /**
@@ -303,9 +309,9 @@ const make_scenario = {
     properties: {
       webhookUrl: { type: 'string', description: 'Make.com webhook URL' },
       data: { type: 'object', description: 'Data to send' },
-      scenarioName: { type: 'string', description: 'Scenario name (for reference)' }
+      scenarioName: { type: 'string', description: 'Scenario name (for reference)' },
     },
-    required: ['webhookUrl', 'data']
+    required: ['webhookUrl', 'data'],
   },
   handler: async ({ webhookUrl, data, scenarioName }) => {
     try {
@@ -319,9 +325,9 @@ const make_scenario = {
               '2. Add "Webhooks" module as trigger',
               '3. Choose "Custom webhook"',
               '4. Copy the webhook URL',
-              '5. Use that URL here'
-            ]
-          }
+              '5. Use that URL here',
+            ],
+          },
         };
       }
 
@@ -331,12 +337,12 @@ const make_scenario = {
         scenario: scenarioName || 'Unnamed',
         dataSent: data,
         note: 'Make.com trigger simulated',
-        message: `🔄 Make.com scenario "${scenarioName || 'webhook'}" triggered`
+        message: `🔄 Make.com scenario "${scenarioName || 'webhook'}" triggered`,
       };
     } catch (error) {
       return { success: false, error: error.message };
     }
-  }
+  },
 };
 
 /**
@@ -351,9 +357,9 @@ const n8n_workflow = {
       webhookUrl: { type: 'string', description: 'n8n webhook URL' },
       data: { type: 'object', description: 'Data to send' },
       workflowName: { type: 'string', description: 'Workflow name' },
-      n8nHost: { type: 'string', description: 'n8n instance URL (if self-hosted)' }
+      n8nHost: { type: 'string', description: 'n8n instance URL (if self-hosted)' },
     },
-    required: ['webhookUrl', 'data']
+    required: ['webhookUrl', 'data'],
   },
   handler: async ({ webhookUrl, data, workflowName, n8nHost }) => {
     try {
@@ -369,16 +375,16 @@ const n8n_workflow = {
             '1. In n8n, add a Webhook node as trigger',
             '2. Set HTTP Method to POST',
             '3. Copy the webhook URL (test or production)',
-            '4. Use that URL here'
+            '4. Use that URL here',
           ],
-          selfHosted: 'n8n can be self-hosted for free: https://n8n.io'
+          selfHosted: 'n8n can be self-hosted for free: https://n8n.io',
         },
-        message: `🔗 n8n workflow "${workflowName || 'webhook'}" triggered`
+        message: `🔗 n8n workflow "${workflowName || 'webhook'}" triggered`,
       };
     } catch (error) {
       return { success: false, error: error.message };
     }
-  }
+  },
 };
 
 module.exports = {
@@ -387,5 +393,5 @@ module.exports = {
   google_sheets_sync,
   zapier_trigger,
   make_scenario,
-  n8n_workflow
+  n8n_workflow,
 };

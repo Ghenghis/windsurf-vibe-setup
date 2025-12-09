@@ -10,9 +10,10 @@ const path = require('path');
 const { execSync, spawn } = require('child_process');
 
 // Data directory
-const DATA_DIR = process.platform === 'win32'
-  ? path.join(process.env.APPDATA || '', 'WindsurfAutopilot')
-  : path.join(process.env.HOME || '', '.windsurf-autopilot');
+const DATA_DIR =
+  process.platform === 'win32'
+    ? path.join(process.env.APPDATA || '', 'WindsurfAutopilot')
+    : path.join(process.env.HOME || '', '.windsurf-autopilot');
 
 const IAC_DIR = path.join(DATA_DIR, 'iac');
 
@@ -22,7 +23,6 @@ if (!fs.existsSync(IAC_DIR)) {
 }
 
 const iacTools = {
-
   // Initialize Terraform in project
   terraform_init: {
     name: 'terraform_init',
@@ -36,18 +36,18 @@ const iacTools = {
           description: 'Backend configuration (s3, gcs, azurerm, local)',
           properties: {
             type: { type: 'string' },
-            config: { type: 'object' }
-          }
+            config: { type: 'object' },
+          },
         },
         providers: {
           type: 'array',
           items: { type: 'string' },
-          description: 'Providers to configure (aws, gcp, azure, etc.)'
-        }
+          description: 'Providers to configure (aws, gcp, azure, etc.)',
+        },
       },
-      required: ['path']
+      required: ['path'],
     },
-    handler: async (args) => {
+    handler: async args => {
       const projectPath = args.path;
       const backend = args.backend || { type: 'local' };
       const providers = args.providers || [];
@@ -58,7 +58,7 @@ const iacTools = {
       } catch {
         return {
           success: false,
-          error: 'Terraform is not installed. Install from https://terraform.io/downloads'
+          error: 'Terraform is not installed. Install from https://terraform.io/downloads',
         };
       }
 
@@ -199,7 +199,7 @@ variable "gcp_region" {
         const output = execSync('terraform init', {
           cwd: projectPath,
           encoding: 'utf8',
-          timeout: 120000
+          timeout: 120000,
         });
 
         // Get providers
@@ -207,7 +207,7 @@ variable "gcp_region" {
         try {
           const versionOutput = execSync('terraform providers', {
             cwd: projectPath,
-            encoding: 'utf8'
+            encoding: 'utf8',
           });
           providersInfo = versionOutput.split('\n').filter(l => l.includes('provider'));
         } catch {}
@@ -218,16 +218,16 @@ variable "gcp_region" {
           backend: backend.type,
           providers: providersInfo,
           files: fs.readdirSync(projectPath).filter(f => f.endsWith('.tf')),
-          message: 'Terraform initialized successfully'
+          message: 'Terraform initialized successfully',
         };
       } catch (error) {
         return {
           success: false,
           error: error.message,
-          hint: 'Check your provider credentials and network connectivity'
+          hint: 'Check your provider credentials and network connectivity',
         };
       }
-    }
+    },
   },
 
   // Plan infrastructure changes
@@ -241,11 +241,11 @@ variable "gcp_region" {
         vars: { type: 'object', description: 'Variable values to pass' },
         varFile: { type: 'string', description: 'Path to .tfvars file' },
         target: { type: 'string', description: 'Target specific resource' },
-        destroy: { type: 'boolean', description: 'Plan for destruction' }
+        destroy: { type: 'boolean', description: 'Plan for destruction' },
       },
-      required: ['path']
+      required: ['path'],
     },
-    handler: async (args) => {
+    handler: async args => {
       const projectPath = args.path;
       const vars = args.vars || {};
       const varFile = args.varFile;
@@ -279,14 +279,14 @@ variable "gcp_region" {
           cwd: projectPath,
           encoding: 'utf8',
           timeout: 300000,
-          maxBuffer: 10 * 1024 * 1024
+          maxBuffer: 10 * 1024 * 1024,
         });
 
         // Parse output for changes
         const changes = {
           add: 0,
           change: 0,
-          destroy: 0
+          destroy: 0,
         };
 
         const planMatch = output.match(/Plan: (\d+) to add, (\d+) to change, (\d+) to destroy/);
@@ -306,16 +306,16 @@ variable "gcp_region" {
           summary: noChanges
             ? 'Infrastructure is up-to-date'
             : `Plan: ${changes.add} to add, ${changes.change} to change, ${changes.destroy} to destroy`,
-          output: output.slice(0, 5000) // Truncate large output
+          output: output.slice(0, 5000), // Truncate large output
         };
       } catch (error) {
         return {
           success: false,
           error: error.message,
-          hint: 'Run terraform init first if not initialized'
+          hint: 'Run terraform init first if not initialized',
         };
       }
-    }
+    },
   },
 
   // Apply infrastructure changes
@@ -330,11 +330,11 @@ variable "gcp_region" {
         varFile: { type: 'string', description: 'Path to .tfvars file' },
         target: { type: 'string', description: 'Target specific resource' },
         autoApprove: { type: 'boolean', description: 'Skip approval prompt (use with caution)' },
-        destroy: { type: 'boolean', description: 'Destroy infrastructure' }
+        destroy: { type: 'boolean', description: 'Destroy infrastructure' },
       },
-      required: ['path']
+      required: ['path'],
     },
-    handler: async (args) => {
+    handler: async args => {
       const projectPath = args.path;
       const vars = args.vars || {};
       const varFile = args.varFile;
@@ -370,7 +370,8 @@ variable "gcp_region" {
           success: false,
           requiresApproval: true,
           command: cmd,
-          message: 'Set autoApprove: true to apply changes automatically, or run the command manually'
+          message:
+            'Set autoApprove: true to apply changes automatically, or run the command manually',
         };
       }
 
@@ -379,7 +380,7 @@ variable "gcp_region" {
           cwd: projectPath,
           encoding: 'utf8',
           timeout: 600000, // 10 minutes
-          maxBuffer: 10 * 1024 * 1024
+          maxBuffer: 10 * 1024 * 1024,
         });
 
         // Parse output
@@ -394,21 +395,21 @@ variable "gcp_region" {
           resources: {
             created: resourcesCreated,
             changed: resourcesChanged,
-            destroyed: resourcesDestroyed
+            destroyed: resourcesDestroyed,
           },
           message: destroy
             ? 'Infrastructure destroyed successfully'
             : 'Infrastructure applied successfully',
-          output: output.slice(-2000) // Last 2000 chars
+          output: output.slice(-2000), // Last 2000 chars
         };
       } catch (error) {
         return {
           success: false,
           error: error.message,
-          hint: 'Check the error output for details'
+          hint: 'Check the error output for details',
         };
       }
-    }
+    },
   },
 
   // Deploy to Kubernetes
@@ -422,11 +423,11 @@ variable "gcp_region" {
         namespace: { type: 'string', description: 'Kubernetes namespace' },
         context: { type: 'string', description: 'Kubectl context to use' },
         dryRun: { type: 'boolean', description: 'Dry run mode' },
-        wait: { type: 'boolean', description: 'Wait for resources to be ready' }
+        wait: { type: 'boolean', description: 'Wait for resources to be ready' },
       },
-      required: ['manifest']
+      required: ['manifest'],
     },
-    handler: async (args) => {
+    handler: async args => {
       const manifest = args.manifest;
       const namespace = args.namespace || 'default';
       const context = args.context;
@@ -439,7 +440,7 @@ variable "gcp_region" {
       } catch {
         return {
           success: false,
-          error: 'kubectl is not installed or not in PATH'
+          error: 'kubectl is not installed or not in PATH',
         };
       }
 
@@ -461,11 +462,12 @@ variable "gcp_region" {
       try {
         const output = execSync(cmd, {
           encoding: 'utf8',
-          timeout: 120000
+          timeout: 120000,
         });
 
         // Parse deployed resources
-        const deployed = output.split('\n')
+        const deployed = output
+          .split('\n')
           .filter(l => l.includes('configured') || l.includes('created') || l.includes('unchanged'))
           .map(l => {
             const match = l.match(/^(\S+)\s+(configured|created|unchanged)/);
@@ -479,9 +481,12 @@ variable "gcp_region" {
           for (const dep of deployments) {
             const depName = dep.resource.split('/')[1];
             try {
-              execSync(`kubectl rollout status deployment/${depName} -n ${namespace} --timeout=300s`, {
-                encoding: 'utf8'
-              });
+              execSync(
+                `kubectl rollout status deployment/${depName} -n ${namespace} --timeout=300s`,
+                {
+                  encoding: 'utf8',
+                }
+              );
             } catch (e) {
               // Timeout or error, continue
             }
@@ -497,15 +502,15 @@ variable "gcp_region" {
           count: deployed.length,
           message: dryRun
             ? 'Dry run completed'
-            : `Deployed ${deployed.length} resources to ${namespace}`
+            : `Deployed ${deployed.length} resources to ${namespace}`,
         };
       } catch (error) {
         return {
           success: false,
-          error: error.message
+          error: error.message,
         };
       }
-    }
+    },
   },
 
   // Install Helm chart
@@ -524,11 +529,11 @@ variable "gcp_region" {
         valuesFile: { type: 'string', description: 'Path to values.yaml file' },
         version: { type: 'string', description: 'Chart version' },
         dryRun: { type: 'boolean', description: 'Dry run mode' },
-        wait: { type: 'boolean', description: 'Wait for resources to be ready' }
+        wait: { type: 'boolean', description: 'Wait for resources to be ready' },
       },
-      required: ['release', 'chart']
+      required: ['release', 'chart'],
     },
-    handler: async (args) => {
+    handler: async args => {
       const release = args.release;
       const chart = args.chart;
       const repo = args.repo;
@@ -546,7 +551,7 @@ variable "gcp_region" {
       } catch {
         return {
           success: false,
-          error: 'Helm is not installed or not in PATH'
+          error: 'Helm is not installed or not in PATH',
         };
       }
 
@@ -584,7 +589,7 @@ variable "gcp_region" {
       try {
         const output = execSync(cmd, {
           encoding: 'utf8',
-          timeout: 600000
+          timeout: 600000,
         });
 
         // Get release status
@@ -592,7 +597,7 @@ variable "gcp_region" {
         if (!dryRun) {
           try {
             const statusOutput = execSync(`helm status ${release} -n ${namespace} -o json`, {
-              encoding: 'utf8'
+              encoding: 'utf8',
             });
             status = JSON.parse(statusOutput);
           } catch {}
@@ -608,16 +613,16 @@ variable "gcp_region" {
           status: status.info?.status || 'deployed',
           message: dryRun
             ? 'Dry run completed successfully'
-            : `Helm release "${release}" deployed to namespace "${namespace}"`
+            : `Helm release "${release}" deployed to namespace "${namespace}"`,
         };
       } catch (error) {
         return {
           success: false,
-          error: error.message
+          error: error.message,
         };
       }
-    }
-  }
+    },
+  },
 };
 
 module.exports = iacTools;

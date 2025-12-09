@@ -9,9 +9,10 @@ const fs = require('fs');
 const path = require('path');
 const https = require('https');
 
-const DATA_DIR = process.platform === 'win32'
-  ? path.join(process.env.APPDATA || '', 'WindsurfAutopilot')
-  : path.join(process.env.HOME || '', '.windsurf-autopilot');
+const DATA_DIR =
+  process.platform === 'win32'
+    ? path.join(process.env.APPDATA || '', 'WindsurfAutopilot')
+    : path.join(process.env.HOME || '', '.windsurf-autopilot');
 
 const OBS_DIR = path.join(DATA_DIR, 'observability');
 const CONFIG_FILE = path.join(OBS_DIR, 'config.json');
@@ -33,7 +34,6 @@ function saveConfig(config) {
 }
 
 const observabilityTools = {
-
   // Setup Sentry error tracking
   sentry_setup: {
     name: 'sentry_setup',
@@ -43,13 +43,20 @@ const observabilityTools = {
       properties: {
         path: { type: 'string', description: 'Project path' },
         dsn: { type: 'string', description: 'Sentry DSN' },
-        environment: { type: 'string', description: 'Environment (production, staging, development)' },
-        framework: { type: 'string', enum: ['node', 'react', 'nextjs', 'express', 'python', 'django'], description: 'Framework' },
-        release: { type: 'string', description: 'Release version' }
+        environment: {
+          type: 'string',
+          description: 'Environment (production, staging, development)',
+        },
+        framework: {
+          type: 'string',
+          enum: ['node', 'react', 'nextjs', 'express', 'python', 'django'],
+          description: 'Framework',
+        },
+        release: { type: 'string', description: 'Release version' },
       },
-      required: ['path']
+      required: ['path'],
     },
-    handler: async (args) => {
+    handler: async args => {
       const projectPath = args.path;
       const dsn = args.dsn;
       const environment = args.environment || 'development';
@@ -87,7 +94,7 @@ const observabilityTools = {
           error: 'Sentry DSN required',
           hint: 'Get DSN from https://sentry.io/settings/projects/YOUR_PROJECT/keys/',
           framework,
-          instructions: getSentryInstructions(framework)
+          instructions: getSentryInstructions(framework),
         };
       }
 
@@ -183,10 +190,10 @@ sentry_sdk.init(
         nextSteps: [
           `Run: ${installCmd}`,
           `Import ${configFile} in your entry point`,
-          'Deploy and verify errors appear in Sentry dashboard'
-        ]
+          'Deploy and verify errors appear in Sentry dashboard',
+        ],
       };
-    }
+    },
   },
 
   // Add Prometheus metrics
@@ -206,14 +213,14 @@ sentry_sdk.init(
             properties: {
               name: { type: 'string' },
               type: { type: 'string', enum: ['counter', 'gauge', 'histogram'] },
-              help: { type: 'string' }
-            }
-          }
-        }
+              help: { type: 'string' },
+            },
+          },
+        },
       },
-      required: ['path']
+      required: ['path'],
     },
-    handler: async (args) => {
+    handler: async args => {
       const projectPath = args.path;
       const port = args.port || 9090;
       const customMetrics = args.metrics || [];
@@ -285,16 +292,16 @@ module.exports = { register${customMetrics.map(m => `, ${m.name}`).join('')} };
           customMetrics: customMetrics.length,
           installCommand: 'npm install prom-client express',
           endpoint: `http://localhost:${port}/metrics`,
-          message: `Added Prometheus metrics on port ${port}`
+          message: `Added Prometheus metrics on port ${port}`,
         };
       }
 
       return {
         success: false,
         error: 'Only Node.js projects currently supported',
-        hint: 'Create package.json first'
+        hint: 'Create package.json first',
       };
-    }
+    },
   },
 
   // Create Grafana dashboard
@@ -314,21 +321,29 @@ module.exports = { register${customMetrics.map(m => `, ${m.name}`).join('')} };
             properties: {
               title: { type: 'string' },
               type: { type: 'string', enum: ['graph', 'stat', 'gauge', 'table'] },
-              query: { type: 'string' }
-            }
-          }
+              query: { type: 'string' },
+            },
+          },
         },
-        output: { type: 'string', description: 'Output file path' }
+        output: { type: 'string', description: 'Output file path' },
       },
-      required: ['title']
+      required: ['title'],
     },
-    handler: async (args) => {
+    handler: async args => {
       const title = args.title;
       const datasource = args.datasource || 'Prometheus';
       const panels = args.panels || [
         { title: 'Request Rate', type: 'graph', query: 'rate(http_requests_total[5m])' },
-        { title: 'Error Rate', type: 'stat', query: 'rate(http_requests_total{status=~"5.."}[5m])' },
-        { title: 'Latency P95', type: 'gauge', query: 'histogram_quantile(0.95, rate(http_request_duration_seconds_bucket[5m]))' }
+        {
+          title: 'Error Rate',
+          type: 'stat',
+          query: 'rate(http_requests_total{status=~"5.."}[5m])',
+        },
+        {
+          title: 'Latency P95',
+          type: 'gauge',
+          query: 'histogram_quantile(0.95, rate(http_request_duration_seconds_bucket[5m]))',
+        },
       ];
       const output = args.output;
 
@@ -347,14 +362,16 @@ module.exports = { register${customMetrics.map(m => `, ${m.name}`).join('')} };
             title: panel.title,
             gridPos: { x: (i % 2) * 12, y: Math.floor(i / 2) * 8, w: 12, h: 8 },
             datasource: { type: 'prometheus', uid: datasource },
-            targets: [{
-              expr: panel.query,
-              refId: 'A'
-            }],
-            options: panel.type === 'stat' ? { colorMode: 'value', graphMode: 'area' } : {}
-          }))
+            targets: [
+              {
+                expr: panel.query,
+                refId: 'A',
+              },
+            ],
+            options: panel.type === 'stat' ? { colorMode: 'value', graphMode: 'area' } : {},
+          })),
         },
-        overwrite: true
+        overwrite: true,
       };
 
       const dashboardJson = JSON.stringify(dashboard, null, 2);
@@ -368,7 +385,7 @@ module.exports = { register${customMetrics.map(m => `, ${m.name}`).join('')} };
           panels: panels.length,
           outputPath,
           message: `Dashboard saved to ${outputPath}`,
-          hint: 'Import via Grafana UI: Dashboards > Import > Upload JSON'
+          hint: 'Import via Grafana UI: Dashboards > Import > Upload JSON',
         };
       }
 
@@ -378,9 +395,9 @@ module.exports = { register${customMetrics.map(m => `, ${m.name}`).join('')} };
         panels: panels.length,
         dashboard: dashboardJson.slice(0, 2000),
         message: 'Dashboard JSON generated',
-        hint: 'Import via Grafana UI or use output parameter to save'
+        hint: 'Import via Grafana UI or use output parameter to save',
       };
-    }
+    },
   },
 
   // Setup alerting rules
@@ -401,13 +418,13 @@ module.exports = { register${customMetrics.map(m => `, ${m.name}`).join('')} };
               expr: { type: 'string' },
               for: { type: 'string' },
               severity: { type: 'string' },
-              summary: { type: 'string' }
-            }
-          }
-        }
-      }
+              summary: { type: 'string' },
+            },
+          },
+        },
+      },
     },
-    handler: async (args) => {
+    handler: async args => {
       const output = args.output || path.join(OBS_DIR, 'alert-rules.yml');
       const alerts = args.alerts || [
         {
@@ -415,22 +432,22 @@ module.exports = { register${customMetrics.map(m => `, ${m.name}`).join('')} };
           expr: 'rate(http_requests_total{status=~"5.."}[5m]) > 0.1',
           for: '5m',
           severity: 'critical',
-          summary: 'High error rate detected'
+          summary: 'High error rate detected',
         },
         {
           name: 'HighLatency',
           expr: 'histogram_quantile(0.95, rate(http_request_duration_seconds_bucket[5m])) > 1',
           for: '10m',
           severity: 'warning',
-          summary: 'High latency detected (p95 > 1s)'
+          summary: 'High latency detected (p95 > 1s)',
         },
         {
           name: 'HighMemoryUsage',
           expr: 'process_resident_memory_bytes / 1024 / 1024 > 500',
           for: '5m',
           severity: 'warning',
-          summary: 'Memory usage above 500MB'
-        }
+          summary: 'Memory usage above 500MB',
+        },
       ];
 
       let yamlContent = `groups:
@@ -459,10 +476,10 @@ module.exports = { register${customMetrics.map(m => `, ${m.name}`).join('')} };
         outputPath,
         rules: alerts.map(a => a.name),
         message: `Created ${alerts.length} alert rules`,
-        hint: 'Add to Prometheus: rule_files: ["alert-rules.yml"]'
+        hint: 'Add to Prometheus: rule_files: ["alert-rules.yml"]',
       };
-    }
-  }
+    },
+  },
 };
 
 function getSentryInstructions(framework) {
@@ -472,7 +489,7 @@ function getSentryInstructions(framework) {
     react: 'npm install @sentry/react && wrap App with Sentry.ErrorBoundary',
     nextjs: 'npx @sentry/wizard@latest -i nextjs',
     python: 'pip install sentry-sdk && import sentry_config at start',
-    django: 'pip install sentry-sdk && add to settings.py'
+    django: 'pip install sentry-sdk && add to settings.py',
   };
   return instructions[framework] || 'See Sentry docs for your framework';
 }

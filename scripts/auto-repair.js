@@ -12,11 +12,18 @@ const path = require('path');
 const CONFIG = {
   rootDir: path.join(__dirname, '..'),
   excludeDirs: [
-    'node_modules', '.git', '.venv', 'venv', '__pycache__',
-    'dist', 'build', 'benchmark-results', 'security-reports'
+    'node_modules',
+    '.git',
+    '.venv',
+    'venv',
+    '__pycache__',
+    'dist',
+    'build',
+    'benchmark-results',
+    'security-reports',
   ],
   dryRun: process.argv.includes('--dry-run'),
-  verbose: process.argv.includes('--verbose')
+  verbose: process.argv.includes('--verbose'),
 };
 
 // Colors for terminal output
@@ -27,7 +34,7 @@ const colors = {
   yellow: '\x1b[33m',
   green: '\x1b[32m',
   cyan: '\x1b[36m',
-  gray: '\x1b[90m'
+  gray: '\x1b[90m',
 };
 
 // Statistics tracking
@@ -35,7 +42,7 @@ const stats = {
   filesScanned: 0,
   issuesFound: 0,
   issuesFixed: 0,
-  errors: 0
+  errors: 0,
 };
 
 /**
@@ -50,7 +57,7 @@ const REPAIR_RULES = {
       replacement: '',
       severity: 'low',
       skipIf: /test|spec|debug/i,
-      autoFix: false // Requires confirmation
+      autoFix: false, // Requires confirmation
     },
     // Note: Semicolon insertion disabled - requires AST parsing for accuracy
     // Use ESLint with --fix for proper semicolon handling
@@ -59,29 +66,29 @@ const REPAIR_RULES = {
       pattern: /\bvar\s+(\w+)\s*=/g,
       replacement: 'const $1 =',
       severity: 'medium',
-      autoFix: true
+      autoFix: true,
     },
     {
       name: 'Fix trailing whitespace',
       pattern: /[ \t]+$/gm,
       replacement: '',
       severity: 'low',
-      autoFix: true
+      autoFix: true,
     },
     {
       name: 'Fix multiple blank lines',
       pattern: /\n{3,}/g,
       replacement: '\n\n',
       severity: 'low',
-      autoFix: true
+      autoFix: true,
     },
     {
       name: 'Add missing newline at end of file',
       pattern: /([^\n])$/,
       replacement: '$1\n',
       severity: 'low',
-      autoFix: true
-    }
+      autoFix: true,
+    },
   ],
 
   // Python repairs
@@ -91,28 +98,28 @@ const REPAIR_RULES = {
       pattern: /[ \t]+$/gm,
       replacement: '',
       severity: 'low',
-      autoFix: true
+      autoFix: true,
     },
     {
       name: 'Fix multiple blank lines (max 2)',
       pattern: /\n{4,}/g,
       replacement: '\n\n\n',
       severity: 'low',
-      autoFix: true
+      autoFix: true,
     },
     {
       name: 'Add missing newline at end of file',
       pattern: /([^\n])$/,
       replacement: '$1\n',
       severity: 'low',
-      autoFix: true
+      autoFix: true,
     },
     {
       name: 'Fix tabs to spaces',
       pattern: /\t/g,
       replacement: '    ',
       severity: 'low',
-      autoFix: true
+      autoFix: true,
     },
     {
       name: 'Remove print statements (debugging)',
@@ -120,8 +127,8 @@ const REPAIR_RULES = {
       replacement: '',
       severity: 'low',
       skipIf: /test|debug|example/i,
-      autoFix: false // Requires confirmation
-    }
+      autoFix: false, // Requires confirmation
+    },
   ],
 
   // PowerShell repairs
@@ -131,15 +138,15 @@ const REPAIR_RULES = {
       pattern: /[ \t]+$/gm,
       replacement: '',
       severity: 'low',
-      autoFix: true
+      autoFix: true,
     },
     {
       name: 'Add missing newline at end of file',
       pattern: /([^\n])$/,
       replacement: '$1\n',
       severity: 'low',
-      autoFix: true
-    }
+      autoFix: true,
+    },
   ],
 
   // JSON repairs
@@ -149,8 +156,8 @@ const REPAIR_RULES = {
       pattern: /,(\s*[}\]])/g,
       replacement: '$1',
       severity: 'medium',
-      autoFix: true
-    }
+      autoFix: true,
+    },
   ],
 
   // Markdown repairs
@@ -160,23 +167,23 @@ const REPAIR_RULES = {
       pattern: /[ \t]+$/gm,
       replacement: '',
       severity: 'low',
-      autoFix: true
+      autoFix: true,
     },
     {
       name: 'Fix multiple blank lines',
       pattern: /\n{3,}/g,
       replacement: '\n\n',
       severity: 'low',
-      autoFix: true
+      autoFix: true,
     },
     {
       name: 'Add missing newline at end of file',
       pattern: /([^\n])$/,
       replacement: '$1\n',
       severity: 'low',
-      autoFix: true
-    }
-  ]
+      autoFix: true,
+    },
+  ],
 };
 
 /**
@@ -248,7 +255,7 @@ function repairFile(file) {
         rule: rule.name,
         severity: rule.severity,
         count: issueCount,
-        autoFix: rule.autoFix
+        autoFix: rule.autoFix,
       });
 
       // Apply fix if autoFix is enabled
@@ -331,9 +338,13 @@ function main() {
       console.log(`${colors.cyan}${file}${colors.reset}`);
       for (const issue of issues) {
         const fixStatus = issue.autoFix
-          ? (CONFIG.dryRun ? `${colors.yellow}[would fix]${colors.reset}` : `${colors.green}[fixed]${colors.reset}`)
+          ? CONFIG.dryRun
+            ? `${colors.yellow}[would fix]${colors.reset}`
+            : `${colors.green}[fixed]${colors.reset}`
           : `${colors.gray}[manual]${colors.reset}`;
-        console.log(`  ${formatSeverity(issue.severity)} ${issue.rule} (${issue.count}x) ${fixStatus}`);
+        console.log(
+          `  ${formatSeverity(issue.severity)} ${issue.rule} (${issue.count}x) ${fixStatus}`
+        );
       }
       console.log('');
     }

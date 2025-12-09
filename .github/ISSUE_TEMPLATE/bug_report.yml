@@ -1,8 +1,8 @@
 name: 🐛 Bug Report
 description: Report a bug or unexpected behavior
-title: "[BUG]: "
-labels: ["bug", "triage"]
-assignees: ["Ghenghis"]
+title: '[BUG]: '
+labels: ['bug', 'triage']
+assignees: ['Ghenghis']
 
 body:
   - type: markdown
@@ -82,7 +82,7 @@ body:
         - **Windsurf Version**: 
         - **Node.js Version**: 
         - **Python Version**: 
-        - **PowerShell Version**: 
+        - **PowerShell Version**:
     validations:
       required: true
 

@@ -80,10 +80,7 @@
   "python.terminal.activateEnvironment": true,
   "python.analysis.typeCheckingMode": "basic",
   "python.analysis.autoImportCompletions": true,
-  "python.analysis.extraPaths": [
-    "${workspaceFolder}/src",
-    "${workspaceFolder}/lib"
-  ],
+  "python.analysis.extraPaths": ["${workspaceFolder}/src", "${workspaceFolder}/lib"],
   "[python]": {
     "editor.formatOnSave": true,
     "editor.defaultFormatter": "ms-python.black-formatter",
@@ -259,16 +256,7 @@
   // ---------------------------------------------------------------------------
   // TODO TREE EXTENSION
   // ---------------------------------------------------------------------------
-  "todo-tree.general.tags": [
-    "BUG",
-    "HACK",
-    "FIXME",
-    "TODO",
-    "XXX",
-    "NOTE",
-    "OPTIMIZE",
-    "REVIEW"
-  ],
+  "todo-tree.general.tags": ["BUG", "HACK", "FIXME", "TODO", "XXX", "NOTE", "OPTIMIZE", "REVIEW"],
   "todo-tree.highlights.defaultHighlight": {
     "icon": "alert",
     "type": "text",
@@ -281,10 +269,7 @@
   // ---------------------------------------------------------------------------
   // ERROR LENS EXTENSION
   // ---------------------------------------------------------------------------
-  "errorLens.enabledDiagnosticLevels": [
-    "error",
-    "warning"
-  ],
+  "errorLens.enabledDiagnosticLevels": ["error", "warning"],
 
   // ---------------------------------------------------------------------------
   // WORKBENCH SETTINGS

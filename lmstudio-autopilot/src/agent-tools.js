@@ -8,9 +8,10 @@ const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
 
-const AGENT_DIR = process.platform === 'win32'
-  ? path.join(process.env.APPDATA || '', 'WindsurfAutopilot', 'agents')
-  : path.join(process.env.HOME || '', '.windsurf-autopilot', 'agents');
+const AGENT_DIR =
+  process.platform === 'win32'
+    ? path.join(process.env.APPDATA || '', 'WindsurfAutopilot', 'agents')
+    : path.join(process.env.HOME || '', '.windsurf-autopilot', 'agents');
 
 if (!fs.existsSync(AGENT_DIR)) {
   fs.mkdirSync(AGENT_DIR, { recursive: true });
@@ -27,32 +28,33 @@ const agentSpecializations = {
     name: 'Code Agent',
     description: 'Specializes in code generation and refactoring',
     tools: ['generate_code', 'refactor_code', 'code_review', 'analyze_complexity'],
-    systemPrompt: 'You are a code generation specialist. Write clean, efficient, well-documented code.'
+    systemPrompt:
+      'You are a code generation specialist. Write clean, efficient, well-documented code.',
   },
   test: {
     name: 'Test Agent',
     description: 'Specializes in test creation and execution',
     tools: ['generate_tests', 'run_tests', 'test_api'],
-    systemPrompt: 'You are a testing specialist. Create comprehensive tests with good coverage.'
+    systemPrompt: 'You are a testing specialist. Create comprehensive tests with good coverage.',
   },
   docs: {
     name: 'Documentation Agent',
     description: 'Specializes in documentation generation',
     tools: ['generate_docs', 'generate_api_docs'],
-    systemPrompt: 'You are a documentation specialist. Write clear, comprehensive documentation.'
+    systemPrompt: 'You are a documentation specialist. Write clear, comprehensive documentation.',
   },
   review: {
     name: 'Review Agent',
     description: 'Specializes in code review and security',
     tools: ['code_review', 'security_audit', 'find_dead_code', 'scan_secrets'],
-    systemPrompt: 'You are a code review specialist. Find issues and suggest improvements.'
+    systemPrompt: 'You are a code review specialist. Find issues and suggest improvements.',
   },
   deploy: {
     name: 'Deploy Agent',
     description: 'Specializes in deployment and CI/CD',
     tools: ['deploy_vercel', 'deploy_netlify', 'setup_github_actions', 'run_pipeline'],
-    systemPrompt: 'You are a deployment specialist. Handle deployments safely and efficiently.'
-  }
+    systemPrompt: 'You are a deployment specialist. Handle deployments safely and efficiently.',
+  },
 };
 
 const agentTools = {
@@ -66,15 +68,19 @@ const agentTools = {
         specialization: {
           type: 'string',
           enum: ['code', 'test', 'docs', 'review', 'deploy', 'custom'],
-          description: 'Agent specialization'
+          description: 'Agent specialization',
         },
-        tools: { type: 'array', items: { type: 'string' }, description: 'Tools this agent can use' },
+        tools: {
+          type: 'array',
+          items: { type: 'string' },
+          description: 'Tools this agent can use',
+        },
         systemPrompt: { type: 'string', description: 'Custom system prompt' },
-        model: { type: 'string', description: 'AI model to use' }
+        model: { type: 'string', description: 'AI model to use' },
       },
-      required: ['name', 'specialization']
+      required: ['name', 'specialization'],
     },
-    handler: async (args) => {
+    handler: async args => {
       try {
         const spec = agentSpecializations[args.specialization] || {};
 
@@ -89,16 +95,13 @@ const agentTools = {
           createdAt: new Date().toISOString(),
           status: 'idle',
           taskCount: 0,
-          successRate: 100
+          successRate: 100,
         };
 
         agents.set(agent.id, agent);
 
         // Save to disk
-        fs.writeFileSync(
-          path.join(AGENT_DIR, `${agent.id}.json`),
-          JSON.stringify(agent, null, 2)
-        );
+        fs.writeFileSync(path.join(AGENT_DIR, `${agent.id}.json`), JSON.stringify(agent, null, 2));
 
         return {
           success: true,
@@ -106,12 +109,12 @@ const agentTools = {
           name: agent.name,
           specialization: agent.specialization,
           tools: agent.tools,
-          message: `Agent "${agent.name}" created`
+          message: `Agent "${agent.name}" created`,
         };
       } catch (error) {
         return { success: false, error: error.message };
       }
-    }
+    },
   },
 
   assign_task: {
@@ -124,18 +127,18 @@ const agentTools = {
         task: { type: 'string', description: 'Task description' },
         priority: { type: 'string', enum: ['low', 'normal', 'high', 'urgent'], default: 'normal' },
         context: { type: 'object', description: 'Additional context for the task' },
-        timeout: { type: 'number', description: 'Task timeout in seconds', default: 300 }
+        timeout: { type: 'number', description: 'Task timeout in seconds', default: 300 },
       },
-      required: ['agentId', 'task']
+      required: ['agentId', 'task'],
     },
-    handler: async (args) => {
+    handler: async args => {
       const agent = agents.get(args.agentId) || loadAgent(args.agentId);
 
       if (!agent) {
         return {
           success: false,
           error: `Agent not found: ${args.agentId}`,
-          availableAgents: Array.from(agents.values()).map(a => ({ id: a.id, name: a.name }))
+          availableAgents: Array.from(agents.values()).map(a => ({ id: a.id, name: a.name })),
         };
       }
 
@@ -148,7 +151,7 @@ const agentTools = {
         context: args.context || {},
         status: 'queued',
         createdAt: new Date().toISOString(),
-        timeout: args.timeout || 300
+        timeout: args.timeout || 300,
       };
 
       taskQueue.push(task);
@@ -162,7 +165,7 @@ const agentTools = {
         task.result = {
           success: true,
           output: `Task "${args.task}" completed by ${agent.name}`,
-          duration: Math.random() * 5000 + 1000
+          duration: Math.random() * 5000 + 1000,
         };
         taskResults.set(task.id, task);
         agent.status = 'idle';
@@ -174,9 +177,9 @@ const agentTools = {
         agentId: agent.id,
         agentName: agent.name,
         status: 'queued',
-        message: `Task assigned to ${agent.name}`
+        message: `Task assigned to ${agent.name}`,
       };
-    }
+    },
   },
 
   agent_status: {
@@ -185,10 +188,10 @@ const agentTools = {
     inputSchema: {
       type: 'object',
       properties: {
-        agentId: { type: 'string', description: 'Specific agent ID (optional)' }
-      }
+        agentId: { type: 'string', description: 'Specific agent ID (optional)' },
+      },
     },
-    handler: async (args) => {
+    handler: async args => {
       // Load agents from disk
       loadAllAgents();
 
@@ -199,15 +202,17 @@ const agentTools = {
         }
 
         const agentTasks = taskQueue.filter(t => t.agentId === args.agentId);
-        const completedTasks = Array.from(taskResults.values()).filter(t => t.agentId === args.agentId);
+        const completedTasks = Array.from(taskResults.values()).filter(
+          t => t.agentId === args.agentId
+        );
 
         return {
           success: true,
           agent: {
             ...agent,
             pendingTasks: agentTasks.length,
-            completedTasks: completedTasks.length
-          }
+            completedTasks: completedTasks.length,
+          },
         };
       }
 
@@ -217,7 +222,7 @@ const agentTools = {
         specialization: agent.specialization,
         status: agent.status,
         taskCount: agent.taskCount,
-        successRate: agent.successRate
+        successRate: agent.successRate,
       }));
 
       return {
@@ -225,9 +230,9 @@ const agentTools = {
         agentCount: allAgents.length,
         agents: allAgents,
         queuedTasks: taskQueue.length,
-        completedTasks: taskResults.size
+        completedTasks: taskResults.size,
       };
-    }
+    },
   },
 
   agent_collaborate: {
@@ -242,13 +247,13 @@ const agentTools = {
           type: 'string',
           enum: ['sequential', 'parallel', 'pipeline'],
           default: 'pipeline',
-          description: 'Collaboration strategy'
+          description: 'Collaboration strategy',
         },
-        projectPath: { type: 'string', description: 'Project context' }
+        projectPath: { type: 'string', description: 'Project context' },
       },
-      required: ['task']
+      required: ['task'],
     },
-    handler: async (args) => {
+    handler: async args => {
       loadAllAgents();
 
       // If no agents specified, auto-select based on task
@@ -289,7 +294,7 @@ const agentTools = {
           success: false,
           error: 'No suitable agents found for this task',
           suggestion: 'Create agents first using create_agent',
-          availableSpecializations: Object.keys(agentSpecializations)
+          availableSpecializations: Object.keys(agentSpecializations),
         };
       }
 
@@ -305,11 +310,11 @@ const agentTools = {
           id: a.id,
           name: a.name,
           specialization: a.specialization,
-          role: getRoleInPipeline(a.specialization)
+          role: getRoleInPipeline(a.specialization),
         })),
         status: 'planning',
         createdAt: new Date().toISOString(),
-        steps: []
+        steps: [],
       };
 
       // Generate steps based on strategy
@@ -320,7 +325,7 @@ const agentTools = {
             agentId: agent.id,
             agentName: agent.name,
             action: `Execute ${agent.specialization} tasks`,
-            dependsOn: index > 0 ? plan.steps[index - 1].order : null
+            dependsOn: index > 0 ? plan.steps[index - 1].order : null,
           });
         });
       } else if (strategy === 'parallel') {
@@ -330,7 +335,7 @@ const agentTools = {
             agentId: agent.id,
             agentName: agent.name,
             action: `Execute ${agent.specialization} tasks`,
-            dependsOn: null
+            dependsOn: null,
           });
         });
       }
@@ -342,9 +347,9 @@ const agentTools = {
         strategy,
         agentsInvolved: selectedAgents.length,
         plan,
-        message: `Collaboration started with ${selectedAgents.length} agents using ${strategy} strategy`
+        message: `Collaboration started with ${selectedAgents.length} agents using ${strategy} strategy`,
       };
-    }
+    },
   },
 
   list_agents: {
@@ -364,30 +369,50 @@ const agentTools = {
           description: a.description,
           tools: a.tools,
           status: a.status,
-          taskCount: a.taskCount
+          taskCount: a.taskCount,
         })),
         availableSpecializations: Object.entries(agentSpecializations).map(([key, value]) => ({
           type: key,
           name: value.name,
-          description: value.description
-        }))
+          description: value.description,
+        })),
       };
-    }
+    },
   },
 
   getToolDefinitions: function () {
     return [
-      { name: this.create_agent.name, description: this.create_agent.description, inputSchema: this.create_agent.inputSchema },
-      { name: this.assign_task.name, description: this.assign_task.description, inputSchema: this.assign_task.inputSchema },
-      { name: this.agent_status.name, description: this.agent_status.description, inputSchema: this.agent_status.inputSchema },
-      { name: this.agent_collaborate.name, description: this.agent_collaborate.description, inputSchema: this.agent_collaborate.inputSchema },
-      { name: this.list_agents.name, description: this.list_agents.description, inputSchema: this.list_agents.inputSchema }
+      {
+        name: this.create_agent.name,
+        description: this.create_agent.description,
+        inputSchema: this.create_agent.inputSchema,
+      },
+      {
+        name: this.assign_task.name,
+        description: this.assign_task.description,
+        inputSchema: this.assign_task.inputSchema,
+      },
+      {
+        name: this.agent_status.name,
+        description: this.agent_status.description,
+        inputSchema: this.agent_status.inputSchema,
+      },
+      {
+        name: this.agent_collaborate.name,
+        description: this.agent_collaborate.description,
+        inputSchema: this.agent_collaborate.inputSchema,
+      },
+      {
+        name: this.list_agents.name,
+        description: this.list_agents.description,
+        inputSchema: this.list_agents.inputSchema,
+      },
     ];
   },
 
   getHandler: function (toolName) {
     return this[toolName]?.handler;
-  }
+  },
 };
 
 // Helper functions
@@ -423,7 +448,7 @@ function getRoleInPipeline(specialization) {
     test: 'Testing',
     docs: 'Documentation',
     review: 'Quality Assurance',
-    deploy: 'Deployment'
+    deploy: 'Deployment',
   };
   return roles[specialization] || 'General';
 }

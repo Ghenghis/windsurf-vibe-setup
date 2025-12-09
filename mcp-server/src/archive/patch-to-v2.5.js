@@ -20,7 +20,7 @@ console.log('✅ Backup created: index.v2.4.backup.js');
 // 1. Add import for ultimate tools
 if (!content.includes('ultimate-tools.js')) {
   content = content.replace(
-    'const realtimeAI = require(\'./realtime-ai-engine.js\');',
+    "const realtimeAI = require('./realtime-ai-engine.js');",
     `const realtimeAI = require('./realtime-ai-engine.js');
 const ultimateTools = require('./ultimate-tools.js');`
   );
@@ -29,7 +29,7 @@ const ultimateTools = require('./ultimate-tools.js');`
 
 // 2. Update version number
 content = content.replace(/v2\.4/g, 'v2.5');
-content = content.replace(/version: '2\.4\.0'/g, 'version: \'2.5.0\'');
+content = content.replace(/version: '2\.4\.0'/g, "version: '2.5.0'");
 console.log('✅ Updated version to 2.5.0');
 
 // 3. Find the right place to add new tools - after the last tool in toolImplementations
@@ -793,7 +793,7 @@ if (toolDefsEndMarker.test(content)) {
 // 5. Update startup message
 content = content.replace(
   /console\.error\(['"]🚀[^'"]+['"]\);/,
-  'console.error(\'🚀 Windsurf Autopilot v2.5 - ULTIMATE EDITION (95%+ Autopilot, 80+ Tools)\');'
+  "console.error('🚀 Windsurf Autopilot v2.5 - ULTIMATE EDITION (95%+ Autopilot, 80+ Tools)');"
 );
 console.log('✅ Updated startup message');
 

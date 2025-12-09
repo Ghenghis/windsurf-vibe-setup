@@ -13,42 +13,55 @@ const swarmTools = {
   // =========================================================================
   // HIVE MIND CONTROL
   // =========================================================================
-  
+
   hive_initialize: {
     name: 'hive_initialize',
     description: 'Initialize the Hive Mind swarm system for multi-agent collaboration',
     inputSchema: {
       type: 'object',
       properties: {
-        ollamaUrl: { type: 'string', description: 'Ollama API URL', default: 'http://localhost:11434' },
-        lmstudioUrl: { type: 'string', description: 'LM Studio API URL', default: 'http://localhost:1234' }
-      }
+        ollamaUrl: {
+          type: 'string',
+          description: 'Ollama API URL',
+          default: 'http://localhost:11434',
+        },
+        lmstudioUrl: {
+          type: 'string',
+          description: 'LM Studio API URL',
+          default: 'http://localhost:1234',
+        },
+      },
     },
-    handler: async (args) => {
+    handler: async args => {
       hiveMind.providers.ollama.url = args.ollamaUrl || hiveMind.providers.ollama.url;
       hiveMind.providers.lmstudio.url = args.lmstudioUrl || hiveMind.providers.lmstudio.url;
       await hiveMind.initialize();
       return hiveMind.getStatus();
-    }
+    },
   },
 
   hive_status: {
     name: 'hive_status',
     description: 'Get the current status of the Hive Mind swarm system',
     inputSchema: { type: 'object', properties: {} },
-    handler: async () => hiveMind.getStatus()
+    handler: async () => hiveMind.getStatus(),
   },
 
   hive_spawn_swarm: {
     name: 'hive_spawn_swarm',
-    description: 'Spawn a new swarm of agents for a complex task. Agents collaborate like a hive mind.',
+    description:
+      'Spawn a new swarm of agents for a complex task. Agents collaborate like a hive mind.',
     inputSchema: {
       type: 'object',
       properties: {
         task: { type: 'string', description: 'Description of the task for the swarm to complete' },
-        maxAgents: { type: 'number', description: 'Maximum number of agents to recruit', default: 10 }
+        maxAgents: {
+          type: 'number',
+          description: 'Maximum number of agents to recruit',
+          default: 10,
+        },
       },
-      required: ['task']
+      required: ['task'],
     },
     handler: async ({ task, maxAgents = 10 }) => {
       const swarm = await hiveMind.spawnSwarm(task, { maxAgents });
@@ -56,9 +69,9 @@ const swarmTools = {
         swarmId: swarm.id,
         agentCount: swarm.agents.length,
         roles: swarm.agents.map(a => a.role),
-        state: swarm.state
+        state: swarm.state,
       };
-    }
+    },
   },
 
   hive_execute_swarm: {
@@ -67,13 +80,13 @@ const swarmTools = {
     inputSchema: {
       type: 'object',
       properties: {
-        swarmId: { type: 'string', description: 'ID of the swarm to execute' }
+        swarmId: { type: 'string', description: 'ID of the swarm to execute' },
       },
-      required: ['swarmId']
+      required: ['swarmId'],
     },
     handler: async ({ swarmId }) => {
       return await hiveMind.executeSwarmTask(swarmId);
-    }
+    },
   },
 
   hive_run_task: {
@@ -82,14 +95,14 @@ const swarmTools = {
     inputSchema: {
       type: 'object',
       properties: {
-        task: { type: 'string', description: 'Task for the swarm to complete' }
+        task: { type: 'string', description: 'Task for the swarm to complete' },
       },
-      required: ['task']
+      required: ['task'],
     },
     handler: async ({ task }) => {
       const swarm = await hiveMind.spawnSwarm(task);
       return await hiveMind.executeSwarmTask(swarm.id);
-    }
+    },
   },
 
   // =========================================================================
@@ -102,14 +115,14 @@ const swarmTools = {
     inputSchema: {
       type: 'object',
       properties: {
-        storagePath: { type: 'string', description: 'Path to store memories' }
-      }
+        storagePath: { type: 'string', description: 'Path to store memories' },
+      },
     },
     handler: async ({ storagePath }) => {
       if (storagePath) mem0.storagePath = storagePath;
       await mem0.initialize();
       return mem0.getStats();
-    }
+    },
   },
 
   memory_add: {
@@ -119,19 +132,19 @@ const swarmTools = {
       type: 'object',
       properties: {
         content: { type: 'string', description: 'Content to remember' },
-        type: { 
-          type: 'string', 
+        type: {
+          type: 'string',
           enum: ['conversation', 'preference', 'knowledge', 'task', 'code', 'relationship'],
-          default: 'knowledge'
+          default: 'knowledge',
         },
         tags: { type: 'array', items: { type: 'string' }, description: 'Tags for categorization' },
-        metadata: { type: 'object', description: 'Additional metadata' }
+        metadata: { type: 'object', description: 'Additional metadata' },
       },
-      required: ['content']
+      required: ['content'],
     },
     handler: async ({ content, type, tags, metadata }) => {
       return await mem0.add(content, { type, tags: tags || [], metadata: metadata || {} });
-    }
+    },
   },
 
   memory_search: {
@@ -142,13 +155,13 @@ const swarmTools = {
       properties: {
         query: { type: 'string', description: 'Search query' },
         limit: { type: 'number', description: 'Max results', default: 10 },
-        type: { type: 'string', description: 'Filter by memory type' }
+        type: { type: 'string', description: 'Filter by memory type' },
       },
-      required: ['query']
+      required: ['query'],
     },
     handler: async ({ query, limit = 10, type }) => {
       return await mem0.search(query, { limit, type });
-    }
+    },
   },
 
   memory_get: {
@@ -157,11 +170,11 @@ const swarmTools = {
     inputSchema: {
       type: 'object',
       properties: {
-        memoryId: { type: 'string', description: 'Memory ID' }
+        memoryId: { type: 'string', description: 'Memory ID' },
       },
-      required: ['memoryId']
+      required: ['memoryId'],
     },
-    handler: async ({ memoryId }) => await mem0.get(memoryId)
+    handler: async ({ memoryId }) => await mem0.get(memoryId),
   },
 
   memory_update: {
@@ -173,11 +186,11 @@ const swarmTools = {
         memoryId: { type: 'string', description: 'Memory ID' },
         content: { type: 'string', description: 'New content' },
         tags: { type: 'array', items: { type: 'string' } },
-        metadata: { type: 'object' }
+        metadata: { type: 'object' },
       },
-      required: ['memoryId']
+      required: ['memoryId'],
     },
-    handler: async ({ memoryId, ...updates }) => await mem0.update(memoryId, updates)
+    handler: async ({ memoryId, ...updates }) => await mem0.update(memoryId, updates),
   },
 
   memory_delete: {
@@ -186,11 +199,11 @@ const swarmTools = {
     inputSchema: {
       type: 'object',
       properties: {
-        memoryId: { type: 'string', description: 'Memory ID' }
+        memoryId: { type: 'string', description: 'Memory ID' },
       },
-      required: ['memoryId']
+      required: ['memoryId'],
     },
-    handler: async ({ memoryId }) => await mem0.delete(memoryId)
+    handler: async ({ memoryId }) => await mem0.delete(memoryId),
   },
 
   memory_relate: {
@@ -201,18 +214,18 @@ const swarmTools = {
       properties: {
         fromId: { type: 'string', description: 'Source memory ID' },
         toId: { type: 'string', description: 'Target memory ID' },
-        type: { type: 'string', description: 'Relationship type' }
+        type: { type: 'string', description: 'Relationship type' },
       },
-      required: ['fromId', 'toId', 'type']
+      required: ['fromId', 'toId', 'type'],
     },
-    handler: async ({ fromId, toId, type }) => await mem0.addRelationship(fromId, toId, type)
+    handler: async ({ fromId, toId, type }) => await mem0.addRelationship(fromId, toId, type),
   },
 
   memory_stats: {
     name: 'memory_stats',
     description: 'Get memory system statistics',
     inputSchema: { type: 'object', properties: {} },
-    handler: async () => mem0.getStats()
+    handler: async () => mem0.getStats(),
   },
 
   // =========================================================================
@@ -227,9 +240,9 @@ const swarmTools = {
       properties: {
         task: { type: 'string', description: 'Task description' },
         contextQuery: { type: 'string', description: 'Query to retrieve relevant memories' },
-        saveResult: { type: 'boolean', description: 'Save result to memory', default: true }
+        saveResult: { type: 'boolean', description: 'Save result to memory', default: true },
       },
-      required: ['task']
+      required: ['task'],
     },
     handler: async ({ task, contextQuery, saveResult = true }) => {
       // Get relevant memories
@@ -237,25 +250,25 @@ const swarmTools = {
       if (contextQuery) {
         context = await mem0.search(contextQuery, { limit: 5 });
       }
-      
+
       // Spawn and execute swarm with context
       const swarm = await hiveMind.spawnSwarm(task);
       swarm.sharedContext.memories = context;
-      
+
       const result = await hiveMind.executeSwarmTask(swarm.id);
-      
+
       // Save result to memory
       if (saveResult && result.result) {
         await mem0.add(JSON.stringify(result.result), {
           type: MEMORY_TYPES.TASK,
           tags: ['swarm-result', swarm.id],
-          metadata: { swarmId: swarm.id, task }
+          metadata: { swarmId: swarm.id, task },
         });
       }
-      
+
       return result;
-    }
-  }
+    },
+  },
 };
 
 module.exports = { swarmTools };

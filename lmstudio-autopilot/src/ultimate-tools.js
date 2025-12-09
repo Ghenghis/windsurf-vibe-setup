@@ -127,7 +127,7 @@ function safeExec(cmd, opts = {}) {
       encoding: 'utf8',
       timeout: opts.timeout || 60000,
       maxBuffer: 10 * 1024 * 1024,
-      ...opts
+      ...opts,
     });
     return { success: true, output: output.trim() };
   } catch (e) {
@@ -135,7 +135,7 @@ function safeExec(cmd, opts = {}) {
       success: false,
       error: e.message,
       output: e.stdout?.toString() || '',
-      stderr: e.stderr?.toString() || ''
+      stderr: e.stderr?.toString() || '',
     };
   }
 }
@@ -144,9 +144,9 @@ function safeExec(cmd, opts = {}) {
 function httpRequest(url, options = {}) {
   return new Promise((resolve, reject) => {
     const protocol = url.startsWith('https') ? https : http;
-    const req = protocol.request(url, options, (res) => {
+    const req = protocol.request(url, options, res => {
       let data = '';
-      res.on('data', chunk => data += chunk);
+      res.on('data', chunk => (data += chunk));
       res.on('end', () => resolve({ status: res.statusCode, data }));
     });
     req.on('error', reject);
@@ -185,7 +185,7 @@ async function deployVercel({ projectPath, token, prod = false }) {
 
   const result = safeExec(`vercel ${prodFlag} ${tokenFlag} ${confirmFlag}`, {
     cwd: projectPath,
-    timeout: 300000 // 5 minutes
+    timeout: 300000, // 5 minutes
   });
 
   if (result.success) {
@@ -195,7 +195,7 @@ async function deployVercel({ projectPath, token, prod = false }) {
       success: true,
       url: urlMatch ? urlMatch[0] : null,
       output: result.output,
-      environment: prod ? 'production' : 'preview'
+      environment: prod ? 'production' : 'preview',
     };
   }
 
@@ -215,7 +215,10 @@ async function deployNetlify({ projectPath, token, prod = false, siteName }) {
   if (!netlifyCheck.success) {
     const install = safeExec('npm install -g netlify-cli', { cwd: projectPath });
     if (!install.success) {
-      return { success: false, error: 'Netlify CLI not installed. Run: npm install -g netlify-cli' };
+      return {
+        success: false,
+        error: 'Netlify CLI not installed. Run: npm install -g netlify-cli',
+      };
     }
   }
 
@@ -237,7 +240,7 @@ async function deployNetlify({ projectPath, token, prod = false, siteName }) {
 
   const result = safeExec(`netlify deploy ${prodFlag} ${tokenFlag} ${siteFlag} --dir=${buildDir}`, {
     cwd: projectPath,
-    timeout: 300000
+    timeout: 300000,
   });
 
   if (result.success) {
@@ -246,7 +249,7 @@ async function deployNetlify({ projectPath, token, prod = false, siteName }) {
       success: true,
       url: urlMatch ? urlMatch[0] : null,
       output: result.output,
-      environment: prod ? 'production' : 'preview'
+      environment: prod ? 'production' : 'preview',
     };
   }
 
@@ -269,7 +272,7 @@ async function deployRailway({ projectPath, token }) {
   const tokenFlag = token ? `RAILWAY_TOKEN=${token}` : '';
   const result = safeExec(`${tokenFlag} railway up`, {
     cwd: projectPath,
-    timeout: 300000
+    timeout: 300000,
   });
 
   return result.success
@@ -309,7 +312,7 @@ async function deployDockerHub({ projectPath, imageName, tag = 'latest', usernam
   return {
     success: true,
     image: fullTag,
-    message: `Pushed to Docker Hub: ${fullTag}`
+    message: `Pushed to Docker Hub: ${fullTag}`,
   };
 }
 
@@ -320,7 +323,12 @@ async function deployDockerHub({ projectPath, imageName, tag = 'latest', usernam
 /**
  * Setup GitHub Actions workflow
  */
-async function setupGitHubActions({ projectPath, type = 'node', includeTests = true, includeDeploy = false }) {
+async function setupGitHubActions({
+  projectPath,
+  type = 'node',
+  includeTests = true,
+  includeDeploy = false,
+}) {
   if (!projectPath || !fs.existsSync(projectPath)) {
     return { success: false, error: 'Project path not found' };
   }
@@ -361,17 +369,23 @@ jobs:
       
       - name: Run linter
         run: npm run lint --if-present
-${includeTests ? `      
+${
+  includeTests
+    ? `      
       - name: Run tests
         run: npm test --if-present
         
       - name: Upload coverage
         uses: codecov/codecov-action@v3
-        if: matrix.node-version == '20.x'` : ''}
+        if: matrix.node-version == '20.x'`
+    : ''
+}
       
       - name: Build
         run: npm run build --if-present
-${includeDeploy ? `
+${
+  includeDeploy
+    ? `
   deploy:
     needs: build
     runs-on: ubuntu-latest
@@ -380,7 +394,9 @@ ${includeDeploy ? `
     steps:
       - uses: actions/checkout@v4
       - name: Deploy
-        run: echo "Add your deployment steps here"` : ''}
+        run: echo "Add your deployment steps here"`
+    : ''
+}
 `,
 
     python: `name: Python CI
@@ -415,12 +431,16 @@ jobs:
       
       - name: Lint with flake8
         run: flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
-${includeTests ? `
+${
+  includeTests
+    ? `
       - name: Test with pytest
         run: pytest --cov=./ --cov-report=xml
         
       - name: Upload coverage
-        uses: codecov/codecov-action@v3` : ''}
+        uses: codecov/codecov-action@v3`
+    : ''
+}
 `,
 
     docker: `name: Docker CI
@@ -449,7 +469,9 @@ jobs:
           tags: app:test
           cache-from: type=gha
           cache-to: type=gha,mode=max
-${includeDeploy ? `
+${
+  includeDeploy
+    ? `
   push:
     needs: build
     runs-on: ubuntu-latest
@@ -469,8 +491,10 @@ ${includeDeploy ? `
         with:
           context: .
           push: true
-          tags: user/app:latest` : ''}
-`
+          tags: user/app:latest`
+    : ''
+}
+`,
   };
 
   const workflow = workflows[type] || workflows.node;
@@ -481,7 +505,7 @@ ${includeDeploy ? `
     success: true,
     path: filePath,
     type,
-    message: `Created GitHub Actions workflow for ${type} project`
+    message: `Created GitHub Actions workflow for ${type} project`,
   };
 }
 
@@ -567,7 +591,7 @@ deploy:
     - main
   script:
     - echo "Add deployment commands here"
-`
+`,
   };
 
   const config = configs[type] || configs.node;
@@ -578,14 +602,18 @@ deploy:
     success: true,
     path: filePath,
     type,
-    message: 'Created GitLab CI configuration'
+    message: 'Created GitLab CI configuration',
   };
 }
 
 /**
  * Trigger CI pipeline (via git push)
  */
-async function runPipeline({ projectPath, branch = 'main', commitMessage = 'trigger: CI pipeline' }) {
+async function runPipeline({
+  projectPath,
+  branch = 'main',
+  commitMessage = 'trigger: CI pipeline',
+}) {
   if (!projectPath || !fs.existsSync(projectPath)) {
     return { success: false, error: 'Project path not found' };
   }
@@ -598,7 +626,7 @@ async function runPipeline({ projectPath, branch = 'main', commitMessage = 'trig
   const commands = [
     'git add .ci-trigger',
     `git commit -m "${commitMessage}"`,
-    `git push origin ${branch}`
+    `git push origin ${branch}`,
   ];
 
   for (const cmd of commands) {
@@ -614,7 +642,7 @@ async function runPipeline({ projectPath, branch = 'main', commitMessage = 'trig
   return {
     success: true,
     message: 'Pipeline triggered via git push',
-    branch
+    branch,
   };
 }
 
@@ -641,7 +669,7 @@ async function checkPipelineStatus({ projectPath, owner, repo, token }) {
   try {
     const headers = {
       'User-Agent': 'windsurf-autopilot',
-      'Accept': 'application/vnd.github.v3+json'
+      Accept: 'application/vnd.github.v3+json',
     };
     if (token) {
       headers['Authorization'] = `token ${token}`;
@@ -660,13 +688,13 @@ async function checkPipelineStatus({ projectPath, owner, repo, token }) {
       conclusion: run.conclusion,
       branch: run.head_branch,
       createdAt: run.created_at,
-      url: run.html_url
+      url: run.html_url,
     }));
 
     return {
       success: true,
       runs: runs || [],
-      total: data.total_count
+      total: data.total_count,
     };
   } catch (e) {
     return { success: false, error: e.message };
@@ -698,7 +726,7 @@ async function refactorCode({ projectPath, operation, target, newName, filePath 
         operation: 'rename',
         target,
         newName,
-        replacements: count
+        replacements: count,
       };
     },
 
@@ -706,7 +734,7 @@ async function refactorCode({ projectPath, operation, target, newName, filePath 
       return {
         success: true,
         message: 'Function extraction: Use IDE refactoring tools for complex extractions',
-        suggestion: 'Select code → Right-click → Refactor → Extract Method'
+        suggestion: 'Select code → Right-click → Refactor → Extract Method',
       };
     },
 
@@ -719,7 +747,7 @@ async function refactorCode({ projectPath, operation, target, newName, filePath 
       return {
         success: true,
         operation: 'remove_unused_imports',
-        output: result.output || 'Cleaned unused imports'
+        output: result.output || 'Cleaned unused imports',
       };
     },
 
@@ -729,16 +757,16 @@ async function refactorCode({ projectPath, operation, target, newName, filePath 
       return {
         success: true,
         operation: 'organize_imports',
-        output: result.output || 'Organized imports'
+        output: result.output || 'Organized imports',
       };
-    }
+    },
   };
 
   if (!operations[operation]) {
     return {
       success: false,
       error: `Unknown operation: ${operation}`,
-      availableOperations: Object.keys(operations)
+      availableOperations: Object.keys(operations),
     };
   }
 
@@ -759,7 +787,7 @@ async function generateDocs({ projectPath, type = 'jsdoc', outputDir = 'docs' })
       if (!fs.existsSync(configPath)) {
         const config = {
           source: { include: ['src'], includePattern: '.+\\.js(doc|x)?$' },
-          opts: { destination: outputDir, recurse: true }
+          opts: { destination: outputDir, recurse: true },
         };
         fs.writeFileSync(configPath, JSON.stringify(config, null, 2));
       }
@@ -774,7 +802,9 @@ async function generateDocs({ projectPath, type = 'jsdoc', outputDir = 'docs' })
     },
 
     sphinx: async () => {
-      const result = safeExec(`sphinx-build -b html docs/source ${outputDir}`, { cwd: projectPath });
+      const result = safeExec(`sphinx-build -b html docs/source ${outputDir}`, {
+        cwd: projectPath,
+      });
       return result;
     },
 
@@ -801,11 +831,15 @@ async function generateDocs({ projectPath, type = 'jsdoc', outputDir = 'docs' })
 
       fs.writeFileSync(readmePath, content);
       return { success: true, output: 'README.md generated' };
-    }
+    },
   };
 
   if (!generators[type]) {
-    return { success: false, error: `Unknown doc type: ${type}`, available: Object.keys(generators) };
+    return {
+      success: false,
+      error: `Unknown doc type: ${type}`,
+      available: Object.keys(generators),
+    };
   }
 
   const result = await generators[type]();
@@ -813,7 +847,7 @@ async function generateDocs({ projectPath, type = 'jsdoc', outputDir = 'docs' })
     success: result.success !== false,
     type,
     outputDir,
-    output: result.output || result.error
+    output: result.output || result.error,
   };
 }
 
@@ -841,17 +875,19 @@ async function codeReview({ projectPath, files = [], strictness = 'medium' }) {
             file: file.filePath,
             line: msg.line,
             message: msg.message,
-            rule: msg.ruleId
+            rule: msg.ruleId,
           });
         });
       });
-    } catch (e) { /* ignore parse errors */ }
+    } catch (e) {
+      /* ignore parse errors */
+    }
   }
 
   // Check for common issues
   const srcDir = path.join(projectPath, 'src');
   if (fs.existsSync(srcDir)) {
-    const checkFile = (filePath) => {
+    const checkFile = filePath => {
       const content = fs.readFileSync(filePath, 'utf8');
       const lines = content.split('\n');
 
@@ -862,7 +898,7 @@ async function codeReview({ projectPath, files = [], strictness = 'medium' }) {
             type: 'cleanup',
             file: filePath,
             line: i + 1,
-            message: 'Consider removing console.log before production'
+            message: 'Consider removing console.log before production',
           });
         }
 
@@ -872,7 +908,7 @@ async function codeReview({ projectPath, files = [], strictness = 'medium' }) {
             type: 'todo',
             file: filePath,
             line: i + 1,
-            message: line.trim()
+            message: line.trim(),
           });
         }
 
@@ -882,17 +918,20 @@ async function codeReview({ projectPath, files = [], strictness = 'medium' }) {
             type: 'style',
             file: filePath,
             line: i + 1,
-            message: `Line exceeds 120 characters (${line.length})`
+            message: `Line exceeds 120 characters (${line.length})`,
           });
         }
       });
     };
 
-    const walkDir = (dir) => {
+    const walkDir = dir => {
       const entries = fs.readdirSync(dir, { withFileTypes: true });
       for (const entry of entries) {
         const fullPath = path.join(dir, entry.name);
-        if (entry.isDirectory() && !['node_modules', '.git', 'dist', 'build'].includes(entry.name)) {
+        if (
+          entry.isDirectory() &&
+          !['node_modules', '.git', 'dist', 'build'].includes(entry.name)
+        ) {
           walkDir(fullPath);
         } else if (entry.isFile() && /\.(js|ts|jsx|tsx)$/.test(entry.name)) {
           checkFile(fullPath);
@@ -908,15 +947,16 @@ async function codeReview({ projectPath, files = [], strictness = 'medium' }) {
     summary: {
       errors: issues.filter(i => i.severity === 'error').length,
       warnings: issues.filter(i => i.severity === 'warning').length,
-      suggestions: suggestions.length
+      suggestions: suggestions.length,
     },
     issues,
     suggestions,
-    recommendation: issues.filter(i => i.severity === 'error').length > 0
-      ? 'Fix errors before committing'
-      : suggestions.length > 10
-        ? 'Consider addressing some suggestions'
-        : 'Code looks good!'
+    recommendation:
+      issues.filter(i => i.severity === 'error').length > 0
+        ? 'Fix errors before committing'
+        : suggestions.length > 10
+          ? 'Consider addressing some suggestions'
+          : 'Code looks good!',
   };
 }
 
@@ -936,7 +976,7 @@ async function findDeadCode({ projectPath }) {
       success: true,
       tool: 'ts-prune',
       unused,
-      count: unused.length
+      count: unused.length,
     };
   }
 
@@ -946,7 +986,7 @@ async function findDeadCode({ projectPath }) {
     success: true,
     tool: 'knip',
     output: result.output || 'No unused code found',
-    errors: result.stderr
+    errors: result.stderr,
   };
 }
 
@@ -965,12 +1005,14 @@ async function analyzeComplexity({ projectPath, threshold = 10 }) {
       success: true,
       tool: 'plato',
       reportDir: 'complexity-report',
-      message: 'Complexity report generated. Open complexity-report/index.html'
+      message: 'Complexity report generated. Open complexity-report/index.html',
     };
   }
 
   // Fallback to eslint complexity rule
-  result = safeExec(`npx eslint . --rule "complexity: [error, ${threshold}]" --format json`, { cwd: projectPath });
+  result = safeExec(`npx eslint . --rule "complexity: [error, ${threshold}]" --format json`, {
+    cwd: projectPath,
+  });
 
   const complexFunctions = [];
   try {
@@ -981,19 +1023,21 @@ async function analyzeComplexity({ projectPath, threshold = 10 }) {
           complexFunctions.push({
             file: file.filePath,
             line: msg.line,
-            message: msg.message
+            message: msg.message,
           });
         }
       });
     });
-  } catch (e) { /* ignore */ }
+  } catch (e) {
+    /* ignore */
+  }
 
   return {
     success: true,
     tool: 'eslint-complexity',
     threshold,
     complexFunctions,
-    count: complexFunctions.length
+    count: complexFunctions.length,
   };
 }
 
@@ -1012,7 +1056,7 @@ async function securityAudit({ projectPath }) {
   const results = {
     npm: null,
     snyk: null,
-    secrets: null
+    secrets: null,
   };
 
   // npm audit
@@ -1038,11 +1082,11 @@ async function securityAudit({ projectPath }) {
     /password\s*[:=]\s*['"][^'"]+['"]/gi,
     /token\s*[:=]\s*['"][^'"]+['"]/gi,
     /AWS[A-Z0-9]{16,}/g,
-    /sk-[a-zA-Z0-9]{32,}/g  // OpenAI keys
+    /sk-[a-zA-Z0-9]{32,}/g, // OpenAI keys
   ];
 
   const exposedSecrets = [];
-  const walkDir = (dir) => {
+  const walkDir = dir => {
     try {
       const entries = fs.readdirSync(dir, { withFileTypes: true });
       for (const entry of entries) {
@@ -1057,12 +1101,18 @@ async function securityAudit({ projectPath }) {
           secretPatterns.forEach(pattern => {
             const matches = content.match(pattern);
             if (matches) {
-              exposedSecrets.push({ file: fullPath, pattern: pattern.source, count: matches.length });
+              exposedSecrets.push({
+                file: fullPath,
+                pattern: pattern.source,
+                count: matches.length,
+              });
             }
           });
         }
       }
-    } catch (e) { /* ignore access errors */ }
+    } catch (e) {
+      /* ignore access errors */
+    }
   };
   walkDir(projectPath);
   results.secrets = exposedSecrets;
@@ -1074,8 +1124,8 @@ async function securityAudit({ projectPath }) {
     exposedSecrets: results.secrets,
     summary: {
       npmVulnerabilities: results.npm?.metadata?.vulnerabilities || {},
-      secretsFound: exposedSecrets.length
-    }
+      secretsFound: exposedSecrets.length,
+    },
   };
 }
 
@@ -1096,7 +1146,9 @@ async function updateDependencies({ projectPath, mode = 'safe', packages = [] })
 
     minor: async () => {
       // Update to latest minor versions
-      const result = safeExec('npx npm-check-updates -u --target minor && npm install', { cwd: projectPath });
+      const result = safeExec('npx npm-check-updates -u --target minor && npm install', {
+        cwd: projectPath,
+      });
       return result;
     },
 
@@ -1112,7 +1164,7 @@ async function updateDependencies({ projectPath, mode = 'safe', packages = [] })
       }
       const result = safeExec(`npm update ${packages.join(' ')}`, { cwd: projectPath });
       return result;
-    }
+    },
   };
 
   if (!modes[mode]) {
@@ -1135,14 +1187,17 @@ async function updateDependencies({ projectPath, mode = 'safe', packages = [] })
     backup: backupPath,
     message: result.success
       ? `Dependencies updated (${mode} mode). Backup at package.json.backup`
-      : result.error
+      : result.error,
   };
 }
 
 /**
  * Check license compliance
  */
-async function checkLicenses({ projectPath, allowed = ['MIT', 'ISC', 'Apache-2.0', 'BSD-3-Clause', 'BSD-2-Clause'] }) {
+async function checkLicenses({
+  projectPath,
+  allowed = ['MIT', 'ISC', 'Apache-2.0', 'BSD-3-Clause', 'BSD-2-Clause'],
+}) {
   if (!projectPath || !fs.existsSync(projectPath)) {
     return { success: false, error: 'Project path not found' };
   }
@@ -1172,7 +1227,7 @@ async function checkLicenses({ projectPath, allowed = ['MIT', 'ISC', 'Apache-2.0
       totalPackages: Object.keys(licenses).length,
       summary,
       issues,
-      compliant: issues.length === 0
+      compliant: issues.length === 0,
     };
   } catch (e) {
     return { success: false, error: 'Failed to parse license data' };
@@ -1192,9 +1247,11 @@ async function scanSecrets({ projectPath }) {
         success: true,
         tool: 'gitleaks',
         findings,
-        count: findings.length
+        count: findings.length,
       };
-    } catch (e) { /* continue */ }
+    } catch (e) {
+      /* continue */
+    }
   }
 
   // Fallback to basic pattern matching (from securityAudit)
@@ -1202,7 +1259,7 @@ async function scanSecrets({ projectPath }) {
     success: true,
     tool: 'basic-scan',
     findings: r.exposedSecrets,
-    count: r.exposedSecrets?.length || 0
+    count: r.exposedSecrets?.length || 0,
   }));
 }
 
@@ -1230,7 +1287,7 @@ async function testApi({ baseUrl, endpoints = [], method = 'GET', headers = {}, 
     try {
       const options = {
         method,
-        headers: { 'Content-Type': 'application/json', ...headers }
+        headers: { 'Content-Type': 'application/json', ...headers },
       };
       if (body) {
         options.body = JSON.stringify(body);
@@ -1246,7 +1303,7 @@ async function testApi({ baseUrl, endpoints = [], method = 'GET', headers = {}, 
         status: response.status,
         duration: `${duration}ms`,
         success: response.status >= 200 && response.status < 400,
-        sample: response.data?.substring(0, 200)
+        sample: response.data?.substring(0, 200),
       });
     } catch (e) {
       results.push({
@@ -1254,7 +1311,7 @@ async function testApi({ baseUrl, endpoints = [], method = 'GET', headers = {}, 
         url,
         status: 'ERROR',
         error: e.message,
-        success: false
+        success: false,
       });
     }
   }
@@ -1266,8 +1323,8 @@ async function testApi({ baseUrl, endpoints = [], method = 'GET', headers = {}, 
     summary: {
       total: results.length,
       passed: results.filter(r => r.success).length,
-      failed: results.filter(r => !r.success).length
-    }
+      failed: results.filter(r => !r.success).length,
+    },
   };
 }
 
@@ -1314,7 +1371,7 @@ server.listen(${port}, () => {
   // Start server
   const proc = spawn('node', [mockPath], {
     detached: true,
-    stdio: 'ignore'
+    stdio: 'ignore',
   });
   proc.unref();
 
@@ -1324,7 +1381,7 @@ server.listen(${port}, () => {
     pid: proc.pid,
     url: `http://localhost:${port}`,
     routes: Object.keys(routes),
-    serverFile: mockPath
+    serverFile: mockPath,
   };
 }
 
@@ -1337,7 +1394,9 @@ async function generateApiDocs({ projectPath, outputFile = 'openapi.json' }) {
   }
 
   // Try swagger-jsdoc
-  const result = safeExec('npx swagger-jsdoc -d swaggerDef.js -o ' + outputFile, { cwd: projectPath });
+  const result = safeExec('npx swagger-jsdoc -d swaggerDef.js -o ' + outputFile, {
+    cwd: projectPath,
+  });
   if (result.success) {
     return { success: true, tool: 'swagger-jsdoc', output: outputFile };
   }
@@ -1348,12 +1407,12 @@ async function generateApiDocs({ projectPath, outputFile = 'openapi.json' }) {
     info: {
       title: 'API Documentation',
       version: '1.0.0',
-      description: 'Auto-generated API documentation'
+      description: 'Auto-generated API documentation',
     },
     paths: {},
     components: {
-      schemas: {}
-    }
+      schemas: {},
+    },
   };
 
   const outputPath = path.join(projectPath, outputFile);
@@ -1363,7 +1422,7 @@ async function generateApiDocs({ projectPath, outputFile = 'openapi.json' }) {
     success: true,
     tool: 'template',
     output: outputPath,
-    message: 'Created OpenAPI template. Add your endpoints to the paths section.'
+    message: 'Created OpenAPI template. Add your endpoints to the paths section.',
   };
 }
 
@@ -1384,10 +1443,24 @@ async function saveTemplate({ projectPath, templateName, description = '' }) {
 
   const templatePath = path.join(TEMPLATE_DIR, templateName);
   if (fs.existsSync(templatePath)) {
-    return { success: false, error: 'Template already exists. Delete it first or use different name.' };
+    return {
+      success: false,
+      error: 'Template already exists. Delete it first or use different name.',
+    };
   }
 
-  const excludes = ['node_modules', '.git', '__pycache__', 'venv', '.venv', 'dist', 'build', '.next', 'coverage', '.env'];
+  const excludes = [
+    'node_modules',
+    '.git',
+    '__pycache__',
+    'venv',
+    '.venv',
+    'dist',
+    'build',
+    '.next',
+    'coverage',
+    '.env',
+  ];
 
   fs.mkdirSync(templatePath, { recursive: true });
 
@@ -1415,7 +1488,7 @@ async function saveTemplate({ projectPath, templateName, description = '' }) {
     name: templateName,
     description,
     createdAt: new Date().toISOString(),
-    sourceProject: path.basename(projectPath)
+    sourceProject: path.basename(projectPath),
   };
   fs.writeFileSync(path.join(templatePath, '.template-meta.json'), JSON.stringify(meta, null, 2));
 
@@ -1423,7 +1496,7 @@ async function saveTemplate({ projectPath, templateName, description = '' }) {
     success: true,
     templateName,
     templatePath,
-    message: `Template saved: ${templateName}`
+    message: `Template saved: ${templateName}`,
   };
 }
 
@@ -1447,7 +1520,9 @@ async function listTemplates() {
     if (fs.existsSync(metaPath)) {
       try {
         meta = JSON.parse(fs.readFileSync(metaPath, 'utf8'));
-      } catch (e) { /* ignore */ }
+      } catch (e) {
+        /* ignore */
+      }
     }
     templates.push(meta);
   }
@@ -1500,7 +1575,7 @@ async function useTemplate({ templateName, targetPath, projectName }) {
     success: true,
     templateName,
     projectPath: destPath,
-    message: `Created project from template: ${templateName}`
+    message: `Created project from template: ${templateName}`,
   };
 }
 
@@ -1528,14 +1603,16 @@ async function notify({ title, message, type = 'info' }) {
     `;
     safeExec(`powershell -Command "${psScript.replace(/\n/g, ' ')}"`, { timeout: 5000 });
   } else if (process.platform === 'darwin') {
-    safeExec(`osascript -e 'display notification "${message}" with title "${title}"'`, { timeout: 5000 });
+    safeExec(`osascript -e 'display notification "${message}" with title "${title}"'`, {
+      timeout: 5000,
+    });
   } else {
     safeExec(`notify-send "${title}" "${message}"`, { timeout: 5000 });
   }
 
   return {
     success: true,
-    notification: { icon, title, message, type }
+    notification: { icon, title, message, type },
   };
 }
 
@@ -1551,13 +1628,13 @@ async function sendWebhook({ url, method = 'POST', payload = {}, headers = {} })
     const response = await httpRequest(url, {
       method,
       headers: { 'Content-Type': 'application/json', ...headers },
-      body: JSON.stringify(payload)
+      body: JSON.stringify(payload),
     });
 
     return {
       success: response.status >= 200 && response.status < 400,
       status: response.status,
-      response: response.data
+      response: response.data,
     };
   } catch (e) {
     return { success: false, error: e.message };
@@ -1582,7 +1659,7 @@ async function scheduleTask({ taskName, command, runAt, projectPath }) {
     runAt,
     projectPath,
     createdAt: new Date().toISOString(),
-    status: 'pending'
+    status: 'pending',
   };
 
   tasks.push(task);
@@ -1591,7 +1668,7 @@ async function scheduleTask({ taskName, command, runAt, projectPath }) {
   return {
     success: true,
     task,
-    message: 'Task scheduled. Note: Actual scheduling requires external cron/task scheduler.'
+    message: 'Task scheduled. Note: Actual scheduling requires external cron/task scheduler.',
   };
 }
 
@@ -1621,7 +1698,7 @@ async function fileDiff({ file1, file2, format = 'unified' }) {
       differences.push({
         line: i + 1,
         file1: content1[i] || '<missing>',
-        file2: content2[i] || '<missing>'
+        file2: content2[i] || '<missing>',
       });
     }
   }
@@ -1636,7 +1713,7 @@ async function fileDiff({ file1, file2, format = 'unified' }) {
     identical: differences.length === 0,
     differences,
     diffCount: differences.length,
-    gitDiff: gitDiff.output || null
+    gitDiff: gitDiff.output || null,
   };
 }
 
@@ -1656,7 +1733,7 @@ async function fileMerge({ projectPath, source, target = 'main' }) {
     target,
     output: result.output,
     error: result.error,
-    hasConflicts: result.output?.includes('CONFLICT') || result.error?.includes('CONFLICT')
+    hasConflicts: result.output?.includes('CONFLICT') || result.error?.includes('CONFLICT'),
   };
 }
 
@@ -1671,7 +1748,7 @@ async function bulkRename({ projectPath, pattern, replacement, dryRun = true }) 
   const results = [];
   const regex = new RegExp(pattern);
 
-  const processDir = (dir) => {
+  const processDir = dir => {
     const entries = fs.readdirSync(dir, { withFileTypes: true });
     for (const entry of entries) {
       if (['node_modules', '.git'].includes(entry.name)) {
@@ -1704,14 +1781,22 @@ async function bulkRename({ projectPath, pattern, replacement, dryRun = true }) 
     replacement,
     files: results,
     count: results.length,
-    message: dryRun ? 'Dry run complete. Set dryRun=false to apply changes.' : 'Files renamed successfully.'
+    message: dryRun
+      ? 'Dry run complete. Set dryRun=false to apply changes.'
+      : 'Files renamed successfully.',
   };
 }
 
 /**
  * Find and replace across entire project
  */
-async function findReplaceAll({ projectPath, find, replace, filePattern = '**/*.{js,ts,jsx,tsx}', dryRun = true }) {
+async function findReplaceAll({
+  projectPath,
+  find,
+  replace,
+  filePattern = '**/*.{js,ts,jsx,tsx}',
+  dryRun = true,
+}) {
   if (!projectPath || !fs.existsSync(projectPath)) {
     return { success: false, error: 'Project path not found' };
   }
@@ -1719,14 +1804,14 @@ async function findReplaceAll({ projectPath, find, replace, filePattern = '**/*.
   const results = [];
   const regex = new RegExp(find, 'g');
 
-  const processFile = (filePath) => {
+  const processFile = filePath => {
     const content = fs.readFileSync(filePath, 'utf8');
     const matches = content.match(regex);
     if (matches) {
       const newContent = content.replace(regex, replace);
       results.push({
         file: filePath,
-        matches: matches.length
+        matches: matches.length,
       });
       if (!dryRun) {
         fs.writeFileSync(filePath, newContent);
@@ -1734,7 +1819,7 @@ async function findReplaceAll({ projectPath, find, replace, filePattern = '**/*.
     }
   };
 
-  const processDir = (dir) => {
+  const processDir = dir => {
     const entries = fs.readdirSync(dir, { withFileTypes: true });
     for (const entry of entries) {
       if (['node_modules', '.git', 'dist', 'build'].includes(entry.name)) {
@@ -1758,7 +1843,7 @@ async function findReplaceAll({ projectPath, find, replace, filePattern = '**/*.
     replace,
     files: results,
     totalMatches: results.reduce((sum, r) => sum + r.matches, 0),
-    message: dryRun ? 'Dry run complete. Set dryRun=false to apply.' : 'Replacements applied.'
+    message: dryRun ? 'Dry run complete. Set dryRun=false to apply.' : 'Replacements applied.',
   };
 }
 
@@ -1778,7 +1863,7 @@ async function analyzeLogs({ logPath, patterns = ['error', 'warning', 'failed'] 
   const lines = content.split('\n');
   const analysis = {
     totalLines: lines.length,
-    matches: {}
+    matches: {},
   };
 
   patterns.forEach(pattern => {
@@ -1786,14 +1871,14 @@ async function analyzeLogs({ logPath, patterns = ['error', 'warning', 'failed'] 
     const matches = lines.filter(line => regex.test(line));
     analysis.matches[pattern] = {
       count: matches.length,
-      samples: matches.slice(0, 5)
+      samples: matches.slice(0, 5),
     };
   });
 
   return {
     success: true,
     logPath,
-    analysis
+    analysis,
   };
 }
 
@@ -1814,7 +1899,7 @@ async function tailLogs({ logPath, lines = 50 }) {
     logPath,
     lines: lastLines,
     count: lastLines.length,
-    totalLines: allLines.length
+    totalLines: allLines.length,
   };
 }
 
@@ -1829,7 +1914,7 @@ async function searchLogs({ logDir, pattern, maxResults = 100 }) {
   const results = [];
   const regex = new RegExp(pattern, 'gi');
 
-  const processFile = (filePath) => {
+  const processFile = filePath => {
     const content = fs.readFileSync(filePath, 'utf8');
     const lines = content.split('\n');
     lines.forEach((line, i) => {
@@ -1837,7 +1922,7 @@ async function searchLogs({ logDir, pattern, maxResults = 100 }) {
         results.push({
           file: filePath,
           line: i + 1,
-          content: line.substring(0, 200)
+          content: line.substring(0, 200),
         });
       }
     });
@@ -1857,7 +1942,7 @@ async function searchLogs({ logDir, pattern, maxResults = 100 }) {
     success: true,
     pattern,
     results,
-    count: results.length
+    count: results.length,
   };
 }
 
@@ -1892,11 +1977,15 @@ async function benchmarkProject({ projectPath, type = 'build' }) {
       const start = Date.now();
       const result = safeExec('npm install', { cwd: projectPath, timeout: 300000 });
       return { duration: Date.now() - start, success: result.success };
-    }
+    },
   };
 
   if (!benchmarks[type]) {
-    return { success: false, error: `Unknown benchmark: ${type}`, available: Object.keys(benchmarks) };
+    return {
+      success: false,
+      error: `Unknown benchmark: ${type}`,
+      available: Object.keys(benchmarks),
+    };
   }
 
   const result = await benchmarks[type]();
@@ -1906,7 +1995,7 @@ async function benchmarkProject({ projectPath, type = 'build' }) {
     benchmark: type,
     duration: result.duration,
     durationFormatted: `${(result.duration / 1000).toFixed(2)}s`,
-    passed: result.success
+    passed: result.success,
   };
 }
 
@@ -1921,9 +2010,9 @@ async function profileApp({ projectPath, command = 'npm start', duration = 10000
       'Chrome DevTools Performance tab',
       'node --prof app.js && node --prof-process',
       'clinic.js: npx clinic doctor -- npm start',
-      '0x: npx 0x app.js'
+      '0x: npx 0x app.js',
     ],
-    command: `npx 0x -o ${path.join(projectPath, 'profile')} -- node src/index.js`
+    command: `npx 0x -o ${path.join(projectPath, 'profile')} -- node src/index.js`,
   };
 }
 
@@ -1936,7 +2025,10 @@ async function analyzeBundle({ projectPath }) {
   }
 
   // Try webpack-bundle-analyzer
-  let result = safeExec('npx webpack-bundle-analyzer dist/stats.json --mode static --report report.html', { cwd: projectPath });
+  let result = safeExec(
+    'npx webpack-bundle-analyzer dist/stats.json --mode static --report report.html',
+    { cwd: projectPath }
+  );
   if (result.success) {
     return { success: true, tool: 'webpack-bundle-analyzer', report: 'report.html' };
   }
@@ -1950,7 +2042,11 @@ async function analyzeBundle({ projectPath }) {
   // Get basic size info
   const distPath = path.join(projectPath, 'dist');
   const buildPath = path.join(projectPath, 'build');
-  const targetPath = fs.existsSync(distPath) ? distPath : fs.existsSync(buildPath) ? buildPath : null;
+  const targetPath = fs.existsSync(distPath)
+    ? distPath
+    : fs.existsSync(buildPath)
+      ? buildPath
+      : null;
 
   if (!targetPath) {
     return { success: false, error: 'No dist/build directory found. Run build first.' };
@@ -1958,7 +2054,7 @@ async function analyzeBundle({ projectPath }) {
 
   let totalSize = 0;
   const files = [];
-  const processDir = (dir) => {
+  const processDir = dir => {
     const entries = fs.readdirSync(dir, { withFileTypes: true });
     for (const entry of entries) {
       const fullPath = path.join(dir, entry.name);
@@ -1968,7 +2064,11 @@ async function analyzeBundle({ projectPath }) {
         const stats = fs.statSync(fullPath);
         totalSize += stats.size;
         if (/\.(js|css)$/.test(entry.name)) {
-          files.push({ file: entry.name, size: stats.size, sizeKB: (stats.size / 1024).toFixed(2) + 'KB' });
+          files.push({
+            file: entry.name,
+            size: stats.size,
+            sizeKB: (stats.size / 1024).toFixed(2) + 'KB',
+          });
         }
       }
     }
@@ -1982,7 +2082,7 @@ async function analyzeBundle({ projectPath }) {
     tool: 'basic',
     totalSize,
     totalSizeFormatted: `${(totalSize / 1024).toFixed(2)} KB`,
-    largestFiles: files.slice(0, 10)
+    largestFiles: files.slice(0, 10),
   };
 }
 
@@ -2006,7 +2106,7 @@ async function switchProject({ projectPath }) {
     data.projects.push({
       path: projectPath,
       name: path.basename(projectPath),
-      addedAt: new Date().toISOString()
+      addedAt: new Date().toISOString(),
     });
   }
 
@@ -2019,7 +2119,7 @@ async function switchProject({ projectPath }) {
   return {
     success: true,
     activeProject: projectPath,
-    name: path.basename(projectPath)
+    name: path.basename(projectPath),
   };
 }
 
@@ -2036,14 +2136,14 @@ async function listProjects() {
   // Add exists check
   data.projects = data.projects.map(p => ({
     ...p,
-    exists: fs.existsSync(p.path)
+    exists: fs.existsSync(p.path),
   }));
 
   return {
     success: true,
     projects: data.projects,
     activeProject: data.activeProject,
-    count: data.projects.length
+    count: data.projects.length,
   };
 }
 
@@ -2059,7 +2159,7 @@ async function projectHealth({ projectPath }) {
     score: 100,
     issues: [],
     warnings: [],
-    good: []
+    good: [],
   };
 
   // Check package.json
@@ -2114,9 +2214,10 @@ async function projectHealth({ projectPath }) {
   }
 
   // Check tests
-  const hasTests = fs.existsSync(path.join(projectPath, 'tests')) ||
-                   fs.existsSync(path.join(projectPath, '__tests__')) ||
-                   fs.existsSync(path.join(projectPath, 'test'));
+  const hasTests =
+    fs.existsSync(path.join(projectPath, 'tests')) ||
+    fs.existsSync(path.join(projectPath, '__tests__')) ||
+    fs.existsSync(path.join(projectPath, 'test'));
   if (hasTests) {
     health.good.push('Has test directory');
   } else {
@@ -2130,8 +2231,9 @@ async function projectHealth({ projectPath }) {
   }
 
   // Check CI
-  const hasCI = fs.existsSync(path.join(projectPath, '.github', 'workflows')) ||
-                fs.existsSync(path.join(projectPath, '.gitlab-ci.yml'));
+  const hasCI =
+    fs.existsSync(path.join(projectPath, '.github', 'workflows')) ||
+    fs.existsSync(path.join(projectPath, '.gitlab-ci.yml'));
   if (hasCI) {
     health.good.push('Has CI/CD configuration');
   } else {
@@ -2143,15 +2245,21 @@ async function projectHealth({ projectPath }) {
   health.score -= health.warnings.length * 2;
   health.score = Math.max(0, Math.min(100, health.score));
 
-  health.grade = health.score >= 90 ? 'A' :
-    health.score >= 80 ? 'B' :
-      health.score >= 70 ? 'C' :
-        health.score >= 60 ? 'D' : 'F';
+  health.grade =
+    health.score >= 90
+      ? 'A'
+      : health.score >= 80
+        ? 'B'
+        : health.score >= 70
+          ? 'C'
+          : health.score >= 60
+            ? 'D'
+            : 'F';
 
   return {
     success: true,
     projectPath,
-    health
+    health,
   };
 }
 
@@ -2174,14 +2282,14 @@ async function cleanupProject({ projectPath, aggressive = false }) {
     '.nyc_output',
     '*.log',
     '.DS_Store',
-    'Thumbs.db'
+    'Thumbs.db',
   ];
 
   if (aggressive) {
     toClean.push('node_modules', 'package-lock.json', 'yarn.lock', '.venv', '__pycache__');
   }
 
-  const cleanPath = (targetPath) => {
+  const cleanPath = targetPath => {
     try {
       if (fs.existsSync(targetPath)) {
         const stats = fs.statSync(targetPath);
@@ -2224,7 +2332,7 @@ async function cleanupProject({ projectPath, aggressive = false }) {
     aggressive,
     message: aggressive
       ? 'Deep clean complete. Run npm install to restore dependencies.'
-      : 'Cache clean complete.'
+      : 'Cache clean complete.',
   };
 }
 
@@ -2293,5 +2401,5 @@ module.exports = {
   switchProject,
   listProjects,
   projectHealth,
-  cleanupProject
+  cleanupProject,
 };

@@ -29,15 +29,15 @@ const pair_start = {
         type: 'string',
         enum: ['mentor', 'collaborator', 'reviewer', 'learner'],
         default: 'collaborator',
-        description: 'Pairing mode'
+        description: 'Pairing mode',
       },
       experience: {
         type: 'string',
         enum: ['beginner', 'intermediate', 'advanced'],
-        default: 'intermediate'
-      }
+        default: 'intermediate',
+      },
     },
-    required: []
+    required: [],
   },
   handler: async ({ projectPath, focus, mode = 'collaborator', experience = 'intermediate' }) => {
     try {
@@ -53,7 +53,7 @@ const pair_start = {
         experience,
         interactions: [],
         suggestions: [],
-        learnings: []
+        learnings: [],
       };
 
       // Save session
@@ -70,20 +70,25 @@ const pair_start = {
         if (files.includes('package.json')) {
           try {
             const pkg = JSON.parse(fs.readFileSync(path.join(targetPath, 'package.json'), 'utf8'));
-            projectContext.type = pkg.dependencies?.next ? 'Next.js' :
-              pkg.dependencies?.react ? 'React' :
-                pkg.dependencies?.express ? 'Express' :
-                  pkg.dependencies?.vue ? 'Vue' : 'Node.js';
+            projectContext.type = pkg.dependencies?.next
+              ? 'Next.js'
+              : pkg.dependencies?.react
+                ? 'React'
+                : pkg.dependencies?.express
+                  ? 'Express'
+                  : pkg.dependencies?.vue
+                    ? 'Vue'
+                    : 'Node.js';
             projectContext.name = pkg.name;
           } catch {}
         }
       }
 
       const modeDescriptions = {
-        mentor: '🎓 I\'ll guide you step-by-step, explaining concepts as we go.',
-        collaborator: '🤝 We\'ll work together as equals, bouncing ideas off each other.',
-        reviewer: '🔍 I\'ll review your code and suggest improvements.',
-        learner: '📚 Tell me what you want to learn, and I\'ll create exercises.'
+        mentor: "🎓 I'll guide you step-by-step, explaining concepts as we go.",
+        collaborator: "🤝 We'll work together as equals, bouncing ideas off each other.",
+        reviewer: "🔍 I'll review your code and suggest improvements.",
+        learner: "📚 Tell me what you want to learn, and I'll create exercises.",
       };
 
       return {
@@ -95,37 +100,37 @@ const pair_start = {
         tips: {
           mentor: [
             'Ask me to explain any concept',
-            'I\'ll break down complex tasks into steps',
-            'Feel free to ask "why" at any point'
+            "I'll break down complex tasks into steps",
+            'Feel free to ask "why" at any point',
           ],
           collaborator: [
-            'Share your ideas and I\'ll build on them',
+            "Share your ideas and I'll build on them",
             'We can brainstorm solutions together',
-            'I\'ll suggest alternatives when relevant'
+            "I'll suggest alternatives when relevant",
           ],
           reviewer: [
             'Share code snippets for review',
-            'I\'ll point out potential issues',
-            'I\'ll suggest best practices'
+            "I'll point out potential issues",
+            "I'll suggest best practices",
           ],
           learner: [
             'Tell me what you want to learn',
-            'I\'ll create practice exercises',
-            'We\'ll build something to reinforce learning'
-          ]
+            "I'll create practice exercises",
+            "We'll build something to reinforce learning",
+          ],
         }[mode],
         quickActions: [
           'pair_suggest - Get suggestions for current task',
           'pair_review - Review a piece of code',
           'pair_explain - Get explanation of code/concept',
-          'pair_refactor - Get refactoring suggestions'
+          'pair_refactor - Get refactoring suggestions',
         ],
-        message: `🚀 Session started in ${mode} mode. Let's build something great!`
+        message: `🚀 Session started in ${mode} mode. Let's build something great!`,
       };
     } catch (error) {
       return { success: false, error: error.message };
     }
-  }
+  },
 };
 
 /**
@@ -137,16 +142,16 @@ const pair_suggest = {
   inputSchema: {
     type: 'object',
     properties: {
-      context: { type: 'string', description: 'What you\'re currently working on' },
+      context: { type: 'string', description: "What you're currently working on" },
       code: { type: 'string', description: 'Current code (optional)' },
       stuck: { type: 'boolean', description: 'Are you stuck?', default: false },
       type: {
         type: 'string',
         enum: ['next-step', 'improvement', 'alternative', 'completion'],
-        default: 'next-step'
-      }
+        default: 'next-step',
+      },
     },
-    required: ['context']
+    required: ['context'],
   },
   handler: async ({ context, code, stuck = false, type = 'next-step' }) => {
     try {
@@ -164,23 +169,27 @@ const pair_suggest = {
       if (stuck) {
         suggestions.push({
           type: 'unstuck',
-          suggestion: 'Let\'s break this down into smaller pieces',
+          suggestion: "Let's break this down into smaller pieces",
           steps: [
-            'What\'s the smallest part you can tackle?',
+            "What's the smallest part you can tackle?",
             'Is there a simpler version that would work?',
-            'What do you know works vs what doesn\'t?'
-          ]
+            "What do you know works vs what doesn't?",
+          ],
         });
       }
 
-      if (contextLower.includes('api') || contextLower.includes('fetch') || contextLower.includes('request')) {
+      if (
+        contextLower.includes('api') ||
+        contextLower.includes('fetch') ||
+        contextLower.includes('request')
+      ) {
         suggestions.push({
           type: 'api',
           suggestion: 'Working with APIs',
           tips: [
             'Always handle errors with try/catch',
             'Add loading and error states',
-            'Consider caching responses'
+            'Consider caching responses',
           ],
           example: `try {
   const response = await fetch(url);
@@ -188,43 +197,55 @@ const pair_suggest = {
   const data = await response.json();
 } catch (error) {
   console.error('Error:', error);
-}`
+}`,
         });
       }
 
-      if (contextLower.includes('form') || contextLower.includes('input') || contextLower.includes('validation')) {
+      if (
+        contextLower.includes('form') ||
+        contextLower.includes('input') ||
+        contextLower.includes('validation')
+      ) {
         suggestions.push({
           type: 'form',
           suggestion: 'Form handling best practices',
           tips: [
             'Validate on both client and server',
             'Show inline error messages',
-            'Disable submit while processing'
-          ]
+            'Disable submit while processing',
+          ],
         });
       }
 
-      if (contextLower.includes('state') || contextLower.includes('data') || contextLower.includes('store')) {
+      if (
+        contextLower.includes('state') ||
+        contextLower.includes('data') ||
+        contextLower.includes('store')
+      ) {
         suggestions.push({
           type: 'state',
           suggestion: 'State management',
           tips: [
-            'Keep state as close to where it\'s used',
+            "Keep state as close to where it's used",
             'Consider if you really need global state',
-            'Avoid deeply nested state objects'
-          ]
+            'Avoid deeply nested state objects',
+          ],
         });
       }
 
-      if (contextLower.includes('style') || contextLower.includes('css') || contextLower.includes('design')) {
+      if (
+        contextLower.includes('style') ||
+        contextLower.includes('css') ||
+        contextLower.includes('design')
+      ) {
         suggestions.push({
           type: 'styling',
           suggestion: 'Styling approaches',
           tips: [
             'Use CSS variables for consistent theming',
             'Consider Tailwind for rapid development',
-            'Keep styles modular and reusable'
-          ]
+            'Keep styles modular and reusable',
+          ],
         });
       }
 
@@ -237,8 +258,8 @@ const pair_suggest = {
             'Write a test for what you just built',
             'Add error handling for edge cases',
             'Document what this code does',
-            'Consider refactoring for clarity'
-          ]
+            'Consider refactoring for clarity',
+          ],
         });
       }
 
@@ -250,8 +271,8 @@ const pair_suggest = {
             'Extract repeated logic into functions',
             'Add meaningful variable names',
             'Consider early returns for cleaner logic',
-            'Add comments for complex sections'
-          ]
+            'Add comments for complex sections',
+          ],
         });
       }
 
@@ -261,7 +282,7 @@ const pair_suggest = {
           time: new Date().toISOString(),
           type: 'suggestion',
           context,
-          suggestionsCount: suggestions.length
+          suggestionsCount: suggestions.length,
         });
         fs.writeFileSync(sessionFile, JSON.stringify(session, null, 2));
       }
@@ -270,19 +291,19 @@ const pair_suggest = {
         success: true,
         suggestions,
         encouragement: stuck
-          ? '💪 Everyone gets stuck. Let\'s figure this out together!'
+          ? "💪 Everyone gets stuck. Let's figure this out together!"
           : '🎯 Looking good! Here are some suggestions.',
         quickTips: [
           'Take a short break if frustrated',
           'Rubber duck debugging: explain the problem out loud',
-          'Check if there\'s a library that solves this'
+          "Check if there's a library that solves this",
         ],
-        message: `💡 Generated ${suggestions.length} suggestions for your task`
+        message: `💡 Generated ${suggestions.length} suggestions for your task`,
       };
     } catch (error) {
       return { success: false, error: error.message };
     }
-  }
+  },
 };
 
 /**
@@ -299,10 +320,10 @@ const pair_review = {
       focus: {
         type: 'array',
         items: { type: 'string' },
-        description: 'Focus areas: bugs, performance, readability, security'
-      }
+        description: 'Focus areas: bugs, performance, readability, security',
+      },
     },
-    required: []
+    required: [],
   },
   handler: async ({ code, filePath, focus = ['bugs', 'readability'] }) => {
     try {
@@ -315,7 +336,7 @@ const pair_review = {
       if (!codeToReview) {
         return {
           success: false,
-          error: 'Please provide code or a valid file path to review'
+          error: 'Please provide code or a valid file path to review',
         };
       }
 
@@ -330,7 +351,7 @@ const pair_review = {
             type: 'info',
             category: 'cleanup',
             message: 'Found console.log statements - remember to remove for production',
-            severity: 'low'
+            severity: 'low',
           });
         }
 
@@ -339,7 +360,7 @@ const pair_review = {
             type: 'warning',
             category: 'incomplete',
             message: 'Found TODO/FIXME comments - make sure to address these',
-            severity: 'medium'
+            severity: 'medium',
           });
         }
 
@@ -348,7 +369,7 @@ const pair_review = {
             type: 'warning',
             category: 'error-handling',
             message: 'Empty catch block found - errors should be handled',
-            severity: 'high'
+            severity: 'high',
           });
         }
       }
@@ -361,7 +382,7 @@ const pair_review = {
             type: 'suggestion',
             category: 'formatting',
             message: `${longLines} lines exceed 100 characters - consider breaking up`,
-            severity: 'low'
+            severity: 'low',
           });
         }
 
@@ -372,7 +393,7 @@ const pair_review = {
             type: 'suggestion',
             category: 'structure',
             message: 'Large file with few functions - consider breaking into smaller pieces',
-            severity: 'medium'
+            severity: 'medium',
           });
         }
       }
@@ -383,7 +404,7 @@ const pair_review = {
             type: 'warning',
             category: 'security',
             message: 'eval() is dangerous - avoid if possible',
-            severity: 'high'
+            severity: 'high',
           });
         }
 
@@ -392,7 +413,7 @@ const pair_review = {
             type: 'warning',
             category: 'security',
             message: 'innerHTML can lead to XSS - use textContent or sanitize',
-            severity: 'high'
+            severity: 'high',
           });
         }
       }
@@ -403,7 +424,7 @@ const pair_review = {
             type: 'suggestion',
             category: 'performance',
             message: 'DOM queries in loops are slow - cache the result',
-            severity: 'medium'
+            severity: 'medium',
           });
         }
       }
@@ -411,28 +432,33 @@ const pair_review = {
       // Calculate score
       const highIssues = feedback.filter(f => f.severity === 'high').length;
       const mediumIssues = feedback.filter(f => f.severity === 'medium').length;
-      const score = Math.max(0, 100 - (highIssues * 15) - (mediumIssues * 5));
+      const score = Math.max(0, 100 - highIssues * 15 - mediumIssues * 5);
 
       return {
         success: true,
         review: {
           linesReviewed: lines.length,
           score: `${score}/100`,
-          rating: score >= 80 ? '✅ Looking good!' : score >= 60 ? '👍 Some improvements needed' : '⚠️ Needs attention',
+          rating:
+            score >= 80
+              ? '✅ Looking good!'
+              : score >= 60
+                ? '👍 Some improvements needed'
+                : '⚠️ Needs attention',
           feedback,
-          issueCount: feedback.length
+          issueCount: feedback.length,
         },
         positives: [
           lines.length < 200 ? '✅ Reasonable file size' : null,
           !codeToReview.includes('var ') ? '✅ Using modern variable declarations' : null,
-          codeToReview.includes('async') ? '✅ Using async/await' : null
+          codeToReview.includes('async') ? '✅ Using async/await' : null,
         ].filter(Boolean),
-        message: `📝 Reviewed ${lines.length} lines - Score: ${score}/100`
+        message: `📝 Reviewed ${lines.length} lines - Score: ${score}/100`,
       };
     } catch (error) {
       return { success: false, error: error.message };
     }
-  }
+  },
 };
 
 /**
@@ -449,10 +475,10 @@ const pair_explain = {
       depth: {
         type: 'string',
         enum: ['brief', 'detailed', 'in-depth'],
-        default: 'detailed'
-      }
+        default: 'detailed',
+      },
     },
-    required: []
+    required: [],
   },
   handler: async ({ code, concept, depth = 'detailed' }) => {
     try {
@@ -461,42 +487,47 @@ const pair_explain = {
         const analysis = {
           language: 'JavaScript', // Would detect actual language
           purpose: 'General code',
-          components: []
+          components: [],
         };
 
         // Detect patterns
         if (code.includes('async') || code.includes('await')) {
           analysis.components.push({
             pattern: 'Async/Await',
-            explanation: 'This code handles operations that take time (like fetching data). "await" pauses execution until the operation completes.'
+            explanation:
+              'This code handles operations that take time (like fetching data). "await" pauses execution until the operation completes.',
           });
         }
 
         if (code.includes('map(') || code.includes('filter(') || code.includes('reduce(')) {
           analysis.components.push({
             pattern: 'Array Methods',
-            explanation: 'These transform arrays: map changes each item, filter keeps matching items, reduce combines items into one value.'
+            explanation:
+              'These transform arrays: map changes each item, filter keeps matching items, reduce combines items into one value.',
           });
         }
 
         if (code.includes('=>')) {
           analysis.components.push({
             pattern: 'Arrow Functions',
-            explanation: 'Shorthand way to write functions. (x) => x * 2 is the same as function(x) { return x * 2; }'
+            explanation:
+              'Shorthand way to write functions. (x) => x * 2 is the same as function(x) { return x * 2; }',
           });
         }
 
         if (code.includes('...')) {
           analysis.components.push({
             pattern: 'Spread Operator',
-            explanation: 'The ... "spreads" items. [...array] copies array, {...obj} copies object.'
+            explanation:
+              'The ... "spreads" items. [...array] copies array, {...obj} copies object.',
           });
         }
 
         if (code.includes('useState') || code.includes('useEffect')) {
           analysis.components.push({
             pattern: 'React Hooks',
-            explanation: 'useState stores data that can change. useEffect runs code when things change (like component loading).'
+            explanation:
+              'useState stores data that can change. useEffect runs code when things change (like component loading).',
           });
         }
 
@@ -505,39 +536,46 @@ const pair_explain = {
           explanation: {
             ...analysis,
             lineByLine: depth === 'in-depth',
-            summary: `This ${analysis.language} code ${analysis.components.length > 0 ? 'uses ' + analysis.components.map(c => c.pattern).join(', ') : 'performs basic operations'}.`
+            summary: `This ${analysis.language} code ${analysis.components.length > 0 ? 'uses ' + analysis.components.map(c => c.pattern).join(', ') : 'performs basic operations'}.`,
           },
           components: analysis.components,
-          relatedConcepts: [
-            'Functions', 'Variables', 'Control Flow', 'Error Handling'
-          ],
-          message: `📖 Explained code with ${analysis.components.length} patterns identified`
+          relatedConcepts: ['Functions', 'Variables', 'Control Flow', 'Error Handling'],
+          message: `📖 Explained code with ${analysis.components.length} patterns identified`,
         };
       }
 
       if (concept) {
         // Explain programming concept
         const concepts = {
-          'api': {
-            simple: 'An API is like a waiter - you tell it what you want, it gets it from the kitchen (server).',
-            detailed: 'API (Application Programming Interface) is a set of rules that allows different software to communicate. You send a request, the server processes it, and sends back a response.',
-            example: 'fetch("https://api.example.com/data") asks a server for data and returns it to your app.'
+          api: {
+            simple:
+              'An API is like a waiter - you tell it what you want, it gets it from the kitchen (server).',
+            detailed:
+              'API (Application Programming Interface) is a set of rules that allows different software to communicate. You send a request, the server processes it, and sends back a response.',
+            example:
+              'fetch("https://api.example.com/data") asks a server for data and returns it to your app.',
           },
-          'async': {
-            simple: 'Async means "don\'t wait here" - the code keeps running while slow tasks complete.',
-            detailed: 'Asynchronous code allows your program to start a slow operation (like fetching data) and continue doing other things instead of freezing.',
-            example: 'Instead of freezing while downloading an image, async code lets the page stay responsive.'
+          async: {
+            simple:
+              'Async means "don\'t wait here" - the code keeps running while slow tasks complete.',
+            detailed:
+              'Asynchronous code allows your program to start a slow operation (like fetching data) and continue doing other things instead of freezing.',
+            example:
+              'Instead of freezing while downloading an image, async code lets the page stay responsive.',
           },
-          'component': {
-            simple: 'Components are like LEGO blocks - reusable pieces you combine to build something bigger.',
-            detailed: 'In React/Vue, components are self-contained pieces of UI. Each has its own logic and appearance, and can be reused throughout your app.',
-            example: 'A Button component can be used many times with different text and colors.'
+          component: {
+            simple:
+              'Components are like LEGO blocks - reusable pieces you combine to build something bigger.',
+            detailed:
+              'In React/Vue, components are self-contained pieces of UI. Each has its own logic and appearance, and can be reused throughout your app.',
+            example: 'A Button component can be used many times with different text and colors.',
           },
-          'state': {
-            simple: 'State is your app\'s memory - it remembers things that can change.',
-            detailed: 'State holds data that changes over time. When state changes, the UI updates automatically to reflect the new data.',
-            example: 'A shopping cart\'s item count is state - it changes as you add/remove items.'
-          }
+          state: {
+            simple: "State is your app's memory - it remembers things that can change.",
+            detailed:
+              'State holds data that changes over time. When state changes, the UI updates automatically to reflect the new data.',
+            example: "A shopping cart's item count is state - it changes as you add/remove items.",
+          },
         };
 
         const conceptLower = concept.toLowerCase();
@@ -554,7 +592,7 @@ const pair_explain = {
           explanation = {
             simple: `${concept} is a programming concept.`,
             detailed: `I'd be happy to explain ${concept} in more detail. Could you provide more context about what aspect you'd like to understand?`,
-            example: `Search for "${concept} tutorial" for practical examples.`
+            example: `Search for "${concept} tutorial" for practical examples.`,
           };
         }
 
@@ -564,13 +602,13 @@ const pair_explain = {
           explanation: {
             simple: explanation.simple,
             detailed: depth !== 'brief' ? explanation.detailed : undefined,
-            example: depth === 'in-depth' ? explanation.example : undefined
+            example: depth === 'in-depth' ? explanation.example : undefined,
           },
           learnMore: [
             `MDN Web Docs: https://developer.mozilla.org/en-US/search?q=${encodeURIComponent(concept)}`,
-            `freeCodeCamp: https://www.freecodecamp.org/news/search/?query=${encodeURIComponent(concept)}`
+            `freeCodeCamp: https://www.freecodecamp.org/news/search/?query=${encodeURIComponent(concept)}`,
           ],
-          message: `📖 Here's an explanation of "${concept}"`
+          message: `📖 Here's an explanation of "${concept}"`,
         };
       }
 
@@ -578,7 +616,7 @@ const pair_explain = {
     } catch (error) {
       return { success: false, error: error.message };
     }
-  }
+  },
 };
 
 /**
@@ -595,10 +633,10 @@ const pair_refactor = {
       goal: {
         type: 'string',
         enum: ['readability', 'performance', 'simplify', 'modernize'],
-        default: 'readability'
-      }
+        default: 'readability',
+      },
     },
-    required: []
+    required: [],
   },
   handler: async ({ code, filePath, goal = 'readability' }) => {
     try {
@@ -621,7 +659,7 @@ const pair_refactor = {
           current: 'Using var',
           suggestion: 'Replace var with const/let',
           reason: 'const and let have better scoping and prevent accidental reassignment',
-          priority: 'high'
+          priority: 'high',
         });
       }
 
@@ -631,7 +669,7 @@ const pair_refactor = {
           current: 'Traditional function syntax',
           suggestion: 'Consider arrow functions for short functions',
           reason: 'Arrow functions are more concise and don\'t rebind "this"',
-          priority: 'low'
+          priority: 'low',
         });
       }
 
@@ -641,7 +679,7 @@ const pair_refactor = {
           current: 'Promise .then() chains',
           suggestion: 'Convert to async/await',
           reason: 'async/await is more readable, especially with error handling',
-          priority: 'medium'
+          priority: 'medium',
         });
       }
 
@@ -651,7 +689,7 @@ const pair_refactor = {
           current: 'Multiple if-else chains',
           suggestion: 'Consider switch statement or object lookup',
           reason: 'Object lookups are often cleaner for many conditions',
-          priority: 'medium'
+          priority: 'medium',
         });
       }
 
@@ -662,17 +700,17 @@ const pair_refactor = {
           current: 'Long functions',
           suggestion: 'Break into smaller, focused functions',
           reason: 'Smaller functions are easier to test, read, and reuse',
-          priority: 'high'
+          priority: 'high',
         });
       }
 
-      if (codeToRefactor.includes('+ \'') || codeToRefactor.includes('\' +')) {
+      if (codeToRefactor.includes("+ '") || codeToRefactor.includes("' +")) {
         suggestions.push({
           type: 'modernize',
           current: 'String concatenation with +',
           suggestion: 'Use template literals: `Hello ${name}`',
           reason: 'Template literals are more readable and allow multi-line strings',
-          priority: 'low'
+          priority: 'low',
         });
       }
 
@@ -682,7 +720,7 @@ const pair_refactor = {
           current: 'General',
           suggestion: 'Consider memoization for expensive calculations',
           reason: 'Caching results prevents redundant work',
-          priority: 'medium'
+          priority: 'medium',
         });
       }
 
@@ -691,23 +729,35 @@ const pair_refactor = {
         analysis: {
           goal,
           linesAnalyzed: codeToRefactor.split('\n').length,
-          suggestionsCount: suggestions.length
+          suggestionsCount: suggestions.length,
         },
         suggestions: suggestions.sort((a, b) =>
           a.priority === 'high' ? -1 : b.priority === 'high' ? 1 : 0
         ),
         generalTips: {
-          readability: ['Use meaningful names', 'Add comments for complex logic', 'Keep functions small'],
-          performance: ['Avoid unnecessary loops', 'Cache expensive operations', 'Use appropriate data structures'],
+          readability: [
+            'Use meaningful names',
+            'Add comments for complex logic',
+            'Keep functions small',
+          ],
+          performance: [
+            'Avoid unnecessary loops',
+            'Cache expensive operations',
+            'Use appropriate data structures',
+          ],
           simplify: ['Remove dead code', 'Combine similar functions', 'Use built-in methods'],
-          modernize: ['Use ES6+ features', 'Replace callbacks with async/await', 'Use destructuring']
+          modernize: [
+            'Use ES6+ features',
+            'Replace callbacks with async/await',
+            'Use destructuring',
+          ],
         }[goal],
-        message: `🔧 Found ${suggestions.length} refactoring opportunities`
+        message: `🔧 Found ${suggestions.length} refactoring opportunities`,
       };
     } catch (error) {
       return { success: false, error: error.message };
     }
-  }
+  },
 };
 
 /**
@@ -720,9 +770,9 @@ const voice_command = {
     type: 'object',
     properties: {
       command: { type: 'string', description: 'Voice command text' },
-      context: { type: 'string', description: 'Current context/file' }
+      context: { type: 'string', description: 'Current context/file' },
     },
-    required: ['command']
+    required: ['command'],
   },
   handler: async ({ command, context }) => {
     try {
@@ -766,16 +816,16 @@ const voice_command = {
           success: true,
           parsed: false,
           command,
-          suggestion: 'I didn\'t understand that command. Try:',
+          suggestion: "I didn't understand that command. Try:",
           examples: [
             '"Create a file called App.js"',
             '"Run the tests"',
             '"Commit with message fixed bug"',
             '"Explain this code"',
             '"Review this code"',
-            '"Suggest next step"'
+            '"Suggest next step"',
           ],
-          message: '❓ Could not parse voice command'
+          message: '❓ Could not parse voice command',
         };
       }
 
@@ -787,13 +837,13 @@ const voice_command = {
         params,
         confirmation: `🎤 Understood: ${action}${Object.keys(params).length > 0 ? ' with ' + JSON.stringify(params) : ''}`,
         note: 'Voice recognition requires browser Speech API or external service',
-        setupTip: 'Use browser\'s SpeechRecognition API or services like Whisper API',
-        message: `🎤 Voice command parsed: ${action}`
+        setupTip: "Use browser's SpeechRecognition API or services like Whisper API",
+        message: `🎤 Voice command parsed: ${action}`,
       };
     } catch (error) {
       return { success: false, error: error.message };
     }
-  }
+  },
 };
 
 module.exports = {
@@ -802,5 +852,5 @@ module.exports = {
   pair_review,
   pair_explain,
   pair_refactor,
-  voice_command
+  voice_command,
 };

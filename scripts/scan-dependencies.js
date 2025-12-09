@@ -14,7 +14,7 @@ const CONFIG = {
   rootDir: path.join(__dirname, '..'),
   outputDir: path.join(__dirname, '..', 'security-reports'),
   npmAuditLevel: 'moderate', // low, moderate, high, critical
-  pipCheckEnabled: true
+  pipCheckEnabled: true,
 };
 
 // Colors for terminal output
@@ -25,7 +25,7 @@ const colors = {
   yellow: '\x1b[33m',
   green: '\x1b[32m',
   cyan: '\x1b[36m',
-  gray: '\x1b[90m'
+  gray: '\x1b[90m',
 };
 
 /**
@@ -46,7 +46,7 @@ function runNpmAudit() {
       cwd: CONFIG.rootDir,
       encoding: 'utf8',
       shell: true,
-      timeout: 60000
+      timeout: 60000,
     });
 
     let auditData;
@@ -69,7 +69,9 @@ function runNpmAudit() {
           title: vuln.name || pkgName,
           range: vuln.range,
           fixAvailable: vuln.fixAvailable,
-          via: Array.isArray(vuln.via) ? vuln.via.map(v => typeof v === 'string' ? v : v.title).join(', ') : ''
+          via: Array.isArray(vuln.via)
+            ? vuln.via.map(v => (typeof v === 'string' ? v : v.title)).join(', ')
+            : '',
         });
       }
     }
@@ -80,7 +82,7 @@ function runNpmAudit() {
       high: metadata.vulnerabilities?.high || 0,
       moderate: metadata.vulnerabilities?.moderate || 0,
       low: metadata.vulnerabilities?.low || 0,
-      info: metadata.vulnerabilities?.info || 0
+      info: metadata.vulnerabilities?.info || 0,
     };
 
     return { vulnerabilities, summary };
@@ -110,7 +112,7 @@ function runPipAudit() {
       cwd: CONFIG.rootDir,
       encoding: 'utf8',
       shell: true,
-      timeout: 120000
+      timeout: 120000,
     });
 
     if (result.stdout) {
@@ -122,7 +124,7 @@ function runPipAudit() {
           severity: vuln.vulns?.[0]?.fix_versions ? 'high' : 'moderate',
           id: vuln.vulns?.[0]?.id || 'Unknown',
           description: vuln.vulns?.[0]?.description || 'Vulnerability detected',
-          fixVersions: vuln.vulns?.[0]?.fix_versions || []
+          fixVersions: vuln.vulns?.[0]?.fix_versions || [],
         });
       }
     }
@@ -134,7 +136,7 @@ function runPipAudit() {
         cwd: CONFIG.rootDir,
         encoding: 'utf8',
         shell: true,
-        timeout: 120000
+        timeout: 120000,
       });
 
       if (result.stdout) {
@@ -146,7 +148,7 @@ function runPipAudit() {
               version: vuln[2],
               severity: 'moderate',
               id: vuln[4],
-              description: vuln[3]
+              description: vuln[3],
             });
           }
         } catch (e) {
@@ -164,7 +166,7 @@ function runPipAudit() {
     critical: vulnerabilities.filter(v => v.severity === 'critical').length,
     high: vulnerabilities.filter(v => v.severity === 'high').length,
     moderate: vulnerabilities.filter(v => v.severity === 'moderate').length,
-    low: vulnerabilities.filter(v => v.severity === 'low').length
+    low: vulnerabilities.filter(v => v.severity === 'low').length,
   };
 
   return { vulnerabilities, summary };
@@ -181,7 +183,7 @@ function checkOutdatedPackages() {
       cwd: CONFIG.rootDir,
       encoding: 'utf8',
       shell: true,
-      timeout: 60000
+      timeout: 60000,
     });
 
     if (result.stdout) {
@@ -191,7 +193,7 @@ function checkOutdatedPackages() {
         current: info.current,
         wanted: info.wanted,
         latest: info.latest,
-        type: info.type
+        type: info.type,
       }));
     }
   } catch (error) {
@@ -232,16 +234,14 @@ function generateReport(npmResults, pipResults, outdated) {
     timestamp: new Date().toISOString(),
     npm: {
       vulnerabilities: npmResults.vulnerabilities,
-      summary: npmResults.summary
+      summary: npmResults.summary,
     },
     pip: {
       vulnerabilities: pipResults.vulnerabilities,
-      summary: pipResults.summary
+      summary: pipResults.summary,
     },
     outdated: outdated,
-    totalVulnerabilities:
-      (npmResults.summary?.total || 0) +
-      (pipResults.summary?.total || 0)
+    totalVulnerabilities: (npmResults.summary?.total || 0) + (pipResults.summary?.total || 0),
   };
 
   const reportPath = path.join(CONFIG.outputDir, `dependency-scan-${Date.now()}.json`);
@@ -263,7 +263,9 @@ function main() {
   const npmResults = runNpmAudit();
   console.log('');
 
-  const pipResults = CONFIG.pipCheckEnabled ? runPipAudit() : { vulnerabilities: [], summary: null };
+  const pipResults = CONFIG.pipCheckEnabled
+    ? runPipAudit()
+    : { vulnerabilities: [], summary: null };
   console.log('');
 
   const outdated = checkOutdatedPackages();
@@ -294,7 +296,9 @@ function main() {
         }
       }
       if (npmResults.vulnerabilities.length > 10) {
-        console.log(`  ${colors.gray}...and ${npmResults.vulnerabilities.length - 10} more${colors.reset}`);
+        console.log(
+          `  ${colors.gray}...and ${npmResults.vulnerabilities.length - 10} more${colors.reset}`
+        );
       }
       console.log('');
     }
@@ -308,7 +312,9 @@ function main() {
 
     for (const vuln of pipResults.vulnerabilities.slice(0, 5)) {
       console.log(`  ${formatSeverity(vuln.severity)} ${vuln.package}@${vuln.version}`);
-      console.log(`    ${colors.gray}${vuln.id}: ${vuln.description?.substring(0, 60)}...${colors.reset}`);
+      console.log(
+        `    ${colors.gray}${vuln.id}: ${vuln.description?.substring(0, 60)}...${colors.reset}`
+      );
     }
     console.log('');
   }
@@ -333,18 +339,24 @@ function main() {
   // Summary
   const totalVulns = (npmResults.summary?.total || 0) + (pipResults.summary?.total || 0);
   const criticalHigh =
-    (npmResults.summary?.critical || 0) + (npmResults.summary?.high || 0) +
-    (pipResults.summary?.critical || 0) + (pipResults.summary?.high || 0);
+    (npmResults.summary?.critical || 0) +
+    (npmResults.summary?.high || 0) +
+    (pipResults.summary?.critical || 0) +
+    (pipResults.summary?.high || 0);
 
   if (totalVulns === 0) {
     console.log(`${colors.green}${colors.bold}✓ No vulnerabilities found${colors.reset}`);
     process.exit(0);
   } else if (criticalHigh > 0) {
-    console.log(`${colors.red}${colors.bold}⚠ Found ${totalVulns} vulnerabilities (${criticalHigh} critical/high)${colors.reset}`);
+    console.log(
+      `${colors.red}${colors.bold}⚠ Found ${totalVulns} vulnerabilities (${criticalHigh} critical/high)${colors.reset}`
+    );
     console.log(`${colors.gray}Run 'npm audit fix' to fix npm vulnerabilities${colors.reset}`);
     process.exit(1);
   } else {
-    console.log(`${colors.yellow}${colors.bold}⚠ Found ${totalVulns} vulnerabilities (none critical/high)${colors.reset}`);
+    console.log(
+      `${colors.yellow}${colors.bold}⚠ Found ${totalVulns} vulnerabilities (none critical/high)${colors.reset}`
+    );
     process.exit(0);
   }
 }

@@ -16,9 +16,10 @@ const path = require('path');
 const crypto = require('crypto');
 
 // Data directory for embeddings
-const DATA_DIR = process.platform === 'win32'
-  ? path.join(process.env.APPDATA || '', 'WindsurfAutopilot', 'embeddings')
-  : path.join(process.env.HOME || '', '.windsurf-autopilot', 'embeddings');
+const DATA_DIR =
+  process.platform === 'win32'
+    ? path.join(process.env.APPDATA || '', 'WindsurfAutopilot', 'embeddings')
+    : path.join(process.env.HOME || '', '.windsurf-autopilot', 'embeddings');
 
 // Ensure data directory exists
 if (!fs.existsSync(DATA_DIR)) {
@@ -108,7 +109,9 @@ class SimpleTFIDF {
     if (v1.length !== v2.length) {
       return 0;
     }
-    let dot = 0, norm1 = 0, norm2 = 0;
+    let dot = 0,
+      norm1 = 0,
+      norm2 = 0;
     for (let i = 0; i < v1.length; i++) {
       dot += v1[i] * v2[i];
       norm1 += v1[i] * v1[i];
@@ -126,37 +129,34 @@ let tfidfModel = null;
  * Embedding Tools Export
  */
 const embeddingTools = {
-
   // ═══════════════════════════════════════════════════════════════════════════
   // TOOL: embed_text
   // ═══════════════════════════════════════════════════════════════════════════
   embed_text: {
     name: 'embed_text',
-    description: 'Generate vector embeddings from text. Uses local TF-IDF by default, or transformer models if available.',
+    description:
+      'Generate vector embeddings from text. Uses local TF-IDF by default, or transformer models if available.',
     inputSchema: {
       type: 'object',
       properties: {
         text: {
-          oneOf: [
-            { type: 'string' },
-            { type: 'array', items: { type: 'string' } }
-          ],
-          description: 'Text or array of texts to embed'
+          oneOf: [{ type: 'string' }, { type: 'array', items: { type: 'string' } }],
+          description: 'Text or array of texts to embed',
         },
         model: {
           type: 'string',
           description: 'Model to use (default: tfidf, or specify transformer model)',
-          default: 'tfidf'
+          default: 'tfidf',
         },
         cache: {
           type: 'boolean',
           description: 'Cache embeddings for reuse',
-          default: true
-        }
+          default: true,
+        },
       },
-      required: ['text']
+      required: ['text'],
     },
-    handler: async (args) => {
+    handler: async args => {
       const texts = Array.isArray(args.text) ? args.text : [args.text];
       const useCache = args.cache !== false;
 
@@ -182,7 +182,6 @@ const embeddingTools = {
               tfidfModel.fit(texts);
             }
             embedding = tfidfModel.transform(text);
-
           } else {
             // Try to use transformers.js
             try {
@@ -214,13 +213,12 @@ const embeddingTools = {
           dimensions: embeddings[0]?.length || 0,
           count: embeddings.length,
           model: model,
-          cached: useCache
+          cached: useCache,
         };
-
       } catch (error) {
         return { success: false, error: error.message };
       }
-    }
+    },
   },
 
   // ═══════════════════════════════════════════════════════════════════════════
@@ -228,37 +226,38 @@ const embeddingTools = {
   // ═══════════════════════════════════════════════════════════════════════════
   semantic_search: {
     name: 'semantic_search',
-    description: 'Search codebase or documents using semantic similarity. Requires index_project to be run first.',
+    description:
+      'Search codebase or documents using semantic similarity. Requires index_project to be run first.',
     inputSchema: {
       type: 'object',
       properties: {
         query: {
           type: 'string',
-          description: 'Search query'
+          description: 'Search query',
         },
         projectPath: {
           type: 'string',
-          description: 'Project path to search (must be indexed first)'
+          description: 'Project path to search (must be indexed first)',
         },
         topK: {
           type: 'number',
           description: 'Number of results to return',
-          default: 10
+          default: 10,
         },
         threshold: {
           type: 'number',
           description: 'Minimum similarity score (0-1)',
-          default: 0.3
+          default: 0.3,
         },
         fileTypes: {
           type: 'array',
           items: { type: 'string' },
-          description: 'Filter by file extensions (e.g., [".js", ".py"])'
-        }
+          description: 'Filter by file extensions (e.g., [".js", ".py"])',
+        },
       },
-      required: ['query', 'projectPath']
+      required: ['query', 'projectPath'],
     },
-    handler: async (args) => {
+    handler: async args => {
       const projectPath = args.projectPath;
       const indexId = crypto.createHash('md5').update(projectPath).digest('hex');
 
@@ -275,14 +274,14 @@ const embeddingTools = {
             return {
               success: false,
               error: 'Project not indexed. Run index_project first.',
-              suggestion: `Use index_project with path: ${projectPath}`
+              suggestion: `Use index_project with path: ${projectPath}`,
             };
           }
         } else {
           return {
             success: false,
             error: 'Project not indexed. Run index_project first.',
-            suggestion: `Use index_project with path: ${projectPath}`
+            suggestion: `Use index_project with path: ${projectPath}`,
           };
         }
       }
@@ -315,7 +314,7 @@ const embeddingTools = {
               file: chunk.file,
               line: chunk.line,
               content: chunk.content.substring(0, 200) + (chunk.content.length > 200 ? '...' : ''),
-              score: Math.round(similarity * 1000) / 1000
+              score: Math.round(similarity * 1000) / 1000,
             });
           }
         }
@@ -330,13 +329,12 @@ const embeddingTools = {
           results: topResults,
           totalMatches: results.length,
           returned: topResults.length,
-          threshold: args.threshold || 0.3
+          threshold: args.threshold || 0.3,
         };
-
       } catch (error) {
         return { success: false, error: error.message };
       }
-    }
+    },
   },
 
   // ═══════════════════════════════════════════════════════════════════════════
@@ -350,34 +348,47 @@ const embeddingTools = {
       properties: {
         path: {
           type: 'string',
-          description: 'Project path to index'
+          description: 'Project path to index',
         },
         fileTypes: {
           type: 'array',
           items: { type: 'string' },
           description: 'File extensions to index (default: common code files)',
-          default: ['.js', '.ts', '.jsx', '.tsx', '.py', '.java', '.cpp', '.c', '.go', '.rs', '.md', '.txt']
+          default: [
+            '.js',
+            '.ts',
+            '.jsx',
+            '.tsx',
+            '.py',
+            '.java',
+            '.cpp',
+            '.c',
+            '.go',
+            '.rs',
+            '.md',
+            '.txt',
+          ],
         },
         chunkSize: {
           type: 'number',
           description: 'Number of lines per chunk',
-          default: 20
+          default: 20,
         },
         incremental: {
           type: 'boolean',
           description: 'Only index changed files',
-          default: true
+          default: true,
         },
         excludePatterns: {
           type: 'array',
           items: { type: 'string' },
           description: 'Patterns to exclude (e.g., node_modules)',
-          default: ['node_modules', '.git', 'dist', 'build', '__pycache__', '.next']
-        }
+          default: ['node_modules', '.git', 'dist', 'build', '__pycache__', '.next'],
+        },
       },
-      required: ['path']
+      required: ['path'],
     },
-    handler: async (args) => {
+    handler: async args => {
       const projectPath = args.path;
 
       if (!fs.existsSync(projectPath)) {
@@ -385,8 +396,28 @@ const embeddingTools = {
       }
 
       try {
-        const fileTypes = args.fileTypes || ['.js', '.ts', '.jsx', '.tsx', '.py', '.java', '.cpp', '.c', '.go', '.rs', '.md', '.txt'];
-        const excludePatterns = args.excludePatterns || ['node_modules', '.git', 'dist', 'build', '__pycache__', '.next'];
+        const fileTypes = args.fileTypes || [
+          '.js',
+          '.ts',
+          '.jsx',
+          '.tsx',
+          '.py',
+          '.java',
+          '.cpp',
+          '.c',
+          '.go',
+          '.rs',
+          '.md',
+          '.txt',
+        ];
+        const excludePatterns = args.excludePatterns || [
+          'node_modules',
+          '.git',
+          'dist',
+          'build',
+          '__pycache__',
+          '.next',
+        ];
         const chunkSize = args.chunkSize || 20;
 
         const indexId = crypto.createHash('md5').update(projectPath).digest('hex');
@@ -408,7 +439,7 @@ const embeddingTools = {
 
         // Collect all files
         const files = [];
-        const collectFiles = (dir) => {
+        const collectFiles = dir => {
           const entries = fs.readdirSync(dir, { withFileTypes: true });
           for (const entry of entries) {
             const fullPath = path.join(dir, entry.name);
@@ -449,7 +480,11 @@ const embeddingTools = {
                 continue;
               } // Skip nearly empty chunks
 
-              const hash = crypto.createHash('md5').update(chunkContent).digest('hex').substring(0, 8);
+              const hash = crypto
+                .createHash('md5')
+                .update(chunkContent)
+                .digest('hex')
+                .substring(0, 8);
               const chunkKey = `${file.relativePath}:${i + 1}:${hash}`;
 
               // Check if we can reuse existing embedding
@@ -462,7 +497,7 @@ const embeddingTools = {
                   line: i + 1,
                   content: chunkContent,
                   hash,
-                  embedding: null // Will be filled after TF-IDF fit
+                  embedding: null, // Will be filled after TF-IDF fit
                 });
               }
             }
@@ -491,7 +526,7 @@ const embeddingTools = {
           fileCount: files.length,
           chunkCount: chunks.length,
           fileTypes,
-          chunks
+          chunks,
         };
 
         // Save index
@@ -505,21 +540,32 @@ const embeddingTools = {
           filesIndexed: files.length,
           chunksCreated: chunks.length,
           indexSize: formatBytes(fs.statSync(indexPath).size),
-          message: `Indexed ${files.length} files with ${chunks.length} searchable chunks`
+          message: `Indexed ${files.length} files with ${chunks.length} searchable chunks`,
         };
-
       } catch (error) {
         return { success: false, error: error.message };
       }
-    }
+    },
   },
 
   // Get all tool definitions for registration
   getToolDefinitions: function () {
     return [
-      { name: this.embed_text.name, description: this.embed_text.description, inputSchema: this.embed_text.inputSchema },
-      { name: this.semantic_search.name, description: this.semantic_search.description, inputSchema: this.semantic_search.inputSchema },
-      { name: this.index_project.name, description: this.index_project.description, inputSchema: this.index_project.inputSchema }
+      {
+        name: this.embed_text.name,
+        description: this.embed_text.description,
+        inputSchema: this.embed_text.inputSchema,
+      },
+      {
+        name: this.semantic_search.name,
+        description: this.semantic_search.description,
+        inputSchema: this.semantic_search.inputSchema,
+      },
+      {
+        name: this.index_project.name,
+        description: this.index_project.description,
+        inputSchema: this.index_project.inputSchema,
+      },
     ];
   },
 
@@ -527,7 +573,7 @@ const embeddingTools = {
   getHandler: function (toolName) {
     const tool = this[toolName];
     return tool ? tool.handler : null;
-  }
+  },
 };
 
 // Helper function to format bytes

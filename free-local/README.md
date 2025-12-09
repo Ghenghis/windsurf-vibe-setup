@@ -13,15 +13,15 @@
 
 This module adds **AI-powered automation** to your local development stack:
 
-| Component | Purpose | Replaces | Savings |
-|-----------|---------|----------|---------|
-| **Ollama** | Local LLM runtime | OpenAI/Claude API | $50+/mo |
-| **SearXNG** | Private web search | Perplexity API | $20/mo |
-| **ChromaDB** | Vector database | Pinecone | $70+/mo |
-| **Qdrant** | Production vectors | Weaviate Cloud | $100/mo |
-| **n8n** | Workflow automation | Zapier | $20+/mo |
-| **CrewAI Agents** | Multi-agent orchestration | Custom dev | Priceless |
-| **AI Orchestrator** | Smart task routing | Manual config | Time |
+| Component           | Purpose                   | Replaces          | Savings   |
+| ------------------- | ------------------------- | ----------------- | --------- |
+| **Ollama**          | Local LLM runtime         | OpenAI/Claude API | $50+/mo   |
+| **SearXNG**         | Private web search        | Perplexity API    | $20/mo    |
+| **ChromaDB**        | Vector database           | Pinecone          | $70+/mo   |
+| **Qdrant**          | Production vectors        | Weaviate Cloud    | $100/mo   |
+| **n8n**             | Workflow automation       | Zapier            | $20+/mo   |
+| **CrewAI Agents**   | Multi-agent orchestration | Custom dev        | Priceless |
+| **AI Orchestrator** | Smart task routing        | Manual config     | Time      |
 
 **Total Potential Savings: $880+/month**
 
@@ -104,14 +104,14 @@ node scripts/ai-orchestrator.js provision rag
 
 ### Task Types & Model Selection
 
-| Task Type | Auto-Selected Model | Services |
-|-----------|---------------------|----------|
-| coding | qwen2.5-coder:32b | Ollama |
-| debugging | qwen2.5-coder:32b | Ollama |
-| architecture | llama3.1:70b | Ollama |
-| research | deepseek-coder-v2:16b | Ollama + SearXNG |
-| rag | nomic-embed-text | Ollama + ChromaDB |
-| documentation | deepseek-coder-v2:16b | Ollama |
+| Task Type     | Auto-Selected Model   | Services          |
+| ------------- | --------------------- | ----------------- |
+| coding        | qwen2.5-coder:32b     | Ollama            |
+| debugging     | qwen2.5-coder:32b     | Ollama            |
+| architecture  | llama3.1:70b          | Ollama            |
+| research      | deepseek-coder-v2:16b | Ollama + SearXNG  |
+| rag           | nomic-embed-text      | Ollama + ChromaDB |
+| documentation | deepseek-coder-v2:16b | Ollama            |
 
 ---
 
@@ -130,14 +130,14 @@ python scripts/agent-crew.py --task "Design and implement auth API" \
 
 ### Available Agents
 
-| Agent | Role | Best For |
-|-------|------|----------|
-| **architect** | System design | Architecture, patterns |
-| **coder** | Implementation | Code generation |
-| **tester** | QA | Test writing, edge cases |
-| **reviewer** | Code review | Security, best practices |
-| **researcher** | Research | Documentation, examples |
-| **docwriter** | Documentation | README, API docs |
+| Agent          | Role           | Best For                 |
+| -------------- | -------------- | ------------------------ |
+| **architect**  | System design  | Architecture, patterns   |
+| **coder**      | Implementation | Code generation          |
+| **tester**     | QA             | Test writing, edge cases |
+| **reviewer**   | Code review    | Security, best practices |
+| **researcher** | Research       | Documentation, examples  |
+| **docwriter**  | Documentation  | README, API docs         |
 
 ---
 
@@ -154,6 +154,7 @@ node scripts/health-daemon.js check
 ```
 
 Features:
+
 - ✅ Monitors all services every 30 seconds
 - ✅ Auto-restarts failed services
 - ✅ GPU memory monitoring
@@ -164,18 +165,18 @@ Features:
 
 ## 🐳 Docker Services
 
-| Service | Port | Description |
-|---------|------|-------------|
-| **Ollama** | 11434 | Local LLM server |
-| **Open WebUI** | 3000 | Chat interface |
-| **SearXNG** | 8080 | Web search |
-| **ChromaDB** | 8000 | Vector DB (dev) |
-| **Qdrant** | 6333/6334 | Vector DB (prod) |
-| **PostgreSQL** | 5432 | SQL database |
-| **Redis** | 6379 | Cache |
-| **n8n** | 5678 | Automation |
-| **Adminer** | 8081 | DB admin UI |
-| **MinIO** | 9002/9003 | Object storage |
+| Service        | Port      | Description      |
+| -------------- | --------- | ---------------- |
+| **Ollama**     | 11434     | Local LLM server |
+| **Open WebUI** | 3000      | Chat interface   |
+| **SearXNG**    | 8080      | Web search       |
+| **ChromaDB**   | 8000      | Vector DB (dev)  |
+| **Qdrant**     | 6333/6334 | Vector DB (prod) |
+| **PostgreSQL** | 5432      | SQL database     |
+| **Redis**      | 6379      | Cache            |
+| **n8n**        | 5678      | Automation       |
+| **Adminer**    | 8081      | DB admin UI      |
+| **MinIO**      | 9002/9003 | Object storage   |
 
 ```bash
 # Start all services
@@ -196,18 +197,19 @@ The free-local tools integrate with the main MCP server (250+ tools):
 
 ### New Free-Local MCP Tools
 
-| Tool | Description |
-|------|-------------|
-| `local_llm_query` | Query local Ollama models |
-| `local_llm_select` | Smart model selection |
-| `local_vector_store` | Store in ChromaDB |
-| `local_vector_search` | Search ChromaDB |
-| `local_web_search` | Search via SearXNG |
-| `local_service_status` | Check service health |
-| `local_service_start` | Start services |
-| `local_agent_run` | Run CrewAI agents |
+| Tool                   | Description               |
+| ---------------------- | ------------------------- |
+| `local_llm_query`      | Query local Ollama models |
+| `local_llm_select`     | Smart model selection     |
+| `local_vector_store`   | Store in ChromaDB         |
+| `local_vector_search`  | Search ChromaDB           |
+| `local_web_search`     | Search via SearXNG        |
+| `local_service_status` | Check service health      |
+| `local_service_start`  | Start services            |
+| `local_agent_run`      | Run CrewAI agents         |
 
 Copy `mcp_config_free_local.json` to your Windsurf config:
+
 ```
 ~/.codeium/windsurf/mcp_config.json
 ```
@@ -218,20 +220,20 @@ Copy `mcp_config_free_local.json` to your Windsurf config:
 
 ### For RTX 3090 Ti (24GB VRAM)
 
-| Model | Size | Use Case |
-|-------|------|----------|
-| `qwen2.5-coder:32b` | ~20GB | Primary coding |
-| `deepseek-coder-v2:16b` | ~10GB | Fast coding |
-| `llama3.1:70b` | ~24GB Q4 | Complex reasoning |
-| `command-r:35b` | ~20GB | RAG tasks |
+| Model                   | Size     | Use Case          |
+| ----------------------- | -------- | ----------------- |
+| `qwen2.5-coder:32b`     | ~20GB    | Primary coding    |
+| `deepseek-coder-v2:16b` | ~10GB    | Fast coding       |
+| `llama3.1:70b`          | ~24GB Q4 | Complex reasoning |
+| `command-r:35b`         | ~20GB    | RAG tasks         |
 
 ### For Secondary GPU (8GB)
 
-| Model | Size | Use Case |
-|-------|------|----------|
-| `starcoder2:3b` | ~2GB | Autocomplete |
-| `nomic-embed-text` | ~275MB | Embeddings |
-| `phi3:3.8b` | ~2GB | Fast assistant |
+| Model              | Size   | Use Case       |
+| ------------------ | ------ | -------------- |
+| `starcoder2:3b`    | ~2GB   | Autocomplete   |
+| `nomic-embed-text` | ~275MB | Embeddings     |
+| `phi3:3.8b`        | ~2GB   | Fast assistant |
 
 ---
 
@@ -258,4 +260,4 @@ Copy `mcp_config_free_local.json` to your Windsurf config:
 
 ---
 
-*Part of [Windsurf Vibe Setup](https://github.com/Ghenghis/windsurf-vibe-setup) v4.0.0 FREE & LOCAL EDITION*
+_Part of [Windsurf Vibe Setup](https://github.com/Ghenghis/windsurf-vibe-setup) v4.0.0 FREE & LOCAL EDITION_

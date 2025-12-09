@@ -1,8 +1,8 @@
 name: ✨ Feature Request
 description: Suggest a new feature or enhancement
-title: "[FEATURE]: "
-labels: ["enhancement", "triage"]
-assignees: ["Ghenghis"]
+title: '[FEATURE]: '
+labels: ['enhancement', 'triage']
+assignees: ['Ghenghis']
 
 body:
   - type: markdown

@@ -13,9 +13,9 @@ const logger = winston.createLogger({
   format: winston.format.json(),
   transports: [
     new winston.transports.Console({
-      format: winston.format.simple()
-    })
-  ]
+      format: winston.format.simple(),
+    }),
+  ],
 });
 
 class HttpClient {
@@ -24,17 +24,17 @@ class HttpClient {
     this.timeout = options.timeout || 30000;
     this.retries = options.retries || 3;
     this.retryDelay = options.retryDelay || 1000;
-    
+
     // Create axios instance with defaults
     this.client = axios.create({
       baseURL: this.baseURL,
       timeout: this.timeout,
       headers: {
         'Content-Type': 'application/json',
-        ...options.headers
-      }
+        ...options.headers,
+      },
     });
-    
+
     // Add request interceptor for logging
     this.client.interceptors.request.use(
       config => {
@@ -46,7 +46,7 @@ class HttpClient {
         return Promise.reject(error);
       }
     );
-    
+
     // Add response interceptor for retry logic
     this.client.interceptors.response.use(
       response => {
@@ -55,27 +55,27 @@ class HttpClient {
       },
       async error => {
         const config = error.config;
-        
+
         if (!config || !config.retry) {
           config.retry = 0;
         }
-        
+
         if (config.retry < this.retries) {
           config.retry++;
-          
+
           const delay = this.retryDelay * Math.pow(2, config.retry - 1);
           logger.warn(`Retry ${config.retry}/${this.retries} after ${delay}ms`);
-          
+
           await new Promise(resolve => setTimeout(resolve, delay));
           return this.client(config);
         }
-        
+
         logger.error(`Failed after ${this.retries} retries: ${error.message}`);
         return Promise.reject(error);
       }
     );
   }
-  
+
   async get(url, config = {}) {
     try {
       const response = await this.client.get(url, config);
@@ -84,7 +84,7 @@ class HttpClient {
       this.handleError(error);
     }
   }
-  
+
   async post(url, data = {}, config = {}) {
     try {
       const response = await this.client.post(url, data, config);
@@ -93,7 +93,7 @@ class HttpClient {
       this.handleError(error);
     }
   }
-  
+
   async put(url, data = {}, config = {}) {
     try {
       const response = await this.client.put(url, data, config);
@@ -102,7 +102,7 @@ class HttpClient {
       this.handleError(error);
     }
   }
-  
+
   async delete(url, config = {}) {
     try {
       const response = await this.client.delete(url, config);
@@ -111,26 +111,26 @@ class HttpClient {
       this.handleError(error);
     }
   }
-  
+
   // Fallback to node-fetch for simple requests
   async fetchSimple(url, options = {}) {
     try {
       const response = await fetch(url, {
         ...options,
-        timeout: this.timeout
+        timeout: this.timeout,
       });
-      
+
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
-      
+
       return await response.json();
     } catch (error) {
       logger.error(`Fetch error: ${error.message}`);
       throw error;
     }
   }
-  
+
   handleError(error) {
     if (error.response) {
       // Server responded with error status
@@ -151,15 +151,15 @@ class HttpClient {
 
 // Singleton instances for common services
 const ollamaClient = new HttpClient('http://localhost:11434', {
-  timeout: 60000 // Longer timeout for model responses
+  timeout: 60000, // Longer timeout for model responses
 });
 
 const lmStudioClient = new HttpClient('http://localhost:1234', {
-  timeout: 60000
+  timeout: 60000,
 });
 
 const chromaClient = new HttpClient('http://localhost:8000', {
-  timeout: 30000
+  timeout: 30000,
 });
 
 // Helper functions for specific API calls
@@ -176,8 +176,8 @@ const llmClients = {
         options: {
           temperature: options.temperature || 0.7,
           top_p: options.top_p || 0.9,
-          ...options
-        }
+          ...options,
+        },
       });
       return response.response;
     } catch (error) {
@@ -185,7 +185,7 @@ const llmClients = {
       return null;
     }
   },
-  
+
   /**
    * Call LM Studio API
    */
@@ -196,7 +196,7 @@ const llmClients = {
         messages,
         temperature: options.temperature || 0.7,
         max_tokens: options.max_tokens || 4096,
-        ...options
+        ...options,
       });
       return response.choices?.[0]?.message?.content || null;
     } catch (error) {
@@ -204,7 +204,7 @@ const llmClients = {
       return null;
     }
   },
-  
+
   /**
    * Check Ollama models
    */
@@ -217,7 +217,7 @@ const llmClients = {
       return [];
     }
   },
-  
+
   /**
    * Check LM Studio models
    */
@@ -230,7 +230,7 @@ const llmClients = {
       return [];
     }
   },
-  
+
   /**
    * Generate embeddings via Ollama
    */
@@ -238,14 +238,14 @@ const llmClients = {
     try {
       const response = await ollamaClient.post('/api/embeddings', {
         model,
-        prompt: text
+        prompt: text,
       });
       return response.embedding;
     } catch (error) {
       logger.error(`Embedding error: ${error.message}`);
       return null;
     }
-  }
+  },
 };
 
 module.exports = {
@@ -254,5 +254,5 @@ module.exports = {
   lmStudioClient,
   chromaClient,
   llmClients,
-  logger
+  logger,
 };

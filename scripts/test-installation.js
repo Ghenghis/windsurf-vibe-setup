@@ -22,7 +22,7 @@ const colors = {
   red: '\x1b[31m',
   yellow: '\x1b[33m',
   cyan: '\x1b[36m',
-  magenta: '\x1b[35m'
+  magenta: '\x1b[35m',
 };
 
 // Paths based on OS
@@ -41,7 +41,7 @@ function getPaths() {
   return {
     windsurfSettings,
     codeiumPath: path.join(home, '.codeium', 'windsurf'),
-    memoriesPath: path.join(home, '.codeium', 'windsurf', 'memories')
+    memoriesPath: path.join(home, '.codeium', 'windsurf', 'memories'),
   };
 }
 
@@ -50,11 +50,11 @@ const paths = getPaths();
 // ==============================================================================
 // Helper Functions
 // ==============================================================================
-const success = (msg) => console.log(`${colors.green}✅ ${msg}${colors.reset}`);
-const error = (msg) => console.log(`${colors.red}❌ ${msg}${colors.reset}`);
-const warning = (msg) => console.log(`${colors.yellow}⚠️  ${msg}${colors.reset}`);
-const info = (msg) => console.log(`${colors.cyan}ℹ️  ${msg}${colors.reset}`);
-const header = (msg) => console.log(`\n${colors.magenta}▶ ${msg}${colors.reset}`);
+const success = msg => console.log(`${colors.green}✅ ${msg}${colors.reset}`);
+const error = msg => console.log(`${colors.red}❌ ${msg}${colors.reset}`);
+const warning = msg => console.log(`${colors.yellow}⚠️  ${msg}${colors.reset}`);
+const info = msg => console.log(`${colors.cyan}ℹ️  ${msg}${colors.reset}`);
+const header = msg => console.log(`\n${colors.magenta}▶ ${msg}${colors.reset}`);
 
 // ==============================================================================
 // Test Functions
@@ -62,7 +62,7 @@ const header = (msg) => console.log(`\n${colors.magenta}▶ ${msg}${colors.reset
 const tests = {
   passed: 0,
   failed: 0,
-  warnings: 0
+  warnings: 0,
 };
 
 function testFileExists(filePath, description, required = true) {
@@ -155,7 +155,7 @@ function testSettingsContent(filePath) {
     const checks = [
       { key: 'windsurf.cascadeCommandsDenyList', name: 'Security deny list' },
       { key: 'files.watcherExclude', name: 'File watcher exclusions' },
-      { key: 'search.exclude', name: 'Search exclusions' }
+      { key: 'search.exclude', name: 'Search exclusions' },
     ];
 
     for (const check of checks) {

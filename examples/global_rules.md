@@ -22,6 +22,7 @@
 ## Code Quality Standards
 
 ### Python
+
 - Use type hints for all function signatures
 - Follow PEP 8 style guide
 - Use meaningful variable names (is_loading, has_error, fetch_user_data)
@@ -29,6 +30,7 @@
 - Prefer early returns over nested conditionals
 
 ### JavaScript/TypeScript
+
 - Use TypeScript strict mode when possible
 - Follow Airbnb style guide
 - Prefer const over let, never use var
@@ -36,6 +38,7 @@
 - Document complex functions with JSDoc
 
 ### PowerShell
+
 - Use approved verbs (Get-, Set-, New-, etc.)
 - Use PascalCase for functions
 - Add comment-based help for all functions

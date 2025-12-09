@@ -10,9 +10,10 @@ const path = require('path');
 const { execSync, spawn } = require('child_process');
 
 // Data directory
-const DATA_DIR = process.platform === 'win32'
-  ? path.join(process.env.APPDATA || '', 'WindsurfAutopilot')
-  : path.join(process.env.HOME || '', '.windsurf-autopilot');
+const DATA_DIR =
+  process.platform === 'win32'
+    ? path.join(process.env.APPDATA || '', 'WindsurfAutopilot')
+    : path.join(process.env.HOME || '', '.windsurf-autopilot');
 
 const TESTING_DIR = path.join(DATA_DIR, 'testing');
 const SCREENSHOTS_DIR = path.join(TESTING_DIR, 'screenshots');
@@ -26,7 +27,6 @@ const REPORTS_DIR = path.join(TESTING_DIR, 'reports');
 });
 
 const testingTools = {
-
   // Run E2E tests with Playwright or Cypress
   run_e2e_tests: {
     name: 'run_e2e_tests',
@@ -37,17 +37,17 @@ const testingTools = {
         framework: {
           type: 'string',
           enum: ['playwright', 'cypress'],
-          description: 'Testing framework to use'
+          description: 'Testing framework to use',
         },
         spec: { type: 'string', description: 'Specific test file or pattern' },
         browser: { type: 'string', description: 'Browser to use (chromium, firefox, webkit)' },
         headed: { type: 'boolean', description: 'Run in headed mode' },
         project: { type: 'string', description: 'Project path' },
-        baseUrl: { type: 'string', description: 'Base URL for tests' }
+        baseUrl: { type: 'string', description: 'Base URL for tests' },
       },
-      required: ['framework']
+      required: ['framework'],
     },
-    handler: async (args) => {
+    handler: async args => {
       const framework = args.framework;
       const spec = args.spec;
       const browser = args.browser || 'chromium';
@@ -59,12 +59,14 @@ const testingTools = {
 
       if (framework === 'playwright') {
         // Check if Playwright is installed
-        const playwrightInstalled = fs.existsSync(path.join(projectPath, 'node_modules', '@playwright', 'test'));
+        const playwrightInstalled = fs.existsSync(
+          path.join(projectPath, 'node_modules', '@playwright', 'test')
+        );
         if (!playwrightInstalled) {
           return {
             success: false,
             error: 'Playwright not installed',
-            hint: 'Run: npm install -D @playwright/test && npx playwright install'
+            hint: 'Run: npm install -D @playwright/test && npx playwright install',
           };
         }
 
@@ -80,7 +82,6 @@ const testingTools = {
           cmd += ` --base-url=${baseUrl}`;
         }
         cmd += ' --reporter=json';
-
       } else if (framework === 'cypress') {
         // Check if Cypress is installed
         const cypressInstalled = fs.existsSync(path.join(projectPath, 'node_modules', 'cypress'));
@@ -88,7 +89,7 @@ const testingTools = {
           return {
             success: false,
             error: 'Cypress not installed',
-            hint: 'Run: npm install -D cypress'
+            hint: 'Run: npm install -D cypress',
           };
         }
 
@@ -107,7 +108,7 @@ const testingTools = {
           cwd: projectPath,
           encoding: 'utf8',
           timeout: 600000,
-          maxBuffer: 50 * 1024 * 1024
+          maxBuffer: 50 * 1024 * 1024,
         });
 
         // Parse results
@@ -148,19 +149,20 @@ const testingTools = {
           results,
           total: results.passed + results.failed + results.skipped,
           reportPath,
-          message: results.failed === 0
-            ? `All ${results.passed} tests passed`
-            : `${results.failed} tests failed out of ${results.passed + results.failed}`
+          message:
+            results.failed === 0
+              ? `All ${results.passed} tests passed`
+              : `${results.failed} tests failed out of ${results.passed + results.failed}`,
         };
       } catch (error) {
         return {
           success: false,
           framework,
           error: error.message,
-          output: error.stdout?.slice(-2000) || ''
+          output: error.stdout?.slice(-2000) || '',
         };
       }
-    }
+    },
   },
 
   // Visual regression testing
@@ -178,15 +180,15 @@ const testingTools = {
           type: 'object',
           properties: {
             width: { type: 'number' },
-            height: { type: 'number' }
-          }
+            height: { type: 'number' },
+          },
         },
         selector: { type: 'string', description: 'CSS selector to capture' },
-        updateBaseline: { type: 'boolean', description: 'Update baseline instead of comparing' }
+        updateBaseline: { type: 'boolean', description: 'Update baseline instead of comparing' },
       },
-      required: ['url', 'name']
+      required: ['url', 'name'],
     },
-    handler: async (args) => {
+    handler: async args => {
       const url = args.url;
       const name = args.name.replace(/[^a-zA-Z0-9-_]/g, '_');
       const baseline = args.baseline || path.join(SCREENSHOTS_DIR, `${name}-baseline.png`);
@@ -202,7 +204,7 @@ const testingTools = {
         return {
           success: false,
           error: 'Puppeteer not installed',
-          hint: 'Run: npm install puppeteer'
+          hint: 'Run: npm install puppeteer',
         };
       }
 
@@ -239,7 +241,7 @@ const testingTools = {
             success: true,
             action: 'baseline_updated',
             baseline,
-            message: 'Baseline screenshot updated'
+            message: 'Baseline screenshot updated',
           };
         }
 
@@ -266,7 +268,7 @@ const testingTools = {
           diffImage: match ? null : diffPath,
           message: match
             ? 'Visual comparison passed'
-            : `Visual difference detected: ${Math.round(sizeRatio * 100)}% change`
+            : `Visual difference detected: ${Math.round(sizeRatio * 100)}% change`,
         };
       } catch (error) {
         if (browser) {
@@ -274,10 +276,10 @@ const testingTools = {
         }
         return {
           success: false,
-          error: error.message
+          error: error.message,
         };
       }
-    }
+    },
   },
 
   // Load testing with k6 or Artillery
@@ -297,13 +299,13 @@ const testingTools = {
           description: 'Performance thresholds',
           properties: {
             p95: { type: 'number', description: 'p95 response time in ms' },
-            errorRate: { type: 'number', description: 'Max error rate (0-1)' }
-          }
-        }
+            errorRate: { type: 'number', description: 'Max error rate (0-1)' },
+          },
+        },
       },
-      required: ['target']
+      required: ['target'],
     },
-    handler: async (args) => {
+    handler: async args => {
       const target = args.target;
       const tool = args.tool || 'k6';
       const vus = args.vus || 10;
@@ -319,7 +321,7 @@ const testingTools = {
           return {
             success: false,
             error: 'k6 is not installed',
-            hint: 'Install from https://k6.io/docs/getting-started/installation/'
+            hint: 'Install from https://k6.io/docs/getting-started/installation/',
           };
         }
 
@@ -356,7 +358,7 @@ export default function () {
           const output = execSync(`k6 run --out json=- ${scriptPath}`, {
             encoding: 'utf8',
             timeout: 300000,
-            maxBuffer: 50 * 1024 * 1024
+            maxBuffer: 50 * 1024 * 1024,
           });
 
           // Parse k6 output
@@ -365,7 +367,7 @@ export default function () {
             requests: 0,
             failed: 0,
             avgDuration: 0,
-            p95Duration: 0
+            p95Duration: 0,
           };
 
           for (const line of lines) {
@@ -381,7 +383,10 @@ export default function () {
           }
 
           const reportPath = path.join(REPORTS_DIR, `loadtest-${Date.now()}.json`);
-          fs.writeFileSync(reportPath, JSON.stringify({ target, metrics, output: output.slice(-5000) }, null, 2));
+          fs.writeFileSync(
+            reportPath,
+            JSON.stringify({ target, metrics, output: output.slice(-5000) }, null, 2)
+          );
 
           return {
             success: true,
@@ -391,12 +396,12 @@ export default function () {
             duration,
             metrics,
             reportPath,
-            message: `Load test completed: ${metrics.requests} requests`
+            message: `Load test completed: ${metrics.requests} requests`,
           };
         } catch (error) {
           return {
             success: false,
-            error: error.message
+            error: error.message,
           };
         }
       } else {
@@ -404,10 +409,10 @@ export default function () {
         return {
           success: false,
           error: 'Artillery support coming soon',
-          hint: 'Use k6 for now'
+          hint: 'Use k6 for now',
         };
       }
-    }
+    },
   },
 
   // Contract testing with Pact
@@ -421,11 +426,11 @@ export default function () {
         consumer: { type: 'string', description: 'Consumer service name' },
         pactFile: { type: 'string', description: 'Path to Pact contract file' },
         providerUrl: { type: 'string', description: 'Provider base URL' },
-        openApiSpec: { type: 'string', description: 'Path to OpenAPI spec for validation' }
+        openApiSpec: { type: 'string', description: 'Path to OpenAPI spec for validation' },
       },
-      required: ['provider']
+      required: ['provider'],
     },
-    handler: async (args) => {
+    handler: async args => {
       const provider = args.provider;
       const consumer = args.consumer || 'consumer';
       const pactFile = args.pactFile;
@@ -471,7 +476,7 @@ export default function () {
           title: parsed.info?.title || 'Unknown API',
           endpoints: endpoints.length,
           endpointList: endpoints.slice(0, 20),
-          message: `OpenAPI spec valid: ${endpoints.length} endpoints found`
+          message: `OpenAPI spec valid: ${endpoints.length} endpoints found`,
         };
       }
 
@@ -493,17 +498,17 @@ export default function () {
           interactionSummary: interactions.map(i => ({
             description: i.description,
             request: `${i.request?.method} ${i.request?.path}`,
-            response: i.response?.status
+            response: i.response?.status,
           })),
-          message: `Pact contract loaded: ${interactions.length} interactions`
+          message: `Pact contract loaded: ${interactions.length} interactions`,
         };
       }
 
       return {
         success: false,
-        error: 'Provide either openApiSpec or pactFile'
+        error: 'Provide either openApiSpec or pactFile',
       };
-    }
+    },
   },
 
   // Mutation testing
@@ -515,27 +520,29 @@ export default function () {
       properties: {
         path: { type: 'string', description: 'Project path' },
         files: { type: 'array', items: { type: 'string' }, description: 'Files to mutate' },
-        testRunner: { type: 'string', description: 'Test runner (jest, mocha, jasmine)' }
+        testRunner: { type: 'string', description: 'Test runner (jest, mocha, jasmine)' },
       },
-      required: ['path']
+      required: ['path'],
     },
-    handler: async (args) => {
+    handler: async args => {
       const projectPath = args.path;
       const files = args.files || ['src/**/*.js'];
       const testRunner = args.testRunner || 'jest';
 
       // Check if Stryker is installed
-      const strykerInstalled = fs.existsSync(path.join(projectPath, 'node_modules', '@stryker-mutator', 'core'));
+      const strykerInstalled = fs.existsSync(
+        path.join(projectPath, 'node_modules', '@stryker-mutator', 'core')
+      );
 
       if (!strykerInstalled) {
         // Create stryker config
         const strykerConfig = {
-          '$schema': './node_modules/@stryker-mutator/core/schema/stryker-schema.json',
-          'packageManager': 'npm',
-          'reporters': ['html', 'clear-text', 'progress'],
-          'testRunner': testRunner,
-          'coverageAnalysis': 'perTest',
-          'mutate': files
+          $schema: './node_modules/@stryker-mutator/core/schema/stryker-schema.json',
+          packageManager: 'npm',
+          reporters: ['html', 'clear-text', 'progress'],
+          testRunner: testRunner,
+          coverageAnalysis: 'perTest',
+          mutate: files,
         };
 
         const configPath = path.join(projectPath, 'stryker.conf.json');
@@ -546,7 +553,7 @@ export default function () {
           configCreated: configPath,
           error: 'Stryker not installed',
           hint: `Run: npm install -D @stryker-mutator/core @stryker-mutator/${testRunner}-runner`,
-          message: 'Stryker config created. Install Stryker and run again.'
+          message: 'Stryker config created. Install Stryker and run again.',
         };
       }
 
@@ -555,7 +562,7 @@ export default function () {
           cwd: projectPath,
           encoding: 'utf8',
           timeout: 600000,
-          maxBuffer: 50 * 1024 * 1024
+          maxBuffer: 50 * 1024 * 1024,
         });
 
         // Parse mutation score
@@ -577,16 +584,19 @@ export default function () {
           timedOut,
           total: killed + survived + timedOut,
           message: `Mutation score: ${score}% (${killed} killed, ${survived} survived)`,
-          hint: score < 80 ? 'Consider adding more tests to kill surviving mutants' : 'Good mutation score!'
+          hint:
+            score < 80
+              ? 'Consider adding more tests to kill surviving mutants'
+              : 'Good mutation score!',
         };
       } catch (error) {
         return {
           success: false,
-          error: error.message
+          error: error.message,
         };
       }
-    }
-  }
+    },
+  },
 };
 
 module.exports = testingTools;

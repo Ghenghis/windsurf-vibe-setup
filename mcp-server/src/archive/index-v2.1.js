@@ -21,7 +21,7 @@ const {
   CallToolRequestSchema,
   ListToolsRequestSchema,
   ListResourcesRequestSchema,
-  ReadResourceRequestSchema
+  ReadResourceRequestSchema,
 } = require('@modelcontextprotocol/sdk/types.js');
 
 const fs = require('fs');
@@ -47,7 +47,7 @@ const PATHS = {
   codeium: path.join(HOME, '.codeium', 'windsurf'),
   memories: path.join(HOME, '.codeium', 'windsurf', 'memories'),
   projects: path.join(HOME, 'Projects'),
-  projectRoot: path.resolve(__dirname, '..', '..')
+  projectRoot: path.resolve(__dirname, '..', '..'),
 };
 
 // Task state for multi-step operations
@@ -55,7 +55,7 @@ const taskState = {
   currentTask: null,
   history: [],
   lastError: null,
-  projectContext: {}
+  projectContext: {},
 };
 
 // Running processes tracker
@@ -70,11 +70,13 @@ function safeExec(command, options = {}) {
     encoding: 'utf8',
     timeout: options.timeout || 60000,
     maxBuffer: 10 * 1024 * 1024,
-    windowsHide: true
+    windowsHide: true,
   };
 
   try {
-    const output = execSync(command, { ...defaults, ...options }).toString().trim();
+    const output = execSync(command, { ...defaults, ...options })
+      .toString()
+      .trim();
     return { success: true, output, exitCode: 0 };
   } catch (e) {
     return {
@@ -82,48 +84,48 @@ function safeExec(command, options = {}) {
       error: e.message,
       output: e.stdout?.toString() || '',
       stderr: e.stderr?.toString() || '',
-      exitCode: e.status || 1
+      exitCode: e.status || 1,
     };
   }
 }
 
 function execAsync(command, options = {}) {
-  return new Promise((resolve) => {
+  return new Promise(resolve => {
     const shell = IS_WINDOWS ? 'cmd.exe' : '/bin/bash';
     const shellArgs = IS_WINDOWS ? ['/c', command] : ['-c', command];
 
     const proc = spawn(shell, shellArgs, {
       cwd: options.cwd || HOME,
       env: { ...process.env, ...options.env },
-      windowsHide: true
+      windowsHide: true,
     });
 
     let stdout = '';
     let stderr = '';
 
-    proc.stdout.on('data', (data) => {
+    proc.stdout.on('data', data => {
       stdout += data.toString();
     });
-    proc.stderr.on('data', (data) => {
+    proc.stderr.on('data', data => {
       stderr += data.toString();
     });
 
-    proc.on('close', (code) => {
+    proc.on('close', code => {
       resolve({
         success: code === 0,
         output: stdout.trim(),
         stderr: stderr.trim(),
-        exitCode: code
+        exitCode: code,
       });
     });
 
-    proc.on('error', (err) => {
+    proc.on('error', err => {
       resolve({
         success: false,
         error: err.message,
         output: stdout,
         stderr: stderr,
-        exitCode: 1
+        exitCode: 1,
       });
     });
 
@@ -134,7 +136,7 @@ function execAsync(command, options = {}) {
         error: 'Command timed out',
         output: stdout,
         stderr: stderr,
-        exitCode: 124
+        exitCode: 124,
       });
     }, options.timeout || 120000);
   });

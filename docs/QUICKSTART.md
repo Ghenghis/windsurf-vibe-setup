@@ -11,6 +11,7 @@
 > "Set everything up for me"
 
 The Autopilot MCP server will:
+
 1. Install all configurations automatically
 2. Set up AI rules
 3. Configure MCP servers
@@ -36,11 +37,11 @@ This project gives you a **pre-configured setup for Windsurf IDE** - the AI-powe
 
 Before starting, make sure you have:
 
-| What | How to Check | Where to Get It |
-|------|--------------|-----------------|
-| Windsurf IDE | Open Windsurf app | [Download Here](https://www.codeium.com/windsurf) |
-| Node.js 18+ | Run `node --version` | [Download Here](https://nodejs.org/) |
-| Git | Run `git --version` | [Download Here](https://git-scm.com/) |
+| What         | How to Check         | Where to Get It                                   |
+| ------------ | -------------------- | ------------------------------------------------- |
+| Windsurf IDE | Open Windsurf app    | [Download Here](https://www.codeium.com/windsurf) |
+| Node.js 18+  | Run `node --version` | [Download Here](https://nodejs.org/)              |
+| Git          | Run `git --version`  | [Download Here](https://git-scm.com/)             |
 
 ---
 
@@ -49,6 +50,7 @@ Before starting, make sure you have:
 ### Step 1: Download This Project
 
 **Option A: Clone with Git (Recommended)**
+
 ```powershell
 # Open PowerShell or Terminal, then run:
 git clone https://github.com/Ghenghis/windsurf-vibe-setup.git
@@ -56,6 +58,7 @@ cd windsurf-vibe-setup
 ```
 
 **Option B: Download ZIP**
+
 1. Go to: https://github.com/Ghenghis/windsurf-vibe-setup
 2. Click green "Code" button → "Download ZIP"
 3. Extract to a folder you'll remember
@@ -72,6 +75,7 @@ npm install
 ### Step 3: Copy Settings to Windsurf
 
 **Windows (PowerShell)**:
+
 ```powershell
 # Copy the main settings file
 Copy-Item .\settings.json "$env:APPDATA\Windsurf\User\settings.json"
@@ -80,6 +84,7 @@ Write-Host "✅ Settings copied!" -ForegroundColor Green
 ```
 
 **macOS/Linux (Terminal)**:
+
 ```bash
 # Copy the main settings file
 cp ./settings.json ~/Library/Application\ Support/Windsurf/User/settings.json  # macOS
@@ -110,6 +115,7 @@ Close and reopen Windsurf IDE for changes to take effect.
 ## ✅ You're Done!
 
 Your Windsurf IDE now has:
+
 - ✅ Optimized AI assistant settings
 - ✅ Security protection (dangerous commands blocked)
 - ✅ Performance tuning for large projects
@@ -132,12 +138,12 @@ If the AI responds, you're all set! 🎉
 
 ## What Each File Does (Simple Explanation)
 
-| File | What It Does | Do I Need to Edit It? |
-|------|--------------|----------------------|
-| `settings.json` | Main Windsurf settings | No, just copy it |
+| File                       | What It Does               | Do I Need to Edit It?  |
+| -------------------------- | -------------------------- | ---------------------- |
+| `settings.json`            | Main Windsurf settings     | No, just copy it       |
 | `examples/global_rules.md` | Teaches AI how to help you | Optional customization |
-| `examples/mcp_config.json` | Adds AI superpowers | Yes, add your API keys |
-| `scripts/*.js` | Helper tools | No, just run them |
+| `examples/mcp_config.json` | Adds AI superpowers        | Yes, add your API keys |
+| `scripts/*.js`             | Helper tools               | No, just run them      |
 
 ---
 
@@ -150,6 +156,7 @@ npm run test
 ```
 
 This runs:
+
 - JSON validation
 - Linting checks
 - Secret scanning
@@ -174,13 +181,13 @@ Finds accidentally committed API keys or passwords.
 
 ## Next Steps
 
-| What You Want | Go Here |
-|---------------|---------|
-| Understand how it works | [ARCHITECTURE.md](ARCHITECTURE.md) |
-| Fix a problem | [TROUBLESHOOTING.md](TROUBLESHOOTING.md) |
-| Set up MCP servers | [MCP_SETUP_GUIDE.md](MCP_SETUP_GUIDE.md) |
-| Learn the scripts | [SCRIPTS_REFERENCE.md](SCRIPTS_REFERENCE.md) |
-| Daily workflow tips | [WORKFLOW.md](WORKFLOW.md) |
+| What You Want           | Go Here                                      |
+| ----------------------- | -------------------------------------------- |
+| Understand how it works | [ARCHITECTURE.md](ARCHITECTURE.md)           |
+| Fix a problem           | [TROUBLESHOOTING.md](TROUBLESHOOTING.md)     |
+| Set up MCP servers      | [MCP_SETUP_GUIDE.md](MCP_SETUP_GUIDE.md)     |
+| Learn the scripts       | [SCRIPTS_REFERENCE.md](SCRIPTS_REFERENCE.md) |
+| Daily workflow tips     | [WORKFLOW.md](WORKFLOW.md)                   |
 
 ---
 

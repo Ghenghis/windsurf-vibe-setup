@@ -1,7 +1,7 @@
 /**
  * Hive Mind Agent Swarm System
  * Windsurf Vibe Setup v4.1.0
- * 
+ *
  * Enables hundreds of AI agents to work together as a collective intelligence,
  * sharing knowledge and coordinating tasks in real-time.
  */
@@ -20,9 +20,9 @@ class HiveMind extends EventEmitter {
       defaultModel: config.defaultModel || 'qwen2.5-coder:32b',
       knowledgeBase: config.knowledgeBase || './data/hive-knowledge.db',
       communicationProtocol: config.communicationProtocol || 'internal',
-      ...config
+      ...config,
     };
-    
+
     this.swarms = new Map();
     this.agents = new Map();
     this.knowledgeGraph = new Map();
@@ -33,7 +33,7 @@ class HiveMind extends EventEmitter {
       totalTasks: 0,
       completedTasks: 0,
       activeAgents: 0,
-      consensusDecisions: 0
+      consensusDecisions: 0,
     };
   }
 
@@ -62,12 +62,12 @@ class HiveMind extends EventEmitter {
   async createSwarm(options) {
     const swarm = new AgentSwarm({
       ...options,
-      hiveMind: this
+      hiveMind: this,
     });
-    
+
     this.swarms.set(options.name, swarm);
     await swarm.initialize();
-    
+
     this.emit('swarmCreated', { name: options.name, agents: swarm.agents.length });
     return swarm;
   }
@@ -95,7 +95,7 @@ class HiveMind extends EventEmitter {
     this.knowledgeGraph.set(scope, {
       data,
       timestamp: new Date(),
-      version: (this.knowledgeGraph.get(scope)?.version || 0) + 1
+      version: (this.knowledgeGraph.get(scope)?.version || 0) + 1,
     });
 
     // Broadcast to all swarms
@@ -132,7 +132,7 @@ class HiveMind extends EventEmitter {
       question,
       perspectives: responses,
       consensus: this.findConsensus(responses),
-      timestamp: new Date()
+      timestamp: new Date(),
     };
     return synthesis;
   }
@@ -144,7 +144,7 @@ class HiveMind extends EventEmitter {
       const key = JSON.stringify(r.recommendation || r.answer);
       votes.set(key, (votes.get(key) || 0) + 1);
     }
-    
+
     let maxVotes = 0;
     let consensus = null;
     for (const [key, count] of votes) {
@@ -153,7 +153,7 @@ class HiveMind extends EventEmitter {
         consensus = JSON.parse(key);
       }
     }
-    
+
     return { value: consensus, confidence: maxVotes / responses.length };
   }
 
@@ -169,11 +169,13 @@ class HiveMind extends EventEmitter {
 
   getAvailableBackend(requirements = {}) {
     // Find best backend for requirements
-    return this.backends.find(b => {
-      if (requirements.model && !b.models.includes(requirements.model)) return false;
-      if (requirements.gpu && b.gpu !== requirements.gpu) return false;
-      return true;
-    }) || this.backends[0];
+    return (
+      this.backends.find(b => {
+        if (requirements.model && !b.models.includes(requirements.model)) return false;
+        if (requirements.gpu && b.gpu !== requirements.gpu) return false;
+        return true;
+      }) || this.backends[0]
+    );
   }
 
   // ─────────────────────────────────────────────────────────────────────────
@@ -186,7 +188,7 @@ class HiveMind extends EventEmitter {
       swarms: this.swarms.size,
       totalAgents: Array.from(this.swarms.values()).reduce((sum, s) => sum + s.agents.length, 0),
       stats: this.stats,
-      backends: this.backends.length
+      backends: this.backends.length,
     };
   }
 }
@@ -220,11 +222,11 @@ class AgentSwarm extends EventEmitter {
         id: `${this.name}-agent-${i}`,
         swarm: this,
         model: this.model,
-        capabilities: this.capabilities
+        capabilities: this.capabilities,
       });
       this.agents.push(agent);
     }
-    
+
     this.isActive = true;
     this.emit('initialized', { agents: this.agents.length });
     return { success: true, agents: this.agents.length };
@@ -249,20 +251,21 @@ class AgentSwarm extends EventEmitter {
     this.emit('taskStarted', { taskId, task: taskConfig.task });
 
     // Send to all agents
-    const promises = this.agents.map(agent => 
-      agent.execute(taskConfig.task, taskConfig)
+    const promises = this.agents.map(agent =>
+      agent
+        .execute(taskConfig.task, taskConfig)
         .catch(err => ({ error: err.message, agent: agent.id }))
     );
 
     const agentResults = await Promise.all(promises);
-    
+
     // Collect results
     for (const result of agentResults) {
       results.push(result);
     }
 
     this.taskResults.set(taskId, results);
-    
+
     // Apply consensus if requested
     if (taskConfig.consensus) {
       const consensus = this.applyConsensus(results, taskConfig.consensus);
@@ -279,11 +282,11 @@ class AgentSwarm extends EventEmitter {
 
     // Distribute files across agents
     const chunksPerAgent = Math.ceil(files.length / this.agents.length);
-    
+
     for (let i = 0; i < this.agents.length; i++) {
       const startIdx = i * chunksPerAgent;
       const agentFiles = files.slice(startIdx, startIdx + chunksPerAgent);
-      
+
       if (agentFiles.length > 0) {
         const result = await this.agents[i].execute(operation, { files: agentFiles });
         results.set(this.agents[i].id, result);
@@ -341,7 +344,7 @@ class AgentSwarm extends EventEmitter {
       participation,
       meetsQuorum,
       confidence: maxVotes / votes.size,
-      reasonings
+      reasonings,
     };
   }
 
@@ -366,7 +369,7 @@ class AgentSwarm extends EventEmitter {
         votes.set(key, (votes.get(key) || 0) + 1);
       }
     }
-    
+
     let best = null;
     let maxVotes = 0;
     for (const [key, count] of votes) {
@@ -375,7 +378,7 @@ class AgentSwarm extends EventEmitter {
         best = JSON.parse(key);
       }
     }
-    
+
     return { decision: best, votes: maxVotes, total: results.length };
   }
 
@@ -388,7 +391,7 @@ class AgentSwarm extends EventEmitter {
         weighted.set(key, (weighted.get(key) || 0) + r.confidence);
       }
     }
-    
+
     let best = null;
     let maxWeight = 0;
     for (const [key, weight] of weighted) {
@@ -397,18 +400,16 @@ class AgentSwarm extends EventEmitter {
         best = JSON.parse(key);
       }
     }
-    
+
     return { decision: best, weight: maxWeight };
   }
 
   unanimousVote(results) {
     const first = results[0]?.recommendation;
     if (!first) return { decision: null, unanimous: false };
-    
-    const allSame = results.every(r => 
-      JSON.stringify(r.recommendation) === JSON.stringify(first)
-    );
-    
+
+    const allSame = results.every(r => JSON.stringify(r.recommendation) === JSON.stringify(first));
+
     return { decision: allSame ? first : null, unanimous: allSame };
   }
 
@@ -418,7 +419,7 @@ class AgentSwarm extends EventEmitter {
 
   async receiveKnowledge(scope, data) {
     this.sharedMemory.set(scope, data);
-    
+
     // Update all agents
     for (const agent of this.agents) {
       agent.updateContext(scope, data);
@@ -426,13 +427,11 @@ class AgentSwarm extends EventEmitter {
   }
 
   async queryAgents(question, roles) {
-    const relevantAgents = this.agents.filter(a => 
-      roles.includes('default') || roles.some(r => a.capabilities.includes(r))
+    const relevantAgents = this.agents.filter(
+      a => roles.includes('default') || roles.some(r => a.capabilities.includes(r))
     );
 
-    const responses = await Promise.all(
-      relevantAgents.map(a => a.query(question))
-    );
+    const responses = await Promise.all(relevantAgents.map(a => a.query(question)));
 
     return responses;
   }
@@ -452,7 +451,7 @@ class AgentSwarm extends EventEmitter {
         const agent = new SwarmAgent({
           id: `${this.name}-agent-${this.agents.length}`,
           swarm: this,
-          ...config
+          ...config,
         });
         this.agents.push(agent);
         added.push(agent.id);
@@ -484,7 +483,7 @@ class AgentSwarm extends EventEmitter {
       active: this.isActive,
       agents: this.agents.length,
       capabilities: this.capabilities,
-      completedTasks: this.taskResults.size
+      completedTasks: this.taskResults.size,
     };
   }
 }
@@ -504,7 +503,7 @@ class SwarmAgent {
     this.currentTask = null;
     this.stats = {
       tasksCompleted: 0,
-      avgResponseTime: 0
+      avgResponseTime: 0,
     };
   }
 
@@ -515,16 +514,16 @@ class SwarmAgent {
     try {
       // Simulate LLM execution (in real implementation, call Ollama/LM Studio)
       const result = await this.callLLM(task, options);
-      
+
       this.stats.tasksCompleted++;
-      this.stats.avgResponseTime = 
-        (this.stats.avgResponseTime * (this.stats.tasksCompleted - 1) + (Date.now() - startTime)) 
-        / this.stats.tasksCompleted;
-      
+      this.stats.avgResponseTime =
+        (this.stats.avgResponseTime * (this.stats.tasksCompleted - 1) + (Date.now() - startTime)) /
+        this.stats.tasksCompleted;
+
       return {
         agent: this.id,
         result,
-        duration: Date.now() - startTime
+        duration: Date.now() - startTime,
       };
     } finally {
       this.currentTask = null;
@@ -538,19 +537,19 @@ class SwarmAgent {
       task,
       processed: true,
       recommendation: null, // Would contain actual LLM output
-      confidence: 0.85
+      confidence: 0.85,
     };
   }
 
   async vote(question, options) {
     // Agent votes on a question
     const result = await this.callLLM(`Vote on: ${question}\nOptions: ${options.join(', ')}`, {
-      type: 'vote'
+      type: 'vote',
     });
-    
+
     return {
       choice: options[0], // Would be actual LLM choice
-      reasoning: 'Based on analysis...'
+      reasoning: 'Based on analysis...',
     };
   }
 
@@ -589,12 +588,16 @@ const hiveMindTools = [
         name: { type: 'string', description: 'Swarm name' },
         type: { type: 'string', description: 'Swarm type (coding, testing, security, etc.)' },
         agentCount: { type: 'number', description: 'Number of agents', default: 10 },
-        capabilities: { type: 'array', items: { type: 'string' }, description: 'Agent capabilities' },
+        capabilities: {
+          type: 'array',
+          items: { type: 'string' },
+          description: 'Agent capabilities',
+        },
         model: { type: 'string', description: 'LLM model to use' },
-        autoScale: { type: 'boolean', description: 'Enable auto-scaling' }
+        autoScale: { type: 'boolean', description: 'Enable auto-scaling' },
       },
-      required: ['name']
-    }
+      required: ['name'],
+    },
   },
   {
     name: 'swarm_add_agents',
@@ -603,19 +606,19 @@ const hiveMindTools = [
       type: 'object',
       properties: {
         swarm: { type: 'string', description: 'Swarm name' },
-        agents: { 
-          type: 'array', 
+        agents: {
+          type: 'array',
           items: {
             type: 'object',
             properties: {
               role: { type: 'string' },
-              model: { type: 'string' }
-            }
-          }
-        }
+              model: { type: 'string' },
+            },
+          },
+        },
       },
-      required: ['swarm', 'agents']
-    }
+      required: ['swarm', 'agents'],
+    },
   },
   {
     name: 'swarm_broadcast',
@@ -627,10 +630,10 @@ const hiveMindTools = [
         task: { type: 'string', description: 'Task description' },
         priority: { type: 'string', enum: ['low', 'normal', 'high'] },
         timeout: { type: 'number', description: 'Timeout in ms' },
-        consensus: { type: 'string', enum: ['majority', 'weighted', 'unanimous'] }
+        consensus: { type: 'string', enum: ['majority', 'weighted', 'unanimous'] },
       },
-      required: ['swarm', 'task']
-    }
+      required: ['swarm', 'task'],
+    },
   },
   {
     name: 'swarm_distribute',
@@ -641,10 +644,10 @@ const hiveMindTools = [
         swarm: { type: 'string' },
         files: { type: 'array', items: { type: 'string' } },
         operation: { type: 'string' },
-        strategy: { type: 'string', enum: ['round-robin', 'load-balanced', 'capability-match'] }
+        strategy: { type: 'string', enum: ['round-robin', 'load-balanced', 'capability-match'] },
       },
-      required: ['swarm', 'files', 'operation']
-    }
+      required: ['swarm', 'files', 'operation'],
+    },
   },
   {
     name: 'swarm_collect',
@@ -654,10 +657,10 @@ const hiveMindTools = [
       properties: {
         swarm: { type: 'string' },
         taskId: { type: 'string' },
-        format: { type: 'string', enum: ['merged', 'individual', 'diff'] }
+        format: { type: 'string', enum: ['merged', 'individual', 'diff'] },
       },
-      required: ['swarm', 'taskId']
-    }
+      required: ['swarm', 'taskId'],
+    },
   },
   {
     name: 'swarm_consensus',
@@ -669,10 +672,10 @@ const hiveMindTools = [
         question: { type: 'string' },
         options: { type: 'array', items: { type: 'string' } },
         votingMethod: { type: 'string', enum: ['majority', 'weighted', 'ranked'] },
-        quorum: { type: 'number', description: '0-1 participation threshold' }
+        quorum: { type: 'number', description: '0-1 participation threshold' },
       },
-      required: ['swarm', 'question', 'options']
-    }
+      required: ['swarm', 'question', 'options'],
+    },
   },
   {
     name: 'swarm_status',
@@ -681,10 +684,10 @@ const hiveMindTools = [
       type: 'object',
       properties: {
         swarm: { type: 'string' },
-        detailed: { type: 'boolean' }
+        detailed: { type: 'boolean' },
       },
-      required: ['swarm']
-    }
+      required: ['swarm'],
+    },
   },
   {
     name: 'hive_mind_sync',
@@ -694,10 +697,10 @@ const hiveMindTools = [
       properties: {
         scope: { type: 'string', description: 'Knowledge scope (project, global, etc.)' },
         data: { type: 'object', description: 'Knowledge data to sync' },
-        broadcast: { type: 'boolean', description: 'Broadcast to all swarms' }
+        broadcast: { type: 'boolean', description: 'Broadcast to all swarms' },
       },
-      required: ['scope', 'data']
-    }
+      required: ['scope', 'data'],
+    },
   },
   {
     name: 'hive_mind_query',
@@ -708,10 +711,10 @@ const hiveMindTools = [
         question: { type: 'string' },
         context: { type: 'string' },
         consultAgents: { type: 'array', items: { type: 'string' } },
-        synthesize: { type: 'boolean' }
+        synthesize: { type: 'boolean' },
       },
-      required: ['question']
-    }
+      required: ['question'],
+    },
   },
   {
     name: 'hive_mind_start',
@@ -720,26 +723,26 @@ const hiveMindTools = [
       type: 'object',
       properties: {
         maxAgents: { type: 'number' },
-        defaultModel: { type: 'string' }
-      }
-    }
+        defaultModel: { type: 'string' },
+      },
+    },
   },
   {
     name: 'hive_mind_stop',
     description: 'Stop the Hive Mind system.',
     inputSchema: {
       type: 'object',
-      properties: {}
-    }
+      properties: {},
+    },
   },
   {
     name: 'hive_mind_status',
     description: 'Get overall Hive Mind status.',
     inputSchema: {
       type: 'object',
-      properties: {}
-    }
-  }
+      properties: {},
+    },
+  },
 ];
 
 // Tool handlers
@@ -747,64 +750,64 @@ const hiveMindHandlers = {
   async swarm_create(params) {
     return hiveMindInstance.createSwarm(params).then(s => s.getStatus());
   },
-  
+
   async swarm_add_agents({ swarm, agents }) {
     const s = hiveMindInstance.getSwarm(swarm);
     if (!s) return { error: 'Swarm not found' };
     return s.addAgents(agents);
   },
-  
+
   async swarm_broadcast({ swarm, task, priority, timeout, consensus }) {
     const s = hiveMindInstance.getSwarm(swarm);
     if (!s) return { error: 'Swarm not found' };
     return s.broadcast({ task, priority, timeout, consensus });
   },
-  
+
   async swarm_distribute({ swarm, files, operation, strategy }) {
     const s = hiveMindInstance.getSwarm(swarm);
     if (!s) return { error: 'Swarm not found' };
     return s.distribute({ files, operation, strategy });
   },
-  
+
   async swarm_collect({ swarm, taskId, format }) {
     const s = hiveMindInstance.getSwarm(swarm);
     if (!s) return { error: 'Swarm not found' };
     return s.collect(taskId);
   },
-  
+
   async swarm_consensus({ swarm, question, options, votingMethod, quorum }) {
     const s = hiveMindInstance.getSwarm(swarm);
     if (!s) return { error: 'Swarm not found' };
     return s.consensus({ question, options, votingMethod, quorum });
   },
-  
+
   async swarm_status({ swarm, detailed }) {
     const s = hiveMindInstance.getSwarm(swarm);
     if (!s) return { error: 'Swarm not found' };
     return s.getStatus();
   },
-  
+
   async hive_mind_sync({ scope, data, broadcast }) {
     return hiveMindInstance.syncKnowledge(scope, data);
   },
-  
+
   async hive_mind_query({ question, context, consultAgents, synthesize }) {
     return hiveMindInstance.queryKnowledge(question, { context, consultAgents, synthesize });
   },
-  
+
   async hive_mind_start({ maxAgents, defaultModel }) {
     hiveMindInstance.config.maxAgents = maxAgents || 100;
     hiveMindInstance.config.defaultModel = defaultModel || 'qwen2.5-coder:32b';
     return hiveMindInstance.start();
   },
-  
+
   async hive_mind_stop() {
     return hiveMindInstance.stop();
   },
-  
+
   async hive_mind_status() {
     return hiveMindInstance.getStatus();
-  }
+  },
 };
 
 module.exports = {
@@ -814,10 +817,11 @@ module.exports = {
   hiveMindTools,
   hiveMindHandlers,
   hiveMindInstance,
-  registerTools: (server) => {
+  registerTools: server => {
     hiveMindTools.forEach(tool => {
-      server.tool(tool.name, tool.description, tool.inputSchema,
-        async (params) => hiveMindHandlers[tool.name](params));
+      server.tool(tool.name, tool.description, tool.inputSchema, async params =>
+        hiveMindHandlers[tool.name](params)
+      );
     });
-  }
+  },
 };

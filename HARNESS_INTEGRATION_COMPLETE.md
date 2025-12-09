@@ -13,29 +13,35 @@ We've successfully integrated Anthropic's long-running agent harness into your W
 ## 📦 Files Created
 
 ### Core Harness System
+
 1. **`mcp-server/src/harness/controller.js`** (600+ lines)
+
    - Main harness controller
    - Session management
    - Progress tracking
    - Git integration
 
 2. **`mcp-server/src/harness/agent-manager.js`** (450+ lines)
+
    - Agent lifecycle management
    - Feature generation
    - Test execution
    - Regression testing
 
 3. **`mcp-server/src/harness/tools.js`** (350+ lines)
+
    - 9 MCP tools for harness control
    - Quick start templates
    - Configuration management
 
 4. **`mcp-server/src/harness/hive-mind-adapter.js`** (320+ lines)
+
    - Hive Mind integration
    - Swarm management for sessions
    - Multi-agent coordination
 
 5. **`mcp-server/src/harness/open-interpreter-adapter.js`** (380+ lines)
+
    - Open Interpreter integration
    - Visual validation
    - Browser automation
@@ -54,24 +60,20 @@ We've successfully integrated Anthropic's long-running agent harness into your W
 // In mcp-server/src/index.js, add:
 
 // Import harness system
-const { 
-  initializeHarness, 
-  harnessTools,
-  registerHarnessTools 
-} = require('./harness');
+const { initializeHarness, harnessTools, registerHarnessTools } = require('./harness');
 
 // Initialize harness during server startup
 async function initializeServer() {
   // ... existing initialization ...
-  
+
   // Initialize Anthropic Harness
   await initializeHarness({
-    enabled: true,  // Can be toggled
+    enabled: true, // Can be toggled
     maxHoursRuntime: 24,
     maxSessions: 100,
-    targetTestPassRate: 0.95
+    targetTestPassRate: 0.95,
   });
-  
+
   // Register harness tools with MCP
   registerHarnessTools(server);
 }
@@ -85,21 +87,21 @@ await harness_toggle({ enabled: true });
 
 // Start a project from scratch
 await harness_start({
-  name: "My SaaS Platform",
-  description: "Modern SaaS dashboard with analytics",
+  name: 'My SaaS Platform',
+  description: 'Modern SaaS dashboard with analytics',
   features: [
-    "User authentication",
-    "Dashboard with charts",
-    "Billing management",
-    "API integration"
+    'User authentication',
+    'Dashboard with charts',
+    'Billing management',
+    'API integration',
   ],
-  maxHours: 24
+  maxHours: 24,
 });
 
 // Or use a quick start template
 await harness_quick_start({
-  template: "claude-clone",  // or saas-dashboard, ecommerce, etc.
-  maxHours: 12
+  template: 'claude-clone', // or saas-dashboard, ecommerce, etc.
+  maxHours: 12,
 });
 
 // Check status
@@ -123,6 +125,7 @@ await harness_stop();
 ## 🔄 How It Works
 
 ### Session Flow
+
 1. **Initializer Agent** creates feature list (200+ tests) and project structure
 2. **Coding Agents** implement features one by one
 3. **Each session** handles ~1-5 features with full testing
@@ -133,11 +136,13 @@ await harness_stop();
 ### Integration with Existing Systems
 
 #### Hive Mind Integration
+
 - Spawns specialized swarms for each session
 - Uses multi-agent collaboration for complex features
 - Runs regression tests with test swarms
 
-#### Open Interpreter Integration  
+#### Open Interpreter Integration
+
 - Handles project setup and scaffolding
 - Performs visual validation with screenshots
 - Executes browser automation for testing
@@ -146,6 +151,7 @@ await harness_stop();
 ## 📊 Expected Results
 
 After 24 hours of autonomous development:
+
 - **50-70% feature completion** (100-150 features)
 - **Git history** with atomic commits for each feature
 - **Fully tested** codebase with regression tests
@@ -168,16 +174,16 @@ After 24 hours of autonomous development:
 
 ## 🎮 Control Commands
 
-| Tool | Description |
-|------|-------------|
-| `harness_toggle` | Enable/disable harness |
-| `harness_start` | Start autonomous development |
-| `harness_stop` | Stop current session |
-| `harness_status` | Get current status |
-| `harness_quick_start` | Use project template |
-| `harness_configure` | Update settings |
-| `harness_checkpoint` | Create checkpoint |
-| `harness_report` | Generate report |
+| Tool                  | Description                  |
+| --------------------- | ---------------------------- |
+| `harness_toggle`      | Enable/disable harness       |
+| `harness_start`       | Start autonomous development |
+| `harness_stop`        | Stop current session         |
+| `harness_status`      | Get current status           |
+| `harness_quick_start` | Use project template         |
+| `harness_configure`   | Update settings              |
+| `harness_checkpoint`  | Create checkpoint            |
+| `harness_report`      | Generate report              |
 
 ## ✨ Key Benefits
 
@@ -199,14 +205,16 @@ After 24 hours of autonomous development:
 ## 🎯 Next Steps
 
 1. **Test with simple project:**
+
    ```javascript
-   await harness_quick_start({ 
-     template: "task-manager", 
-     maxHours: 2 
+   await harness_quick_start({
+     template: 'task-manager',
+     maxHours: 2,
    });
    ```
 
 2. **Monitor progress:**
+
    ```javascript
    const status = await harness_status();
    console.log(status.metrics);

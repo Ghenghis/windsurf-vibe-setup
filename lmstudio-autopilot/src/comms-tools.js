@@ -11,9 +11,10 @@ const https = require('https');
 const http = require('http');
 
 // Data directory
-const DATA_DIR = process.platform === 'win32'
-  ? path.join(process.env.APPDATA || '', 'WindsurfAutopilot')
-  : path.join(process.env.HOME || '', '.windsurf-autopilot');
+const DATA_DIR =
+  process.platform === 'win32'
+    ? path.join(process.env.APPDATA || '', 'WindsurfAutopilot')
+    : path.join(process.env.HOME || '', '.windsurf-autopilot');
 
 const COMMS_DIR = path.join(DATA_DIR, 'communications');
 const CONFIG_FILE = path.join(COMMS_DIR, 'config.json');
@@ -48,18 +49,18 @@ function httpPost(url, data, headers = {}) {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        ...headers
-      }
+        ...headers,
+      },
     };
 
-    const req = protocol.request(options, (res) => {
+    const req = protocol.request(options, res => {
       let body = '';
-      res.on('data', chunk => body += chunk);
+      res.on('data', chunk => (body += chunk));
       res.on('end', () => {
         resolve({
           statusCode: res.statusCode,
           headers: res.headers,
-          body
+          body,
         });
       });
     });
@@ -71,7 +72,6 @@ function httpPost(url, data, headers = {}) {
 }
 
 const commsTools = {
-
   // Slack notification
   slack_notify: {
     name: 'slack_notify',
@@ -86,16 +86,16 @@ const commsTools = {
         iconEmoji: { type: 'string', description: 'Bot icon emoji' },
         blocks: {
           type: 'array',
-          description: 'Slack Block Kit blocks for rich formatting'
+          description: 'Slack Block Kit blocks for rich formatting',
         },
         attachments: {
           type: 'array',
-          description: 'Legacy attachments'
-        }
+          description: 'Legacy attachments',
+        },
       },
-      required: ['message']
+      required: ['message'],
     },
-    handler: async (args) => {
+    handler: async args => {
       const config = loadConfig();
       const webhookUrl = args.webhookUrl || config.slackWebhook;
       const message = args.message;
@@ -109,7 +109,7 @@ const commsTools = {
         return {
           success: false,
           error: 'No webhook URL provided',
-          hint: 'Provide webhookUrl or save it to config'
+          hint: 'Provide webhookUrl or save it to config',
         };
       }
 
@@ -122,7 +122,7 @@ const commsTools = {
       const payload = {
         text: message,
         username,
-        icon_emoji: iconEmoji
+        icon_emoji: iconEmoji,
       };
 
       if (channel) {
@@ -141,17 +141,18 @@ const commsTools = {
         return {
           success: response.statusCode === 200,
           statusCode: response.statusCode,
-          message: response.statusCode === 200
-            ? 'Message sent to Slack successfully'
-            : `Slack returned status ${response.statusCode}`
+          message:
+            response.statusCode === 200
+              ? 'Message sent to Slack successfully'
+              : `Slack returned status ${response.statusCode}`,
         };
       } catch (error) {
         return {
           success: false,
-          error: error.message
+          error: error.message,
         };
       }
-    }
+    },
   },
 
   // Discord notification
@@ -174,15 +175,15 @@ const commsTools = {
               title: { type: 'string' },
               description: { type: 'string' },
               color: { type: 'number' },
-              fields: { type: 'array' }
-            }
-          }
+              fields: { type: 'array' },
+            },
+          },
         },
-        tts: { type: 'boolean', description: 'Text-to-speech' }
+        tts: { type: 'boolean', description: 'Text-to-speech' },
       },
-      required: ['content']
+      required: ['content'],
     },
-    handler: async (args) => {
+    handler: async args => {
       const config = loadConfig();
       const webhookUrl = args.webhookUrl || config.discordWebhook;
       const content = args.content;
@@ -194,7 +195,7 @@ const commsTools = {
       if (!webhookUrl) {
         return {
           success: false,
-          error: 'No webhook URL provided'
+          error: 'No webhook URL provided',
         };
       }
 
@@ -207,7 +208,7 @@ const commsTools = {
       const payload = {
         content,
         username,
-        tts
+        tts,
       };
 
       if (avatarUrl) {
@@ -223,17 +224,18 @@ const commsTools = {
         return {
           success: response.statusCode >= 200 && response.statusCode < 300,
           statusCode: response.statusCode,
-          message: response.statusCode >= 200 && response.statusCode < 300
-            ? 'Message sent to Discord successfully'
-            : `Discord returned status ${response.statusCode}`
+          message:
+            response.statusCode >= 200 && response.statusCode < 300
+              ? 'Message sent to Discord successfully'
+              : `Discord returned status ${response.statusCode}`,
         };
       } catch (error) {
         return {
           success: false,
-          error: error.message
+          error: error.message,
         };
       }
-    }
+    },
   },
 
   // Microsoft Teams notification
@@ -249,16 +251,16 @@ const commsTools = {
         themeColor: { type: 'string', description: 'Theme color hex' },
         sections: {
           type: 'array',
-          description: 'Message card sections'
+          description: 'Message card sections',
         },
         potentialAction: {
           type: 'array',
-          description: 'Action buttons'
-        }
+          description: 'Action buttons',
+        },
       },
-      required: ['text']
+      required: ['text'],
     },
-    handler: async (args) => {
+    handler: async args => {
       const config = loadConfig();
       const webhookUrl = args.webhookUrl || config.teamsWebhook;
       const title = args.title || 'Windsurf Autopilot Notification';
@@ -270,7 +272,7 @@ const commsTools = {
       if (!webhookUrl) {
         return {
           success: false,
-          error: 'No webhook URL provided'
+          error: 'No webhook URL provided',
         };
       }
 
@@ -287,7 +289,7 @@ const commsTools = {
         themeColor,
         summary: title,
         title,
-        text
+        text,
       };
 
       if (sections) {
@@ -303,17 +305,18 @@ const commsTools = {
         return {
           success: response.statusCode === 200,
           statusCode: response.statusCode,
-          message: response.statusCode === 200
-            ? 'Message sent to Teams successfully'
-            : `Teams returned status ${response.statusCode}`
+          message:
+            response.statusCode === 200
+              ? 'Message sent to Teams successfully'
+              : `Teams returned status ${response.statusCode}`,
         };
       } catch (error) {
         return {
           success: false,
-          error: error.message
+          error: error.message,
         };
       }
-    }
+    },
   },
 
   // Email notification
@@ -326,7 +329,7 @@ const commsTools = {
         provider: {
           type: 'string',
           enum: ['smtp', 'sendgrid'],
-          description: 'Email provider'
+          description: 'Email provider',
         },
         to: { type: 'string', description: 'Recipient email' },
         subject: { type: 'string', description: 'Email subject' },
@@ -339,11 +342,11 @@ const commsTools = {
         smtpUser: { type: 'string' },
         smtpPass: { type: 'string' },
         // SendGrid config
-        sendgridApiKey: { type: 'string' }
+        sendgridApiKey: { type: 'string' },
       },
-      required: ['to', 'subject', 'body']
+      required: ['to', 'subject', 'body'],
     },
-    handler: async (args) => {
+    handler: async args => {
       const provider = args.provider || 'sendgrid';
       const to = args.to;
       const subject = args.subject;
@@ -360,7 +363,7 @@ const commsTools = {
           return {
             success: false,
             error: 'SendGrid API key not provided',
-            hint: 'Get API key from https://sendgrid.com'
+            hint: 'Get API key from https://sendgrid.com',
           };
         }
 
@@ -374,30 +377,31 @@ const commsTools = {
           personalizations: [{ to: [{ email: to }] }],
           from: { email: from },
           subject,
-          content: [{
-            type: isHtml ? 'text/html' : 'text/plain',
-            value: body
-          }]
+          content: [
+            {
+              type: isHtml ? 'text/html' : 'text/plain',
+              value: body,
+            },
+          ],
         };
 
         try {
-          const response = await httpPost(
-            'https://api.sendgrid.com/v3/mail/send',
-            payload,
-            { 'Authorization': `Bearer ${apiKey}` }
-          );
+          const response = await httpPost('https://api.sendgrid.com/v3/mail/send', payload, {
+            Authorization: `Bearer ${apiKey}`,
+          });
 
           return {
             success: response.statusCode === 202,
             statusCode: response.statusCode,
-            message: response.statusCode === 202
-              ? `Email sent to ${to}`
-              : `SendGrid returned status ${response.statusCode}`
+            message:
+              response.statusCode === 202
+                ? `Email sent to ${to}`
+                : `SendGrid returned status ${response.statusCode}`,
           };
         } catch (error) {
           return {
             success: false,
-            error: error.message
+            error: error.message,
           };
         }
       } else {
@@ -420,10 +424,10 @@ await transporter.sendMail({
   subject: '${subject}',
   ${isHtml ? 'html' : 'text'}: body
 });
-`
+`,
         };
       }
-    }
+    },
   },
 
   // SMS notification
@@ -437,11 +441,11 @@ await transporter.sendMail({
         message: { type: 'string', description: 'SMS message' },
         from: { type: 'string', description: 'Twilio phone number' },
         accountSid: { type: 'string', description: 'Twilio Account SID' },
-        authToken: { type: 'string', description: 'Twilio Auth Token' }
+        authToken: { type: 'string', description: 'Twilio Auth Token' },
       },
-      required: ['to', 'message']
+      required: ['to', 'message'],
     },
-    handler: async (args) => {
+    handler: async args => {
       const to = args.to;
       const message = args.message;
       const config = loadConfig();
@@ -454,14 +458,14 @@ await transporter.sendMail({
         return {
           success: false,
           error: 'Twilio credentials not provided',
-          hint: 'Get credentials from https://twilio.com/console'
+          hint: 'Get credentials from https://twilio.com/console',
         };
       }
 
       if (!from) {
         return {
           success: false,
-          error: 'Twilio phone number (from) not provided'
+          error: 'Twilio phone number (from) not provided',
         };
       }
 
@@ -484,51 +488,55 @@ await transporter.sendMail({
       const formData = new URLSearchParams({
         To: to,
         From: from,
-        Body: message
+        Body: message,
       });
 
-      return new Promise((resolve) => {
+      return new Promise(resolve => {
         const urlObj = new URL(url);
-        const req = https.request({
-          hostname: urlObj.hostname,
-          path: urlObj.pathname,
-          method: 'POST',
-          headers: {
-            'Authorization': `Basic ${auth}`,
-            'Content-Type': 'application/x-www-form-urlencoded'
+        const req = https.request(
+          {
+            hostname: urlObj.hostname,
+            path: urlObj.pathname,
+            method: 'POST',
+            headers: {
+              Authorization: `Basic ${auth}`,
+              'Content-Type': 'application/x-www-form-urlencoded',
+            },
+          },
+          res => {
+            let body = '';
+            res.on('data', chunk => (body += chunk));
+            res.on('end', () => {
+              try {
+                const data = JSON.parse(body);
+                resolve({
+                  success: res.statusCode === 201,
+                  statusCode: res.statusCode,
+                  sid: data.sid,
+                  message:
+                    res.statusCode === 201
+                      ? `SMS sent to ${to}`
+                      : data.message || `Twilio returned status ${res.statusCode}`,
+                });
+              } catch {
+                resolve({
+                  success: false,
+                  error: 'Failed to parse response',
+                });
+              }
+            });
           }
-        }, (res) => {
-          let body = '';
-          res.on('data', chunk => body += chunk);
-          res.on('end', () => {
-            try {
-              const data = JSON.parse(body);
-              resolve({
-                success: res.statusCode === 201,
-                statusCode: res.statusCode,
-                sid: data.sid,
-                message: res.statusCode === 201
-                  ? `SMS sent to ${to}`
-                  : data.message || `Twilio returned status ${res.statusCode}`
-              });
-            } catch {
-              resolve({
-                success: false,
-                error: 'Failed to parse response'
-              });
-            }
-          });
-        });
+        );
 
-        req.on('error', (error) => {
+        req.on('error', error => {
           resolve({ success: false, error: error.message });
         });
 
         req.write(formData.toString());
         req.end();
       });
-    }
-  }
+    },
+  },
 };
 
 module.exports = commsTools;

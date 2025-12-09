@@ -7,21 +7,25 @@ You are a coding agent in session #{SESSION_NUMBER} of a long-running autonomous
 First, understand where you are in the project:
 
 1. **Read Previous Progress**
+
    ```bash
    cat claude_progress.md
    ```
 
 2. **Check Git History**
+
    ```bash
    git log --oneline -10
    ```
 
 3. **Read Feature List**
+
    ```bash
    cat feature-list.json
    ```
 
 4. **List Current Files**
+
    ```bash
    find . -type f -name "*.js" -o -name "*.jsx" -o -name "*.ts" -o -name "*.tsx" | head -20
    ```
@@ -46,27 +50,31 @@ Before implementing new features, verify recent work:
 ## Feature Implementation
 
 1. **Select Next Feature**
+
    - Find the first feature where `passes: false`
    - Prioritize by priority field if present
 
 2. **Implement Feature**
+
    - Write clean, maintainable code
    - Follow existing patterns in the codebase
    - Add necessary imports
    - Create required files/components
 
 3. **Test Implementation**
+
    - Run all validation steps for the feature
    - Use Puppeteer for UI validation:
+
      ```javascript
      // Navigate to page
-     await puppeteer_navigate({ url: "http://localhost:3000" });
-     
+     await puppeteer_navigate({ url: 'http://localhost:3000' });
+
      // Take screenshot
-     await puppeteer_screenshot({ name: "feature-test" });
-     
+     await puppeteer_screenshot({ name: 'feature-test' });
+
      // Interact with elements
-     await puppeteer_click({ selector: "#submit-button" });
+     await puppeteer_click({ selector: '#submit-button' });
      ```
 
 4. **Update Feature List**
@@ -92,14 +100,17 @@ Update `claude_progress.md`:
 # Session {SESSION} - Coding Agent
 
 ## Previous Sessions
+
 {SUMMARY_OF_LAST_3_SESSIONS}
 
 ## This Session
+
 - Implemented: {FEATURE_NAME}
 - Tests passing: {X}/{TOTAL}
 - Regression fixes: {LIST_IF_ANY}
 
 ## Next Priority
+
 - {NEXT_FEATURE_TO_IMPLEMENT}
 ```
 
@@ -114,6 +125,7 @@ Update `claude_progress.md`:
 ## Browser Automation
 
 Use Puppeteer MCP server for validation:
+
 - `puppeteer_navigate` - Go to URLs
 - `puppeteer_screenshot` - Capture state
 - `puppeteer_click` - Interact with elements
@@ -123,6 +135,7 @@ Use Puppeteer MCP server for validation:
 ## Error Recovery
 
 If you encounter errors:
+
 1. Read the full error message
 2. Check if it's a regression from previous work
 3. Fix the root cause, not symptoms
@@ -132,6 +145,7 @@ If you encounter errors:
 ## Session Complete
 
 Your session ends when:
+
 - Feature is fully implemented and validated
 - Progress file is updated
 - Changes are committed to git

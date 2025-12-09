@@ -18,9 +18,10 @@ const path = require('path');
 const crypto = require('crypto');
 
 // Team data directory
-const TEAM_DIR = process.platform === 'win32'
-  ? path.join(process.env.APPDATA || '', 'WindsurfAutopilot', 'teams')
-  : path.join(process.env.HOME || '', '.windsurf-autopilot', 'teams');
+const TEAM_DIR =
+  process.platform === 'win32'
+    ? path.join(process.env.APPDATA || '', 'WindsurfAutopilot', 'teams')
+    : path.join(process.env.HOME || '', '.windsurf-autopilot', 'teams');
 
 // Ensure team directory exists
 if (!fs.existsSync(TEAM_DIR)) {
@@ -31,14 +32,13 @@ if (!fs.existsSync(TEAM_DIR)) {
 const currentUser = {
   id: crypto.randomUUID().substring(0, 8),
   name: process.env.USER || process.env.USERNAME || 'developer',
-  email: `${process.env.USER || 'dev'}@local`
+  email: `${process.env.USER || 'dev'}@local`,
 };
 
 /**
  * Team Tools Export
  */
 const teamTools = {
-
   // ═══════════════════════════════════════════════════════════════════════════
   // TOOL: create_team
   // ═══════════════════════════════════════════════════════════════════════════
@@ -50,11 +50,11 @@ const teamTools = {
       properties: {
         name: {
           type: 'string',
-          description: 'Team name'
+          description: 'Team name',
         },
         description: {
           type: 'string',
-          description: 'Team description'
+          description: 'Team description',
         },
         settings: {
           type: 'object',
@@ -62,13 +62,13 @@ const teamTools = {
           properties: {
             visibility: { type: 'string', enum: ['private', 'public'] },
             allowInvites: { type: 'boolean' },
-            defaultRole: { type: 'string', enum: ['member', 'admin', 'viewer'] }
-          }
-        }
+            defaultRole: { type: 'string', enum: ['member', 'admin', 'viewer'] },
+          },
+        },
       },
-      required: ['name']
+      required: ['name'],
     },
-    handler: async (args) => {
+    handler: async args => {
       try {
         const teamId = crypto.randomUUID().substring(0, 8);
         const team = {
@@ -80,7 +80,7 @@ const teamTools = {
           settings: {
             visibility: args.settings?.visibility || 'private',
             allowInvites: args.settings?.allowInvites !== false,
-            defaultRole: args.settings?.defaultRole || 'member'
+            defaultRole: args.settings?.defaultRole || 'member',
           },
           members: [
             {
@@ -88,8 +88,8 @@ const teamTools = {
               name: currentUser.name,
               email: currentUser.email,
               role: 'owner',
-              joinedAt: new Date().toISOString()
-            }
+              joinedAt: new Date().toISOString(),
+            },
           ],
           sharedSettings: {},
           sharedTemplates: [],
@@ -98,9 +98,9 @@ const teamTools = {
               action: 'team_created',
               userId: currentUser.id,
               timestamp: new Date().toISOString(),
-              details: { teamName: args.name }
-            }
-          ]
+              details: { teamName: args.name },
+            },
+          ],
         };
 
         // Create team directory
@@ -116,13 +116,12 @@ const teamTools = {
           teamName: team.name,
           teamPath,
           inviteCode: generateInviteCode(teamId),
-          message: `Team "${team.name}" created successfully`
+          message: `Team "${team.name}" created successfully`,
         };
-
       } catch (error) {
         return { success: false, error: error.message };
       }
-    }
+    },
   },
 
   // ═══════════════════════════════════════════════════════════════════════════
@@ -136,30 +135,30 @@ const teamTools = {
       properties: {
         teamId: {
           type: 'string',
-          description: 'Team ID'
+          description: 'Team ID',
         },
         email: {
           type: 'string',
-          description: 'Email address to invite'
+          description: 'Email address to invite',
         },
         name: {
           type: 'string',
-          description: 'Member name'
+          description: 'Member name',
         },
         role: {
           type: 'string',
           enum: ['admin', 'member', 'viewer'],
           description: 'Role for the new member',
-          default: 'member'
+          default: 'member',
         },
         message: {
           type: 'string',
-          description: 'Personal message with invitation'
-        }
+          description: 'Personal message with invitation',
+        },
       },
-      required: ['teamId', 'email']
+      required: ['teamId', 'email'],
     },
-    handler: async (args) => {
+    handler: async args => {
       try {
         const teamPath = path.join(TEAM_DIR, args.teamId);
         const teamFile = path.join(teamPath, 'team.json');
@@ -191,7 +190,7 @@ const teamTools = {
           invitedAt: new Date().toISOString(),
           message: args.message,
           status: 'pending',
-          expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString() // 7 days
+          expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(), // 7 days
         };
 
         // Store invitation
@@ -208,7 +207,7 @@ const teamTools = {
           action: 'member_invited',
           userId: currentUser.id,
           timestamp: new Date().toISOString(),
-          details: { email: args.email, role: invitation.role }
+          details: { email: args.email, role: invitation.role },
         });
         fs.writeFileSync(teamFile, JSON.stringify(team, null, 2));
 
@@ -219,13 +218,12 @@ const teamTools = {
           role: invitation.role,
           expiresAt: invitation.expiresAt,
           inviteLink: `autopilot://join/${args.teamId}/${invitation.id}`,
-          message: `Invitation sent to ${args.email}`
+          message: `Invitation sent to ${args.email}`,
         };
-
       } catch (error) {
         return { success: false, error: error.message };
       }
-    }
+    },
   },
 
   // ═══════════════════════════════════════════════════════════════════════════
@@ -239,31 +237,31 @@ const teamTools = {
       properties: {
         teamId: {
           type: 'string',
-          description: 'Team ID'
+          description: 'Team ID',
         },
         action: {
           type: 'string',
           enum: ['share', 'get', 'list', 'remove'],
           description: 'Action to perform',
-          default: 'list'
+          default: 'list',
         },
         settingName: {
           type: 'string',
-          description: 'Setting name'
+          description: 'Setting name',
         },
         settingValue: {
           type: 'object',
-          description: 'Setting value to share'
+          description: 'Setting value to share',
         },
         category: {
           type: 'string',
           description: 'Setting category',
-          enum: ['editor', 'linting', 'formatting', 'tools', 'custom']
-        }
+          enum: ['editor', 'linting', 'formatting', 'tools', 'custom'],
+        },
       },
-      required: ['teamId']
+      required: ['teamId'],
     },
-    handler: async (args) => {
+    handler: async args => {
       try {
         const teamPath = path.join(TEAM_DIR, args.teamId);
         const teamFile = path.join(teamPath, 'team.json');
@@ -280,7 +278,7 @@ const teamTools = {
             name,
             category: data.category,
             sharedBy: data.sharedBy,
-            sharedAt: data.sharedAt
+            sharedAt: data.sharedAt,
           }));
 
           return {
@@ -288,7 +286,7 @@ const teamTools = {
             teamId: args.teamId,
             teamName: team.name,
             count: settings.length,
-            settings
+            settings,
           };
         }
 
@@ -297,14 +295,14 @@ const teamTools = {
             return {
               success: false,
               error: `Setting not found: ${args.settingName}`,
-              availableSettings: Object.keys(team.sharedSettings)
+              availableSettings: Object.keys(team.sharedSettings),
             };
           }
 
           return {
             success: true,
             settingName: args.settingName,
-            ...team.sharedSettings[args.settingName]
+            ...team.sharedSettings[args.settingName],
           };
         }
 
@@ -317,14 +315,14 @@ const teamTools = {
             value: args.settingValue,
             category: args.category || 'custom',
             sharedBy: currentUser.id,
-            sharedAt: new Date().toISOString()
+            sharedAt: new Date().toISOString(),
           };
 
           team.activityLog.push({
             action: 'settings_shared',
             userId: currentUser.id,
             timestamp: new Date().toISOString(),
-            details: { settingName: args.settingName }
+            details: { settingName: args.settingName },
           });
 
           fs.writeFileSync(teamFile, JSON.stringify(team, null, 2));
@@ -332,7 +330,7 @@ const teamTools = {
           return {
             success: true,
             settingName: args.settingName,
-            message: `Setting "${args.settingName}" shared with team`
+            message: `Setting "${args.settingName}" shared with team`,
           };
         }
 
@@ -347,23 +345,22 @@ const teamTools = {
             action: 'settings_removed',
             userId: currentUser.id,
             timestamp: new Date().toISOString(),
-            details: { settingName: args.settingName }
+            details: { settingName: args.settingName },
           });
 
           fs.writeFileSync(teamFile, JSON.stringify(team, null, 2));
 
           return {
             success: true,
-            message: `Setting "${args.settingName}" removed`
+            message: `Setting "${args.settingName}" removed`,
           };
         }
 
         return { success: false, error: 'Invalid action' };
-
       } catch (error) {
         return { success: false, error: error.message };
       }
-    }
+    },
   },
 
   // ═══════════════════════════════════════════════════════════════════════════
@@ -377,30 +374,30 @@ const teamTools = {
       properties: {
         teamId: {
           type: 'string',
-          description: 'Team ID'
+          description: 'Team ID',
         },
         action: {
           type: 'string',
           enum: ['list', 'add', 'use', 'remove'],
           description: 'Action to perform',
-          default: 'list'
+          default: 'list',
         },
         templateName: {
           type: 'string',
-          description: 'Template name'
+          description: 'Template name',
         },
         templateData: {
           type: 'object',
-          description: 'Template data for add action'
+          description: 'Template data for add action',
         },
         projectPath: {
           type: 'string',
-          description: 'Path to project for creating from template'
-        }
+          description: 'Path to project for creating from template',
+        },
       },
-      required: ['teamId']
+      required: ['teamId'],
     },
-    handler: async (args) => {
+    handler: async args => {
       try {
         const teamPath = path.join(TEAM_DIR, args.teamId);
         const teamFile = path.join(teamPath, 'team.json');
@@ -422,8 +419,8 @@ const teamTools = {
               description: t.description,
               type: t.type,
               sharedBy: t.sharedBy,
-              sharedAt: t.sharedAt
-            }))
+              sharedAt: t.sharedAt,
+            })),
           };
         }
 
@@ -440,7 +437,7 @@ const teamTools = {
             files: args.templateData.files || [],
             config: args.templateData.config || {},
             sharedBy: currentUser.id,
-            sharedAt: new Date().toISOString()
+            sharedAt: new Date().toISOString(),
           };
 
           team.sharedTemplates.push(template);
@@ -449,7 +446,7 @@ const teamTools = {
             action: 'template_shared',
             userId: currentUser.id,
             timestamp: new Date().toISOString(),
-            details: { templateName: args.templateName }
+            details: { templateName: args.templateName },
           });
 
           fs.writeFileSync(teamFile, JSON.stringify(team, null, 2));
@@ -458,7 +455,7 @@ const teamTools = {
             success: true,
             templateId: template.id,
             templateName: template.name,
-            message: `Template "${template.name}" added to team`
+            message: `Template "${template.name}" added to team`,
           };
         }
 
@@ -467,12 +464,14 @@ const teamTools = {
             return { success: false, error: 'templateName required' };
           }
 
-          const template = team.sharedTemplates.find(t => t.name === args.templateName || t.id === args.templateName);
+          const template = team.sharedTemplates.find(
+            t => t.name === args.templateName || t.id === args.templateName
+          );
           if (!template) {
             return {
               success: false,
               error: `Template not found: ${args.templateName}`,
-              availableTemplates: team.sharedTemplates.map(t => t.name)
+              availableTemplates: team.sharedTemplates.map(t => t.name),
             };
           }
 
@@ -483,9 +482,9 @@ const teamTools = {
               description: template.description,
               type: template.type,
               files: template.files,
-              config: template.config
+              config: template.config,
             },
-            message: `Template "${template.name}" retrieved. Use create_project to apply.`
+            message: `Template "${template.name}" retrieved. Use create_project to apply.`,
           };
         }
 
@@ -494,7 +493,9 @@ const teamTools = {
             return { success: false, error: 'templateName required' };
           }
 
-          const index = team.sharedTemplates.findIndex(t => t.name === args.templateName || t.id === args.templateName);
+          const index = team.sharedTemplates.findIndex(
+            t => t.name === args.templateName || t.id === args.templateName
+          );
           if (index === -1) {
             return { success: false, error: `Template not found: ${args.templateName}` };
           }
@@ -505,23 +506,22 @@ const teamTools = {
             action: 'template_removed',
             userId: currentUser.id,
             timestamp: new Date().toISOString(),
-            details: { templateName: args.templateName }
+            details: { templateName: args.templateName },
           });
 
           fs.writeFileSync(teamFile, JSON.stringify(team, null, 2));
 
           return {
             success: true,
-            message: `Template "${args.templateName}" removed from team`
+            message: `Template "${args.templateName}" removed from team`,
           };
         }
 
         return { success: false, error: 'Invalid action' };
-
       } catch (error) {
         return { success: false, error: error.message };
       }
-    }
+    },
   },
 
   // ═══════════════════════════════════════════════════════════════════════════
@@ -535,29 +535,29 @@ const teamTools = {
       properties: {
         teamId: {
           type: 'string',
-          description: 'Team ID'
+          description: 'Team ID',
         },
         limit: {
           type: 'number',
           description: 'Number of activities to return',
-          default: 50
+          default: 50,
         },
         filter: {
           type: 'string',
-          description: 'Filter by action type'
+          description: 'Filter by action type',
         },
         userId: {
           type: 'string',
-          description: 'Filter by user ID'
+          description: 'Filter by user ID',
         },
         since: {
           type: 'string',
-          description: 'ISO timestamp to filter from'
-        }
+          description: 'ISO timestamp to filter from',
+        },
       },
-      required: ['teamId']
+      required: ['teamId'],
     },
-    handler: async (args) => {
+    handler: async args => {
       try {
         const teamPath = path.join(TEAM_DIR, args.teamId);
         const teamFile = path.join(teamPath, 'team.json');
@@ -595,7 +595,7 @@ const teamTools = {
           const member = team.members.find(m => m.userId === activity.userId);
           return {
             ...activity,
-            userName: member?.name || 'Unknown'
+            userName: member?.name || 'Unknown',
           };
         });
 
@@ -605,13 +605,12 @@ const teamTools = {
           teamName: team.name,
           count: enriched.length,
           activities: enriched,
-          actionTypes: [...new Set(team.activityLog.map(a => a.action))]
+          actionTypes: [...new Set(team.activityLog.map(a => a.action))],
         };
-
       } catch (error) {
         return { success: false, error: error.message };
       }
-    }
+    },
   },
 
   // ═══════════════════════════════════════════════════════════════════════════
@@ -622,7 +621,7 @@ const teamTools = {
     description: 'List all teams you belong to',
     inputSchema: {
       type: 'object',
-      properties: {}
+      properties: {},
     },
     handler: async () => {
       try {
@@ -648,7 +647,7 @@ const teamTools = {
                   description: team.description,
                   role: membership.role,
                   memberCount: team.members.length,
-                  createdAt: team.createdAt
+                  createdAt: team.createdAt,
                 });
               }
             }
@@ -658,31 +657,54 @@ const teamTools = {
         return {
           success: true,
           count: teams.length,
-          teams
+          teams,
         };
-
       } catch (error) {
         return { success: false, error: error.message };
       }
-    }
+    },
   },
 
   // Get tool definitions
   getToolDefinitions: function () {
     return [
-      { name: this.create_team.name, description: this.create_team.description, inputSchema: this.create_team.inputSchema },
-      { name: this.invite_member.name, description: this.invite_member.description, inputSchema: this.invite_member.inputSchema },
-      { name: this.share_settings.name, description: this.share_settings.description, inputSchema: this.share_settings.inputSchema },
-      { name: this.team_templates.name, description: this.team_templates.description, inputSchema: this.team_templates.inputSchema },
-      { name: this.activity_log.name, description: this.activity_log.description, inputSchema: this.activity_log.inputSchema },
-      { name: this.list_teams.name, description: this.list_teams.description, inputSchema: this.list_teams.inputSchema }
+      {
+        name: this.create_team.name,
+        description: this.create_team.description,
+        inputSchema: this.create_team.inputSchema,
+      },
+      {
+        name: this.invite_member.name,
+        description: this.invite_member.description,
+        inputSchema: this.invite_member.inputSchema,
+      },
+      {
+        name: this.share_settings.name,
+        description: this.share_settings.description,
+        inputSchema: this.share_settings.inputSchema,
+      },
+      {
+        name: this.team_templates.name,
+        description: this.team_templates.description,
+        inputSchema: this.team_templates.inputSchema,
+      },
+      {
+        name: this.activity_log.name,
+        description: this.activity_log.description,
+        inputSchema: this.activity_log.inputSchema,
+      },
+      {
+        name: this.list_teams.name,
+        description: this.list_teams.description,
+        inputSchema: this.list_teams.inputSchema,
+      },
     ];
   },
 
   getHandler: function (toolName) {
     const tool = this[toolName];
     return tool ? tool.handler : null;
-  }
+  },
 };
 
 // Helper: Generate invite code

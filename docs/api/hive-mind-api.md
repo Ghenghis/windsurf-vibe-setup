@@ -1,0 +1,772 @@
+# hive-mind API Reference
+
+## Overview
+
+This document provides the complete API reference for all hive-mind modules.
+
+## Modules
+
+### code-generation-personalizer
+
+- **Class**: `CodeGenerationPersonalizer`
+- **Methods**: 64
+- **Events**: 3
+- [Full Documentation](../modules/hive-mind/code-generation-personalizer.md)
+
+### continuous-feedback-loop
+
+- **Class**: `ContinuousFeedbackLoop`
+- **Methods**: 71
+- **Events**: 9
+- [Full Documentation](../modules/hive-mind/continuous-feedback-loop.md)
+
+### emotional-intelligence-module
+
+- **Class**: `EmotionalIntelligenceModule`
+- **Methods**: 50
+- **Events**: 6
+- [Full Documentation](../modules/hive-mind/emotional-intelligence-module.md)
+
+### ghenghis-profile-insights
+
+- **Class**: `GhenghisProfileInsights`
+- **Methods**: 2
+- **Events**: 0
+- [Full Documentation](../modules/hive-mind/ghenghis-profile-insights.md)
+
+### github-portfolio-analyzer
+
+- **Class**: `GitHubPortfolioAnalyzer`
+- **Methods**: 45
+- **Events**: 3
+- [Full Documentation](../modules/hive-mind/github-portfolio-analyzer.md)
+
+### hive-mind-orchestrator
+
+- **Class**: `HiveMindOrchestrator`
+- **Methods**: 55
+- **Events**: 5
+- [Full Documentation](../modules/hive-mind/hive-mind-orchestrator.md)
+
+### interaction-memory-system
+
+- **Class**: `InteractionMemorySystem`
+- **Methods**: 63
+- **Events**: 3
+- [Full Documentation](../modules/hive-mind/interaction-memory-system.md)
+
+### open-interpreter-bridge
+
+- **Class**: `OpenInterpreterBridge`
+- **Methods**: 54
+- **Events**: 5
+- [Full Documentation](../modules/hive-mind/open-interpreter-bridge.md)
+
+### personality-synthesizer
+
+- **Class**: `PersonalitySynthesizer`
+- **Methods**: 36
+- **Events**: 4
+- [Full Documentation](../modules/hive-mind/personality-synthesizer.md)
+
+### project-idea-generator
+
+- **Class**: `ProjectIdeaGenerator`
+- **Methods**: 37
+- **Events**: 6
+- [Full Documentation](../modules/hive-mind/project-idea-generator.md)
+
+### project-pattern-recognizer
+
+- **Class**: `ProjectPatternRecognizer`
+- **Methods**: 49
+- **Events**: 5
+- [Full Documentation](../modules/hive-mind/project-pattern-recognizer.md)
+
+### ui-ux-preference-learner
+
+- **Class**: `UIUXPreferenceLearner`
+- **Methods**: 38
+- **Events**: 3
+- [Full Documentation](../modules/hive-mind/ui-ux-preference-learner.md)
+
+### user-preference-engine
+
+- **Class**: `UserPreferenceEngine`
+- **Methods**: 37
+- **Events**: 4
+- [Full Documentation](../modules/hive-mind/user-preference-engine.md)
+
+## Quick Reference
+
+### All Methods
+
+- `code-generation-personalizer.initialize()`
+- `code-generation-personalizer.generateCode(request)`
+- `code-generation-personalizer.if(request.type === 'project')`
+- `code-generation-personalizer.if(request.type === 'component')`
+- `code-generation-personalizer.if(request.type === 'function')`
+- `code-generation-personalizer.detectLanguage(request)`
+- `code-generation-personalizer.detectFramework(request)`
+- `code-generation-personalizer.selectPattern(request)`
+- `code-generation-personalizer.generateProject(request)`
+- `code-generation-personalizer.if(request.language === 'javascript' || !request.language)`
+- `code-generation-personalizer.if(request.language === 'python')`
+- `code-generation-personalizer.if(request.framework === 'react' || request.framework === 'nextjs')`
+- `code-generation-personalizer.generateReadme(request)`
+- `code-generation-personalizer.generateEnvExample(request)`
+- `code-generation-personalizer.if(request.framework === 'mcp')`
+- `code-generation-personalizer.if(request.includesAI)`
+- `code-generation-personalizer.generatePackageJson(request)`
+- `code-generation-personalizer.if(request.framework === 'react')`
+- `code-generation-personalizer.if(request.framework === 'nextjs')`
+- `code-generation-personalizer.if(request.framework === 'express')`
+- `code-generation-personalizer.generateRequirements(request)`
+- `code-generation-personalizer.if(request.framework === 'fastapi')`
+- `code-generation-personalizer.if(request.includesAI)`
+- `code-generation-personalizer.generateMainFile(request, language)`
+- `code-generation-personalizer.if(language === 'javascript')`
+- `code-generation-personalizer.if(language === 'python')`
+- `code-generation-personalizer.generateJavaScriptMain(request)`
+- `code-generation-personalizer.if(request.framework === 'express')`
+- `code-generation-personalizer.main()`
+- `code-generation-personalizer.generatePythonMain(request)`
+- `code-generation-personalizer.if(request.framework === 'fastapi')`
+- `code-generation-personalizer.generateReactFiles(request)`
+- `code-generation-personalizer.push({
+      name: 'src/App.js', content: `import React from 'react';
+  import './App.css';
+
+function App()`
+
+- `code-generation-personalizer.generateComponent(request)`
+- `code-generation-personalizer.if(lang === 'javascript' && request.framework === 'react')`
+- `code-generation-personalizer.generateReactComponent(request)`
+- `code-generation-personalizer.generateGenericComponent(request)`
+- `code-generation-personalizer.initialize()`
+- `code-generation-personalizer.render()`
+- `code-generation-personalizer.generateFunction(request)`
+- `code-generation-personalizer.if(lang === 'javascript')`
+- `code-generation-personalizer.catch(error)`
+- `code-generation-personalizer.if(lang === 'python')`
+- `code-generation-personalizer.generateGeneral(request)`
+- `code-generation-personalizer.applyPersonalizations(code, language)`
+- `code-generation-personalizer.if(this.userStyle.comments === 'minimal')`
+- `code-generation-personalizer.if(language === 'javascript')`
+- `code-generation-personalizer.getMCPServerTemplate()`
+- `code-generation-personalizer.getMCPToolTemplate()`
+- `code-generation-personalizer.getMCPIntegrationTemplate()`
+- `code-generation-personalizer.getAIAgentTemplate()`
+- `code-generation-personalizer.getLangChainTemplate()`
+- `code-generation-personalizer.getPromptTemplate()`
+- `code-generation-personalizer.getGameBotTemplate()`
+- `code-generation-personalizer.getAutomationTemplate()`
+- `code-generation-personalizer.getGameAITemplate()`
+- `code-generation-personalizer.getDashboardTemplate()`
+- `code-generation-personalizer.getLandingPageTemplate()`
+- `code-generation-personalizer.getWebAppTemplate()`
+- `code-generation-personalizer.saveTemplates()`
+- `code-generation-personalizer.loadTemplates()`
+- `code-generation-personalizer.catch(error)`
+- `code-generation-personalizer.getStatus()`
+- `code-generation-personalizer.shutdown()`
+- `continuous-feedback-loop.initialize()`
+- `continuous-feedback-loop.if(this.config.autoLearn)`
+- `continuous-feedback-loop.startLearning()`
+- `continuous-feedback-loop.processFeedback(feedback)`
+- `continuous-feedback-loop.if(processed.weight > 0.8)`
+- `continuous-feedback-loop.calculateWeight(feedback)`
+- `continuous-feedback-loop.if(feedback.category === 'outcome')`
+- `continuous-feedback-loop.storeFeedback(feedback)`
+- `continuous-feedback-loop.if(categoryFeedback.length > 100)`
+- `continuous-feedback-loop.updateMetrics(feedback)`
+- `continuous-feedback-loop.switch(feedback.category)`
+- `continuous-feedback-loop.if(feedback.value === 'success')`
+- `continuous-feedback-loop.if(feedback.context?.isNew)`
+- `continuous-feedback-loop.triggerImmediateAdaptation(feedback)`
+- `continuous-feedback-loop.if(feedback.category === 'error' && feedback.value === 'repeated')`
+- `continuous-feedback-loop.if(feedback.category === 'speed' && feedback.value < 0.5)`
+- `continuous-feedback-loop.if(feedback.category === 'satisfaction' && feedback.value < 0.5)`
+- `continuous-feedback-loop.if(adaptation.changes.length > 0)`
+- `continuous-feedback-loop.updateStreams(feedback)`
+- `continuous-feedback-loop.if(feedback.context?.code)`
+- `continuous-feedback-loop.if(feedback.context?.project)`
+- `continuous-feedback-loop.if(feedback.context?.interaction)`
+- `continuous-feedback-loop.if(feedback.category === 'error')`
+- `continuous-feedback-loop.if(feedback.type === 'explicit' || feedback.category === 'preference')`
+- `continuous-feedback-loop.if(stream.length > 500)`
+- `continuous-feedback-loop.performLearningCycle()`
+- `continuous-feedback-loop.if(this.cycles.history.length > 100)`
+- `continuous-feedback-loop.for(const adaptation of adaptations)`
+- `continuous-feedback-loop.if(adaptation.confidence > this.config.adaptationThreshold)`
+- `continuous-feedback-loop.getRecentFeedback()`
+- `continuous-feedback-loop.extractInsights(feedback)`
+- `continuous-feedback-loop.if(performanceFeedback.length > 3)`
+- `continuous-feedback-loop.if(satisfactionFeedback.length > 0)`
+- `continuous-feedback-loop.if(errors.length > 2)`
+- `continuous-feedback-loop.for(const [type, count] of errorTypes)`
+- `continuous-feedback-loop.if(count > 1)`
+- `continuous-feedback-loop.if(successes.length > 0)`
+- `continuous-feedback-loop.analyzeSuccessPatterns(successes)`
+- `continuous-feedback-loop.for(const [type, count] of projectTypes)`
+- `continuous-feedback-loop.if(count > 2)`
+- `continuous-feedback-loop.generateAdaptations(insights)`
+- `continuous-feedback-loop.for(const insight of insights)`
+- `continuous-feedback-loop.if(insight.type === 'performance-trend' && insight.trend === 'needs-improvement')`
+- `continuous-feedback-loop.if(insight.type === 'recurring-error')`
+- `continuous-feedback-loop.if(insight.type === 'user-satisfaction' && insight.trend === 'declining')`
+- `continuous-feedback-loop.if(insight.type === 'success-pattern')`
+- `continuous-feedback-loop.identifyImprovements(insights)`
+- `continuous-feedback-loop.for(const insight of positiveInsights)`
+- `continuous-feedback-loop.if(negativeInsights.length > 0)`
+- `continuous-feedback-loop.applyAdaptation(adaptation)`
+- `continuous-feedback-loop.catch(error)`
+- `continuous-feedback-loop.checkAdaptations()`
+- `continuous-feedback-loop.for(const [id, measurement] of this.adaptations.effectiveness)`
+- `continuous-feedback-loop.if(!measurement.after && now >= measurement.measureAt)`
+- `continuous-feedback-loop.if(adaptation)`
+- `continuous-feedback-loop.calculateImprovement(before, after)`
+- `continuous-feedback-loop.if(typeof before[key] === 'number' && typeof after[key] === 'number')`
+- `continuous-feedback-loop.provideFeedback(type, value, context = {})`
+- `continuous-feedback-loop.categorizeType(type)`
+- `continuous-feedback-loop.getCurrentMetrics()`
+- `continuous-feedback-loop.getLearingSummary()`
+- `continuous-feedback-loop.calculateOverallEffectiveness()`
+- `continuous-feedback-loop.getRecentInsights()`
+- `continuous-feedback-loop.for(const cycle of recent)`
+- `continuous-feedback-loop.saveFeedback()`
+- `continuous-feedback-loop.loadFeedback()`
+- `continuous-feedback-loop.catch(error)`
+- `continuous-feedback-loop.getStatus()`
+- `continuous-feedback-loop.shutdown()`
+- `continuous-feedback-loop.if(this.learningInterval)`
+- `continuous-feedback-loop.if(this.adaptationInterval)`
+- `emotional-intelligence-module.initialize()`
+- `emotional-intelligence-module.startMonitoring()`
+- `emotional-intelligence-module.detectEmotion(interaction)`
+- `emotional-intelligence-module.if(this.memory.shortTerm.length > 100)`
+- `emotional-intelligence-module.analyzeText(text)`
+- `emotional-intelligence-module.if(excitementCount > 0)`
+- `emotional-intelligence-module.if(frustrationCount > 0)`
+- `emotional-intelligence-module.if(satisfactionCount > 0)`
+- `emotional-intelligence-module.if(curiosityCount > 0)`
+- `emotional-intelligence-module.analyzeBehavior(interaction)`
+- `emotional-intelligence-module.if(interaction.action === 'create' && interaction.speed === 'fast')`
+- `emotional-intelligence-module.if(interaction.errors && interaction.errors > 2)`
+- `emotional-intelligence-module.if(interaction.action === 'explore' || interaction.newTechnology)`
+- `emotional-intelligence-module.if(interaction.action === 'complete' || interaction.success)`
+- `emotional-intelligence-module.combinedAnalysis(textAnalysis, behaviorAnalysis)`
+- `emotional-intelligence-module.for(const [emotion, value] of textAnalysis.emotions)`
+- `emotional-intelligence-module.if(value > strongestValue)`
+- `emotional-intelligence-module.if(behaviorAnalysis.confidence > 0.7)`
+- `emotional-intelligence-module.calculateConfidence(textAnalysis, behaviorAnalysis)`
+- `emotional-intelligence-module.identifyTriggers(interaction)`
+- `emotional-intelligence-module.matchesTrigger(interaction, trigger)`
+- `emotional-intelligence-module.switch(trigger)`
+- `emotional-intelligence-module.updateEmotionalState(detection)`
+- `emotional-intelligence-module.switch(detection.primaryEmotion)`
+- `emotional-intelligence-module.if(detection.primaryEmotion !== this.lastEmotion)`
+- `emotional-intelligence-module.determineMood()`
+- `emotional-intelligence-module.if(score > maxScore)`
+- `emotional-intelligence-module.assessEmotionalState()`
+- `emotional-intelligence-module.if(this.currentState.frustration > 0.6)`
+- `emotional-intelligence-module.if(this.currentState.energy < 0.3)`
+- `emotional-intelligence-module.if(this.currentState.excitement > 0.8)`
+- `emotional-intelligence-module.calculateStability()`
+- `emotional-intelligence-module.calculateTrend()`
+- `emotional-intelligence-module.for(const memory of recent)`
+- `emotional-intelligence-module.decayEmotions()`
+- `emotional-intelligence-module.generateResponse(context)`
+- `emotional-intelligence-module.switch(mood)`
+- `emotional-intelligence-module.if(context.isError)`
+- `emotional-intelligence-module.if(context.isSuccess)`
+- `emotional-intelligence-module.adaptBehavior()`
+- `emotional-intelligence-module.determineFocusArea()`
+- `emotional-intelligence-module.predictResponse(scenario)`
+- `emotional-intelligence-module.if(!prediction.likelyEmotion)`
+- `emotional-intelligence-module.saveEmotionalHistory()`
+- `emotional-intelligence-module.loadEmotionalHistory()`
+- `emotional-intelligence-module.catch(error)`
+- `emotional-intelligence-module.getStatus()`
+- `emotional-intelligence-module.shutdown()`
+- `emotional-intelligence-module.if(this.monitoringInterval)`
+- `emotional-intelligence-module.if(this.decayInterval)`
+- `ghenghis-profile-insights.getProjectRecommendations()`
+- `ghenghis-profile-insights.getPersonalityProfile()`
+- `github-portfolio-analyzer.initialize()`
+- `github-portfolio-analyzer.if(this.config.useLocalCache)`
+- `github-portfolio-analyzer.analyzePortfolio(repos = null)`
+- `github-portfolio-analyzer.for(const repo of simulatedRepos)`
+- `github-portfolio-analyzer.simulateAIGeneratedRepos()`
+- `github-portfolio-analyzer.for(let i = 1; i <= 400; i++)`
+- `github-portfolio-analyzer.getLanguageForFramework(framework)`
+- `github-portfolio-analyzer.analyzeRepository(repo)`
+- `github-portfolio-analyzer.categorizeProject(repo)`
+- `github-portfolio-analyzer.trackTechnology(repo)`
+- `github-portfolio-analyzer.if(repo.language)`
+- `github-portfolio-analyzer.if(repo.framework)`
+- `github-portfolio-analyzer.if(repo.database)`
+- `github-portfolio-analyzer.analyzeNamingPattern(name)`
+- `github-portfolio-analyzer.for(const pattern of patterns)`
+- `github-portfolio-analyzer.identifyPatterns()`
+- `github-portfolio-analyzer.for(const repo of techByDate)`
+- `github-portfolio-analyzer.if(currentTech !== repo.framework)`
+- `github-portfolio-analyzer.if(currentTech)`
+- `github-portfolio-analyzer.if(!avgComplexityByQuarter[quarter])`
+- `github-portfolio-analyzer.calculateMetrics()`
+- `github-portfolio-analyzer.trackEvolution()`
+- `github-portfolio-analyzer.for(const repo of repos)`
+- `github-portfolio-analyzer.if(!monthlyActivity[monthsAgo])`
+- `github-portfolio-analyzer.generateInsights()`
+- `github-portfolio-analyzer.getMostUsed(map)`
+- `github-portfolio-analyzer.for(const [key, count] of map)`
+- `github-portfolio-analyzer.if(count > maxCount)`
+- `github-portfolio-analyzer.getTopCategories()`
+- `github-portfolio-analyzer.if(repos.length > 0)`
+- `github-portfolio-analyzer.getComplexityTrend()`
+- `github-portfolio-analyzer.getCurrentFocus()`
+- `github-portfolio-analyzer.for(const repo of recent)`
+- `github-portfolio-analyzer.getGrowthRate()`
+- `github-portfolio-analyzer.getDominantCategory()`
+- `github-portfolio-analyzer.if(repos.length > maxCount)`
+- `github-portfolio-analyzer.generateRecommendations()`
+- `github-portfolio-analyzer.if(currentFocus)`
+- `github-portfolio-analyzer.if(trend === 'increasing')`
+- `github-portfolio-analyzer.if(this.stats.uniqueFrameworks < 5)`
+- `github-portfolio-analyzer.saveAnalysis()`
+- `github-portfolio-analyzer.loadCachedAnalysis()`
+- `github-portfolio-analyzer.catch(error)`
+- `github-portfolio-analyzer.getStatus()`
+- `github-portfolio-analyzer.shutdown()`
+- `hive-mind-orchestrator.initialize()`
+- `hive-mind-orchestrator.connectModules()`
+- `hive-mind-orchestrator.for(const moduleName of hiveModules)`
+- `hive-mind-orchestrator.for(const moduleName of coreModules)`
+- `hive-mind-orchestrator.registerModule(category, name)`
+- `hive-mind-orchestrator.setupCommunication()`
+- `hive-mind-orchestrator.awakenCollective()`
+- `hive-mind-orchestrator.think()`
+- `hive-mind-orchestrator.if(thoughts.length > 0)`
+- `hive-mind-orchestrator.if(this.collective.thoughts.length > 100)`
+- `hive-mind-orchestrator.orchestrate(task)`
+- `hive-mind-orchestrator.catch(error)`
+- `hive-mind-orchestrator.analyzeTask(task)`
+- `hive-mind-orchestrator.detectTaskType(task)`
+- `hive-mind-orchestrator.assessComplexity(task)`
+- `hive-mind-orchestrator.selectModules(requirements)`
+- `hive-mind-orchestrator.for(const moduleId of this.modules.active)`
+- `hive-mind-orchestrator.if(selected.length < 3)`
+- `hive-mind-orchestrator.createPlan(task, modules)`
+- `hive-mind-orchestrator.executePlan(plan)`
+- `hive-mind-orchestrator.for(const step of plan.steps)`
+- `hive-mind-orchestrator.executeModuleTask(moduleId, action)`
+- `hive-mind-orchestrator.makeCollectiveDecision(decision)`
+- `hive-mind-orchestrator.for(const moduleId of this.modules.active)`
+- `hive-mind-orchestrator.if(decision.status === 'approved')`
+- `hive-mind-orchestrator.detectEmergentPatterns(thoughts)`
+- `hive-mind-orchestrator.for(const thought of thoughts)`
+- `hive-mind-orchestrator.for(const word of words)`
+- `hive-mind-orchestrator.if(word.length > 4)`
+- `hive-mind-orchestrator.for(const [theme, count] of themes)`
+- `hive-mind-orchestrator.if(count > 3)`
+- `hive-mind-orchestrator.if(patterns.length > 0)`
+- `hive-mind-orchestrator.gatherInputs()`
+- `hive-mind-orchestrator.for(const moduleId of this.modules.active)`
+- `hive-mind-orchestrator.processThoughts(inputs)`
+- `hive-mind-orchestrator.for(const input of inputs)`
+- `hive-mind-orchestrator.updateCollectiveIQ()`
+- `hive-mind-orchestrator.handleBroadcast(message)`
+- `hive-mind-orchestrator.handlePriorityAlert(alert)`
+- `hive-mind-orchestrator.broadcast(message)`
+- `hive-mind-orchestrator.for(const moduleId of this.modules.active)`
+- `hive-mind-orchestrator.notifyModule(moduleId, message)`
+- `hive-mind-orchestrator.if(module)`
+- `hive-mind-orchestrator.getModule(moduleId)`
+- `hive-mind-orchestrator.requestConsensus(topic)`
+- `hive-mind-orchestrator.queryCollective(query)`
+- `hive-mind-orchestrator.for(const moduleId of this.modules.active)`
+- `hive-mind-orchestrator.if(response)`
+- `hive-mind-orchestrator.queryModule(moduleId, query)`
+- `hive-mind-orchestrator.synthesizeResponses(responses)`
+- `hive-mind-orchestrator.getEmergentInsight()`
+- `hive-mind-orchestrator.if(patterns.length > 0)`
+- `hive-mind-orchestrator.getStatus()`
+- `hive-mind-orchestrator.shutdown()`
+- `hive-mind-orchestrator.if(this.consciousnessInterval)`
+- `interaction-memory-system.initialize()`
+- `interaction-memory-system.initializeGhenghisPatterns()`
+- `interaction-memory-system.remember(interaction)`
+- `interaction-memory-system.if(this.context.recent.length > 100)`
+- `interaction-memory-system.if(this.memories.interactions.length > this.config.maxMemories)`
+- `interaction-memory-system.if(memory.importance > 0.8)`
+- `interaction-memory-system.detectEmotion(interaction)`
+- `interaction-memory-system.if(hasPositive && !hasNegative)`
+- `interaction-memory-system.if(hasNegative && !hasPositive)`
+- `interaction-memory-system.if(hasExcitement)`
+- `interaction-memory-system.calculateImportance(interaction)`
+- `interaction-memory-system.categorizeMemory(memory)`
+- `interaction-memory-system.if(memory.type === 'command')`
+- `interaction-memory-system.if(memory.context.project)`
+- `interaction-memory-system.if(memory.emotion.emotion === 'positive' || memory.emotion.emotion === 'excited')`
+- `interaction-memory-system.if(memory.emotion.emotion === 'frustrated')`
+- `interaction-memory-system.if(memory.outcome === 'success')`
+- `interaction-memory-system.if(memory.outcome === 'error')`
+- `interaction-memory-system.indexMemory(memory)`
+- `interaction-memory-system.for(const keyword of keywords)`
+- `interaction-memory-system.extractKeywords(content)`
+- `interaction-memory-system.for(const word of words)`
+- `interaction-memory-system.updateKnowledgeGraph(memory)`
+- `interaction-memory-system.for(const keyword of keywords)`
+- `interaction-memory-system.for(let i = 0; i < keywords.length - 1; i++)`
+- `interaction-memory-system.for(let j = i + 1; j < keywords.length; j++)`
+- `interaction-memory-system.detectPatterns(memory)`
+- `interaction-memory-system.if(memory.type === 'command')`
+- `interaction-memory-system.if(recentCommands.length > 2)`
+- `interaction-memory-system.if(memory.context.project)`
+- `interaction-memory-system.detectProjectType(projectName)`
+- `interaction-memory-system.recall(query)`
+- `interaction-memory-system.for(const keyword of keywords)`
+- `interaction-memory-system.for(const id of memoryIds)`
+- `interaction-memory-system.if(memory)`
+- `interaction-memory-system.if(this.context.current.project)`
+- `interaction-memory-system.if(memory)`
+- `interaction-memory-system.generateSuggestions(query)`
+- `interaction-memory-system.if(hourlyActivity > 5)`
+- `interaction-memory-system.for(const [key, count] of topProjectTypes)`
+- `interaction-memory-system.for(const error of recentErrors)`
+- `interaction-memory-system.if(error.outcome === 'resolved')`
+- `interaction-memory-system.updateStatistics(memory)`
+- `interaction-memory-system.for(const [hour, count] of this.temporal.hourly)`
+- `interaction-memory-system.if(count > maxActivity)`
+- `interaction-memory-system.for(const [project, memories] of this.memories.projects)`
+- `interaction-memory-system.if(memories.length > maxProjectMemories)`
+- `interaction-memory-system.compressOldMemories()`
+- `interaction-memory-system.if(toCompress.length > 0)`
+- `interaction-memory-system.getMemorySummary()`
+- `interaction-memory-system.getMostUsedCommand()`
+- `interaction-memory-system.for(const [command, count] of this.memories.commands)`
+- `interaction-memory-system.if(count > maxCount)`
+- `interaction-memory-system.getFavoriteProjectType()`
+- `interaction-memory-system.for(const [pattern, count] of this.context.patterns)`
+- `interaction-memory-system.for(const [type, count] of types)`
+- `interaction-memory-system.if(count > maxCount)`
+- `interaction-memory-system.saveMemory(memory)`
+- `interaction-memory-system.saveMemories()`
+- `interaction-memory-system.loadMemories()`
+- `interaction-memory-system.catch(error)`
+- `interaction-memory-system.getStatus()`
+- `interaction-memory-system.shutdown()`
+- `open-interpreter-bridge.initialize()`
+- `open-interpreter-bridge.if(this.config.autoExecute)`
+- `open-interpreter-bridge.initializeIntents()`
+- `open-interpreter-bridge.checkInterpreter()`
+- `open-interpreter-bridge.if(code === 0)`
+- `open-interpreter-bridge.catch(error)`
+- `open-interpreter-bridge.startInterpreter()`
+- `open-interpreter-bridge.catch(error)`
+- `open-interpreter-bridge.processRequest(request)`
+- `open-interpreter-bridge.if(this.nlp.context.length > 10)`
+- `open-interpreter-bridge.if(this.config.safeMode)`
+- `open-interpreter-bridge.if(!safetyCheck.safe)`
+- `open-interpreter-bridge.if(processed.intent)`
+- `open-interpreter-bridge.if(handler)`
+- `open-interpreter-bridge.if(result.success)`
+- `open-interpreter-bridge.detectIntent(request)`
+- `open-interpreter-bridge.for(const [intent, config] of this.nlp.intents)`
+- `open-interpreter-bridge.for(const pattern of config.patterns)`
+- `open-interpreter-bridge.extractEntities(request)`
+- `open-interpreter-bridge.if(fileMatch)`
+- `open-interpreter-bridge.checkSafety(processed)`
+- `open-interpreter-bridge.for(const blocked of this.safety.blockedCommands)`
+- `open-interpreter-bridge.for(const confirmWord of this.safety.requireConfirmation)`
+- `open-interpreter-bridge.handleCreateProject(processed)`
+- `open-interpreter-bridge.for(const command of commands)`
+- `open-interpreter-bridge.generateProjectName(input)`
+- `open-interpreter-bridge.if(keywords.length > 0)`
+- `open-interpreter-bridge.generateProjectCommands(config)`
+- `open-interpreter-bridge.if(config.framework === 'react')`
+- `open-interpreter-bridge.if(config.framework === 'nextjs')`
+- `open-interpreter-bridge.if(config.language === 'python')`
+- `open-interpreter-bridge.handleGenerateCode(processed)`
+- `open-interpreter-bridge.generateCode(processed)`
+- `open-interpreter-bridge.generateComponent(entities)`
+- `open-interpreter-bridge.generateFunction(entities)`
+- `open-interpreter-bridge.if(lang === 'python')`
+- `open-interpreter-bridge.generateGenericCode(entities)`
+- `open-interpreter-bridge.handleAnalyze(processed)`
+- `open-interpreter-bridge.handleFix(processed)`
+- `open-interpreter-bridge.handleExecute(processed)`
+- `open-interpreter-bridge.if(command)`
+- `open-interpreter-bridge.extractCommand(input)`
+- `open-interpreter-bridge.handleGeneral(processed)`
+- `open-interpreter-bridge.interpretNaturalLanguage(request)`
+- `open-interpreter-bridge.executeCommand(command)`
+- `open-interpreter-bridge.if(!this.config.autoExecute)`
+- `open-interpreter-bridge.catch(error)`
+- `open-interpreter-bridge.updateContext(update)`
+- `open-interpreter-bridge.if(update.workingDirectory)`
+- `open-interpreter-bridge.getSuggestions(partialRequest)`
+- `open-interpreter-bridge.saveSession()`
+- `open-interpreter-bridge.getStatus()`
+- `open-interpreter-bridge.shutdown()`
+- `open-interpreter-bridge.if(this.interpreter.process)`
+- `personality-synthesizer.initialize()`
+- `personality-synthesizer.createModulePersonalities()`
+- `personality-synthesizer.synthesizePersonality(moduleName, archetypeKey)`
+- `personality-synthesizer.generateQuirks(archetypeKey)`
+- `personality-synthesizer.generateCatchphrases(archetypeKey)`
+- `personality-synthesizer.generatePreferences(archetypeKey)`
+- `personality-synthesizer.getWorkStylePreference(archetypeKey)`
+- `personality-synthesizer.getCommunicationPreference(archetypeKey)`
+- `personality-synthesizer.getProblemSolvingPreference(archetypeKey)`
+- `personality-synthesizer.calculateFormality(archetypeKey)`
+- `personality-synthesizer.calculateHumor(archetypeKey)`
+- `personality-synthesizer.calculateVerbosity(archetypeKey)`
+- `personality-synthesizer.generateResponse(moduleName, context)`
+- `personality-synthesizer.if(!personality)`
+- `personality-synthesizer.generateDefaultResponse(context)`
+- `personality-synthesizer.generateContextualResponse(personality, context)`
+- `personality-synthesizer.addPersonalityFlair(message, personality)`
+- `personality-synthesizer.addEmotionalColoring(message, emotionalState)`
+- `personality-synthesizer.adjustForUserMood(message, userMood)`
+- `personality-synthesizer.adaptPersonality(moduleName, interaction)`
+- `personality-synthesizer.if(interaction.feedback === 'positive')`
+- `personality-synthesizer.if(interaction.feedback === 'negative')`
+- `personality-synthesizer.if(interaction.preferred)`
+- `personality-synthesizer.getPersonalityProfile(moduleName)`
+- `personality-synthesizer.updateContext(update)`
+- `personality-synthesizer.if(update.userMood)`
+- `personality-synthesizer.if(update.topic)`
+- `personality-synthesizer.if(this.context.recentTopics.length > 10)`
+- `personality-synthesizer.if(update.sessionLength)`
+- `personality-synthesizer.savePersonalities()`
+- `personality-synthesizer.for(const [moduleName, personality] of this.personalities)`
+- `personality-synthesizer.loadPersonalities()`
+- `personality-synthesizer.for(const file of files)`
+- `personality-synthesizer.catch(error)`
+- `personality-synthesizer.getStatus()`
+- `personality-synthesizer.shutdown()`
+- `project-idea-generator.initialize()`
+- `project-idea-generator.initializeTemplates()`
+- `project-idea-generator.generateIdeas(context = {})`
+- `project-idea-generator.for(const idea of batch.ideas)`
+- `project-idea-generator.generateTrendBased()`
+- `project-idea-generator.generateCombination()`
+- `project-idea-generator.generateEvolution()`
+- `project-idea-generator.generateInnovative()`
+- `project-idea-generator.scoreIdea(idea)`
+- `project-idea-generator.generateCustomIdea(request)`
+- `project-idea-generator.generateName(request)`
+- `project-idea-generator.generateDescription(request)`
+- `project-idea-generator.detectCategory(request)`
+- `project-idea-generator.assessComplexity(request)`
+- `project-idea-generator.assessInnovation(request)`
+- `project-idea-generator.generateFeatures(request)`
+- `project-idea-generator.if(category === 'mcp')`
+- `project-idea-generator.if(category === 'ai')`
+- `project-idea-generator.if(category === 'game')`
+- `project-idea-generator.suggestTechStack(request)`
+- `project-idea-generator.if(category === 'mcp' || category === 'tool')`
+- `project-idea-generator.if(category === 'ai')`
+- `project-idea-generator.if(category === 'game')`
+- `project-idea-generator.estimateTimeline(request)`
+- `project-idea-generator.extractKeywords(text)`
+- `project-idea-generator.for(const word of words)`
+- `project-idea-generator.getRecommendations()`
+- `project-idea-generator.if(recentImplemented.length > 0)`
+- `project-idea-generator.markImplemented(ideaId, feedback = {})`
+- `project-idea-generator.if(idea)`
+- `project-idea-generator.markFavorite(ideaId)`
+- `project-idea-generator.if(idea)`
+- `project-idea-generator.saveIdeas()`
+- `project-idea-generator.loadIdeas()`
+- `project-idea-generator.catch(error)`
+- `project-idea-generator.getStatus()`
+- `project-idea-generator.shutdown()`
+- `project-pattern-recognizer.initialize()`
+- `project-pattern-recognizer.initializeSequences()`
+- `project-pattern-recognizer.recognizePatterns(project)`
+- `project-pattern-recognizer.if(typePattern)`
+- `project-pattern-recognizer.if(techPattern)`
+- `project-pattern-recognizer.if(structurePattern)`
+- `project-pattern-recognizer.if(namingPattern)`
+- `project-pattern-recognizer.if(recognition.patterns.length > 0)`
+- `project-pattern-recognizer.detectProjectType(project)`
+- `project-pattern-recognizer.detectTechStack(project)`
+- `project-pattern-recognizer.detectStructure(project)`
+- `project-pattern-recognizer.detectNamingPattern(name)`
+- `project-pattern-recognizer.predictNextProject(context)`
+- `project-pattern-recognizer.if(sequence)`
+- `project-pattern-recognizer.if(techTrend)`
+- `project-pattern-recognizer.analyzeRecentPatterns(projects)`
+- `project-pattern-recognizer.for(const project of projects)`
+- `project-pattern-recognizer.detectSequence(patterns)`
+- `project-pattern-recognizer.for(const [name, sequence] of this.patterns.sequences)`
+- `project-pattern-recognizer.if(lastIndex >= 0 && lastIndex < sequence.length - 1)`
+- `project-pattern-recognizer.findInSequence(patterns, sequence)`
+- `project-pattern-recognizer.for(let i = 0; i < sequence.length; i++)`
+- `project-pattern-recognizer.detectTechnologyTrend(patterns)`
+- `project-pattern-recognizer.if(suggestions[lastTech])`
+- `project-pattern-recognizer.generateSuggestions(patterns)`
+- `project-pattern-recognizer.for(const pattern of patterns)`
+- `project-pattern-recognizer.if(pattern.type === 'project-type')`
+- `project-pattern-recognizer.if(pattern.type === 'tech-stack' && pattern.value === 'react-tailwind-shadcn')`
+- `project-pattern-recognizer.getProjectTemplate(type)`
+- `project-pattern-recognizer.if(!template)`
+- `project-pattern-recognizer.getDefaultTemplate()`
+- `project-pattern-recognizer.customizeTemplate(template, type)`
+- `project-pattern-recognizer.learnFromFeedback(predictionId, feedback)`
+- `project-pattern-recognizer.if(feedback === 'incorrect')`
+- `project-pattern-recognizer.adaptPatterns(prediction, feedback)`
+- `project-pattern-recognizer.for(const suggestion of prediction.suggestions)`
+- `project-pattern-recognizer.if(this.knownPatterns.projectTypes[suggestion.value])`
+- `project-pattern-recognizer.analyzeEvolution(projectHistory)`
+- `project-pattern-recognizer.for(let i = 0; i < projectHistory.length; i++)`
+- `project-pattern-recognizer.if(tech)`
+- `project-pattern-recognizer.identifyTrends(stages)`
+- `project-pattern-recognizer.if(stages.length > 2)`
+- `project-pattern-recognizer.if(recentComplexity > earlyComplexity)`
+- `project-pattern-recognizer.if(techs.length > 3)`
+- `project-pattern-recognizer.savePatterns()`
+- `project-pattern-recognizer.loadPatterns()`
+- `project-pattern-recognizer.catch(error)`
+- `project-pattern-recognizer.getStatus()`
+- `project-pattern-recognizer.shutdown()`
+- `ui-ux-preference-learner.initialize()`
+- `ui-ux-preference-learner.initializeGhenghisPatterns()`
+- `ui-ux-preference-learner.learnFromInteraction(interaction)`
+- `ui-ux-preference-learner.for(const pref of preferences)`
+- `ui-ux-preference-learner.analyzeInteraction(interaction)`
+- `ui-ux-preference-learner.if(interaction.element?.color)`
+- `ui-ux-preference-learner.if(colorPref)`
+- `ui-ux-preference-learner.if(interaction.layout)`
+- `ui-ux-preference-learner.if(layoutPref)`
+- `ui-ux-preference-learner.if(interaction.component)`
+- `ui-ux-preference-learner.if(interaction.animation)`
+- `ui-ux-preference-learner.if(animPref)`
+- `ui-ux-preference-learner.updatePreference(preference)`
+- `ui-ux-preference-learner.switch(preference.type)`
+- `ui-ux-preference-learner.switch(preference.type)`
+- `ui-ux-preference-learner.generateUIRecommendations(projectType = 'general')`
+- `ui-ux-preference-learner.getColorRecommendations(projectType)`
+- `ui-ux-preference-learner.if(projectType === 'mcp')`
+- `ui-ux-preference-learner.if(projectType === 'ai')`
+- `ui-ux-preference-learner.if(projectType === 'game')`
+- `ui-ux-preference-learner.getLayoutRecommendations(projectType)`
+- `ui-ux-preference-learner.if(projectType === 'dashboard' || projectType === 'tool')`
+- `ui-ux-preference-learner.if(projectType === 'game')`
+- `ui-ux-preference-learner.getComponentRecommendations(projectType)`
+- `ui-ux-preference-learner.getProjectSpecificComponents(projectType)`
+- `ui-ux-preference-learner.getTypographyRecommendations()`
+- `ui-ux-preference-learner.getAnimationRecommendations()`
+- `ui-ux-preference-learner.getFrameworkRecommendations(projectType)`
+- `ui-ux-preference-learner.if(projectType === 'game')`
+- `ui-ux-preference-learner.if(projectType === 'ai')`
+- `ui-ux-preference-learner.predictPreference(context)`
+- `ui-ux-preference-learner.if(context.projectType)`
+- `ui-ux-preference-learner.savePreferences()`
+- `ui-ux-preference-learner.loadPreferences()`
+- `ui-ux-preference-learner.if(data.visualPreferences)`
+- `ui-ux-preference-learner.catch(error)`
+- `ui-ux-preference-learner.getStatus()`
+- `ui-ux-preference-learner.shutdown()`
+- `user-preference-engine.initialize()`
+- `user-preference-engine.initializeVIBECoderDefaults()`
+- `user-preference-engine.learnFromInteraction(interaction)`
+- `user-preference-engine.for(const pref of detectedPreferences)`
+- `user-preference-engine.if(this.interactions.length > this.config.memoryLimit)`
+- `user-preference-engine.analyzeInteraction(interaction)`
+- `user-preference-engine.for(const fw of frameworks)`
+- `user-preference-engine.for(const type of projectTypes)`
+- `user-preference-engine.updatePreference(category, subcategory, key, update)`
+- `user-preference-engine.if(existing)`
+- `user-preference-engine.if(existing.value !== update.value)`
+- `user-preference-engine.if(newConfidence > existing.confidence || update.confidence > 0.9)`
+- `user-preference-engine.handleContradiction(key, existing, update)`
+- `user-preference-engine.if(update.confidence > existing.confidence * 1.2)`
+- `user-preference-engine.trackChange(key, from, to)`
+- `user-preference-engine.setPreference(category, subcategory, key, data)`
+- `user-preference-engine.if(!this.preferences[category]?.[subcategory])`
+- `user-preference-engine.getPreference(category, subcategory, key)`
+- `user-preference-engine.if(pref)`
+- `user-preference-engine.if(pref.confidence >= this.config.confidenceThreshold)`
+- `user-preference-engine.getCategoryPreferences(category)`
+- `user-preference-engine.if(this.preferences[category])`
+- `user-preference-engine.for(const [key, value] of map)`
+- `user-preference-engine.predictPreference(context)`
+- `user-preference-engine.for(const pref of relevantPrefs)`
+- `user-preference-engine.findRelevantPreferences(context)`
+- `user-preference-engine.for(const [key, value] of prefs)`
+- `user-preference-engine.isRelevant(context, category, subcategory, key)`
+- `user-preference-engine.generateReport()`
+- `user-preference-engine.for(const [key, pref] of subcategory)`
+- `user-preference-engine.savePreferences()`
+- `user-preference-engine.loadPreferences()`
+- `user-preference-engine.catch(error)`
+- `user-preference-engine.getStatus()`
+- `user-preference-engine.getConfidenceCount(min, max)`
+- `user-preference-engine.if(pref.confidence >= min && pref.confidence < max)`
+- `user-preference-engine.shutdown()`
+
+### All Events
+
+- `code-generation-personalizer:initialized`
+- `code-generation-personalizer:codeGenerated`
+- `code-generation-personalizer:shutdown`
+- `continuous-feedback-loop:initialized`
+- `continuous-feedback-loop:feedbackProcessed`
+- `continuous-feedback-loop:metricsUpdated`
+- `continuous-feedback-loop:adaptationTriggered`
+- `continuous-feedback-loop:learningCycleComplete`
+- `continuous-feedback-loop:adaptationApplied`
+- `continuous-feedback-loop:adaptationFailed`
+- `continuous-feedback-loop:adaptationMeasured`
+- `continuous-feedback-loop:shutdown`
+- `emotional-intelligence-module:initialized`
+- `emotional-intelligence-module:emotionDetected`
+- `emotional-intelligence-module:stateUpdated`
+- `emotional-intelligence-module:assessmentComplete`
+- `emotional-intelligence-module:behaviorAdapted`
+- `emotional-intelligence-module:shutdown`
+- `github-portfolio-analyzer:initialized`
+- `github-portfolio-analyzer:analysisComplete`
+- `github-portfolio-analyzer:shutdown`
+- `hive-mind-orchestrator:initialized`
+- `hive-mind-orchestrator:taskCompleted`
+- `hive-mind-orchestrator:taskFailed`
+- `hive-mind-orchestrator:decisionMade`
+- `hive-mind-orchestrator:shutdown`
+- `interaction-memory-system:initialized`
+- `interaction-memory-system:remembered`
+- `interaction-memory-system:shutdown`
+- `open-interpreter-bridge:initialized`
+- `open-interpreter-bridge:interpreterStarted`
+- `open-interpreter-bridge:requestProcessed`
+- `open-interpreter-bridge:contextUpdated`
+- `open-interpreter-bridge:shutdown`
+- `personality-synthesizer:initialized`
+- `personality-synthesizer:responseGenerated`
+- `personality-synthesizer:personalityAdapted`
+- `personality-synthesizer:shutdown`
+- `project-idea-generator:initialized`
+- `project-idea-generator:ideasGenerated`
+- `project-idea-generator:customIdeaGenerated`
+- `project-idea-generator:ideaImplemented`
+- `project-idea-generator:ideaFavorited`
+- `project-idea-generator:shutdown`
+- `project-pattern-recognizer:initialized`
+- `project-pattern-recognizer:patternsRecognized`
+- `project-pattern-recognizer:predictionMade`
+- `project-pattern-recognizer:feedbackProcessed`
+- `project-pattern-recognizer:shutdown`
+- `ui-ux-preference-learner:initialized`
+- `ui-ux-preference-learner:learned`
+- `ui-ux-preference-learner:shutdown`
+- `user-preference-engine:initialized`
+- `user-preference-engine:learned`
+- `user-preference-engine:preferenceChanged`
+- `user-preference-engine:shutdown`
+
+---
+
+_API documentation auto-generated from source code_

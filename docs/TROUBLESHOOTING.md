@@ -11,6 +11,7 @@
 **Problem**: After copying `settings.json`, Windsurf crashes or won't open.
 
 **Fix**:
+
 ```powershell
 # Delete the settings and restart
 Remove-Item "$env:APPDATA\Windsurf\User\settings.json"
@@ -30,6 +31,7 @@ Remove-Item "$env:APPDATA\Windsurf\User\settings.json"
 **Common Causes & Fixes**:
 
 **1. Node.js not installed or outdated**
+
 ```powershell
 # Check version (need 18+)
 node --version
@@ -38,6 +40,7 @@ node --version
 ```
 
 **2. Network/proxy issues**
+
 ```powershell
 # Clear npm cache
 npm cache clean --force
@@ -47,6 +50,7 @@ npm install
 ```
 
 **3. Permission errors (Windows)**
+
 ```powershell
 # Run PowerShell as Administrator, then:
 npm install
@@ -61,17 +65,21 @@ npm install
 **Fixes**:
 
 **1. Check if Windsurf is logged in**
+
 - Click your profile icon (bottom left)
 - Make sure you're signed in to Codeium
 
 **2. Check internet connection**
+
 - Cascade needs internet to work
 - Try opening a website in your browser
 
 **3. Restart Windsurf**
+
 - Close completely and reopen
 
 **4. Clear Cascade cache**
+
 ```powershell
 # Windows: Delete cache folder
 Remove-Item -Recurse -Force "$env:USERPROFILE\.codeium\*"
@@ -88,6 +96,7 @@ Remove-Item -Recurse -Force "$env:USERPROFILE\.codeium\*"
 **Fixes**:
 
 **1. Verify the file was copied**
+
 ```powershell
 # Check if file exists
 Test-Path "$env:APPDATA\Windsurf\User\settings.json"
@@ -97,11 +106,13 @@ Get-Content "$env:APPDATA\Windsurf\User\settings.json" | Select-Object -First 20
 ```
 
 **2. Restart Windsurf completely**
+
 - Close all Windsurf windows
 - Wait 5 seconds
 - Reopen
 
 **3. Check for JSON errors**
+
 ```powershell
 # In the project folder:
 npm run validate:json
@@ -116,6 +127,7 @@ npm run validate:json
 **Fixes**:
 
 **1. Verify mcp_config.json location**
+
 ```powershell
 # Check if file exists
 Test-Path "$env:USERPROFILE\.codeium\windsurf\mcp_config.json"
@@ -125,6 +137,7 @@ Copy-Item .\examples\mcp_config.json "$env:USERPROFILE\.codeium\windsurf\"
 ```
 
 **2. Check if Node.js can run npx**
+
 ```powershell
 # Test npx
 npx --version
@@ -133,6 +146,7 @@ npx --version
 ```
 
 **3. Check environment variables**
+
 ```powershell
 # For GitHub MCP, you need a PAT
 $env:GITHUB_PAT = "your_token_here"
@@ -151,6 +165,7 @@ $env:GITHUB_PAT = "your_token_here"
 **Fixes**:
 
 **1. Check Python installation**
+
 ```powershell
 python --version
 # or
@@ -158,6 +173,7 @@ python3 --version
 ```
 
 **2. Update settings.json Python path**
+
 ```json
 // For Windows:
 "python.defaultInterpreterPath": "C:\\Users\\YourName\\AppData\\Local\\Programs\\Python\\Python311\\python.exe"
@@ -167,6 +183,7 @@ python3 --version
 ```
 
 **3. Create virtual environment**
+
 ```powershell
 # In your project folder:
 python -m venv .venv
@@ -186,18 +203,21 @@ python -m venv .venv
 **Fixes**:
 
 **1. Make sure you're in the right folder**
+
 ```powershell
 # Should be in windsurf-vibe-setup folder
 cd C:\Users\Admin\windsurf-vibe-setup
 ```
 
 **2. PowerShell execution policy**
+
 ```powershell
 # Allow scripts to run (one-time)
 Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 ```
 
 **3. Run directly**
+
 ```powershell
 pwsh .\scripts\testing\Run-WindsurfBenchmark.ps1
 ```
@@ -211,11 +231,13 @@ pwsh .\scripts\testing\Run-WindsurfBenchmark.ps1
 **Fixes**:
 
 **1. Check if Prettier is installed**
+
 - In Windsurf: Extensions sidebar (Ctrl+Shift+X)
 - Search "Prettier"
 - Install "Prettier - Code formatter"
 
 **2. Verify settings**
+
 ```json
 // In settings.json, make sure these exist:
 "editor.formatOnSave": true,
@@ -225,6 +247,7 @@ pwsh .\scripts\testing\Run-WindsurfBenchmark.ps1
 ```
 
 **3. Check for conflicting formatters**
+
 - Disable other formatters
 - Only keep Prettier
 
@@ -237,6 +260,7 @@ pwsh .\scripts\testing\Run-WindsurfBenchmark.ps1
 **Meaning**: A JavaScript package is missing.
 
 **Fix**:
+
 ```powershell
 npm install
 ```
@@ -246,9 +270,11 @@ npm install
 **Meaning**: No permission to write files.
 
 **Fix (Windows)**:
+
 - Run PowerShell as Administrator
 
 **Fix (macOS/Linux)**:
+
 ```bash
 sudo chown -R $USER:$USER ~/.codeium
 ```
@@ -258,6 +284,7 @@ sudo chown -R $USER:$USER ~/.codeium
 **Meaning**: Invalid JSON syntax.
 
 **Fix**:
+
 ```powershell
 # Find the problem:
 npm run validate:json
@@ -273,6 +300,7 @@ npm run validate:json
 **Meaning**: Node.js not installed or not in PATH.
 
 **Fix**:
+
 1. Install Node.js from https://nodejs.org
 2. Restart your terminal
 3. Try again
@@ -286,8 +314,10 @@ npm run validate:json
 **Quick fixes**:
 
 1. **Exclude large folders from watching**
+
    - Already configured in settings.json
    - Add more if needed:
+
    ```json
    "files.watcherExclude": {
      "**/your_big_folder/**": true
@@ -295,9 +325,11 @@ npm run validate:json
    ```
 
 2. **Close unused tabs**
+
    - Windsurf keeps files in memory
 
 3. **Increase memory limit** (in settings.json):
+
    ```json
    "files.maxMemoryForLargeFilesMB": 8192
    ```
@@ -308,11 +340,13 @@ npm run validate:json
 ### AI Responses are Slow
 
 **Possible causes**:
+
 - Internet connection
 - Large codebase being indexed
 - Many files open
 
 **Fixes**:
+
 - Wait for initial indexing to complete
 - Close files you're not using
 - Use `Ctrl+Enter` for Fast Context mode

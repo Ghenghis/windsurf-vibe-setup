@@ -4,7 +4,7 @@
  * Health Daemon - Windsurf Vibe Free-Local
  * ============================================================================
  * Continuous service monitoring and auto-recovery daemon.
- * 
+ *
  * Features:
  * - Monitors all free-local services
  * - Auto-restarts failed services
@@ -27,58 +27,58 @@ const CONFIG = {
   checkInterval: 30000, // 30 seconds
   maxRestartAttempts: 3,
   restartCooldown: 60000, // 1 minute between restart attempts
-  
+
   services: {
     ollama: {
       url: 'http://localhost:11434/api/tags',
       critical: true,
-      restartCmd: 'ollama serve'
+      restartCmd: 'ollama serve',
     },
     chromadb: {
       url: 'http://localhost:8000/api/v1/heartbeat',
       critical: false,
-      container: 'chromadb'
+      container: 'chromadb',
     },
     qdrant: {
       url: 'http://localhost:6333/collections',
       critical: false,
-      container: 'qdrant'
+      container: 'qdrant',
     },
     searxng: {
       url: 'http://localhost:8080',
       critical: false,
-      container: 'searxng'
+      container: 'searxng',
     },
     redis: {
       url: 'http://localhost:6379',
       tcpCheck: true,
       critical: false,
-      container: 'redis'
+      container: 'redis',
     },
     openwebui: {
       url: 'http://localhost:3000',
       critical: false,
-      container: 'open-webui'
+      container: 'open-webui',
     },
     n8n: {
       url: 'http://localhost:5678',
       critical: false,
-      container: 'n8n'
-    }
+      container: 'n8n',
+    },
   },
-  
+
   thresholds: {
     gpuMemoryWarning: 90, // percent
     gpuMemoryCritical: 95,
     cpuWarning: 80,
-    ramWarning: 85
+    ramWarning: 85,
   },
-  
+
   paths: {
     composeFile: path.join(__dirname, '..', 'docker-compose-vibe-stack.yml'),
     logFile: path.join(__dirname, '..', '..', 'logs', 'health-daemon.log'),
-    stateFile: path.join(__dirname, '..', '.daemon-state.json')
-  }
+    stateFile: path.join(__dirname, '..', '.daemon-state.json'),
+  },
 };
 
 // Ensure log directory exists
@@ -95,7 +95,7 @@ let state = {
   restartAttempts: {},
   lastRestartTime: {},
   alerts: [],
-  startTime: Date.now()
+  startTime: Date.now(),
 };
 
 function saveState() {
@@ -117,17 +117,17 @@ function loadState() {
 function log(level, message) {
   const timestamp = new Date().toISOString();
   const line = `[${timestamp}] [${level}] ${message}`;
-  
+
   fs.appendFileSync(CONFIG.paths.logFile, line + '\n');
-  
+
   const colors = {
     INFO: '\x1b[36m',
-    OK: '\x1b[32m', 
+    OK: '\x1b[32m',
     WARN: '\x1b[33m',
     ERROR: '\x1b[31m',
-    ALERT: '\x1b[35m'
+    ALERT: '\x1b[35m',
   };
-  
+
   console.log(`${colors[level] || ''}[${level}]\x1b[0m ${message}`);
 }
 
@@ -136,8 +136,8 @@ function log(level, message) {
 // ============================================================================
 
 async function checkHttp(url, timeout = 5000) {
-  return new Promise((resolve) => {
-    const req = http.get(url, { timeout }, (res) => {
+  return new Promise(resolve => {
+    const req = http.get(url, { timeout }, res => {
       resolve({ ok: res.statusCode < 400, status: res.statusCode });
     });
     req.on('error', () => resolve({ ok: false, error: 'connection failed' }));
@@ -151,7 +151,7 @@ async function checkHttp(url, timeout = 5000) {
 async function checkService(name, config) {
   if (config.tcpCheck) {
     // TCP check for Redis
-    return new Promise((resolve) => {
+    return new Promise(resolve => {
       const net = require('net');
       const socket = new net.Socket();
       socket.setTimeout(3000);
@@ -166,7 +166,7 @@ async function checkService(name, config) {
       });
     });
   }
-  
+
   return checkHttp(config.url);
 }
 
@@ -176,21 +176,24 @@ async function checkGpuResources() {
       'nvidia-smi --query-gpu=name,memory.used,memory.total,utilization.gpu,temperature.gpu --format=csv,noheader,nounits',
       { encoding: 'utf8' }
     );
-    
-    return output.trim().split('\n').map((line, index) => {
-      const [name, memUsed, memTotal, util, temp] = line.split(', ');
-      const memPercent = (parseInt(memUsed) / parseInt(memTotal)) * 100;
-      
-      return {
-        index,
-        name: name.trim(),
-        memUsed: parseInt(memUsed),
-        memTotal: parseInt(memTotal),
-        memPercent: memPercent.toFixed(1),
-        utilization: parseInt(util),
-        temperature: parseInt(temp)
-      };
-    });
+
+    return output
+      .trim()
+      .split('\n')
+      .map((line, index) => {
+        const [name, memUsed, memTotal, util, temp] = line.split(', ');
+        const memPercent = (parseInt(memUsed) / parseInt(memTotal)) * 100;
+
+        return {
+          index,
+          name: name.trim(),
+          memUsed: parseInt(memUsed),
+          memTotal: parseInt(memTotal),
+          memPercent: memPercent.toFixed(1),
+          utilization: parseInt(util),
+          temperature: parseInt(temp),
+        };
+      });
   } catch {
     return [];
   }
@@ -204,7 +207,7 @@ function canRestart(serviceName) {
   const attempts = state.restartAttempts[serviceName] || 0;
   const lastRestart = state.lastRestartTime[serviceName] || 0;
   const timeSinceRestart = Date.now() - lastRestart;
-  
+
   return attempts < CONFIG.maxRestartAttempts && timeSinceRestart > CONFIG.restartCooldown;
 }
 
@@ -213,26 +216,31 @@ async function restartService(name, config) {
     log('WARN', `${name}: Max restart attempts reached or cooldown active`);
     return false;
   }
-  
-  log('ALERT', `${name}: Attempting restart (attempt ${(state.restartAttempts[name] || 0) + 1}/${CONFIG.maxRestartAttempts})`);
-  
+
+  log(
+    'ALERT',
+    `${name}: Attempting restart (attempt ${(state.restartAttempts[name] || 0) + 1}/${CONFIG.maxRestartAttempts})`
+  );
+
   state.restartAttempts[name] = (state.restartAttempts[name] || 0) + 1;
   state.lastRestartTime[name] = Date.now();
   saveState();
-  
+
   try {
     if (config.container) {
       // Docker container
-      execSync(`docker-compose -f "${CONFIG.paths.composeFile}" restart ${config.container}`, { stdio: 'pipe' });
+      execSync(`docker-compose -f "${CONFIG.paths.composeFile}" restart ${config.container}`, {
+        stdio: 'pipe',
+      });
     } else if (config.restartCmd) {
       // System process (like Ollama)
       spawn('cmd', ['/c', config.restartCmd], { detached: true, stdio: 'ignore' }).unref();
     }
-    
+
     // Wait and verify
     await new Promise(r => setTimeout(r, 5000));
     const status = await checkService(name, config);
-    
+
     if (status.ok) {
       log('OK', `${name}: Restart successful`);
       state.restartAttempts[name] = 0;
@@ -242,7 +250,7 @@ async function restartService(name, config) {
   } catch (err) {
     log('ERROR', `${name}: Restart failed - ${err.message}`);
   }
-  
+
   return false;
 }
 
@@ -252,12 +260,12 @@ async function restartService(name, config) {
 
 async function runHealthCheck() {
   const results = { timestamp: new Date().toISOString(), services: {}, gpu: [], alerts: [] };
-  
+
   // Check services
   for (const [name, config] of Object.entries(CONFIG.services)) {
     const status = await checkService(name, config);
     results.services[name] = status.ok;
-    
+
     if (status.ok) {
       // Reset restart counter on successful check
       if (state.restartAttempts[name] > 0) {
@@ -266,20 +274,20 @@ async function runHealthCheck() {
       }
     } else {
       log('WARN', `${name}: Service unhealthy`);
-      
+
       // Auto-restart if enabled
       if (config.critical || process.env.AUTO_RESTART === 'true') {
         await restartService(name, config);
       }
-      
+
       results.alerts.push({ service: name, message: 'Service unhealthy' });
     }
   }
-  
+
   // Check GPU resources
   const gpus = await checkGpuResources();
   results.gpu = gpus;
-  
+
   for (const gpu of gpus) {
     if (parseFloat(gpu.memPercent) > CONFIG.thresholds.gpuMemoryCritical) {
       log('ALERT', `GPU ${gpu.index} memory critical: ${gpu.memPercent}%`);
@@ -287,12 +295,12 @@ async function runHealthCheck() {
     } else if (parseFloat(gpu.memPercent) > CONFIG.thresholds.gpuMemoryWarning) {
       log('WARN', `GPU ${gpu.index} memory high: ${gpu.memPercent}%`);
     }
-    
+
     if (gpu.temperature > 85) {
       log('WARN', `GPU ${gpu.index} temperature high: ${gpu.temperature}°C`);
     }
   }
-  
+
   return results;
 }
 
@@ -302,12 +310,12 @@ async function startDaemon() {
   log('INFO', `Check interval: ${CONFIG.checkInterval / 1000}s`);
   log('INFO', `Auto-restart: ${process.env.AUTO_RESTART === 'true' ? 'enabled' : 'disabled'}`);
   log('INFO', '═'.repeat(50));
-  
+
   loadState();
-  
+
   // Initial check
   await runHealthCheck();
-  
+
   // Continuous monitoring
   setInterval(async () => {
     try {

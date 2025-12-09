@@ -28,7 +28,7 @@ const DATA_FILES = {
   preferences: path.join(AUTOPILOT_DATA_DIR, 'preferences.json'),
   patterns: path.join(AUTOPILOT_DATA_DIR, 'learned-patterns.json'),
   history: path.join(AUTOPILOT_DATA_DIR, 'action-history.json'),
-  projects: path.join(AUTOPILOT_DATA_DIR, 'project-contexts.json')
+  projects: path.join(AUTOPILOT_DATA_DIR, 'project-contexts.json'),
 };
 
 // Initialize data directory
@@ -43,29 +43,29 @@ function initDataDir() {
       version: '1.0',
       createdAt: new Date().toISOString(),
       interactions: [],
-      insights: []
+      insights: [],
     },
     preferences: {
       version: '1.0',
       userPreferences: {},
       projectDefaults: {},
-      autoActions: []
+      autoActions: [],
     },
     patterns: {
       version: '1.0',
       errorPatterns: [],
       successPatterns: [],
-      workflows: []
+      workflows: [],
     },
     history: {
       version: '1.0',
       sessions: [],
-      totalActions: 0
+      totalActions: 0,
     },
     projects: {
       version: '1.0',
-      contexts: {}
-    }
+      contexts: {},
+    },
   };
 
   Object.entries(DATA_FILES).forEach(([key, filepath]) => {
@@ -110,7 +110,7 @@ const autopilotState = {
   currentAction: null,
   startTime: null,
   actionsInSession: 0,
-  lastActionTime: null
+  lastActionTime: null,
 };
 
 /**
@@ -120,9 +120,7 @@ function getAutopilotStatus() {
   const history = loadData('history') || { totalActions: 0, sessions: [] };
   const memory = loadData('memory') || { interactions: [], insights: [] };
 
-  const indicator = autopilotState.active
-    ? '🤖 AUTO-PILOT ACTIVE'
-    : '🔵 Auto-Pilot Ready';
+  const indicator = autopilotState.active ? '🤖 AUTO-PILOT ACTIVE' : '🔵 Auto-Pilot Ready';
 
   return {
     indicator,
@@ -132,18 +130,18 @@ function getAutopilotStatus() {
       actionsThisSession: autopilotState.actionsInSession,
       sessionDuration: autopilotState.startTime
         ? Math.round((Date.now() - autopilotState.startTime) / 1000) + 's'
-        : null
+        : null,
     },
     lifetimeStats: {
       totalActions: history.totalActions,
       totalSessions: history.sessions.length,
       totalInteractions: memory.interactions.length,
-      insightsLearned: memory.insights.length
+      insightsLearned: memory.insights.length,
     },
     status: autopilotState.active
       ? `Currently executing: ${autopilotState.currentAction}`
       : 'Waiting for your request...',
-    message: getAutopilotMessage()
+    message: getAutopilotMessage(),
   };
 }
 
@@ -184,7 +182,7 @@ function startAction(actionName, params = {}) {
     history.sessions.push({
       startTime: new Date().toISOString(),
       platform: process.platform,
-      nodeVersion: process.version
+      nodeVersion: process.version,
     });
     saveData('history', history);
   }
@@ -195,7 +193,7 @@ function startAction(actionName, params = {}) {
   return {
     indicator: '🤖 AUTO-PILOT ACTIVE',
     action: actionName,
-    message: `Executing: ${actionName}...`
+    message: `Executing: ${actionName}...`,
   };
 }
 
@@ -224,7 +222,7 @@ function endAction(actionName, result, success = true) {
   return {
     indicator: '✅ Action Complete',
     action: actionName,
-    success
+    success,
   };
 }
 
@@ -243,7 +241,7 @@ function recordInteraction(action, params, status) {
     action,
     params: sanitizeParams(params),
     status,
-    platform: process.platform
+    platform: process.platform,
   });
 
   // Keep last 1000 interactions
@@ -274,7 +272,11 @@ function sanitizeParams(params) {
  * Learn from successful actions
  */
 function learnFromSuccess(action, result) {
-  const patterns = loadData('patterns') || { successPatterns: [], errorPatterns: [], workflows: [] };
+  const patterns = loadData('patterns') || {
+    successPatterns: [],
+    errorPatterns: [],
+    workflows: [],
+  };
 
   // Record success pattern
   const existingPattern = patterns.successPatterns.find(p => p.action === action);
@@ -286,7 +288,7 @@ function learnFromSuccess(action, result) {
       action,
       count: 1,
       firstSuccess: new Date().toISOString(),
-      lastSuccess: new Date().toISOString()
+      lastSuccess: new Date().toISOString(),
     });
   }
 
@@ -297,13 +299,18 @@ function learnFromSuccess(action, result) {
  * Learn from failed actions
  */
 function learnFromFailure(action, result) {
-  const patterns = loadData('patterns') || { successPatterns: [], errorPatterns: [], workflows: [] };
+  const patterns = loadData('patterns') || {
+    successPatterns: [],
+    errorPatterns: [],
+    workflows: [],
+  };
 
-  const errorMessage = typeof result === 'string' ? result : result?.error || result?.message || 'Unknown error';
+  const errorMessage =
+    typeof result === 'string' ? result : result?.error || result?.message || 'Unknown error';
 
   // Record error pattern
-  const existingPattern = patterns.errorPatterns.find(p =>
-    p.action === action && p.errorType === categorizeError(errorMessage)
+  const existingPattern = patterns.errorPatterns.find(
+    p => p.action === action && p.errorType === categorizeError(errorMessage)
   );
 
   if (existingPattern) {
@@ -317,7 +324,7 @@ function learnFromFailure(action, result) {
       count: 1,
       firstOccurrence: new Date().toISOString(),
       lastOccurrence: new Date().toISOString(),
-      suggestedFix: suggestFix(errorMessage)
+      suggestedFix: suggestFix(errorMessage),
     });
   }
 
@@ -365,15 +372,15 @@ function suggestFix(error) {
   const errorType = categorizeError(error);
 
   const fixes = {
-    'FILE_NOT_FOUND': 'Check if the file/directory exists. Create it if needed.',
-    'PERMISSION_DENIED': 'Run with elevated permissions or check file ownership.',
-    'NETWORK_ERROR': 'Check internet connection. Verify URLs and ports.',
-    'TIMEOUT': 'Increase timeout or check for slow operations.',
-    'SYNTAX_ERROR': 'Check code syntax. Run linter for details.',
-    'NPM_ERROR': 'Try: npm cache clean --force, then npm install',
-    'GIT_ERROR': 'Check git status. Resolve conflicts if any.',
-    'PYTHON_ERROR': 'Check Python version and virtual environment.',
-    'UNKNOWN': 'Check error details and logs for more information.'
+    FILE_NOT_FOUND: 'Check if the file/directory exists. Create it if needed.',
+    PERMISSION_DENIED: 'Run with elevated permissions or check file ownership.',
+    NETWORK_ERROR: 'Check internet connection. Verify URLs and ports.',
+    TIMEOUT: 'Increase timeout or check for slow operations.',
+    SYNTAX_ERROR: 'Check code syntax. Run linter for details.',
+    NPM_ERROR: 'Try: npm cache clean --force, then npm install',
+    GIT_ERROR: 'Check git status. Resolve conflicts if any.',
+    PYTHON_ERROR: 'Check Python version and virtual environment.',
+    UNKNOWN: 'Check error details and logs for more information.',
   };
 
   return fixes[errorType] || fixes['UNKNOWN'];
@@ -392,7 +399,7 @@ function saveProjectContext(projectPath, context) {
   projects.contexts[projectPath] = {
     ...context,
     lastAccessed: new Date().toISOString(),
-    accessCount: (projects.contexts[projectPath]?.accessCount || 0) + 1
+    accessCount: (projects.contexts[projectPath]?.accessCount || 0) + 1,
   };
 
   saveData('projects', projects);
@@ -413,7 +420,7 @@ function rememberPreference(key, value) {
   const prefs = loadData('preferences') || { userPreferences: {} };
   prefs.userPreferences[key] = {
     value,
-    setAt: new Date().toISOString()
+    setAt: new Date().toISOString(),
   };
   saveData('preferences', prefs);
 }
@@ -441,15 +448,13 @@ function getSuggestions(currentAction, projectPath) {
   const suggestions = [];
 
   // Suggest based on common success patterns
-  const topPatterns = patterns.successPatterns
-    .sort((a, b) => b.count - a.count)
-    .slice(0, 5);
+  const topPatterns = patterns.successPatterns.sort((a, b) => b.count - a.count).slice(0, 5);
 
   if (topPatterns.length > 0) {
     suggestions.push({
       type: 'frequent_actions',
       message: 'Your most used actions:',
-      actions: topPatterns.map(p => p.action)
+      actions: topPatterns.map(p => p.action),
     });
   }
 
@@ -459,7 +464,7 @@ function getSuggestions(currentAction, projectPath) {
     suggestions.push({
       type: 'project_context',
       message: `Last worked on: ${ctx.lastAccessed}`,
-      context: ctx
+      context: ctx,
     });
   }
 
@@ -488,8 +493,8 @@ function getInsights() {
         action: p.action,
         errorType: p.errorType,
         count: p.count,
-        suggestedFix: p.suggestedFix
-      }))
+        suggestedFix: p.suggestedFix,
+      })),
   };
 }
 
@@ -538,5 +543,5 @@ module.exports = {
 
   // Constants
   AUTOPILOT_DATA_DIR,
-  DATA_FILES
+  DATA_FILES,
 };

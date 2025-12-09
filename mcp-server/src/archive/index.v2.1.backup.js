@@ -20,7 +20,7 @@ const {
   CallToolRequestSchema,
   ListToolsRequestSchema,
   ListResourcesRequestSchema,
-  ReadResourceRequestSchema
+  ReadResourceRequestSchema,
 } = require('@modelcontextprotocol/sdk/types.js');
 
 const fs = require('fs');
@@ -46,7 +46,7 @@ const PATHS = {
   codeium: path.join(HOME, '.codeium', 'windsurf'),
   memories: path.join(HOME, '.codeium', 'windsurf', 'memories'),
   projects: path.join(HOME, 'Projects'),
-  projectRoot: path.resolve(__dirname, '..', '..')
+  projectRoot: path.resolve(__dirname, '..', '..'),
 };
 
 // Task state for multi-step operations
@@ -54,7 +54,7 @@ const taskState = {
   currentTask: null,
   history: [],
   lastError: null,
-  projectContext: {}
+  projectContext: {},
 };
 
 // ==============================================================================
@@ -69,11 +69,13 @@ function safeExec(command, options = {}) {
     encoding: 'utf8',
     timeout: options.timeout || 60000,
     maxBuffer: 10 * 1024 * 1024,
-    windowsHide: true
+    windowsHide: true,
   };
 
   try {
-    const output = execSync(command, { ...defaults, ...options }).toString().trim();
+    const output = execSync(command, { ...defaults, ...options })
+      .toString()
+      .trim();
     return { success: true, output, exitCode: 0 };
   } catch (e) {
     return {
@@ -81,7 +83,7 @@ function safeExec(command, options = {}) {
       error: e.message,
       output: e.stdout?.toString() || '',
       stderr: e.stderr?.toString() || '',
-      exitCode: e.status || 1
+      exitCode: e.status || 1,
     };
   }
 }
@@ -90,42 +92,42 @@ function safeExec(command, options = {}) {
  * Execute command asynchronously with streaming
  */
 function execAsync(command, options = {}) {
-  return new Promise((resolve) => {
+  return new Promise(resolve => {
     const shell = IS_WINDOWS ? 'cmd.exe' : '/bin/bash';
     const shellArgs = IS_WINDOWS ? ['/c', command] : ['-c', command];
 
     const proc = spawn(shell, shellArgs, {
       cwd: options.cwd || HOME,
       env: { ...process.env, ...options.env },
-      windowsHide: true
+      windowsHide: true,
     });
 
     let stdout = '';
     let stderr = '';
 
-    proc.stdout.on('data', (data) => {
+    proc.stdout.on('data', data => {
       stdout += data.toString();
     });
-    proc.stderr.on('data', (data) => {
+    proc.stderr.on('data', data => {
       stderr += data.toString();
     });
 
-    proc.on('close', (code) => {
+    proc.on('close', code => {
       resolve({
         success: code === 0,
         output: stdout.trim(),
         stderr: stderr.trim(),
-        exitCode: code
+        exitCode: code,
       });
     });
 
-    proc.on('error', (err) => {
+    proc.on('error', err => {
       resolve({
         success: false,
         error: err.message,
         output: stdout,
         stderr: stderr,
-        exitCode: 1
+        exitCode: 1,
       });
     });
 
@@ -137,7 +139,7 @@ function execAsync(command, options = {}) {
         error: 'Command timed out',
         output: stdout,
         stderr: stderr,
-        exitCode: 124
+        exitCode: 124,
       });
     }, options.timeout || 120000);
   });
@@ -231,7 +233,7 @@ function logAction(action, details) {
   const entry = {
     timestamp: new Date().toISOString(),
     action,
-    ...details
+    ...details,
   };
   taskState.history.push(entry);
   // Keep last 100 actions
@@ -257,7 +259,7 @@ const tools = {
       return {
         success: false,
         error: `Directory does not exist: ${workingDir}`,
-        suggestion: 'Create the directory first or use a valid path'
+        suggestion: 'Create the directory first or use a valid path',
       };
     }
 
@@ -269,19 +271,19 @@ const tools = {
         cwd: workingDir,
         detached: true,
         stdio: 'ignore',
-        windowsHide: true
+        windowsHide: true,
       });
       proc.unref();
       return {
         success: true,
         message: `Command started in background (PID: ${proc.pid})`,
-        pid: proc.pid
+        pid: proc.pid,
       };
     }
 
     const result = await execAsync(command, {
       cwd: workingDir,
-      timeout: timeout || 120000
+      timeout: timeout || 120000,
     });
 
     return {
@@ -290,7 +292,7 @@ const tools = {
       stderr: result.stderr,
       exitCode: result.exitCode,
       error: result.error,
-      cwd: workingDir
+      cwd: workingDir,
     };
   },
 
@@ -312,7 +314,7 @@ const tools = {
         content,
         size: stats.size,
         modified: stats.mtime.toISOString(),
-        lines: content.split('\n').length
+        lines: content.split('\n').length,
       };
     } catch (e) {
       return { success: false, error: e.message };
@@ -338,7 +340,7 @@ const tools = {
         success: true,
         path: filePath,
         size: Buffer.byteLength(content, 'utf8'),
-        message: append ? 'Content appended' : 'File written'
+        message: append ? 'Content appended' : 'File written',
       };
     } catch (e) {
       return { success: false, error: e.message };
@@ -366,7 +368,7 @@ const tools = {
         return {
           success: true,
           changed: false,
-          message: 'No changes made - pattern not found'
+          message: 'No changes made - pattern not found',
         };
       }
 
@@ -376,7 +378,7 @@ const tools = {
         success: true,
         changed: true,
         path: filePath,
-        message: 'File updated successfully'
+        message: 'File updated successfully',
       };
     } catch (e) {
       return { success: false, error: e.message };
@@ -443,7 +445,7 @@ const tools = {
           const item = {
             name: entry.name,
             path: relativePath,
-            type: entry.isDirectory() ? 'directory' : 'file'
+            type: entry.isDirectory() ? 'directory' : 'file',
           };
 
           if (!entry.isDirectory()) {
@@ -467,7 +469,7 @@ const tools = {
         success: true,
         path: dirPath,
         count: items.length,
-        items: items.slice(0, 200) // Limit output
+        items: items.slice(0, 200), // Limit output
       };
     } catch (e) {
       return { success: false, error: e.message };
@@ -540,7 +542,7 @@ const tools = {
               results.push({
                 path: fullPath,
                 name: entry.name,
-                matches: matchingLines
+                matches: matchingLines,
               });
             }
 
@@ -559,13 +561,12 @@ const tools = {
         pattern,
         contentPattern,
         count: results.length,
-        results
+        results,
       };
     } catch (e) {
       return { success: false, error: e.message };
     }
   },
-
 
   // ===========================================================================
   // 3. GIT OPERATIONS - Full version control
@@ -584,7 +585,7 @@ const tools = {
       branch: branch.success ? branch.output : 'unknown',
       remotes: remote.success ? remote.output : '',
       changes: status.success ? status.output.split('\n').filter(l => l) : [],
-      clean: status.success && !status.output.trim()
+      clean: status.success && !status.output.trim(),
     };
   },
 
@@ -604,7 +605,7 @@ const tools = {
     return {
       success: commitResult.success,
       output: commitResult.output,
-      error: commitResult.error
+      error: commitResult.error,
     };
   },
 
@@ -629,7 +630,7 @@ const tools = {
       success: result.success,
       output: result.output,
       stderr: result.stderr,
-      error: result.error
+      error: result.error,
     };
   },
 
@@ -650,7 +651,7 @@ const tools = {
     return {
       success: result.success,
       output: result.output,
-      error: result.error
+      error: result.error,
     };
   },
 
@@ -671,7 +672,7 @@ const tools = {
       success: result.success,
       output: result.output,
       error: result.error,
-      path: destPath || path.basename(url, '.git')
+      path: destPath || path.basename(url, '.git'),
     };
   },
 
@@ -693,8 +694,13 @@ const tools = {
     const result = safeExec('git branch -a', { cwd });
     return {
       success: result.success,
-      branches: result.success ? result.output.split('\n').map(b => b.trim()).filter(b => b) : [],
-      error: result.error
+      branches: result.success
+        ? result.output
+            .split('\n')
+            .map(b => b.trim())
+            .filter(b => b)
+        : [],
+      error: result.error,
     };
   },
 
@@ -710,9 +716,8 @@ const tools = {
     const hasRequirements = fileExists(path.join(cwd, 'requirements.txt'));
     const hasPyproject = fileExists(path.join(cwd, 'pyproject.toml'));
 
-    const detectedManager = manager ||
-      (hasPackageJson ? 'npm' :
-        hasRequirements || hasPyproject ? 'pip' : 'npm');
+    const detectedManager =
+      manager || (hasPackageJson ? 'npm' : hasRequirements || hasPyproject ? 'pip' : 'npm');
 
     let cmd;
     const pkgList = Array.isArray(packages) ? packages.join(' ') : packages;
@@ -744,7 +749,7 @@ const tools = {
       manager: detectedManager,
       packages: pkgList,
       output: result.output,
-      error: result.error
+      error: result.error,
     };
   },
 
@@ -767,14 +772,13 @@ const tools = {
           script,
           output: result.output,
           stderr: result.stderr,
-          error: result.error
+          error: result.error,
         };
       }
     }
 
     return { success: false, error: `Script "${script}" not found in package.json` };
   },
-
 
   // ===========================================================================
   // 5. PROJECT CREATION - Full project scaffolding
@@ -797,7 +801,7 @@ const tools = {
         // Create React project using Vite (faster than CRA)
         const result = safeExec(`npm create vite@latest ${name} -- --template react-ts`, {
           cwd: path.dirname(projectPath),
-          timeout: 120000
+          timeout: 120000,
         });
         if (result.success) {
           results.steps.push({ step: 'Created Vite React TypeScript project', success: true });
@@ -819,7 +823,7 @@ const tools = {
         results.steps.push({
           step: 'Created Next.js project',
           success: result.success,
-          error: result.error
+          error: result.error,
         });
         results.success = result.success;
         return 'Next.js project with TypeScript, Tailwind, App Router';
@@ -832,7 +836,8 @@ const tools = {
 
         // Create files
         const files = {
-          'requirements.txt': '# Dependencies\nfastapi>=0.100.0\nuvicorn>=0.22.0\npython-dotenv>=1.0.0\n',
+          'requirements.txt':
+            '# Dependencies\nfastapi>=0.100.0\nuvicorn>=0.22.0\npython-dotenv>=1.0.0\n',
           'src/__init__.py': '',
           'src/main.py': `"""${name} - Main Application"""
 from fastapi import FastAPI
@@ -865,7 +870,7 @@ def test_root():
 `,
           'README.md': `# ${name}\n\n## Setup\n\`\`\`bash\npip install -r requirements.txt\n\`\`\`\n\n## Run\n\`\`\`bash\nuvicorn src.main:app --reload\n\`\`\`\n`,
           '.gitignore': '__pycache__/\n*.py[cod]\n*$py.class\n.env\nvenv/\n.venv/\n*.egg-info/\n',
-          '.env.example': 'DEBUG=true\nAPI_KEY=your-key-here\n'
+          '.env.example': 'DEBUG=true\nAPI_KEY=your-key-here\n',
         };
 
         Object.entries(files).forEach(([filename, content]) => {
@@ -918,7 +923,7 @@ module.exports = app;
 `,
           '.gitignore': 'node_modules/\n.env\n*.log\ndist/\n',
           '.env.example': 'PORT=3000\nNODE_ENV=development\n',
-          'README.md': `# ${name}\n\n## Install\n\`\`\`bash\nnpm install\n\`\`\`\n\n## Run\n\`\`\`bash\nnpm start\n\`\`\`\n`
+          'README.md': `# ${name}\n\n## Install\n\`\`\`bash\nnpm install\n\`\`\`\n\n## Run\n\`\`\`bash\nnpm start\n\`\`\`\n`,
         };
 
         Object.entries(files).forEach(([filename, content]) => {
@@ -932,7 +937,7 @@ module.exports = app;
         pkg.scripts = {
           start: 'node src/index.js',
           dev: 'node --watch src/index.js',
-          test: 'jest'
+          test: 'jest',
         };
         fs.writeFileSync(pkgPath, JSON.stringify(pkg, null, 2));
 
@@ -951,7 +956,12 @@ module.exports = app;
         fs.mkdirSync(path.join(projectPath, 'src'), { recursive: true });
 
         // Copy from this project's template
-        const templateSrc = path.join(PATHS.projectRoot, 'templates', 'workspace-rules', 'mcp-server.md');
+        const templateSrc = path.join(
+          PATHS.projectRoot,
+          'templates',
+          'workspace-rules',
+          'mcp-server.md'
+        );
         if (fileExists(templateSrc)) {
           fs.copyFileSync(templateSrc, path.join(projectPath, 'GUIDE.md'));
         }
@@ -963,7 +973,7 @@ module.exports = app;
           type: 'module',
           main: 'src/index.js',
           scripts: { start: 'node src/index.js' },
-          dependencies: { '@modelcontextprotocol/sdk': '^1.0.0' }
+          dependencies: { '@modelcontextprotocol/sdk': '^1.0.0' },
         };
         fs.writeFileSync(path.join(projectPath, 'package.json'), JSON.stringify(pkg, null, 2));
 
@@ -1019,7 +1029,7 @@ await server.connect(transport);
         safeExec('git init', { cwd: projectPath });
         results.steps.push({ step: 'Created empty project', success: true });
         return 'Empty project with git';
-      }
+      },
     };
 
     const templateFn = templates[type] || templates.empty;
@@ -1031,13 +1041,9 @@ await server.connect(transport);
       type,
       description,
       steps: results.steps,
-      nextSteps: [
-        `Open ${projectPath} in your editor`,
-        'Start building your project!'
-      ]
+      nextSteps: [`Open ${projectPath} in your editor`, 'Start building your project!'],
     };
   },
-
 
   // ===========================================================================
   // 6. TASK ORCHESTRATION - Multi-step autonomous tasks
@@ -1069,10 +1075,14 @@ await server.connect(transport);
         results.push({
           step: i + 1,
           description: step.description || step.command || step.tool,
-          ...result
+          ...result,
         });
 
-        taskState.currentTask.steps.push({ ...step, result, completedAt: new Date().toISOString() });
+        taskState.currentTask.steps.push({
+          ...step,
+          result,
+          completedAt: new Date().toISOString(),
+        });
 
         // Stop on failure unless step is marked as optional
         if (!result.success && !step.optional) {
@@ -1085,7 +1095,7 @@ await server.connect(transport);
             error: result.error,
             message: `Task failed at step ${i + 1}: ${step.description || ''}`,
             canContinue: true,
-            suggestion: 'Use continue_task to retry or skip this step'
+            suggestion: 'Use continue_task to retry or skip this step',
           };
         }
       } catch (e) {
@@ -1096,7 +1106,7 @@ await server.connect(transport);
           completedSteps: i,
           totalSteps: steps.length,
           results,
-          error: e.message
+          error: e.message,
         };
       }
     }
@@ -1108,7 +1118,7 @@ await server.connect(transport);
       completedSteps: steps.length,
       totalSteps: steps.length,
       results,
-      message: `Task "${task}" completed successfully!`
+      message: `Task "${task}" completed successfully!`,
     };
   },
 
@@ -1120,7 +1130,7 @@ await server.connect(transport);
         success: false,
         error: 'No active task to continue',
         lastError: taskState.lastError,
-        history: taskState.history.slice(-5)
+        history: taskState.history.slice(-5),
       };
     }
 
@@ -1133,7 +1143,7 @@ await server.connect(transport);
         success: true,
         action: 'retry',
         message: `Will retry step ${stepIndex + 1}`,
-        step: task.steps[stepIndex]
+        step: task.steps[stepIndex],
       };
     }
 
@@ -1144,7 +1154,7 @@ await server.connect(transport);
         success: true,
         action: 'skip',
         message: `Skipped step ${task.currentStep}, continuing...`,
-        nextStep: task.currentStep
+        nextStep: task.currentStep,
       };
     }
 
@@ -1168,7 +1178,12 @@ await server.connect(transport);
     // Check Node.js
     const nodeCheck = safeExec('node --version');
     if (!nodeCheck.success) {
-      issues.push({ severity: 'critical', issue: 'Node.js not installed', fix: 'install_nodejs', autoFix: false });
+      issues.push({
+        severity: 'critical',
+        issue: 'Node.js not installed',
+        fix: 'install_nodejs',
+        autoFix: false,
+      });
       status.healthy = false;
     } else {
       status.nodeVersion = nodeCheck.output;
@@ -1177,7 +1192,12 @@ await server.connect(transport);
     // Check npm
     const npmCheck = safeExec('npm --version');
     if (!npmCheck.success) {
-      issues.push({ severity: 'critical', issue: 'npm not available', fix: 'reinstall_node', autoFix: false });
+      issues.push({
+        severity: 'critical',
+        issue: 'npm not available',
+        fix: 'reinstall_node',
+        autoFix: false,
+      });
       status.healthy = false;
     } else {
       status.npmVersion = npmCheck.output;
@@ -1186,7 +1206,12 @@ await server.connect(transport);
     // Check Git
     const gitCheck = safeExec('git --version');
     if (!gitCheck.success) {
-      issues.push({ severity: 'warning', issue: 'Git not installed', fix: 'install_git', autoFix: false });
+      issues.push({
+        severity: 'warning',
+        issue: 'Git not installed',
+        fix: 'install_git',
+        autoFix: false,
+      });
     } else {
       status.gitVersion = gitCheck.output;
     }
@@ -1206,11 +1231,21 @@ await server.connect(transport);
     // Check Windsurf settings
     const settingsPath = path.join(PATHS.windsurfSettings, 'settings.json');
     if (!fileExists(settingsPath)) {
-      issues.push({ severity: 'warning', issue: 'Windsurf settings not configured', fix: 'setup_windsurf', autoFix: true });
+      issues.push({
+        severity: 'warning',
+        issue: 'Windsurf settings not configured',
+        fix: 'setup_windsurf',
+        autoFix: true,
+      });
     } else {
       const settings = readJsonSafe(settingsPath);
       if (!settings.success) {
-        issues.push({ severity: 'critical', issue: 'settings.json is corrupted', fix: 'repair_settings', autoFix: true });
+        issues.push({
+          severity: 'critical',
+          issue: 'settings.json is corrupted',
+          fix: 'repair_settings',
+          autoFix: true,
+        });
         status.healthy = false;
       } else {
         status.windsurfSettingsValid = true;
@@ -1220,11 +1255,21 @@ await server.connect(transport);
     // Check MCP config
     const mcpPath = path.join(PATHS.codeium, 'mcp_config.json');
     if (!fileExists(mcpPath)) {
-      issues.push({ severity: 'info', issue: 'MCP servers not configured', fix: 'setup_mcp', autoFix: true });
+      issues.push({
+        severity: 'info',
+        issue: 'MCP servers not configured',
+        fix: 'setup_mcp',
+        autoFix: true,
+      });
     } else {
       const mcp = readJsonSafe(mcpPath);
       if (!mcp.success) {
-        issues.push({ severity: 'critical', issue: 'mcp_config.json is corrupted', fix: 'repair_mcp', autoFix: true });
+        issues.push({
+          severity: 'critical',
+          issue: 'mcp_config.json is corrupted',
+          fix: 'repair_mcp',
+          autoFix: true,
+        });
         status.healthy = false;
       } else {
         status.mcpServers = Object.keys(mcp.data.mcpServers || {}).length;
@@ -1234,21 +1279,32 @@ await server.connect(transport);
     // Check global rules
     const rulesPath = path.join(PATHS.memories, 'global_rules.md');
     if (!fileExists(rulesPath)) {
-      issues.push({ severity: 'info', issue: 'AI global rules not set', fix: 'setup_rules', autoFix: true });
+      issues.push({
+        severity: 'info',
+        issue: 'AI global rules not set',
+        fix: 'setup_rules',
+        autoFix: true,
+      });
     }
 
     // Check Projects directory
     if (!fileExists(PATHS.projects)) {
-      issues.push({ severity: 'info', issue: 'Projects directory not found', fix: 'create_projects_dir', autoFix: true });
+      issues.push({
+        severity: 'info',
+        issue: 'Projects directory not found',
+        fix: 'create_projects_dir',
+        autoFix: true,
+      });
     }
 
     return {
       status,
       issues,
       autoFixable: issues.filter(i => i.autoFix).length,
-      summary: issues.length === 0
-        ? '✅ Environment is healthy! All systems operational.'
-        : `Found ${issues.length} issue(s). ${issues.filter(i => i.autoFix).length} can be auto-fixed.`
+      summary:
+        issues.length === 0
+          ? '✅ Environment is healthy! All systems operational.'
+          : `Found ${issues.length} issue(s). ${issues.filter(i => i.autoFix).length} can be auto-fixed.`,
     };
   },
 
@@ -1263,7 +1319,9 @@ await server.connect(transport);
           return { success: false, message: 'Source settings.json not found' };
         }
         const result = copyFileSafe(src, dest);
-        return result.success ? { success: true, message: 'Windsurf settings installed' } : { success: false, message: result.error };
+        return result.success
+          ? { success: true, message: 'Windsurf settings installed' }
+          : { success: false, message: result.error };
       },
 
       setup_mcp: async () => {
@@ -1273,7 +1331,9 @@ await server.connect(transport);
           return { success: false, message: 'Source mcp_config.json not found' };
         }
         const result = copyFileSafe(src, dest);
-        return result.success ? { success: true, message: 'MCP configuration installed' } : { success: false, message: result.error };
+        return result.success
+          ? { success: true, message: 'MCP configuration installed' }
+          : { success: false, message: result.error };
       },
 
       setup_rules: async () => {
@@ -1283,7 +1343,9 @@ await server.connect(transport);
           return { success: false, message: 'Source global_rules.md not found' };
         }
         const result = copyFileSafe(src, dest);
-        return result.success ? { success: true, message: 'AI global rules installed' } : { success: false, message: result.error };
+        return result.success
+          ? { success: true, message: 'AI global rules installed' }
+          : { success: false, message: result.error };
       },
 
       repair_settings: async () => {
@@ -1306,13 +1368,17 @@ await server.connect(transport);
 
       create_projects_dir: async () => {
         const result = writeFileSafe(path.join(PATHS.projects, '.keep'), '');
-        return result.success ? { success: true, message: 'Projects directory created' } : { success: false, message: result.error };
+        return result.success
+          ? { success: true, message: 'Projects directory created' }
+          : { success: false, message: result.error };
       },
 
       install_dependencies: async () => {
         const result = safeExec('npm install', { cwd: PATHS.projectRoot, timeout: 120000 });
-        return result.success ? { success: true, message: 'Dependencies installed' } : { success: false, message: result.error };
-      }
+        return result.success
+          ? { success: true, message: 'Dependencies installed' }
+          : { success: false, message: result.error };
+      },
     };
 
     if (all) {
@@ -1328,12 +1394,15 @@ await server.connect(transport);
     }
 
     if (!fixes[issue_type]) {
-      return { success: false, message: `Unknown fix type: ${issue_type}`, available: Object.keys(fixes) };
+      return {
+        success: false,
+        message: `Unknown fix type: ${issue_type}`,
+        available: Object.keys(fixes),
+      };
     }
 
     return await fixes[issue_type]();
   },
-
 
   // ===========================================================================
   // 8. COMPLETE SETUP - Full automated setup
@@ -1358,8 +1427,8 @@ await server.connect(transport);
       nextSteps: [
         'Restart Windsurf IDE',
         'Test by saying: "Check my status"',
-        'Create a project: "Make me a website called my-site"'
-      ]
+        'Create a project: "Make me a website called my-site"',
+      ],
     };
   },
 
@@ -1381,10 +1450,10 @@ await server.connect(transport);
           'Install Windsurf settings',
           'Configure MCP servers',
           'Set up AI rules',
-          'Install dependencies'
+          'Install dependencies',
         ],
         tool: 'complete_setup',
-        willDo: 'I will configure everything. You just need to restart Windsurf after.'
+        willDo: 'I will configure everything. You just need to restart Windsurf after.',
       },
 
       'website|web|react|nextjs|frontend': {
@@ -1394,11 +1463,11 @@ await server.connect(transport);
           'Create project directory',
           'Set up Next.js with TypeScript & Tailwind',
           'Initialize Git repository',
-          'Install all dependencies'
+          'Install all dependencies',
         ],
         tool: 'create_project',
         args: { type: 'nextjs' },
-        willDo: 'I will create a complete Next.js website. Just give me a name for it.'
+        willDo: 'I will create a complete Next.js website. Just give me a name for it.',
       },
 
       'api|backend|server|python|fastapi': {
@@ -1409,11 +1478,11 @@ await server.connect(transport);
           'Set up FastAPI with uvicorn',
           'Create example endpoints',
           'Set up tests',
-          'Initialize Git'
+          'Initialize Git',
         ],
         tool: 'create_project',
         args: { type: 'python' },
-        willDo: 'I will create a Python API project. Just give me a name.'
+        willDo: 'I will create a Python API project. Just give me a name.',
       },
 
       'mcp|plugin|extension|tool': {
@@ -1423,11 +1492,11 @@ await server.connect(transport);
           'Create MCP server structure',
           'Set up SDK dependencies',
           'Create example tool',
-          'Configure for Windsurf'
+          'Configure for Windsurf',
         ],
         tool: 'create_project',
         args: { type: 'mcp' },
-        willDo: 'I will create an MCP server template you can customize.'
+        willDo: 'I will create an MCP server template you can customize.',
       },
 
       'fix|repair|diagnose|problem|error|issue': {
@@ -1437,10 +1506,10 @@ await server.connect(transport);
           'Scan for issues',
           'Identify fixable problems',
           'Auto-repair what I can',
-          'Report what needs manual attention'
+          'Report what needs manual attention',
         ],
         tool: 'diagnose_environment',
-        willDo: 'I will find and fix issues automatically. Just say "fix it" after diagnosis.'
+        willDo: 'I will find and fix issues automatically. Just say "fix it" after diagnosis.',
       },
 
       'status|check|health|ready': {
@@ -1450,36 +1519,27 @@ await server.connect(transport);
           'Check installed tools',
           'Verify configurations',
           'Test connectivity',
-          'Report status'
+          'Report status',
         ],
         tool: 'get_status',
-        willDo: 'I will check your entire environment and tell you what\'s working.'
+        willDo: "I will check your entire environment and tell you what's working.",
       },
 
       'git|commit|push|version': {
         name: 'Git Operations',
         description: 'Manage version control',
-        steps: [
-          'Check current status',
-          'Stage changes',
-          'Create commit',
-          'Push to remote'
-        ],
+        steps: ['Check current status', 'Stage changes', 'Create commit', 'Push to remote'],
         tool: 'git_status',
-        willDo: 'I can help with Git. Tell me: commit, push, pull, or status.'
+        willDo: 'I can help with Git. Tell me: commit, push, pull, or status.',
       },
 
       'run|start|dev|serve': {
         name: 'Run Project',
         description: 'Start development server or run scripts',
-        steps: [
-          'Detect project type',
-          'Find available scripts',
-          'Start appropriate command'
-        ],
+        steps: ['Detect project type', 'Find available scripts', 'Start appropriate command'],
         tool: 'run_script',
-        willDo: 'I will start your project. What script should I run? (e.g., dev, start, build)'
-      }
+        willDo: 'I will start your project. What script should I run? (e.g., dev, start, build)',
+      },
     };
 
     // Find matching guide
@@ -1490,7 +1550,7 @@ await server.connect(transport);
           found: true,
           ...guide,
           message: `I can help with "${guide.name}". Here's what I'll do:`,
-          prompt: guide.willDo
+          prompt: guide.willDo,
         };
       }
     }
@@ -1499,7 +1559,7 @@ await server.connect(transport);
       found: false,
       message: "I'm not sure what you want to do. I can help with:",
       suggestions: Object.values(guides).map(g => ({ name: g.name, description: g.description })),
-      hint: 'Try saying something like: "set up my environment", "create a website", or "fix my issues"'
+      hint: 'Try saying something like: "set up my environment", "create a website", or "fix my issues"',
     };
   },
 
@@ -1517,7 +1577,7 @@ await server.connect(transport);
       homeDir: HOME,
       paths: PATHS,
       currentTask: taskState.currentTask,
-      lastActions: taskState.history.slice(-5)
+      lastActions: taskState.history.slice(-5),
     };
 
     // Check each component
@@ -1543,7 +1603,7 @@ await server.connect(transport);
 
     // Windsurf settings
     components.windsurfSettings = {
-      exists: fileExists(path.join(PATHS.windsurfSettings, 'settings.json'))
+      exists: fileExists(path.join(PATHS.windsurfSettings, 'settings.json')),
     };
 
     // MCP config
@@ -1553,7 +1613,7 @@ await server.connect(transport);
       components.mcpConfig = {
         exists: true,
         valid: mcp.success,
-        serverCount: mcp.success ? Object.keys(mcp.data.mcpServers || {}).length : 0
+        serverCount: mcp.success ? Object.keys(mcp.data.mcpServers || {}).length : 0,
       };
     } else {
       components.mcpConfig = { exists: false };
@@ -1561,7 +1621,7 @@ await server.connect(transport);
 
     // Global rules
     components.globalRules = {
-      exists: fileExists(path.join(PATHS.memories, 'global_rules.md'))
+      exists: fileExists(path.join(PATHS.memories, 'global_rules.md')),
     };
 
     // Projects directory
@@ -1571,7 +1631,8 @@ await server.connect(transport);
 
     // Overall readiness
     const critical = components.node.installed && components.npm.installed;
-    const recommended = components.git.installed && components.windsurfSettings.exists && components.mcpConfig.exists;
+    const recommended =
+      components.git.installed && components.windsurfSettings.exists && components.mcpConfig.exists;
 
     status.ready = critical;
     status.fullyConfigured = critical && recommended;
@@ -1584,7 +1645,7 @@ await server.connect(transport);
       status.action = 'Run complete_setup to finish configuration';
     } else {
       status.message = '✅ Fully operational! Ready for vibe coding.';
-      status.action = 'You\'re all set! Start creating!';
+      status.action = "You're all set! Start creating!";
     }
 
     return status;
@@ -1599,7 +1660,7 @@ await server.connect(transport);
       count: taskState.history.length,
       actions: taskState.history.slice(-(limit || 20)),
       currentTask: taskState.currentTask,
-      lastError: taskState.lastError
+      lastError: taskState.lastError,
     };
   },
 
@@ -1607,87 +1668,86 @@ await server.connect(transport);
   // NEW v2.1 TOOLS - Project Intelligence, Error Analysis, HTTP, Quality, Testing
   // ===========================================================================
 
-  analyze_project: async (args) => {
+  analyze_project: async args => {
     logAction('analyze_project', args);
     return await additionalTools.analyzeProject(args);
   },
 
-  detect_tech_stack: async (args) => {
+  detect_tech_stack: async args => {
     logAction('detect_tech_stack', args);
     return await additionalTools.detectTechStack(args);
   },
 
-  analyze_error: async (args) => {
+  analyze_error: async args => {
     logAction('analyze_error', args);
     return await additionalTools.analyzeError(args);
   },
 
-  smart_retry: async (args) => {
+  smart_retry: async args => {
     logAction('smart_retry', args);
     return await additionalTools.smartRetry(args);
   },
 
-  http_request: async (args) => {
+  http_request: async args => {
     logAction('http_request', args);
     return await additionalTools.httpRequest(args);
   },
 
-  download_file: async (args) => {
+  download_file: async args => {
     logAction('download_file', args);
     return await additionalTools.downloadFile(args);
   },
 
-  lint_code: async (args) => {
+  lint_code: async args => {
     logAction('lint_code', args);
     return await additionalTools.lintCode(args);
   },
 
-  format_code: async (args) => {
+  format_code: async args => {
     logAction('format_code', args);
     return await additionalTools.formatCode(args);
   },
 
-  run_tests: async (args) => {
+  run_tests: async args => {
     logAction('run_tests', args);
     return await additionalTools.runTests(args);
   },
 
-  start_server: async (args) => {
+  start_server: async args => {
     logAction('start_server', args);
     return await additionalTools.startServer(args);
   },
 
-  stop_server: async (args) => {
+  stop_server: async args => {
     logAction('stop_server', args);
     return await additionalTools.stopServer(args);
   },
 
-  list_running: async (args) => {
+  list_running: async args => {
     logAction('list_running', args);
     return await additionalTools.listRunning(args);
   },
 
-  docker_status: async (args) => {
+  docker_status: async args => {
     logAction('docker_status', args);
     return await additionalTools.dockerStatus(args);
   },
 
-  docker_build: async (args) => {
+  docker_build: async args => {
     logAction('docker_build', args);
     return await additionalTools.dockerBuild(args);
   },
 
-  docker_run: async (args) => {
+  docker_run: async args => {
     logAction('docker_run', args);
     return await additionalTools.dockerRun(args);
   },
 
-  docker_compose_up: async (args) => {
+  docker_compose_up: async args => {
     logAction('docker_compose_up', args);
     return await additionalTools.dockerComposeUp(args);
-  }
+  },
 };
-
 
 // ==============================================================================
 // MCP SERVER SETUP
@@ -1702,17 +1762,18 @@ const toolDefinitions = [
   // Command Execution
   {
     name: 'execute_command',
-    description: 'Execute ANY terminal command. Use this to run npm, pip, git, or any shell command for the user.',
+    description:
+      'Execute ANY terminal command. Use this to run npm, pip, git, or any shell command for the user.',
     inputSchema: {
       type: 'object',
       properties: {
         command: { type: 'string', description: 'Command to execute' },
         cwd: { type: 'string', description: 'Working directory (optional)' },
         timeout: { type: 'number', description: 'Timeout in ms (default: 120000)' },
-        background: { type: 'boolean', description: 'Run in background' }
+        background: { type: 'boolean', description: 'Run in background' },
       },
-      required: ['command']
-    }
+      required: ['command'],
+    },
   },
 
   // File Operations
@@ -1723,10 +1784,10 @@ const toolDefinitions = [
       type: 'object',
       properties: {
         path: { type: 'string', description: 'File path to read' },
-        encoding: { type: 'string', description: 'Encoding (default: utf8)' }
+        encoding: { type: 'string', description: 'Encoding (default: utf8)' },
       },
-      required: ['path']
-    }
+      required: ['path'],
+    },
   },
   {
     name: 'write_file',
@@ -1737,10 +1798,10 @@ const toolDefinitions = [
         path: { type: 'string', description: 'File path to write' },
         content: { type: 'string', description: 'Content to write' },
         append: { type: 'boolean', description: 'Append instead of overwrite' },
-        createDirs: { type: 'boolean', description: 'Create parent directories (default: true)' }
+        createDirs: { type: 'boolean', description: 'Create parent directories (default: true)' },
       },
-      required: ['path', 'content']
-    }
+      required: ['path', 'content'],
+    },
   },
   {
     name: 'edit_file',
@@ -1751,10 +1812,10 @@ const toolDefinitions = [
         path: { type: 'string', description: 'File path to edit' },
         find: { type: 'string', description: 'Text to find' },
         replace: { type: 'string', description: 'Replacement text' },
-        replaceAll: { type: 'boolean', description: 'Replace all occurrences' }
+        replaceAll: { type: 'boolean', description: 'Replace all occurrences' },
       },
-      required: ['path', 'find', 'replace']
-    }
+      required: ['path', 'find', 'replace'],
+    },
   },
   {
     name: 'delete_file',
@@ -1763,10 +1824,10 @@ const toolDefinitions = [
       type: 'object',
       properties: {
         path: { type: 'string', description: 'Path to delete' },
-        recursive: { type: 'boolean', description: 'Delete directories recursively' }
+        recursive: { type: 'boolean', description: 'Delete directories recursively' },
       },
-      required: ['path']
-    }
+      required: ['path'],
+    },
   },
   {
     name: 'list_directory',
@@ -1776,10 +1837,10 @@ const toolDefinitions = [
       properties: {
         path: { type: 'string', description: 'Directory path' },
         recursive: { type: 'boolean', description: 'Include subdirectories' },
-        pattern: { type: 'string', description: 'Filter by name pattern' }
+        pattern: { type: 'string', description: 'Filter by name pattern' },
       },
-      required: ['path']
-    }
+      required: ['path'],
+    },
   },
   {
     name: 'search_files',
@@ -1790,10 +1851,10 @@ const toolDefinitions = [
         path: { type: 'string', description: 'Directory to search' },
         pattern: { type: 'string', description: 'Filename pattern' },
         contentPattern: { type: 'string', description: 'Search file contents' },
-        fileExtensions: { type: 'string', description: 'File extensions (e.g., ".js,.ts")' }
+        fileExtensions: { type: 'string', description: 'File extensions (e.g., ".js,.ts")' },
       },
-      required: ['path']
-    }
+      required: ['path'],
+    },
   },
 
   // Git Operations
@@ -1803,9 +1864,9 @@ const toolDefinitions = [
     inputSchema: {
       type: 'object',
       properties: {
-        path: { type: 'string', description: 'Repository path' }
-      }
-    }
+        path: { type: 'string', description: 'Repository path' },
+      },
+    },
   },
   {
     name: 'git_commit',
@@ -1815,10 +1876,10 @@ const toolDefinitions = [
       properties: {
         path: { type: 'string', description: 'Repository path' },
         message: { type: 'string', description: 'Commit message' },
-        addAll: { type: 'boolean', description: 'Stage all changes (default: true)' }
+        addAll: { type: 'boolean', description: 'Stage all changes (default: true)' },
       },
-      required: ['message']
-    }
+      required: ['message'],
+    },
   },
   {
     name: 'git_push',
@@ -1829,9 +1890,9 @@ const toolDefinitions = [
         path: { type: 'string', description: 'Repository path' },
         remote: { type: 'string', description: 'Remote name (default: origin)' },
         branch: { type: 'string', description: 'Branch name' },
-        force: { type: 'boolean', description: 'Force push' }
-      }
-    }
+        force: { type: 'boolean', description: 'Force push' },
+      },
+    },
   },
   {
     name: 'git_pull',
@@ -1841,9 +1902,9 @@ const toolDefinitions = [
       properties: {
         path: { type: 'string', description: 'Repository path' },
         remote: { type: 'string', description: 'Remote name' },
-        branch: { type: 'string', description: 'Branch name' }
-      }
-    }
+        branch: { type: 'string', description: 'Branch name' },
+      },
+    },
   },
   {
     name: 'git_clone',
@@ -1853,10 +1914,10 @@ const toolDefinitions = [
       properties: {
         url: { type: 'string', description: 'Repository URL' },
         path: { type: 'string', description: 'Destination path' },
-        branch: { type: 'string', description: 'Branch to clone' }
+        branch: { type: 'string', description: 'Branch to clone' },
       },
-      required: ['url']
-    }
+      required: ['url'],
+    },
   },
   {
     name: 'git_branch',
@@ -1867,9 +1928,9 @@ const toolDefinitions = [
         path: { type: 'string', description: 'Repository path' },
         name: { type: 'string', description: 'Branch name' },
         checkout: { type: 'boolean', description: 'Create and checkout branch' },
-        delete: { type: 'boolean', description: 'Delete branch' }
-      }
-    }
+        delete: { type: 'boolean', description: 'Delete branch' },
+      },
+    },
   },
 
   // Package Management
@@ -1880,18 +1941,19 @@ const toolDefinitions = [
       type: 'object',
       properties: {
         packages: {
-          oneOf: [
-            { type: 'string' },
-            { type: 'array', items: { type: 'string' } }
-          ],
-          description: 'Package(s) to install'
+          oneOf: [{ type: 'string' }, { type: 'array', items: { type: 'string' } }],
+          description: 'Package(s) to install',
         },
         path: { type: 'string', description: 'Project path' },
-        manager: { type: 'string', enum: ['npm', 'yarn', 'pnpm', 'pip', 'pip3'], description: 'Package manager' },
-        dev: { type: 'boolean', description: 'Install as dev dependency' }
+        manager: {
+          type: 'string',
+          enum: ['npm', 'yarn', 'pnpm', 'pip', 'pip3'],
+          description: 'Package manager',
+        },
+        dev: { type: 'boolean', description: 'Install as dev dependency' },
       },
-      required: ['packages']
-    }
+      required: ['packages'],
+    },
   },
   {
     name: 'run_script',
@@ -1901,10 +1963,10 @@ const toolDefinitions = [
       properties: {
         script: { type: 'string', description: 'Script name (e.g., dev, build, test)' },
         path: { type: 'string', description: 'Project path' },
-        args: { type: 'string', description: 'Additional arguments' }
+        args: { type: 'string', description: 'Additional arguments' },
       },
-      required: ['script']
-    }
+      required: ['script'],
+    },
   },
 
   // Project Creation
@@ -1918,14 +1980,14 @@ const toolDefinitions = [
         type: {
           type: 'string',
           enum: ['react', 'nextjs', 'python', 'node', 'mcp', 'empty'],
-          description: 'Project type'
+          description: 'Project type',
         },
         path: { type: 'string', description: 'Parent directory (default: ~/Projects)' },
         template: { type: 'string', description: 'Template name' },
-        features: { type: 'array', items: { type: 'string' }, description: 'Additional features' }
+        features: { type: 'array', items: { type: 'string' }, description: 'Additional features' },
       },
-      required: ['name', 'type']
-    }
+      required: ['name', 'type'],
+    },
   },
 
   // Task Orchestration
@@ -1939,12 +2001,12 @@ const toolDefinitions = [
         steps: {
           type: 'array',
           items: { type: 'object' },
-          description: 'Array of steps to execute'
+          description: 'Array of steps to execute',
         },
-        context: { type: 'object', description: 'Context data' }
+        context: { type: 'object', description: 'Context data' },
       },
-      required: ['task', 'steps']
-    }
+      required: ['task', 'steps'],
+    },
   },
   {
     name: 'continue_task',
@@ -1955,19 +2017,19 @@ const toolDefinitions = [
         action: {
           type: 'string',
           enum: ['retry', 'skip', 'abort'],
-          description: 'Action to take'
+          description: 'Action to take',
         },
-        newStep: { type: 'object', description: 'Replacement step' }
+        newStep: { type: 'object', description: 'Replacement step' },
       },
-      required: ['action']
-    }
+      required: ['action'],
+    },
   },
 
   // Environment
   {
     name: 'diagnose_environment',
     description: 'Check the environment for issues. Finds problems and suggests fixes.',
-    inputSchema: { type: 'object', properties: {} }
+    inputSchema: { type: 'object', properties: {} },
   },
   {
     name: 'auto_fix',
@@ -1977,17 +2039,25 @@ const toolDefinitions = [
       properties: {
         issue_type: {
           type: 'string',
-          enum: ['setup_windsurf', 'setup_mcp', 'setup_rules', 'repair_settings', 'repair_mcp', 'create_projects_dir', 'install_dependencies'],
-          description: 'Specific issue to fix'
+          enum: [
+            'setup_windsurf',
+            'setup_mcp',
+            'setup_rules',
+            'repair_settings',
+            'repair_mcp',
+            'create_projects_dir',
+            'install_dependencies',
+          ],
+          description: 'Specific issue to fix',
         },
-        all: { type: 'boolean', description: 'Fix all auto-fixable issues' }
-      }
-    }
+        all: { type: 'boolean', description: 'Fix all auto-fixable issues' },
+      },
+    },
   },
   {
     name: 'complete_setup',
     description: 'Complete full Windsurf setup automatically. One command to configure everything.',
-    inputSchema: { type: 'object', properties: {} }
+    inputSchema: { type: 'object', properties: {} },
   },
 
   // Guidance
@@ -1997,17 +2067,17 @@ const toolDefinitions = [
     inputSchema: {
       type: 'object',
       properties: {
-        task: { type: 'string', description: 'What the user wants to do' }
+        task: { type: 'string', description: 'What the user wants to do' },
       },
-      required: ['task']
-    }
+      required: ['task'],
+    },
   },
 
   // Status
   {
     name: 'get_status',
     description: 'Get current system status, installed tools, and configuration state.',
-    inputSchema: { type: 'object', properties: {} }
+    inputSchema: { type: 'object', properties: {} },
   },
   {
     name: 'get_history',
@@ -2015,21 +2085,22 @@ const toolDefinitions = [
     inputSchema: {
       type: 'object',
       properties: {
-        limit: { type: 'number', description: 'Max actions to return (default: 20)' }
-      }
-    }
+        limit: { type: 'number', description: 'Max actions to return (default: 20)' },
+      },
+    },
   },
   // v2.1 Tools - Project Intelligence
   {
     name: 'analyze_project',
-    description: 'Analyze a project to understand its structure, tech stack, dependencies, and potential issues. Use this to understand any project.',
+    description:
+      'Analyze a project to understand its structure, tech stack, dependencies, and potential issues. Use this to understand any project.',
     inputSchema: {
       type: 'object',
       properties: {
-        projectPath: { type: 'string', description: 'Path to the project directory' }
+        projectPath: { type: 'string', description: 'Path to the project directory' },
       },
-      required: ['projectPath']
-    }
+      required: ['projectPath'],
+    },
   },
   {
     name: 'detect_tech_stack',
@@ -2037,10 +2108,10 @@ const toolDefinitions = [
     inputSchema: {
       type: 'object',
       properties: {
-        projectPath: { type: 'string', description: 'Path to the project' }
+        projectPath: { type: 'string', description: 'Path to the project' },
       },
-      required: ['projectPath']
-    }
+      required: ['projectPath'],
+    },
   },
 
   // v2.1 Tools - Error Analysis
@@ -2052,24 +2123,25 @@ const toolDefinitions = [
       properties: {
         error: { type: 'string', description: 'Error message to analyze' },
         context: { type: 'string', description: 'Context about what was being done' },
-        projectPath: { type: 'string', description: 'Project path for context' }
+        projectPath: { type: 'string', description: 'Project path for context' },
       },
-      required: ['error']
-    }
+      required: ['error'],
+    },
   },
   {
     name: 'smart_retry',
-    description: 'Retry a command with intelligent strategies (retry, clear cache, reinstall, force).',
+    description:
+      'Retry a command with intelligent strategies (retry, clear cache, reinstall, force).',
     inputSchema: {
       type: 'object',
       properties: {
         command: { type: 'string', description: 'Command to retry' },
         cwd: { type: 'string', description: 'Working directory' },
         maxAttempts: { type: 'number', description: 'Max retry attempts (default: 3)' },
-        strategies: { type: 'array', items: { type: 'string' }, description: 'Strategies to try' }
+        strategies: { type: 'array', items: { type: 'string' }, description: 'Strategies to try' },
       },
-      required: ['command']
-    }
+      required: ['command'],
+    },
   },
 
   // v2.1 Tools - HTTP
@@ -2080,13 +2152,17 @@ const toolDefinitions = [
       type: 'object',
       properties: {
         url: { type: 'string', description: 'URL to request' },
-        method: { type: 'string', enum: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'], description: 'HTTP method' },
+        method: {
+          type: 'string',
+          enum: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
+          description: 'HTTP method',
+        },
         headers: { type: 'object', description: 'Request headers' },
         body: { type: 'object', description: 'Request body (for POST/PUT)' },
-        timeout: { type: 'number', description: 'Timeout in ms' }
+        timeout: { type: 'number', description: 'Timeout in ms' },
       },
-      required: ['url']
-    }
+      required: ['url'],
+    },
   },
   {
     name: 'download_file',
@@ -2096,10 +2172,10 @@ const toolDefinitions = [
       properties: {
         url: { type: 'string', description: 'URL to download from' },
         destPath: { type: 'string', description: 'Destination file path' },
-        overwrite: { type: 'boolean', description: 'Overwrite if exists' }
+        overwrite: { type: 'boolean', description: 'Overwrite if exists' },
       },
-      required: ['url', 'destPath']
-    }
+      required: ['url', 'destPath'],
+    },
   },
 
   // v2.1 Tools - Code Quality
@@ -2110,10 +2186,10 @@ const toolDefinitions = [
       type: 'object',
       properties: {
         projectPath: { type: 'string', description: 'Project path' },
-        fix: { type: 'boolean', description: 'Auto-fix issues' }
+        fix: { type: 'boolean', description: 'Auto-fix issues' },
       },
-      required: ['projectPath']
-    }
+      required: ['projectPath'],
+    },
   },
   {
     name: 'format_code',
@@ -2121,10 +2197,10 @@ const toolDefinitions = [
     inputSchema: {
       type: 'object',
       properties: {
-        projectPath: { type: 'string', description: 'Project path' }
+        projectPath: { type: 'string', description: 'Project path' },
       },
-      required: ['projectPath']
-    }
+      required: ['projectPath'],
+    },
   },
 
   // v2.1 Tools - Testing
@@ -2136,10 +2212,10 @@ const toolDefinitions = [
       properties: {
         projectPath: { type: 'string', description: 'Project path' },
         testFile: { type: 'string', description: 'Specific test file' },
-        coverage: { type: 'boolean', description: 'Include coverage report' }
+        coverage: { type: 'boolean', description: 'Include coverage report' },
       },
-      required: ['projectPath']
-    }
+      required: ['projectPath'],
+    },
   },
 
   // v2.1 Tools - Process Management
@@ -2151,10 +2227,10 @@ const toolDefinitions = [
       properties: {
         projectPath: { type: 'string', description: 'Project path' },
         script: { type: 'string', description: 'Script to run (default: dev)' },
-        port: { type: 'number', description: 'Port number' }
+        port: { type: 'number', description: 'Port number' },
       },
-      required: ['projectPath']
-    }
+      required: ['projectPath'],
+    },
   },
   {
     name: 'stop_server',
@@ -2163,21 +2239,21 @@ const toolDefinitions = [
       type: 'object',
       properties: {
         serverId: { type: 'string', description: 'Server ID from start_server' },
-        pid: { type: 'number', description: 'Process ID' }
-      }
-    }
+        pid: { type: 'number', description: 'Process ID' },
+      },
+    },
   },
   {
     name: 'list_running',
     description: 'List all running servers started by autopilot.',
-    inputSchema: { type: 'object', properties: {} }
+    inputSchema: { type: 'object', properties: {} },
   },
 
   // v2.1 Tools - Docker
   {
     name: 'docker_status',
     description: 'Check Docker installation, running containers, and images.',
-    inputSchema: { type: 'object', properties: {} }
+    inputSchema: { type: 'object', properties: {} },
   },
   {
     name: 'docker_build',
@@ -2187,10 +2263,10 @@ const toolDefinitions = [
       properties: {
         projectPath: { type: 'string', description: 'Project path with Dockerfile' },
         tag: { type: 'string', description: 'Image tag' },
-        dockerfile: { type: 'string', description: 'Dockerfile name (default: Dockerfile)' }
+        dockerfile: { type: 'string', description: 'Dockerfile name (default: Dockerfile)' },
       },
-      required: ['projectPath']
-    }
+      required: ['projectPath'],
+    },
   },
   {
     name: 'docker_run',
@@ -2200,12 +2276,16 @@ const toolDefinitions = [
       properties: {
         image: { type: 'string', description: 'Image name' },
         name: { type: 'string', description: 'Container name' },
-        ports: { type: 'array', items: { type: 'string' }, description: 'Port mappings (e.g., "3000:3000")' },
+        ports: {
+          type: 'array',
+          items: { type: 'string' },
+          description: 'Port mappings (e.g., "3000:3000")',
+        },
         env: { type: 'object', description: 'Environment variables' },
-        detach: { type: 'boolean', description: 'Run in background (default: true)' }
+        detach: { type: 'boolean', description: 'Run in background (default: true)' },
       },
-      required: ['image']
-    }
+      required: ['image'],
+    },
   },
   {
     name: 'docker_compose_up',
@@ -2215,36 +2295,43 @@ const toolDefinitions = [
       properties: {
         projectPath: { type: 'string', description: 'Project path with docker-compose.yml' },
         detach: { type: 'boolean', description: 'Run in background (default: true)' },
-        build: { type: 'boolean', description: 'Rebuild images' }
+        build: { type: 'boolean', description: 'Rebuild images' },
       },
-      required: ['projectPath']
-    }
-  }
+      required: ['projectPath'],
+    },
+  },
 ];
 
 // Register tools
 server.setRequestHandler(ListToolsRequestSchema, async () => ({
-  tools: toolDefinitions
+  tools: toolDefinitions,
 }));
 
 // Handle tool calls
-server.setRequestHandler(CallToolRequestSchema, async (request) => {
+server.setRequestHandler(CallToolRequestSchema, async request => {
   const { name, arguments: args } = request.params;
 
   if (!tools[name]) {
     return {
-      content: [{ type: 'text', text: JSON.stringify({ error: `Unknown tool: ${name}`, available: Object.keys(tools) }) }]
+      content: [
+        {
+          type: 'text',
+          text: JSON.stringify({ error: `Unknown tool: ${name}`, available: Object.keys(tools) }),
+        },
+      ],
     };
   }
 
   try {
     const result = await tools[name](args || {});
     return {
-      content: [{ type: 'text', text: JSON.stringify(result, null, 2) }]
+      content: [{ type: 'text', text: JSON.stringify(result, null, 2) }],
     };
   } catch (error) {
     return {
-      content: [{ type: 'text', text: JSON.stringify({ error: error.message, stack: error.stack }) }]
+      content: [
+        { type: 'text', text: JSON.stringify({ error: error.message, stack: error.stack }) },
+      ],
     };
   }
 });
@@ -2256,31 +2343,31 @@ server.setRequestHandler(ListResourcesRequestSchema, async () => ({
       uri: 'autopilot://status',
       name: 'System Status',
       description: 'Current environment status',
-      mimeType: 'application/json'
+      mimeType: 'application/json',
     },
     {
       uri: 'autopilot://history',
       name: 'Action History',
       description: 'Recent actions and task state',
-      mimeType: 'application/json'
-    }
-  ]
+      mimeType: 'application/json',
+    },
+  ],
 }));
 
-server.setRequestHandler(ReadResourceRequestSchema, async (request) => {
+server.setRequestHandler(ReadResourceRequestSchema, async request => {
   const uri = request.params.uri;
 
   if (uri === 'autopilot://status') {
     const status = await tools.get_status();
     return {
-      contents: [{ uri, mimeType: 'application/json', text: JSON.stringify(status, null, 2) }]
+      contents: [{ uri, mimeType: 'application/json', text: JSON.stringify(status, null, 2) }],
     };
   }
 
   if (uri === 'autopilot://history') {
     const history = await tools.get_history({ limit: 50 });
     return {
-      contents: [{ uri, mimeType: 'application/json', text: JSON.stringify(history, null, 2) }]
+      contents: [{ uri, mimeType: 'application/json', text: JSON.stringify(history, null, 2) }],
     };
   }
 
@@ -2296,7 +2383,7 @@ async function main() {
   console.error(`💻 Platform: ${process.platform}`);
 }
 
-main().catch((err) => {
+main().catch(err => {
   console.error('Failed to start server:', err);
   process.exit(1);
 });

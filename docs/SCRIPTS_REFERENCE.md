@@ -24,20 +24,20 @@ scripts/
 
 ## Quick Reference
 
-| Command | What It Does | When to Use |
-|---------|--------------|-------------|
-| `npm run test` | Run lint + JSON validation + secret scan | Before commits |
-| `npm run lint` | Check JavaScript code style | During development |
-| `npm run lint:fix` | Auto-fix JavaScript issues | After writing code |
-| `npm run format` | Format all files with Prettier | Before commits |
-| `npm run validate:json` | Check all JSON files | After editing JSON |
-| `npm run scan:secrets` | Find leaked credentials | Before commits |
-| `npm run scan:deps` | Check dependency vulnerabilities | Weekly |
-| `npm run repair` | Auto-fix common issues | When lint fails |
-| `npm run repair:dry` | Preview repairs (no changes) | Before actual repair |
-| `npm run metrics` | Generate code quality report | Monthly review |
-| `npm run security` | Full security audit | Before releases |
-| `npm run benchmark` | Run performance tests | After config changes |
+| Command                 | What It Does                             | When to Use          |
+| ----------------------- | ---------------------------------------- | -------------------- |
+| `npm run test`          | Run lint + JSON validation + secret scan | Before commits       |
+| `npm run lint`          | Check JavaScript code style              | During development   |
+| `npm run lint:fix`      | Auto-fix JavaScript issues               | After writing code   |
+| `npm run format`        | Format all files with Prettier           | Before commits       |
+| `npm run validate:json` | Check all JSON files                     | After editing JSON   |
+| `npm run scan:secrets`  | Find leaked credentials                  | Before commits       |
+| `npm run scan:deps`     | Check dependency vulnerabilities         | Weekly               |
+| `npm run repair`        | Auto-fix common issues                   | When lint fails      |
+| `npm run repair:dry`    | Preview repairs (no changes)             | Before actual repair |
+| `npm run metrics`       | Generate code quality report             | Monthly review       |
+| `npm run security`      | Full security audit                      | Before releases      |
+| `npm run benchmark`     | Run performance tests                    | After config changes |
 
 ---
 
@@ -48,6 +48,7 @@ scripts/
 **Purpose**: Validates all JSON and JSONC files in the project.
 
 **Run**:
+
 ```powershell
 npm run validate:json
 # or directly:
@@ -55,12 +56,14 @@ node scripts/validate-json.js
 ```
 
 **What It Does**:
+
 - Finds all `.json` and `.jsonc` files
 - Strips comments from JSONC files
 - Validates JSON syntax
 - Reports errors with line numbers
 
 **Output Example**:
+
 ```
 JSON/JSONC Validation
 ==================================================
@@ -83,6 +86,7 @@ Summary
 ```
 
 **Excludes**:
+
 - `node_modules/`
 - `.git/`
 - `benchmark-results/`
@@ -95,6 +99,7 @@ Summary
 **Purpose**: Detects accidentally committed API keys, passwords, and tokens.
 
 **Run**:
+
 ```powershell
 npm run scan:secrets
 # or directly:
@@ -113,11 +118,13 @@ node scripts/scan-secrets.js
 | Hardcoded Passwords | `password = "secret123"` |
 
 **False Positive Handling**:
+
 - Ignores `${ENV_VAR}` placeholders
 - Ignores `process.env.` patterns
 - Ignores example/test values
 
 **Output Example**:
+
 ```
 Secret Scanning Tool
 ==================================================
@@ -140,6 +147,7 @@ Report saved to: secret-scan-report.json
 ```
 
 **Exit Codes**:
+
 - `0` = No secrets found
 - `1` = Secrets detected (fails CI)
 
@@ -150,6 +158,7 @@ Report saved to: secret-scan-report.json
 **Purpose**: Checks for known vulnerabilities in npm dependencies.
 
 **Run**:
+
 ```powershell
 npm run scan:deps
 # or directly:
@@ -157,6 +166,7 @@ node scripts/scan-dependencies.js
 ```
 
 **What It Does**:
+
 - Runs `npm audit`
 - Parses vulnerability data
 - Creates detailed report
@@ -171,6 +181,7 @@ node scripts/scan-dependencies.js
 **Purpose**: Automatically fixes common code issues.
 
 **Run**:
+
 ```powershell
 # Preview changes (recommended first)
 npm run repair:dry
@@ -181,21 +192,22 @@ npm run repair
 
 **What It Fixes**:
 
-| Language | Fix | Auto-Fix? |
-|----------|-----|-----------|
-| JS/TS | `var` → `const` | ✅ Yes |
-| JS/TS | Trailing whitespace | ✅ Yes |
-| JS/TS | Multiple blank lines | ✅ Yes |
-| JS/TS | Missing final newline | ✅ Yes |
-| JS/TS | `console.log` removal | ❌ Manual |
-| Python | Trailing whitespace | ✅ Yes |
-| Python | Tabs → 4 spaces | ✅ Yes |
-| Python | Multiple blank lines | ✅ Yes |
-| Python | `print()` removal | ❌ Manual |
-| JSON | Trailing commas | ✅ Yes |
-| Markdown | Trailing whitespace | ✅ Yes |
+| Language | Fix                   | Auto-Fix? |
+| -------- | --------------------- | --------- |
+| JS/TS    | `var` → `const`       | ✅ Yes    |
+| JS/TS    | Trailing whitespace   | ✅ Yes    |
+| JS/TS    | Multiple blank lines  | ✅ Yes    |
+| JS/TS    | Missing final newline | ✅ Yes    |
+| JS/TS    | `console.log` removal | ❌ Manual |
+| Python   | Trailing whitespace   | ✅ Yes    |
+| Python   | Tabs → 4 spaces       | ✅ Yes    |
+| Python   | Multiple blank lines  | ✅ Yes    |
+| Python   | `print()` removal     | ❌ Manual |
+| JSON     | Trailing commas       | ✅ Yes    |
+| Markdown | Trailing whitespace   | ✅ Yes    |
 
 **Output Example**:
+
 ```
 Auto-Repair Script
 ==================================================
@@ -230,6 +242,7 @@ Run without --dry-run to apply fixes
 **Purpose**: Generates code quality metrics and statistics.
 
 **Run**:
+
 ```powershell
 npm run metrics
 # or directly:
@@ -237,6 +250,7 @@ node scripts/collect-metrics.js
 ```
 
 **Metrics Collected**:
+
 - Lines of code by language
 - Comment density
 - Cyclomatic complexity
@@ -246,6 +260,7 @@ node scripts/collect-metrics.js
 - Most complex files
 
 **Output Example**:
+
 ```
 Code Metrics Collection
 ============================================================
@@ -293,6 +308,7 @@ Detailed report: metrics-reports/metrics-1234567890.json
 **Purpose**: Logs security events and generates audit reports.
 
 **Run**:
+
 ```powershell
 npm run audit:security
 # or directly:
@@ -300,12 +316,14 @@ node scripts/security-audit.js
 ```
 
 **Full Security Suite**:
+
 ```powershell
 # Run all security checks at once
 npm run security
 ```
 
 This runs:
+
 1. Secret scanning
 2. Dependency scanning
 3. Security audit logging
@@ -317,6 +335,7 @@ This runs:
 **Purpose**: Tests Windsurf configuration performance.
 
 **Run**:
+
 ```powershell
 # Basic run (3 iterations per test)
 npm run benchmark
@@ -337,6 +356,7 @@ npm run benchmark:html
 | `-ExportHtml` | Generate HTML report | false |
 
 **Test Categories**:
+
 - `FileSystem` - File watcher, search, large files
 - `Language` - Python, JS/TS, PowerShell servers
 - `Security` - Command deny list validation
@@ -344,6 +364,7 @@ npm run benchmark:html
 - `Editor` - Core editor performance
 
 **Output Example**:
+
 ```
 Windsurf Configuration Benchmark
 ================================
@@ -392,6 +413,7 @@ jobs:
 ```
 
 **When Scripts Run**:
+
 - On every push to any branch
 - On every pull request
 - Can be run manually
@@ -403,6 +425,7 @@ jobs:
 To add your own script:
 
 1. **Create the file**:
+
 ```javascript
 // scripts/my-script.js
 #!/usr/bin/env node
@@ -410,6 +433,7 @@ console.log('Hello from my script!');
 ```
 
 2. **Add to package.json**:
+
 ```json
 {
   "scripts": {
@@ -419,6 +443,7 @@ console.log('Hello from my script!');
 ```
 
 3. **Run it**:
+
 ```powershell
 npm run my-script
 ```
@@ -429,12 +454,12 @@ npm run my-script
 
 All scripts follow standard exit codes:
 
-| Code | Meaning |
-|------|---------|
-| 0 | Success |
-| 1 | Errors found (lint, secrets, etc.) |
-| 2 | Invalid arguments |
-| 127 | Command not found |
+| Code | Meaning                            |
+| ---- | ---------------------------------- |
+| 0    | Success                            |
+| 1    | Errors found (lint, secrets, etc.) |
+| 2    | Invalid arguments                  |
+| 127  | Command not found                  |
 
 CI pipelines fail on non-zero exit codes.
 
@@ -443,18 +468,21 @@ CI pipelines fail on non-zero exit codes.
 ## Troubleshooting Scripts
 
 ### "Permission denied"
+
 ```powershell
 # Allow script execution
 Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 ```
 
 ### "node: command not found"
+
 ```powershell
 # Install Node.js and restart terminal
 # Download from: https://nodejs.org
 ```
 
 ### "Cannot find module"
+
 ```powershell
 # Reinstall dependencies
 rm -rf node_modules

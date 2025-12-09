@@ -10,9 +10,10 @@ const path = require('path');
 const { execSync } = require('child_process');
 
 // Data directory
-const DATA_DIR = process.platform === 'win32'
-  ? path.join(process.env.APPDATA || '', 'WindsurfAutopilot')
-  : path.join(process.env.HOME || '', '.windsurf-autopilot');
+const DATA_DIR =
+  process.platform === 'win32'
+    ? path.join(process.env.APPDATA || '', 'WindsurfAutopilot')
+    : path.join(process.env.HOME || '', '.windsurf-autopilot');
 
 const SECURITY_DIR = path.join(DATA_DIR, 'security');
 const REPORTS_DIR = path.join(SECURITY_DIR, 'reports');
@@ -25,7 +26,6 @@ const REPORTS_DIR = path.join(SECURITY_DIR, 'reports');
 });
 
 const securityAdvancedTools = {
-
   // Static Application Security Testing
   sast_scan: {
     name: 'sast_scan',
@@ -34,14 +34,22 @@ const securityAdvancedTools = {
       type: 'object',
       properties: {
         path: { type: 'string', description: 'Project path to scan' },
-        tool: { type: 'string', enum: ['semgrep', 'codeql', 'eslint-security'], description: 'SAST tool' },
+        tool: {
+          type: 'string',
+          enum: ['semgrep', 'codeql', 'eslint-security'],
+          description: 'SAST tool',
+        },
         rules: { type: 'array', items: { type: 'string' }, description: 'Rule sets to use' },
-        severity: { type: 'string', enum: ['error', 'warning', 'info'], description: 'Minimum severity' },
-        output: { type: 'string', description: 'Output file path' }
+        severity: {
+          type: 'string',
+          enum: ['error', 'warning', 'info'],
+          description: 'Minimum severity',
+        },
+        output: { type: 'string', description: 'Output file path' },
       },
-      required: ['path']
+      required: ['path'],
     },
-    handler: async (args) => {
+    handler: async args => {
       const projectPath = args.path;
       const tool = args.tool || 'semgrep';
       const rules = args.rules || ['auto'];
@@ -63,18 +71,20 @@ const securityAdvancedTools = {
           return {
             success: false,
             error: 'Semgrep is not installed',
-            hint: 'Install with: pip install semgrep OR brew install semgrep'
+            hint: 'Install with: pip install semgrep OR brew install semgrep',
           };
         }
 
-        const ruleConfig = rules.includes('auto') ? '--config=auto' : rules.map(r => `--config=${r}`).join(' ');
+        const ruleConfig = rules.includes('auto')
+          ? '--config=auto'
+          : rules.map(r => `--config=${r}`).join(' ');
 
         try {
           const cmd = `semgrep ${ruleConfig} --json --severity=${severity} "${projectPath}"`;
           const output = execSync(cmd, {
             encoding: 'utf8',
             timeout: 300000,
-            maxBuffer: 50 * 1024 * 1024
+            maxBuffer: 50 * 1024 * 1024,
           });
 
           const results = JSON.parse(output);
@@ -86,7 +96,7 @@ const securityAdvancedTools = {
               message: result.extra?.message || result.check_id,
               file: result.path,
               line: result.start?.line,
-              code: result.extra?.lines
+              code: result.extra?.lines,
             });
           }
         } catch (error) {
@@ -99,7 +109,7 @@ const securityAdvancedTools = {
                 severity: result.extra?.severity || 'unknown',
                 message: result.extra?.message || result.check_id,
                 file: result.path,
-                line: result.start?.line
+                line: result.start?.line,
               });
             }
           } catch {
@@ -114,7 +124,7 @@ const securityAdvancedTools = {
           return {
             success: false,
             error: 'ESLint not installed in project',
-            hint: 'Run: npm install -D eslint eslint-plugin-security'
+            hint: 'Run: npm install -D eslint eslint-plugin-security',
           };
         }
 
@@ -123,20 +133,23 @@ const securityAdvancedTools = {
           const output = execSync(cmd, {
             cwd: projectPath,
             encoding: 'utf8',
-            timeout: 120000
+            timeout: 120000,
           });
 
           const results = JSON.parse(output || '[]');
 
           for (const file of results) {
             for (const msg of file.messages || []) {
-              if (msg.ruleId?.includes('security') || msg.message?.toLowerCase().includes('security')) {
+              if (
+                msg.ruleId?.includes('security') ||
+                msg.message?.toLowerCase().includes('security')
+              ) {
                 findings.push({
                   rule: msg.ruleId,
                   severity: msg.severity === 2 ? 'error' : 'warning',
                   message: msg.message,
                   file: file.filePath,
-                  line: msg.line
+                  line: msg.line,
                 });
               }
             }
@@ -150,7 +163,7 @@ const securityAdvancedTools = {
       const bySeverity = {
         error: findings.filter(f => f.severity === 'error' || f.severity === 'ERROR'),
         warning: findings.filter(f => f.severity === 'warning' || f.severity === 'WARNING'),
-        info: findings.filter(f => f.severity === 'info' || f.severity === 'INFO')
+        info: findings.filter(f => f.severity === 'info' || f.severity === 'INFO'),
       };
 
       // Save report
@@ -163,8 +176,8 @@ const securityAdvancedTools = {
           total: findings.length,
           errors: bySeverity.error.length,
           warnings: bySeverity.warning.length,
-          info: bySeverity.info.length
-        }
+          info: bySeverity.info.length,
+        },
       };
 
       fs.writeFileSync(reportPath, JSON.stringify(report, null, 2));
@@ -176,11 +189,12 @@ const securityAdvancedTools = {
         summary: report.summary,
         reportPath,
         criticalFindings: findings.slice(0, 10),
-        message: findings.length === 0
-          ? 'No security issues found'
-          : `Found ${findings.length} potential security issues`
+        message:
+          findings.length === 0
+            ? 'No security issues found'
+            : `Found ${findings.length} potential security issues`,
       };
-    }
+    },
   },
 
   // Generate Software Bill of Materials
@@ -193,11 +207,11 @@ const securityAdvancedTools = {
         path: { type: 'string', description: 'Project path' },
         format: { type: 'string', enum: ['cyclonedx', 'spdx'], description: 'SBOM format' },
         output: { type: 'string', description: 'Output file path' },
-        includeDevDeps: { type: 'boolean', description: 'Include dev dependencies' }
+        includeDevDeps: { type: 'boolean', description: 'Include dev dependencies' },
       },
-      required: ['path']
+      required: ['path'],
     },
-    handler: async (args) => {
+    handler: async args => {
       const projectPath = args.path;
       const format = args.format || 'cyclonedx';
       const includeDevDeps = args.includeDevDeps !== false;
@@ -229,10 +243,12 @@ const securityAdvancedTools = {
           version: cleanVersion,
           purl: `pkg:npm/${name}@${cleanVersion}`,
           licenses: [], // Would need to fetch from registry
-          externalReferences: [{
-            type: 'website',
-            url: `https://www.npmjs.com/package/${name}`
-          }]
+          externalReferences: [
+            {
+              type: 'website',
+              url: `https://www.npmjs.com/package/${name}`,
+            },
+          ],
         });
       }
 
@@ -247,18 +263,20 @@ const securityAdvancedTools = {
           version: 1,
           metadata: {
             timestamp,
-            tools: [{
-              vendor: 'Windsurf',
-              name: 'Autopilot',
-              version: '3.1.0'
-            }],
+            tools: [
+              {
+                vendor: 'Windsurf',
+                name: 'Autopilot',
+                version: '3.1.0',
+              },
+            ],
             component: {
               type: 'application',
               name: pkg.name || 'unknown',
-              version: pkg.version || '0.0.0'
-            }
+              version: pkg.version || '0.0.0',
+            },
           },
-          components
+          components,
         };
       } else {
         // SPDX format
@@ -270,14 +288,14 @@ const securityAdvancedTools = {
           documentNamespace: `https://windsurf.dev/sbom/${pkg.name || 'unknown'}`,
           creationInfo: {
             created: timestamp,
-            creators: ['Tool: Windsurf-Autopilot-3.1.0']
+            creators: ['Tool: Windsurf-Autopilot-3.1.0'],
           },
           packages: components.map((c, i) => ({
             SPDXID: `SPDXRef-Package-${i}`,
             name: c.name,
             versionInfo: c.version,
-            downloadLocation: c.externalReferences?.[0]?.url || 'NOASSERTION'
-          }))
+            downloadLocation: c.externalReferences?.[0]?.url || 'NOASSERTION',
+          })),
         };
       }
 
@@ -291,9 +309,9 @@ const securityAdvancedTools = {
         version: pkg.version,
         components: components.length,
         outputPath,
-        message: `Generated ${format.toUpperCase()} SBOM with ${components.length} components`
+        message: `Generated ${format.toUpperCase()} SBOM with ${components.length} components`,
       };
-    }
+    },
   },
 
   // Dependency graph visualization
@@ -306,11 +324,11 @@ const securityAdvancedTools = {
         path: { type: 'string', description: 'Project path' },
         format: { type: 'string', enum: ['json', 'dot', 'mermaid'], description: 'Output format' },
         depth: { type: 'number', description: 'Max depth to traverse' },
-        output: { type: 'string', description: 'Output file path' }
+        output: { type: 'string', description: 'Output file path' },
       },
-      required: ['path']
+      required: ['path'],
     },
-    handler: async (args) => {
+    handler: async args => {
       const projectPath = args.path;
       const format = args.format || 'mermaid';
       const depth = args.depth || 3;
@@ -331,7 +349,11 @@ const securityAdvancedTools = {
       const edges = [];
 
       for (const [name, version] of Object.entries(deps || {})) {
-        nodes.push({ id: name, label: `${name}@${version.replace(/[\^~]/g, '')}`, type: 'dependency' });
+        nodes.push({
+          id: name,
+          label: `${name}@${version.replace(/[\^~]/g, '')}`,
+          type: 'dependency',
+        });
         edges.push({ from: pkg.name || 'root', to: name });
       }
 
@@ -363,8 +385,12 @@ const securityAdvancedTools = {
         }
       }
 
-      const outputPath = args.output || path.join(REPORTS_DIR, `dep-graph.${format === 'mermaid' ? 'md' : format}`);
-      fs.writeFileSync(outputPath, format === 'mermaid' ? `\`\`\`mermaid\n${output}\`\`\`\n` : output);
+      const outputPath =
+        args.output || path.join(REPORTS_DIR, `dep-graph.${format === 'mermaid' ? 'md' : format}`);
+      fs.writeFileSync(
+        outputPath,
+        format === 'mermaid' ? `\`\`\`mermaid\n${output}\`\`\`\n` : output
+      );
 
       return {
         success: true,
@@ -373,9 +399,9 @@ const securityAdvancedTools = {
         edges: edges.length,
         outputPath,
         preview: output.slice(0, 1000),
-        message: `Generated dependency graph with ${nodes.length} packages`
+        message: `Generated dependency graph with ${nodes.length} packages`,
       };
-    }
+    },
   },
 
   // Technical debt score
@@ -386,11 +412,15 @@ const securityAdvancedTools = {
       type: 'object',
       properties: {
         path: { type: 'string', description: 'Project path' },
-        include: { type: 'array', items: { type: 'string' }, description: 'File patterns to include' }
+        include: {
+          type: 'array',
+          items: { type: 'string' },
+          description: 'File patterns to include',
+        },
       },
-      required: ['path']
+      required: ['path'],
     },
-    handler: async (args) => {
+    handler: async args => {
       const projectPath = args.path;
       const include = args.include || ['**/*.js', '**/*.ts', '**/*.jsx', '**/*.tsx'];
 
@@ -405,7 +435,7 @@ const securityAdvancedTools = {
         longFiles: 0,
         complexFunctions: 0,
         duplicatePatterns: 0,
-        outdatedDeps: 0
+        outdatedDeps: 0,
       };
 
       // Scan source files
@@ -459,7 +489,7 @@ const securityAdvancedTools = {
           const output = execSync('npm outdated --json', {
             cwd: projectPath,
             encoding: 'utf8',
-            timeout: 60000
+            timeout: 60000,
           });
           const outdated = JSON.parse(output || '{}');
           metrics.outdatedDeps = Object.keys(outdated).length;
@@ -479,7 +509,7 @@ const securityAdvancedTools = {
         hackCount: 3,
         longFiles: 5,
         complexFunctions: 4,
-        outdatedDeps: 2
+        outdatedDeps: 2,
       };
 
       let rawScore = 0;
@@ -505,11 +535,11 @@ const securityAdvancedTools = {
           metrics.fixmeCount > 5 ? `Fix ${metrics.fixmeCount} FIXME items` : null,
           metrics.hackCount > 0 ? `Remove ${metrics.hackCount} temporary hacks` : null,
           metrics.longFiles > 0 ? `Refactor ${metrics.longFiles} long files` : null,
-          metrics.outdatedDeps > 5 ? `Update ${metrics.outdatedDeps} outdated dependencies` : null
+          metrics.outdatedDeps > 5 ? `Update ${metrics.outdatedDeps} outdated dependencies` : null,
         ].filter(Boolean),
-        message: `Technical debt score: ${score}/100 (Grade: ${grade})`
+        message: `Technical debt score: ${score}/100 (Grade: ${grade})`,
       };
-    }
+    },
   },
 
   // Compliance check
@@ -523,12 +553,12 @@ const securityAdvancedTools = {
         framework: {
           type: 'string',
           enum: ['soc2', 'gdpr', 'hipaa', 'pci-dss'],
-          description: 'Compliance framework'
-        }
+          description: 'Compliance framework',
+        },
       },
-      required: ['path', 'framework']
+      required: ['path', 'framework'],
     },
-    handler: async (args) => {
+    handler: async args => {
       const projectPath = args.path;
       const framework = args.framework;
 
@@ -539,44 +569,103 @@ const securityAdvancedTools = {
       // Define checklists for each framework
       const checklists = {
         soc2: [
-          { id: 'CC6.1', check: 'Authentication', test: () => hasFile(['auth', 'login', 'session']) },
-          { id: 'CC6.2', check: 'Access Control', test: () => hasFile(['rbac', 'permission', 'role']) },
-          { id: 'CC6.6', check: 'Encryption', test: () => hasPatternInCode(/encrypt|crypto|bcrypt|hash/) },
-          { id: 'CC7.1', check: 'Logging', test: () => hasPatternInCode(/log|winston|bunyan|pino/) },
-          { id: 'CC7.2', check: 'Monitoring', test: () => hasFile(['monitor', 'metrics', 'health']) },
-          { id: 'A1.2', check: 'Data Backup', test: () => hasFile(['backup', 'snapshot']) }
+          {
+            id: 'CC6.1',
+            check: 'Authentication',
+            test: () => hasFile(['auth', 'login', 'session']),
+          },
+          {
+            id: 'CC6.2',
+            check: 'Access Control',
+            test: () => hasFile(['rbac', 'permission', 'role']),
+          },
+          {
+            id: 'CC6.6',
+            check: 'Encryption',
+            test: () => hasPatternInCode(/encrypt|crypto|bcrypt|hash/),
+          },
+          {
+            id: 'CC7.1',
+            check: 'Logging',
+            test: () => hasPatternInCode(/log|winston|bunyan|pino/),
+          },
+          {
+            id: 'CC7.2',
+            check: 'Monitoring',
+            test: () => hasFile(['monitor', 'metrics', 'health']),
+          },
+          { id: 'A1.2', check: 'Data Backup', test: () => hasFile(['backup', 'snapshot']) },
         ],
         gdpr: [
           { id: 'Art.5', check: 'Data Minimization', test: () => !hasPatternInCode(/SELECT \*/) },
-          { id: 'Art.17', check: 'Right to Erasure', test: () => hasPatternInCode(/delete.*user|remove.*data/i) },
-          { id: 'Art.20', check: 'Data Portability', test: () => hasPatternInCode(/export|download.*data/i) },
+          {
+            id: 'Art.17',
+            check: 'Right to Erasure',
+            test: () => hasPatternInCode(/delete.*user|remove.*data/i),
+          },
+          {
+            id: 'Art.20',
+            check: 'Data Portability',
+            test: () => hasPatternInCode(/export|download.*data/i),
+          },
           { id: 'Art.25', check: 'Privacy by Design', test: () => hasFile(['privacy', 'consent']) },
-          { id: 'Art.32', check: 'Security Measures', test: () => hasPatternInCode(/encrypt|https|ssl|tls/) },
-          { id: 'Art.33', check: 'Breach Notification', test: () => hasFile(['incident', 'breach', 'alert']) }
+          {
+            id: 'Art.32',
+            check: 'Security Measures',
+            test: () => hasPatternInCode(/encrypt|https|ssl|tls/),
+          },
+          {
+            id: 'Art.33',
+            check: 'Breach Notification',
+            test: () => hasFile(['incident', 'breach', 'alert']),
+          },
         ],
         hipaa: [
-          { id: '164.312(a)', check: 'Access Control', test: () => hasPatternInCode(/auth|login|access.*control/) },
+          {
+            id: '164.312(a)',
+            check: 'Access Control',
+            test: () => hasPatternInCode(/auth|login|access.*control/),
+          },
           { id: '164.312(b)', check: 'Audit Controls', test: () => hasPatternInCode(/audit|log/) },
-          { id: '164.312(c)', check: 'Integrity', test: () => hasPatternInCode(/checksum|hash|verify/) },
-          { id: '164.312(d)', check: 'Authentication', test: () => hasPatternInCode(/authenticate|credential/) },
-          { id: '164.312(e)', check: 'Transmission Security', test: () => hasPatternInCode(/https|ssl|tls|encrypt/) }
+          {
+            id: '164.312(c)',
+            check: 'Integrity',
+            test: () => hasPatternInCode(/checksum|hash|verify/),
+          },
+          {
+            id: '164.312(d)',
+            check: 'Authentication',
+            test: () => hasPatternInCode(/authenticate|credential/),
+          },
+          {
+            id: '164.312(e)',
+            check: 'Transmission Security',
+            test: () => hasPatternInCode(/https|ssl|tls|encrypt/),
+          },
         ],
         'pci-dss': [
-          { id: 'Req.3', check: 'Protect Stored Data', test: () => hasPatternInCode(/encrypt.*card|mask.*pan/i) },
+          {
+            id: 'Req.3',
+            check: 'Protect Stored Data',
+            test: () => hasPatternInCode(/encrypt.*card|mask.*pan/i),
+          },
           { id: 'Req.4', check: 'Encrypt Transmission', test: () => hasPatternInCode(/https|tls/) },
           { id: 'Req.6', check: 'Secure Systems', test: () => hasFile(['security', 'patch']) },
           { id: 'Req.8', check: 'Identify Access', test: () => hasPatternInCode(/user.*id|auth/) },
-          { id: 'Req.10', check: 'Track Access', test: () => hasPatternInCode(/log|audit/) }
-        ]
+          { id: 'Req.10', check: 'Track Access', test: () => hasPatternInCode(/log|audit/) },
+        ],
       };
 
       // Helper functions
       function hasFile(keywords) {
         try {
-          const files = execSync(`find "${projectPath}" -type f -name "*.js" -o -name "*.ts" 2>/dev/null || dir /s /b "${projectPath}\\*.js" "${projectPath}\\*.ts" 2>nul`, {
-            encoding: 'utf8',
-            timeout: 10000
-          });
+          const files = execSync(
+            `find "${projectPath}" -type f -name "*.js" -o -name "*.ts" 2>/dev/null || dir /s /b "${projectPath}\\*.js" "${projectPath}\\*.ts" 2>nul`,
+            {
+              encoding: 'utf8',
+              timeout: 10000,
+            }
+          );
           return keywords.some(kw => files.toLowerCase().includes(kw));
         } catch {
           return false;
@@ -588,9 +677,10 @@ const securityAdvancedTools = {
           const srcDir = path.join(projectPath, 'src');
           const searchDir = fs.existsSync(srcDir) ? srcDir : projectPath;
 
-          const grepCmd = process.platform === 'win32'
-            ? `findstr /s /i /r "${pattern.source}" "${searchDir}\\*.js" "${searchDir}\\*.ts"`
-            : `grep -r -l "${pattern.source}" "${searchDir}" --include="*.js" --include="*.ts"`;
+          const grepCmd =
+            process.platform === 'win32'
+              ? `findstr /s /i /r "${pattern.source}" "${searchDir}\\*.js" "${searchDir}\\*.ts"`
+              : `grep -r -l "${pattern.source}" "${searchDir}" --include="*.js" --include="*.ts"`;
 
           execSync(grepCmd, { encoding: 'utf8', timeout: 10000 });
           return true;
@@ -612,7 +702,7 @@ const securityAdvancedTools = {
           id: item.id,
           check: item.check,
           status: passed ? 'PASS' : 'REVIEW',
-          note: passed ? 'Evidence found' : 'Manual review recommended'
+          note: passed ? 'Evidence found' : 'Manual review recommended',
         });
       }
 
@@ -627,10 +717,10 @@ const securityAdvancedTools = {
         total: results.length,
         results,
         message: `${framework.toUpperCase()} compliance: ${compliance}% (${passCount}/${results.length} checks passed)`,
-        disclaimer: 'This is an automated scan. Professional audit required for certification.'
+        disclaimer: 'This is an automated scan. Professional audit required for certification.',
       };
-    }
-  }
+    },
+  },
 };
 
 module.exports = securityAdvancedTools;

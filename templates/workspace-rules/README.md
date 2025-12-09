@@ -21,13 +21,13 @@ cp templates/workspace-rules/react-app.md .windsurf/rules/
 
 ## Available Templates
 
-| Template | Best For |
-|----------|----------|
-| `react-app.md` | React, Next.js, frontend projects |
-| `python-api.md` | FastAPI, Django, Flask backends |
-| `ml-project.md` | PyTorch, TensorFlow, ML research |
-| `mcp-server.md` | MCP server development |
-| `docker-project.md` | Containerized applications |
+| Template            | Best For                          |
+| ------------------- | --------------------------------- |
+| `react-app.md`      | React, Next.js, frontend projects |
+| `python-api.md`     | FastAPI, Django, Flask backends   |
+| `ml-project.md`     | PyTorch, TensorFlow, ML research  |
+| `mcp-server.md`     | MCP server development            |
+| `docker-project.md` | Containerized applications        |
 
 ## Creating Custom Rules
 

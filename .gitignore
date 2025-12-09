@@ -1,33 +1,91 @@
+# ============================================
+# VIBE PROJECT GITIGNORE
+# ============================================
+
+# CRITICAL - Never commit these
+.env
+.env.local
+.env.*.local
+*.env
+
 # Dependencies
 node_modules/
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
 
-# Build outputs
+# VIBE Data & Storage
+vibe-data/
+!vibe-data/.gitkeep
+cache/
+temp/
+backups/
+snapshots/
+
+# Build output
 dist/
 build/
-
-# Benchmark results (generated)
-benchmark-results/
-*.generated.*
-
-# IDE
-.windsurf/
-.vscode/
-*.code-workspace
-
-# OS
-.DS_Store
-Thumbs.db
+out/
+*.bundle.js
+*.min.js
 
 # Logs
 *.log
 logs/
-security-logs/
+*.error
+*.debug
 
-# Environment
-.env
-.env.local
-.env*.local
+# IDE & Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.settings/
 
+# OS Files
+.DS_Store
+Thumbs.db
+desktop.ini
+$RECYCLE.BIN/
+
+# Testing & Coverage
+coverage/
+.nyc_output/
+*.test.js
+test-results/
+
+# Python (if used)
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# Model Files (Large)
+*.gguf
+*.bin
+*.safetensors
+*.pt
+*.pth
+*.onnx
+
+# Temporary
+*.tmp
+*.temp
+*.bak
+*.backup
+*.old
+
+# Security
 # Secrets & Credentials
 *.pem
 *.key

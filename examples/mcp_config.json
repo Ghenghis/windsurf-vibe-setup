@@ -7,7 +7,12 @@
     },
     "github": {
       "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-github", "--toolsets", "repos,issues,prs,actions"],
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-github",
+        "--toolsets",
+        "repos,issues,prs,actions"
+      ],
       "env": {
         "GITHUB_PERSONAL_ACCESS_TOKEN": "${GITHUB_PAT}"
       }
@@ -18,11 +23,7 @@
     },
     "filesystem": {
       "command": "npx",
-      "args": [
-        "-y",
-        "@modelcontextprotocol/server-filesystem",
-        "C:\\Users\\YourUsername\\projects"
-      ]
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "C:\\Users\\YourUsername\\projects"]
     },
     "git": {
       "command": "npx",
@@ -38,10 +39,14 @@
         "-y",
         "@executeautomation/database-server",
         "--postgresql",
-        "--host", "localhost",
-        "--database", "mydb",
-        "--user", "postgres",
-        "--password", "${POSTGRES_PASSWORD}"
+        "--host",
+        "localhost",
+        "--database",
+        "mydb",
+        "--user",
+        "postgres",
+        "--password",
+        "${POSTGRES_PASSWORD}"
       ]
     },
     "sqlite": {

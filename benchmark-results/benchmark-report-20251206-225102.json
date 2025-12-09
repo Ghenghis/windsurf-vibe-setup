@@ -1,0 +1,1333 @@
+{
+  "Summary": {
+    "Failed": 1,
+    "Total": 12,
+    "Degraded": 4,
+    "Acceptable": 1,
+    "Error": 0,
+    "Optimal": 4,
+    "Critical": 2
+  },
+  "Tests": [
+    {
+      "Timestamp": "2025-12-06 22:49:55",
+      "Variance": 7178.0,
+      "Average": 7658.0,
+      "Category": "FileSystem",
+      "Max": 11549.0,
+      "DelayReasons": "File watcher processing excluded directories",
+      "Runs": [
+        {
+          "Success": true,
+          "MemoryAfter": 33372384,
+          "MemoryDelta": 18686688,
+          "Error": null,
+          "MemoryBefore": 14685696,
+          "Run": 1,
+          "Duration": 7054,
+          "Output": {
+            "ExcludedViolations": 14,
+            "TestPath": "C:\\Users\\Admin\\civitai",
+            "PatternsChecked": 7,
+            "Message": "14 directories with files should be excluded",
+            "Violations": [
+              {
+                "Path": "C:\\Users\\Admin\\civitai\\project\\Frontier-Stories\\node_modules",
+                "FileCount": 17162,
+                "Pattern": "node_modules"
+              },
+              {
+                "Path": "C:\\Users\\Admin\\civitai\\project\\Frontier-Stories\\node_modules\\@radix-ui\\react-alert-dialog\\node_modules",
+                "FileCount": 9,
+                "Pattern": "node_modules"
+              },
+              {
+                "Path": "C:\\Users\\Admin\\civitai\\project\\Frontier-Stories\\node_modules\\@radix-ui\\react-aspect-ratio\\node_modules",
+                "FileCount": 9,
+                "Pattern": "node_modules"
+              },
+              {
+                "Path": "C:\\Users\\Admin\\civitai\\project\\Frontier-Stories\\node_modules\\@radix-ui\\react-avatar\\node_modules",
+                "FileCount": 18,
+                "Pattern": "node_modules"
+              },
+              {
+                "Path": "C:\\Users\\Admin\\civitai\\project\\Frontier-Stories\\node_modules\\@radix-ui\\react-collection\\node_modules",
+                "FileCount": 9,
+                "Pattern": "node_modules"
+              },
+              {
+                "Path": "C:\\Users\\Admin\\civitai\\mcp_server\\__pycache__",
+                "FileCount": 1,
+                "Pattern": "__pycache__"
+              },
+              {
+                "Path": "C:\\Users\\Admin\\civitai\\project\\GPT-SoVITS-main\\GPT-SoVITS-main\\GPT_SoVITS\\text\\__pycache__",
+                "FileCount": 3,
+                "Pattern": "__pycache__"
+              },
+              {
+                "Path": "C:\\Users\\Admin\\civitai\\project\\GPT-SoVITS-main\\GPT-SoVITS-main\\GPT_SoVITS\\text\\LangSegmenter\\__pycache__",
+                "FileCount": 2,
+                "Pattern": "__pycache__"
+              },
+              {
+                "Path": "C:\\Users\\Admin\\civitai\\scripts\\__pycache__",
+                "FileCount": 80,
+                "Pattern": "__pycache__"
+              },
+              {
+                "Path": "C:\\Users\\Admin\\civitai\\scripts\\admin\\__pycache__",
+                "FileCount": 1,
+                "Pattern": "__pycache__"
+              },
+              {
+                "Path": "C:\\Users\\Admin\\civitai\\checkpoints",
+                "FileCount": 13,
+                "Pattern": "checkpoints"
+              },
+              {
+                "Path": "C:\\Users\\Admin\\civitai\\models",
+                "FileCount": 3,
+                "Pattern": "models"
+              },
+              {
+                "Path": "C:\\Users\\Admin\\civitai\\project\\fish-speech-main\\fish-speech-main\\fish_speech\\models",
+                "FileCount": 9,
+                "Pattern": "models"
+              },
+              {
+                "Path": "C:\\Users\\Admin\\civitai\\project\\Frontier-Stories\\models",
+                "FileCount": 4,
+                "Pattern": "models"
+              }
+            ]
+          }
+        },
+        {
+          "Success": true,
+          "MemoryAfter": 47947688,
+          "MemoryDelta": 13974952,
+          "Error": null,
+          "MemoryBefore": 33972736,
+          "Run": 2,
+          "Duration": 4371,
+          "Output": {
+            "ExcludedViolations": 14,
+            "TestPath": "C:\\Users\\Admin\\civitai",
+            "PatternsChecked": 7,
+            "Message": "14 directories with files should be excluded",
+            "Violations": [
+              {
+                "Path": "C:\\Users\\Admin\\civitai\\project\\Frontier-Stories\\node_modules",
+                "FileCount": 17162,
+                "Pattern": "node_modules"
+              },
+              {
+                "Path": "C:\\Users\\Admin\\civitai\\project\\Frontier-Stories\\node_modules\\@radix-ui\\react-alert-dialog\\node_modules",
+                "FileCount": 9,
+                "Pattern": "node_modules"
+              },
+              {
+                "Path": "C:\\Users\\Admin\\civitai\\project\\Frontier-Stories\\node_modules\\@radix-ui\\react-aspect-ratio\\node_modules",
+                "FileCount": 9,
+                "Pattern": "node_modules"
+              },
+              {
+                "Path": "C:\\Users\\Admin\\civitai\\project\\Frontier-Stories\\node_modules\\@radix-ui\\react-avatar\\node_modules",
+                "FileCount": 18,
+                "Pattern": "node_modules"
+              },
+              {
+                "Path": "C:\\Users\\Admin\\civitai\\project\\Frontier-Stories\\node_modules\\@radix-ui\\react-collection\\node_modules",
+                "FileCount": 9,
+                "Pattern": "node_modules"
+              },
+              {
+                "Path": "C:\\Users\\Admin\\civitai\\mcp_server\\__pycache__",
+                "FileCount": 1,
+                "Pattern": "__pycache__"
+              },
+              {
+                "Path": "C:\\Users\\Admin\\civitai\\project\\GPT-SoVITS-main\\GPT-SoVITS-main\\GPT_SoVITS\\text\\__pycache__",
+                "FileCount": 3,
+                "Pattern": "__pycache__"
+              },
+              {
+                "Path": "C:\\Users\\Admin\\civitai\\project\\GPT-SoVITS-main\\GPT-SoVITS-main\\GPT_SoVITS\\text\\LangSegmenter\\__pycache__",
+                "FileCount": 2,
+                "Pattern": "__pycache__"
+              },
+              {
+                "Path": "C:\\Users\\Admin\\civitai\\scripts\\__pycache__",
+                "FileCount": 80,
+                "Pattern": "__pycache__"
+              },
+              {
+                "Path": "C:\\Users\\Admin\\civitai\\scripts\\admin\\__pycache__",
+                "FileCount": 1,
+                "Pattern": "__pycache__"
+              },
+              {
+                "Path": "C:\\Users\\Admin\\civitai\\checkpoints",
+                "FileCount": 13,
+                "Pattern": "checkpoints"
+              },
+              {
+                "Path": "C:\\Users\\Admin\\civitai\\models",
+                "FileCount": 3,
+                "Pattern": "models"
+              },
+              {
+                "Path": "C:\\Users\\Admin\\civitai\\project\\fish-speech-main\\fish-speech-main\\fish_speech\\models",
+                "FileCount": 9,
+                "Pattern": "models"
+              },
+              {
+                "Path": "C:\\Users\\Admin\\civitai\\project\\Frontier-Stories\\models",
+                "FileCount": 4,
+                "Pattern": "models"
+              }
+            ]
+          }
+        },
+        {
+          "Success": true,
+          "MemoryAfter": 59506864,
+          "MemoryDelta": 11518056,
+          "Error": null,
+          "MemoryBefore": 47988808,
+          "Run": 3,
+          "Duration": 11549,
+          "Output": {
+            "ExcludedViolations": 14,
+            "TestPath": "C:\\Users\\Admin\\civitai",
+            "PatternsChecked": 7,
+            "Message": "14 directories with files should be excluded",
+            "Violations": [
+              {
+                "Path": "C:\\Users\\Admin\\civitai\\project\\Frontier-Stories\\node_modules",
+                "FileCount": 17162,
+                "Pattern": "node_modules"
+              },
+              {
+                "Path": "C:\\Users\\Admin\\civitai\\project\\Frontier-Stories\\node_modules\\@radix-ui\\react-alert-dialog\\node_modules",
+                "FileCount": 9,
+                "Pattern": "node_modules"
+              },
+              {
+                "Path": "C:\\Users\\Admin\\civitai\\project\\Frontier-Stories\\node_modules\\@radix-ui\\react-aspect-ratio\\node_modules",
+                "FileCount": 9,
+                "Pattern": "node_modules"
+              },
+              {
+                "Path": "C:\\Users\\Admin\\civitai\\project\\Frontier-Stories\\node_modules\\@radix-ui\\react-avatar\\node_modules",
+                "FileCount": 18,
+                "Pattern": "node_modules"
+              },
+              {
+                "Path": "C:\\Users\\Admin\\civitai\\project\\Frontier-Stories\\node_modules\\@radix-ui\\react-collection\\node_modules",
+                "FileCount": 9,
+                "Pattern": "node_modules"
+              },
+              {
+                "Path": "C:\\Users\\Admin\\civitai\\mcp_server\\__pycache__",
+                "FileCount": 1,
+                "Pattern": "__pycache__"
+              },
+              {
+                "Path": "C:\\Users\\Admin\\civitai\\project\\GPT-SoVITS-main\\GPT-SoVITS-main\\GPT_SoVITS\\text\\__pycache__",
+                "FileCount": 3,
+                "Pattern": "__pycache__"
+              },
+              {
+                "Path": "C:\\Users\\Admin\\civitai\\project\\GPT-SoVITS-main\\GPT-SoVITS-main\\GPT_SoVITS\\text\\LangSegmenter\\__pycache__",
+                "FileCount": 2,
+                "Pattern": "__pycache__"
+              },
+              {
+                "Path": "C:\\Users\\Admin\\civitai\\scripts\\__pycache__",
+                "FileCount": 80,
+                "Pattern": "__pycache__"
+              },
+              {
+                "Path": "C:\\Users\\Admin\\civitai\\scripts\\admin\\__pycache__",
+                "FileCount": 1,
+                "Pattern": "__pycache__"
+              },
+              {
+                "Path": "C:\\Users\\Admin\\civitai\\checkpoints",
+                "FileCount": 13,
+                "Pattern": "checkpoints"
+              },
+              {
+                "Path": "C:\\Users\\Admin\\civitai\\models",
+                "FileCount": 3,
+                "Pattern": "models"
+              },
+              {
+                "Path": "C:\\Users\\Admin\\civitai\\project\\fish-speech-main\\fish-speech-main\\fish_speech\\models",
+                "FileCount": 9,
+                "Pattern": "models"
+              },
+              {
+                "Path": "C:\\Users\\Admin\\civitai\\project\\Frontier-Stories\\models",
+                "FileCount": 4,
+                "Pattern": "models"
+              }
+            ]
+          }
+        }
+      ],
+      "TestName": "File Watcher Exclusion Validation",
+      "Status": "Failed",
+      "Min": 4371.0,
+      "TestId": "FS-001"
+    },
+    {
+      "Timestamp": "2025-12-06 22:50:19",
+      "Variance": 1412.0,
+      "Average": 3120.0,
+      "Category": "FileSystem",
+      "Max": 3712.0,
+      "DelayReasons": "Performance within acceptable range but could be optimized",
+      "Runs": [
+        {
+          "Success": true,
+          "MemoryAfter": 44025080,
+          "MemoryDelta": 32944576,
+          "Error": null,
+          "MemoryBefore": 11080504,
+          "Run": 1,
+          "Duration": 3712,
+          "Output": {
+            "SearchTerm": "import",
+            "FileCount": 50,
+            "TestPath": "C:\\Users\\Admin\\civitai",
+            "TotalFiles": 50,
+            "MatchCount": 377,
+            "FilesSearched": 50,
+            "FilesWithMatches": 42
+          }
+        },
+        {
+          "Success": true,
+          "MemoryAfter": 22560480,
+          "MemoryDelta": -21505720,
+          "Error": null,
+          "MemoryBefore": 44066200,
+          "Run": 2,
+          "Duration": 3348,
+          "Output": {
+            "SearchTerm": "import",
+            "FileCount": 50,
+            "TestPath": "C:\\Users\\Admin\\civitai",
+            "TotalFiles": 50,
+            "MatchCount": 377,
+            "FilesSearched": 50,
+            "FilesWithMatches": 42
+          }
+        },
+        {
+          "Success": true,
+          "MemoryAfter": 55475288,
+          "MemoryDelta": 32873688,
+          "Error": null,
+          "MemoryBefore": 22601600,
+          "Run": 3,
+          "Duration": 2300,
+          "Output": {
+            "SearchTerm": "import",
+            "FileCount": 50,
+            "TestPath": "C:\\Users\\Admin\\civitai",
+            "TotalFiles": 50,
+            "MatchCount": 377,
+            "FilesSearched": 50,
+            "FilesWithMatches": 42
+          }
+        }
+      ],
+      "TestName": "Search Performance with Exclusions",
+      "Status": "Critical",
+      "Min": 2300.0,
+      "TestId": "FS-002"
+    },
+    {
+      "Timestamp": "2025-12-06 22:50:30",
+      "Variance": 17.0,
+      "Average": 14.0,
+      "Category": "FileSystem",
+      "Max": 24.0,
+      "DelayReasons": null,
+      "Runs": [
+        {
+          "Success": true,
+          "MemoryAfter": 56872720,
+          "MemoryDelta": 1084920,
+          "Error": null,
+          "MemoryBefore": 55787800,
+          "Run": 1,
+          "Duration": 24,
+          "Output": {
+            "BinaryFilesFound": 7,
+            "TestPath": "C:\\Users\\Admin\\civitai",
+            "LargeFilesFound": 10,
+            "Message": "Found 10 large files, 7 are binary model files",
+            "Files": [
+              {
+                "Path": "C:\\Users\\Admin\\civitai\\backups\\databases_20251204_170643.zip",
+                "Name": "databases_20251204_170643.zip",
+                "Extension": ".zip",
+                "SizeMB": 2.5
+              },
+              {
+                "Path": "C:\\Users\\Admin\\civitai\\backups\\databases_20251206_162158.zip",
+                "Name": "databases_20251206_162158.zip",
+                "Extension": ".zip",
+                "SizeMB": 2.73
+              },
+              {
+                "Path": "C:\\Users\\Admin\\civitai\\backups\\databases_20251206_222159.zip",
+                "Name": "databases_20251206_222159.zip",
+                "Extension": ".zip",
+                "SizeMB": 3.0
+              },
+              {
+                "Path": "C:\\Users\\Admin\\civitai\\checkpoints\\CyberRealistic.safetensors",
+                "Name": "CyberRealistic.safetensors",
+                "Extension": ".safetensors",
+                "SizeMB": 2033.85
+              },
+              {
+                "Path": "C:\\Users\\Admin\\civitai\\checkpoints\\juggernautXL_v9.safetensors",
+                "Name": "juggernautXL_v9.safetensors",
+                "Extension": ".safetensors",
+                "SizeMB": 6776.19
+              },
+              {
+                "Path": "C:\\Users\\Admin\\civitai\\checkpoints\\NoobAI-XL-v1.0.safetensors",
+                "Name": "NoobAI-XL-v1.0.safetensors",
+                "Extension": ".safetensors",
+                "SizeMB": 6616.63
+              },
+              {
+                "Path": "C:\\Users\\Admin\\civitai\\checkpoints\\ponyDiffusionV6XL_v6.safetensors",
+                "Name": "ponyDiffusionV6XL_v6.safetensors",
+                "Extension": ".safetensors",
+                "SizeMB": 6616.63
+              },
+              {
+                "Path": "C:\\Users\\Admin\\civitai\\checkpoints\\RealisticVisionV5.safetensors",
+                "Name": "RealisticVisionV5.safetensors",
+                "Extension": ".safetensors",
+                "SizeMB": 2033.83
+              },
+              {
+                "Path": "C:\\Users\\Admin\\civitai\\checkpoints\\sd_xl_base_1.0.safetensors",
+                "Name": "sd_xl_base_1.0.safetensors",
+                "Extension": ".safetensors",
+                "SizeMB": 6616.67
+              },
+              {
+                "Path": "C:\\Users\\Admin\\civitai\\checkpoints\\sd_xl_refiner_1.0.safetensors",
+                "Name": "sd_xl_refiner_1.0.safetensors",
+                "Extension": ".safetensors",
+                "SizeMB": 5794.51
+              }
+            ]
+          }
+        },
+        {
+          "Success": true,
+          "MemoryAfter": 57678672,
+          "MemoryDelta": 764832,
+          "Error": null,
+          "MemoryBefore": 56913840,
+          "Run": 2,
+          "Duration": 11,
+          "Output": {
+            "BinaryFilesFound": 7,
+            "TestPath": "C:\\Users\\Admin\\civitai",
+            "LargeFilesFound": 10,
+            "Message": "Found 10 large files, 7 are binary model files",
+            "Files": [
+              {
+                "Path": "C:\\Users\\Admin\\civitai\\backups\\databases_20251204_170643.zip",
+                "Name": "databases_20251204_170643.zip",
+                "Extension": ".zip",
+                "SizeMB": 2.5
+              },
+              {
+                "Path": "C:\\Users\\Admin\\civitai\\backups\\databases_20251206_162158.zip",
+                "Name": "databases_20251206_162158.zip",
+                "Extension": ".zip",
+                "SizeMB": 2.73
+              },
+              {
+                "Path": "C:\\Users\\Admin\\civitai\\backups\\databases_20251206_222159.zip",
+                "Name": "databases_20251206_222159.zip",
+                "Extension": ".zip",
+                "SizeMB": 3.0
+              },
+              {
+                "Path": "C:\\Users\\Admin\\civitai\\checkpoints\\CyberRealistic.safetensors",
+                "Name": "CyberRealistic.safetensors",
+                "Extension": ".safetensors",
+                "SizeMB": 2033.85
+              },
+              {
+                "Path": "C:\\Users\\Admin\\civitai\\checkpoints\\juggernautXL_v9.safetensors",
+                "Name": "juggernautXL_v9.safetensors",
+                "Extension": ".safetensors",
+                "SizeMB": 6776.19
+              },
+              {
+                "Path": "C:\\Users\\Admin\\civitai\\checkpoints\\NoobAI-XL-v1.0.safetensors",
+                "Name": "NoobAI-XL-v1.0.safetensors",
+                "Extension": ".safetensors",
+                "SizeMB": 6616.63
+              },
+              {
+                "Path": "C:\\Users\\Admin\\civitai\\checkpoints\\ponyDiffusionV6XL_v6.safetensors",
+                "Name": "ponyDiffusionV6XL_v6.safetensors",
+                "Extension": ".safetensors",
+                "SizeMB": 6616.63
+              },
+              {
+                "Path": "C:\\Users\\Admin\\civitai\\checkpoints\\RealisticVisionV5.safetensors",
+                "Name": "RealisticVisionV5.safetensors",
+                "Extension": ".safetensors",
+                "SizeMB": 2033.83
+              },
+              {
+                "Path": "C:\\Users\\Admin\\civitai\\checkpoints\\sd_xl_base_1.0.safetensors",
+                "Name": "sd_xl_base_1.0.safetensors",
+                "Extension": ".safetensors",
+                "SizeMB": 6616.67
+              },
+              {
+                "Path": "C:\\Users\\Admin\\civitai\\checkpoints\\sd_xl_refiner_1.0.safetensors",
+                "Name": "sd_xl_refiner_1.0.safetensors",
+                "Extension": ".safetensors",
+                "SizeMB": 5794.51
+              }
+            ]
+          }
+        },
+        {
+          "Success": true,
+          "MemoryAfter": 58476368,
+          "MemoryDelta": 756576,
+          "Error": null,
+          "MemoryBefore": 57719792,
+          "Run": 3,
+          "Duration": 7,
+          "Output": {
+            "BinaryFilesFound": 7,
+            "TestPath": "C:\\Users\\Admin\\civitai",
+            "LargeFilesFound": 10,
+            "Message": "Found 10 large files, 7 are binary model files",
+            "Files": [
+              {
+                "Path": "C:\\Users\\Admin\\civitai\\backups\\databases_20251204_170643.zip",
+                "Name": "databases_20251204_170643.zip",
+                "Extension": ".zip",
+                "SizeMB": 2.5
+              },
+              {
+                "Path": "C:\\Users\\Admin\\civitai\\backups\\databases_20251206_162158.zip",
+                "Name": "databases_20251206_162158.zip",
+                "Extension": ".zip",
+                "SizeMB": 2.73
+              },
+              {
+                "Path": "C:\\Users\\Admin\\civitai\\backups\\databases_20251206_222159.zip",
+                "Name": "databases_20251206_222159.zip",
+                "Extension": ".zip",
+                "SizeMB": 3.0
+              },
+              {
+                "Path": "C:\\Users\\Admin\\civitai\\checkpoints\\CyberRealistic.safetensors",
+                "Name": "CyberRealistic.safetensors",
+                "Extension": ".safetensors",
+                "SizeMB": 2033.85
+              },
+              {
+                "Path": "C:\\Users\\Admin\\civitai\\checkpoints\\juggernautXL_v9.safetensors",
+                "Name": "juggernautXL_v9.safetensors",
+                "Extension": ".safetensors",
+                "SizeMB": 6776.19
+              },
+              {
+                "Path": "C:\\Users\\Admin\\civitai\\checkpoints\\NoobAI-XL-v1.0.safetensors",
+                "Name": "NoobAI-XL-v1.0.safetensors",
+                "Extension": ".safetensors",
+                "SizeMB": 6616.63
+              },
+              {
+                "Path": "C:\\Users\\Admin\\civitai\\checkpoints\\ponyDiffusionV6XL_v6.safetensors",
+                "Name": "ponyDiffusionV6XL_v6.safetensors",
+                "Extension": ".safetensors",
+                "SizeMB": 6616.63
+              },
+              {
+                "Path": "C:\\Users\\Admin\\civitai\\checkpoints\\RealisticVisionV5.safetensors",
+                "Name": "RealisticVisionV5.safetensors",
+                "Extension": ".safetensors",
+                "SizeMB": 2033.83
+              },
+              {
+                "Path": "C:\\Users\\Admin\\civitai\\checkpoints\\sd_xl_base_1.0.safetensors",
+                "Name": "sd_xl_base_1.0.safetensors",
+                "Extension": ".safetensors",
+                "SizeMB": 6616.67
+              },
+              {
+                "Path": "C:\\Users\\Admin\\civitai\\checkpoints\\sd_xl_refiner_1.0.safetensors",
+                "Name": "sd_xl_refiner_1.0.safetensors",
+                "Extension": ".safetensors",
+                "SizeMB": 5794.51
+              }
+            ]
+          }
+        }
+      ],
+      "TestName": "Large File Detection and Handling",
+      "Status": "Optimal",
+      "Min": 7.0,
+      "TestId": "FS-003"
+    },
+    {
+      "Timestamp": "2025-12-06 22:50:31",
+      "Variance": 52.0,
+      "Average": 168.67,
+      "Category": "Language",
+      "Max": 197.0,
+      "DelayReasons": null,
+      "Runs": [
+        {
+          "Success": true,
+          "MemoryAfter": 50989416,
+          "MemoryDelta": -7799464,
+          "Error": null,
+          "MemoryBefore": 58788880,
+          "Run": 1,
+          "Duration": 197,
+          "Output": {
+            "TotalLines": 5721,
+            "FilesAnalyzed": 25,
+            "FileSize": 5721,
+            "ImportStatements": 168,
+            "Functions": 117,
+            "AverageLinesPerFile": 229.0,
+            "Classes": 18
+          }
+        },
+        {
+          "Success": true,
+          "MemoryAfter": 42491256,
+          "MemoryDelta": -8539280,
+          "Error": null,
+          "MemoryBefore": 51030536,
+          "Run": 2,
+          "Duration": 145,
+          "Output": {
+            "TotalLines": 5721,
+            "FilesAnalyzed": 25,
+            "FileSize": 5721,
+            "ImportStatements": 168,
+            "Functions": 117,
+            "AverageLinesPerFile": 229.0,
+            "Classes": 18
+          }
+        },
+        {
+          "Success": true,
+          "MemoryAfter": 34367456,
+          "MemoryDelta": -8164920,
+          "Error": null,
+          "MemoryBefore": 42532376,
+          "Run": 3,
+          "Duration": 164,
+          "Output": {
+            "TotalLines": 5721,
+            "FilesAnalyzed": 25,
+            "FileSize": 5721,
+            "ImportStatements": 168,
+            "Functions": 117,
+            "AverageLinesPerFile": 229.0,
+            "Classes": 18
+          }
+        }
+      ],
+      "TestName": "Python File Analysis Performance",
+      "Status": "Acceptable",
+      "Min": 145.0,
+      "TestId": "LANG-001"
+    },
+    {
+      "Timestamp": "2025-12-06 22:50:33",
+      "Variance": 464.0,
+      "Average": 713.33,
+      "Category": "Language",
+      "Max": 991.0,
+      "DelayReasons": "Performance within acceptable range but could be optimized",
+      "Runs": [
+        {
+          "Success": true,
+          "MemoryAfter": 45322736,
+          "MemoryDelta": 10628336,
+          "Error": null,
+          "MemoryBefore": 34694400,
+          "Run": 1,
+          "Duration": 527,
+          "Output": {
+            "TotalLines": 184,
+            "FilesAnalyzed": 4,
+            "FileSize": 184,
+            "ImportStatements": 11,
+            "Functions": 1,
+            "ExportStatements": 4
+          }
+        },
+        {
+          "Success": true,
+          "MemoryAfter": 55393088,
+          "MemoryDelta": 10029232,
+          "Error": null,
+          "MemoryBefore": 45363856,
+          "Run": 2,
+          "Duration": 622,
+          "Output": {
+            "TotalLines": 184,
+            "FilesAnalyzed": 4,
+            "FileSize": 184,
+            "ImportStatements": 11,
+            "Functions": 1,
+            "ExportStatements": 4
+          }
+        },
+        {
+          "Success": true,
+          "MemoryAfter": 16005760,
+          "MemoryDelta": -39428448,
+          "Error": null,
+          "MemoryBefore": 55434208,
+          "Run": 3,
+          "Duration": 991,
+          "Output": {
+            "TotalLines": 184,
+            "FilesAnalyzed": 4,
+            "FileSize": 184,
+            "ImportStatements": 11,
+            "Functions": 1,
+            "ExportStatements": 4
+          }
+        }
+      ],
+      "TestName": "JavaScript/TypeScript Analysis Performance",
+      "Status": "Degraded",
+      "Min": 527.0,
+      "TestId": "LANG-002"
+    },
+    {
+      "Timestamp": "2025-12-06 22:50:36",
+      "Variance": 136.0,
+      "Average": 646.0,
+      "Category": "Language",
+      "Max": 711.0,
+      "DelayReasons": "Performance within acceptable range but could be optimized",
+      "Runs": [
+        {
+          "Success": true,
+          "MemoryAfter": 53848976,
+          "MemoryDelta": 37530704,
+          "Error": null,
+          "MemoryBefore": 16318272,
+          "Run": 1,
+          "Duration": 711,
+          "Output": {
+            "Functions": 22,
+            "FilesAnalyzed": 20,
+            "VariableAssignments": 251,
+            "CmdletUsages": 631,
+            "TotalLines": 1773
+          }
+        },
+        {
+          "Success": true,
+          "MemoryAfter": 40584480,
+          "MemoryDelta": -13313840,
+          "Error": null,
+          "MemoryBefore": 53898320,
+          "Run": 2,
+          "Duration": 652,
+          "Output": {
+            "Functions": 22,
+            "FilesAnalyzed": 20,
+            "VariableAssignments": 251,
+            "CmdletUsages": 631,
+            "TotalLines": 1773
+          }
+        },
+        {
+          "Success": true,
+          "MemoryAfter": 26893176,
+          "MemoryDelta": -13740648,
+          "Error": null,
+          "MemoryBefore": 40633824,
+          "Run": 3,
+          "Duration": 575,
+          "Output": {
+            "Functions": 22,
+            "FilesAnalyzed": 20,
+            "VariableAssignments": 251,
+            "CmdletUsages": 631,
+            "TotalLines": 1773
+          }
+        }
+      ],
+      "TestName": "PowerShell Script Analysis",
+      "Status": "Degraded",
+      "Min": 575.0,
+      "TestId": "LANG-003"
+    },
+    {
+      "Timestamp": "2025-12-06 22:50:39",
+      "Variance": 16.0,
+      "Average": 9.33,
+      "Category": "Security",
+      "Max": 20.0,
+      "DelayReasons": null,
+      "Runs": [
+        {
+          "Success": true,
+          "MemoryAfter": 28187480,
+          "MemoryDelta": 1000448,
+          "Error": null,
+          "MemoryBefore": 27187032,
+          "Run": 1,
+          "Duration": 20,
+          "Output": {
+            "DenyListConfigured": true,
+            "DenyListCount": 18,
+            "MissingBlocks": [],
+            "AllowListCount": 15,
+            "Status": "Pass",
+            "AllowListConfigured": true
+          }
+        },
+        {
+          "Success": true,
+          "MemoryAfter": 28565736,
+          "MemoryDelta": 337136,
+          "Error": null,
+          "MemoryBefore": 28228600,
+          "Run": 2,
+          "Duration": 4,
+          "Output": {
+            "DenyListConfigured": true,
+            "DenyListCount": 18,
+            "MissingBlocks": [],
+            "AllowListCount": 15,
+            "Status": "Pass",
+            "AllowListConfigured": true
+          }
+        },
+        {
+          "Success": true,
+          "MemoryAfter": 28953840,
+          "MemoryDelta": 338760,
+          "Error": null,
+          "MemoryBefore": 28615080,
+          "Run": 3,
+          "Duration": 4,
+          "Output": {
+            "DenyListConfigured": true,
+            "DenyListCount": 18,
+            "MissingBlocks": [],
+            "AllowListCount": 15,
+            "Status": "Pass",
+            "AllowListConfigured": true
+          }
+        }
+      ],
+      "TestName": "Security Configuration Validation",
+      "Status": "Optimal",
+      "Min": 4.0,
+      "TestId": "SEC-001"
+    },
+    {
+      "Timestamp": "2025-12-06 22:50:40",
+      "Variance": 22.0,
+      "Average": 9.33,
+      "Category": "Security",
+      "Max": 24.0,
+      "DelayReasons": null,
+      "Runs": [
+        {
+          "Success": true,
+          "MemoryAfter": 30085472,
+          "MemoryDelta": 811040,
+          "Error": null,
+          "MemoryBefore": 29274432,
+          "Run": 1,
+          "Duration": 24,
+          "Output": {
+            "FilesExcludeCount": 7,
+            "WatcherExcludeCount": 16,
+            "TotalExclusions": 41,
+            "SearchExcludeCount": 18
+          }
+        },
+        {
+          "Success": true,
+          "MemoryAfter": 30469352,
+          "MemoryDelta": 334536,
+          "Error": null,
+          "MemoryBefore": 30134816,
+          "Run": 2,
+          "Duration": 2,
+          "Output": {
+            "FilesExcludeCount": 7,
+            "WatcherExcludeCount": 16,
+            "TotalExclusions": 41,
+            "SearchExcludeCount": 18
+          }
+        },
+        {
+          "Success": true,
+          "MemoryAfter": 30852824,
+          "MemoryDelta": 334128,
+          "Error": null,
+          "MemoryBefore": 30518696,
+          "Run": 3,
+          "Duration": 2,
+          "Output": {
+            "FilesExcludeCount": 7,
+            "WatcherExcludeCount": 16,
+            "TotalExclusions": 41,
+            "SearchExcludeCount": 18
+          }
+        }
+      ],
+      "TestName": "File Exclusion Security Check",
+      "Status": "Optimal",
+      "Min": 2.0,
+      "TestId": "SEC-002"
+    },
+    {
+      "Timestamp": "2025-12-06 22:50:41",
+      "Variance": 1469.0,
+      "Average": 1800.67,
+      "Category": "Extension",
+      "Max": 2632.0,
+      "DelayReasons": "Performance within acceptable range but could be optimized",
+      "Runs": [
+        {
+          "Success": true,
+          "MemoryAfter": 18802272,
+          "MemoryDelta": -12330168,
+          "Error": null,
+          "MemoryBefore": 31132440,
+          "Run": 1,
+          "Duration": 1607,
+          "Output": {
+            "TotalTodos": 52.0,
+            "Patterns": {
+              "HACK": 0,
+              "XXX": 5,
+              "TODO": 4,
+              "REVIEW": 2,
+              "FIXME": 0,
+              "OPTIMIZE": 10,
+              "NOTE": 8,
+              "BUG": 23
+            },
+            "FilesScanned": 50
+          }
+        },
+        {
+          "Success": true,
+          "MemoryAfter": 56878232,
+          "MemoryDelta": 38034840,
+          "Error": null,
+          "MemoryBefore": 18843392,
+          "Run": 2,
+          "Duration": 1163,
+          "Output": {
+            "TotalTodos": 52.0,
+            "Patterns": {
+              "HACK": 0,
+              "XXX": 5,
+              "TODO": 4,
+              "REVIEW": 2,
+              "FIXME": 0,
+              "OPTIMIZE": 10,
+              "NOTE": 8,
+              "BUG": 23
+            },
+            "FilesScanned": 50
+          }
+        },
+        {
+          "Success": true,
+          "MemoryAfter": 42956272,
+          "MemoryDelta": -13971304,
+          "Error": null,
+          "MemoryBefore": 56927576,
+          "Run": 3,
+          "Duration": 2632,
+          "Output": {
+            "TotalTodos": 52.0,
+            "Patterns": {
+              "HACK": 0,
+              "XXX": 5,
+              "TODO": 4,
+              "REVIEW": 2,
+              "FIXME": 0,
+              "OPTIMIZE": 10,
+              "NOTE": 8,
+              "BUG": 23
+            },
+            "FilesScanned": 50
+          }
+        }
+      ],
+      "TestName": "Todo Pattern Detection",
+      "Status": "Degraded",
+      "Min": 1163.0,
+      "TestId": "EXT-001"
+    },
+    {
+      "Timestamp": "2025-12-06 22:50:47",
+      "Variance": 209.0,
+      "Average": 617.67,
+      "Category": "Extension",
+      "Max": 724.0,
+      "DelayReasons": "Performance within acceptable range but could be optimized",
+      "Runs": [
+        {
+          "Success": true,
+          "MemoryAfter": 44447088,
+          "MemoryDelta": 982336,
+          "Error": null,
+          "MemoryBefore": 43464752,
+          "Run": 1,
+          "Duration": 724,
+          "Output": {
+            "Path": "C:\\Users\\Admin\\civitai",
+            "CurrentBranch": "main",
+            "ModifiedFiles": 35,
+            "RecentCommits": 3,
+            "IsGitRepository": true
+          }
+        },
+        {
+          "Success": true,
+          "MemoryAfter": 44960632,
+          "MemoryDelta": 472424,
+          "Error": null,
+          "MemoryBefore": 44488208,
+          "Run": 2,
+          "Duration": 614,
+          "Output": {
+            "Path": "C:\\Users\\Admin\\civitai",
+            "CurrentBranch": "main",
+            "ModifiedFiles": 35,
+            "RecentCommits": 3,
+            "IsGitRepository": true
+          }
+        },
+        {
+          "Success": true,
+          "MemoryAfter": 45473728,
+          "MemoryDelta": 471976,
+          "Error": null,
+          "MemoryBefore": 45001752,
+          "Run": 3,
+          "Duration": 515,
+          "Output": {
+            "Path": "C:\\Users\\Admin\\civitai",
+            "CurrentBranch": "main",
+            "ModifiedFiles": 35,
+            "RecentCommits": 3,
+            "IsGitRepository": true
+          }
+        }
+      ],
+      "TestName": "Git Repository Status",
+      "Status": "Degraded",
+      "Min": 515.0,
+      "TestId": "EXT-002"
+    },
+    {
+      "Timestamp": "2025-12-06 22:50:50",
+      "Variance": 11.0,
+      "Average": 9.0,
+      "Category": "Editor",
+      "Max": 15.0,
+      "DelayReasons": null,
+      "Runs": [
+        {
+          "Success": true,
+          "MemoryAfter": 47251184,
+          "MemoryDelta": 1476560,
+          "Error": null,
+          "MemoryBefore": 45774624,
+          "Run": 1,
+          "Duration": 8,
+          "Output": {
+            "SizeKB": 10.08,
+            "Valid": true,
+            "Path": "C:\\Users\\Admin\\AppData\\Roaming\\Windsurf\\User\\settings.json",
+            "KeyCount": 65,
+            "LineCount": 295,
+            "Exists": true
+          }
+        },
+        {
+          "Success": true,
+          "MemoryAfter": 48483312,
+          "MemoryDelta": 1191008,
+          "Error": null,
+          "MemoryBefore": 47292304,
+          "Run": 2,
+          "Duration": 15,
+          "Output": {
+            "SizeKB": 10.08,
+            "Valid": true,
+            "Path": "C:\\Users\\Admin\\AppData\\Roaming\\Windsurf\\User\\settings.json",
+            "KeyCount": 65,
+            "LineCount": 295,
+            "Exists": true
+          }
+        },
+        {
+          "Success": true,
+          "MemoryAfter": 49716296,
+          "MemoryDelta": 1191864,
+          "Error": null,
+          "MemoryBefore": 48524432,
+          "Run": 3,
+          "Duration": 4,
+          "Output": {
+            "SizeKB": 10.08,
+            "Valid": true,
+            "Path": "C:\\Users\\Admin\\AppData\\Roaming\\Windsurf\\User\\settings.json",
+            "KeyCount": 65,
+            "LineCount": 295,
+            "Exists": true
+          }
+        }
+      ],
+      "TestName": "Settings.json Validation",
+      "Status": "Optimal",
+      "Min": 4.0,
+      "TestId": "EDITOR-001"
+    },
+    {
+      "Timestamp": "2025-12-06 22:50:51",
+      "Variance": 1124.0,
+      "Average": 3326.33,
+      "Category": "Editor",
+      "Max": 4073.0,
+      "DelayReasons": [
+        "Extension conflict or high extension activation time",
+        "Consider checking Developer: Show Running Extensions"
+      ],
+      "Runs": [
+        {
+          "Success": true,
+          "MemoryAfter": 121806304,
+          "MemoryDelta": 71633984,
+          "Error": null,
+          "MemoryBefore": 50172320,
+          "Run": 1,
+          "Duration": 4073,
+          "Output": {
+            "TopExtensions": [
+              {
+                "Extension": ".png",
+                "Count": 9463
+              },
+              {
+                "Extension": ".jpg",
+                "Count": 6541
+              },
+              {
+                "Extension": ".py",
+                "Count": 1136
+              },
+              {
+                "Extension": ".txt",
+                "Count": 492
+              },
+              {
+                "Extension": "",
+                "Count": 412
+              },
+              {
+                "Extension": ".md",
+                "Count": 408
+              },
+              {
+                "Extension": ".json",
+                "Count": 357
+              },
+              {
+                "Extension": ".wav",
+                "Count": 177
+              },
+              {
+                "Extension": ".tsx",
+                "Count": 79
+              },
+              {
+                "Extension": ".jpeg",
+                "Count": 79
+              }
+            ],
+            "IncludedFiles": 19674,
+            "FileCount": 19674,
+            "ExcludedFiles": 17534,
+            "TotalFiles": 37208,
+            "ExclusionRatio": 47.1
+          }
+        },
+        {
+          "Success": true,
+          "MemoryAfter": 141080000,
+          "MemoryDelta": 19224352,
+          "Error": null,
+          "MemoryBefore": 121855648,
+          "Run": 2,
+          "Duration": 2949,
+          "Output": {
+            "TopExtensions": [
+              {
+                "Extension": ".png",
+                "Count": 9463
+              },
+              {
+                "Extension": ".jpg",
+                "Count": 6541
+              },
+              {
+                "Extension": ".py",
+                "Count": 1136
+              },
+              {
+                "Extension": ".txt",
+                "Count": 492
+              },
+              {
+                "Extension": "",
+                "Count": 412
+              },
+              {
+                "Extension": ".md",
+                "Count": 408
+              },
+              {
+                "Extension": ".json",
+                "Count": 357
+              },
+              {
+                "Extension": ".wav",
+                "Count": 177
+              },
+              {
+                "Extension": ".tsx",
+                "Count": 79
+              },
+              {
+                "Extension": ".jpeg",
+                "Count": 79
+              }
+            ],
+            "IncludedFiles": 19674,
+            "FileCount": 19674,
+            "ExcludedFiles": 17534,
+            "TotalFiles": 37208,
+            "ExclusionRatio": 47.1
+          }
+        },
+        {
+          "Success": true,
+          "MemoryAfter": 219865856,
+          "MemoryDelta": 78744736,
+          "Error": null,
+          "MemoryBefore": 141121120,
+          "Run": 3,
+          "Duration": 2957,
+          "Output": {
+            "TopExtensions": [
+              {
+                "Extension": ".png",
+                "Count": 9463
+              },
+              {
+                "Extension": ".jpg",
+                "Count": 6541
+              },
+              {
+                "Extension": ".py",
+                "Count": 1136
+              },
+              {
+                "Extension": ".txt",
+                "Count": 492
+              },
+              {
+                "Extension": "",
+                "Count": 412
+              },
+              {
+                "Extension": ".md",
+                "Count": 408
+              },
+              {
+                "Extension": ".json",
+                "Count": 357
+              },
+              {
+                "Extension": ".wav",
+                "Count": 177
+              },
+              {
+                "Extension": ".tsx",
+                "Count": 79
+              },
+              {
+                "Extension": ".jpeg",
+                "Count": 79
+              }
+            ],
+            "IncludedFiles": 19674,
+            "FileCount": 19674,
+            "ExcludedFiles": 17534,
+            "TotalFiles": 37208,
+            "ExclusionRatio": 47.1
+          }
+        }
+      ],
+      "TestName": "Workspace File Count Analysis",
+      "Status": "Critical",
+      "Min": 2949.0,
+      "TestId": "EDITOR-002"
+    }
+  ],
+  "Metadata": {
+    "Timestamp": "2025-12-06 22:49:52",
+    "System": {
+      "OS": "Microsoft Windows NT 10.0.26100.0",
+      "RAM": 127.92,
+      "PSVersion": "7.5.4",
+      "CPU": "AMD Ryzen 7 5800X3D 8-Core Processor           "
+    },
+    "Version": "1.0.0",
+    "TestCategory": "All",
+    "RunCount": 3
+  }
+}

@@ -4,11 +4,11 @@ This directory contains example configuration files to help you set up Windsurf 
 
 ## Files
 
-| File | Description | Destination |
-|------|-------------|-------------|
-| `global_rules.md` | AI assistant behavior rules | `~/.codeium/windsurf/memories/global_rules.md` |
-| `mcp_config.json` | MCP server configuration | `~/.codeium/windsurf/mcp_config.json` |
-| `windsurf-vibe.code-workspace` | Multi-project workspace template | Your project root |
+| File                           | Description                      | Destination                                    |
+| ------------------------------ | -------------------------------- | ---------------------------------------------- |
+| `global_rules.md`              | AI assistant behavior rules      | `~/.codeium/windsurf/memories/global_rules.md` |
+| `mcp_config.json`              | MCP server configuration         | `~/.codeium/windsurf/mcp_config.json`          |
+| `windsurf-vibe.code-workspace` | Multi-project workspace template | Your project root                              |
 
 ## Usage
 
@@ -17,11 +17,13 @@ This directory contains example configuration files to help you set up Windsurf 
 Copy `global_rules.md` to your Codeium config directory:
 
 **Windows:**
+
 ```powershell
 Copy-Item .\examples\global_rules.md "$env:USERPROFILE\.codeium\windsurf\memories\"
 ```
 
 **Linux/macOS:**
+
 ```bash
 cp ./examples/global_rules.md ~/.codeium/windsurf/memories/
 ```
@@ -32,6 +34,7 @@ cp ./examples/global_rules.md ~/.codeium/windsurf/memories/
 2. Copy to your Codeium config directory:
 
 **Windows:**
+
 ```powershell
 Copy-Item .\examples\mcp_config.json "$env:USERPROFILE\.codeium\windsurf\"
 ```

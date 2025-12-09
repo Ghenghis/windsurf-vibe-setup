@@ -5,8 +5,9 @@
 This plan seamlessly integrates the Free & Local module into Windsurf Vibe Setup with **full AI/ML automation**. The goal: zero-config, self-managing local AI infrastructure that rivals cloud services.
 
 **Integration Goals:**
+
 - ✅ Automatic model selection based on task
-- ✅ Self-healing service infrastructure  
+- ✅ Self-healing service infrastructure
 - ✅ Multi-agent orchestration with CrewAI
 - ✅ Unified MCP server integration (250+ tools)
 - ✅ One-command deployment
@@ -46,14 +47,14 @@ This plan seamlessly integrates the Free & Local module into Windsurf Vibe Setup
 
 ### 1.2 Files to Create/Update
 
-| File | Action | Purpose |
-|------|--------|---------|
-| `scripts/ai-orchestrator.js` | CREATE | Main AI automation controller |
-| `scripts/agent-crew.py` | CREATE | CrewAI multi-agent system |
-| `scripts/health-daemon.js` | CREATE | Auto-healing service monitor |
-| `scripts/setup-all.ps1` | CREATE | One-command full setup |
-| `mcp-server/src/free-local-tools.js` | CREATE | MCP tools for free-local |
-| `docker-compose-full.yml` | CREATE | Complete service stack |
+| File                                 | Action | Purpose                       |
+| ------------------------------------ | ------ | ----------------------------- |
+| `scripts/ai-orchestrator.js`         | CREATE | Main AI automation controller |
+| `scripts/agent-crew.py`              | CREATE | CrewAI multi-agent system     |
+| `scripts/health-daemon.js`           | CREATE | Auto-healing service monitor  |
+| `scripts/setup-all.ps1`              | CREATE | One-command full setup        |
+| `mcp-server/src/free-local-tools.js` | CREATE | MCP tools for free-local      |
+| `docker-compose-full.yml`            | CREATE | Complete service stack        |
 
 ---
 
@@ -62,6 +63,7 @@ This plan seamlessly integrates the Free & Local module into Windsurf Vibe Setup
 ### 2.1 Smart Task Router
 
 The AI orchestrator automatically:
+
 1. Analyzes incoming requests
 2. Selects optimal model (code, reason, embed)
 3. Provisions required services
@@ -80,14 +82,14 @@ Request: "Refactor this code and add tests"
 
 ### 2.2 CrewAI Agent Definitions
 
-| Agent | Role | Model | Capabilities |
-|-------|------|-------|--------------|
-| **Architect** | System design | llama3.1:70b | Design patterns, architecture |
-| **Coder** | Implementation | qwen2.5-coder:32b | Code generation, refactoring |
-| **Tester** | Quality assurance | deepseek-coder-v2:16b | Test writing, edge cases |
-| **Reviewer** | Code review | qwen2.5-coder:32b | Security, best practices |
-| **Researcher** | Web search | + SearXNG | Documentation, examples |
-| **DocWriter** | Documentation | deepseek-coder-v2:16b | README, comments |
+| Agent          | Role              | Model                 | Capabilities                  |
+| -------------- | ----------------- | --------------------- | ----------------------------- |
+| **Architect**  | System design     | llama3.1:70b          | Design patterns, architecture |
+| **Coder**      | Implementation    | qwen2.5-coder:32b     | Code generation, refactoring  |
+| **Tester**     | Quality assurance | deepseek-coder-v2:16b | Test writing, edge cases      |
+| **Reviewer**   | Code review       | qwen2.5-coder:32b     | Security, best practices      |
+| **Researcher** | Web search        | + SearXNG             | Documentation, examples       |
+| **DocWriter**  | Documentation     | deepseek-coder-v2:16b | README, comments              |
 
 ---
 
@@ -114,6 +116,7 @@ tools.push(
 ### 3.2 MCP Config Merge
 
 Create unified `mcp_config_unified.json` combining:
+
 - All 250+ existing tools
 - Free-local service tools
 - Agent orchestration tools
@@ -128,24 +131,24 @@ Create unified `mcp_config_unified.json` combining:
 # docker-compose-full.yml
 services:
   # Core Free-Local Services
-  ollama:           # GPU-accelerated LLM
-  chromadb:         # Vector database
-  searxng:          # Web search
-  qdrant:           # Production vectors
-  
+  ollama: # GPU-accelerated LLM
+  chromadb: # Vector database
+  searxng: # Web search
+  qdrant: # Production vectors
+
   # Support Services
-  redis:            # Caching
-  postgres:         # SQL storage
-  n8n:              # Workflow automation
-  
+  redis: # Caching
+  postgres: # SQL storage
+  n8n: # Workflow automation
+
   # UIs
-  open-webui:       # Chat interface
-  adminer:          # Database UI
-  
+  open-webui: # Chat interface
+  adminer: # Database UI
+
   # NEW: Automation
-  ai-orchestrator:  # Node.js orchestrator
-  agent-crew:       # Python CrewAI agents
-  health-daemon:    # Service monitor
+  ai-orchestrator: # Node.js orchestrator
+  agent-crew: # Python CrewAI agents
+  health-daemon: # Service monitor
 ```
 
 ### 4.2 GPU Resource Allocation
@@ -158,15 +161,15 @@ ollama:
       reservations:
         devices:
           - driver: nvidia
-            device_ids: ['0']  # RTX 3090 Ti
-            
+            device_ids: ['0'] # RTX 3090 Ti
+
 embedding-server:
   deploy:
     resources:
       reservations:
         devices:
           - driver: nvidia
-            device_ids: ['1']  # RTX 3060 Ti
+            device_ids: ['1'] # RTX 3060 Ti
 ```
 
 ---
@@ -192,12 +195,12 @@ embedding-server:
 
 ### 5.2 Automation Scripts
 
-| Script | Purpose | Trigger |
-|--------|---------|---------|
-| `health-daemon.js` | Monitor & auto-restart | Runs continuously |
-| `auto-provision.js` | Spin up services on demand | Request-based |
-| `model-preloader.js` | Keep models warm in VRAM | Scheduled |
-| `resource-optimizer.js` | Balance GPU/RAM usage | Real-time |
+| Script                  | Purpose                    | Trigger           |
+| ----------------------- | -------------------------- | ----------------- |
+| `health-daemon.js`      | Monitor & auto-restart     | Runs continuously |
+| `auto-provision.js`     | Spin up services on demand | Request-based     |
+| `model-preloader.js`    | Keep models warm in VRAM   | Scheduled         |
+| `resource-optimizer.js` | Balance GPU/RAM usage      | Real-time         |
 
 ---
 
@@ -206,6 +209,7 @@ embedding-server:
 ### 6.1 Dashboard Enhancements
 
 The React dashboard (`FreeLocalComparison.jsx`) gets real-time data:
+
 - GPU utilization graphs
 - Model loading status
 - Service health indicators
@@ -258,13 +262,13 @@ node free-local/scripts/orchestrate.js dashboard
 
 ## ✅ Success Criteria
 
-| Metric | Target | How |
-|--------|--------|-----|
-| Setup time | < 10 minutes | One-command script |
-| Service uptime | 99%+ | Health daemon auto-restart |
-| Model response | < 5s first token | Model preloading |
-| Memory usage | < 80% RAM | Resource optimizer |
-| Integration | 100% MCP compatible | Unified tools |
+| Metric         | Target              | How                        |
+| -------------- | ------------------- | -------------------------- |
+| Setup time     | < 10 minutes        | One-command script         |
+| Service uptime | 99%+                | Health daemon auto-restart |
+| Model response | < 5s first token    | Model preloading           |
+| Memory usage   | < 80% RAM           | Resource optimizer         |
+| Integration    | 100% MCP compatible | Unified tools              |
 
 ---
 
@@ -308,4 +312,4 @@ windsurf-vibe-setup/
 
 ---
 
-*Generated for Windsurf Vibe Setup v4.0 • December 2025*
+_Generated for Windsurf Vibe Setup v4.0 • December 2025_

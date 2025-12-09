@@ -26,9 +26,9 @@ const seo_audit = {
     properties: {
       url: { type: 'string', description: 'Site URL to audit' },
       htmlPath: { type: 'string', description: 'Or path to local HTML file' },
-      generateFixes: { type: 'boolean', default: true, description: 'Generate fix code' }
+      generateFixes: { type: 'boolean', default: true, description: 'Generate fix code' },
     },
-    required: []
+    required: [],
   },
   handler: async ({ url, htmlPath, generateFixes = true }) => {
     try {
@@ -64,16 +64,25 @@ const seo_audit = {
         issues.push({ severity: 'high', issue: 'Missing page title', impact: 'Major SEO impact' });
         fixes.push({ issue: 'Missing title', fix: '<title>Your Page Title - Brand Name</title>' });
       } else if (titleMatch[1].length < 30 || titleMatch[1].length > 60) {
-        issues.push({ severity: 'medium', issue: `Title length: ${titleMatch[1].length} chars (optimal: 30-60)` });
+        issues.push({
+          severity: 'medium',
+          issue: `Title length: ${titleMatch[1].length} chars (optimal: 30-60)`,
+        });
       }
 
       // Check meta description
-      const descMatch = htmlContent.match(/<meta\s+name=["']description["']\s+content=["'](.*?)["']/i);
+      const descMatch = htmlContent.match(
+        /<meta\s+name=["']description["']\s+content=["'](.*?)["']/i
+      );
       if (!descMatch) {
-        issues.push({ severity: 'high', issue: 'Missing meta description', impact: 'Affects click-through rate' });
+        issues.push({
+          severity: 'high',
+          issue: 'Missing meta description',
+          impact: 'Affects click-through rate',
+        });
         fixes.push({
           issue: 'Missing description',
-          fix: '<meta name="description" content="Your compelling description here (150-160 chars)">'
+          fix: '<meta name="description" content="Your compelling description here (150-160 chars)">',
         });
       }
 
@@ -83,36 +92,52 @@ const seo_audit = {
       const ogImage = htmlContent.match(/<meta\s+property=["']og:image["']/i);
 
       if (!ogTitle || !ogDesc || !ogImage) {
-        issues.push({ severity: 'medium', issue: 'Missing Open Graph tags', impact: 'Poor social sharing' });
+        issues.push({
+          severity: 'medium',
+          issue: 'Missing Open Graph tags',
+          impact: 'Poor social sharing',
+        });
         fixes.push({
           issue: 'Missing OG tags',
           fix: `<meta property="og:title" content="Page Title">
 <meta property="og:description" content="Page description">
 <meta property="og:image" content="https://example.com/og-image.jpg">
-<meta property="og:url" content="https://example.com/page">`
+<meta property="og:url" content="https://example.com/page">`,
         });
       }
 
       // Check viewport
       const viewport = htmlContent.match(/<meta\s+name=["']viewport["']/i);
       if (!viewport) {
-        issues.push({ severity: 'high', issue: 'Missing viewport meta', impact: 'Mobile unfriendly' });
+        issues.push({
+          severity: 'high',
+          issue: 'Missing viewport meta',
+          impact: 'Mobile unfriendly',
+        });
         fixes.push({
           issue: 'Missing viewport',
-          fix: '<meta name="viewport" content="width=device-width, initial-scale=1">'
+          fix: '<meta name="viewport" content="width=device-width, initial-scale=1">',
         });
       }
 
       // Check canonical
       const canonical = htmlContent.match(/<link\s+rel=["']canonical["']/i);
       if (!canonical) {
-        issues.push({ severity: 'low', issue: 'Missing canonical URL', impact: 'Duplicate content risk' });
+        issues.push({
+          severity: 'low',
+          issue: 'Missing canonical URL',
+          impact: 'Duplicate content risk',
+        });
       }
 
       // Check h1
       const h1Match = htmlContent.match(/<h1[^>]*>(.*?)<\/h1>/i);
       if (!h1Match) {
-        issues.push({ severity: 'medium', issue: 'Missing H1 heading', impact: 'Content structure' });
+        issues.push({
+          severity: 'medium',
+          issue: 'Missing H1 heading',
+          impact: 'Content structure',
+        });
       }
 
       // Check alt tags
@@ -121,14 +146,14 @@ const seo_audit = {
         issues.push({
           severity: 'medium',
           issue: `${imgWithoutAlt.length} images without alt text`,
-          impact: 'Accessibility and image SEO'
+          impact: 'Accessibility and image SEO',
         });
       }
 
       // Calculate score
       const highIssues = issues.filter(i => i.severity === 'high').length;
       const mediumIssues = issues.filter(i => i.severity === 'medium').length;
-      const score = Math.max(0, 100 - (highIssues * 20) - (mediumIssues * 10));
+      const score = Math.max(0, 100 - highIssues * 20 - mediumIssues * 10);
 
       return {
         success: true,
@@ -137,25 +162,29 @@ const seo_audit = {
           score: `${score}/100`,
           rating: score >= 80 ? '🟢 Good' : score >= 50 ? '🟡 Needs Work' : '🔴 Poor',
           issues,
-          issueCount: { high: highIssues, medium: mediumIssues, low: issues.length - highIssues - mediumIssues }
+          issueCount: {
+            high: highIssues,
+            medium: mediumIssues,
+            low: issues.length - highIssues - mediumIssues,
+          },
         },
         fixes: generateFixes ? fixes : [],
         recommendations: [
           'Add all missing meta tags',
           'Ensure every page has a unique title and description',
           'Add alt text to all images',
-          'Submit sitemap to Google Search Console'
+          'Submit sitemap to Google Search Console',
         ],
         tools: {
           searchConsole: 'https://search.google.com/search-console',
-          richResults: 'https://search.google.com/test/rich-results'
+          richResults: 'https://search.google.com/test/rich-results',
         },
-        message: `🔍 SEO Score: ${score}/100 with ${issues.length} issues found`
+        message: `🔍 SEO Score: ${score}/100 with ${issues.length} issues found`,
       };
     } catch (error) {
       return { success: false, error: error.message };
     }
-  }
+  },
 };
 
 /**
@@ -171,13 +200,17 @@ const lighthouse_report = {
       categories: {
         type: 'array',
         items: { type: 'string' },
-        description: 'Categories: performance, accessibility, best-practices, seo'
+        description: 'Categories: performance, accessibility, best-practices, seo',
       },
-      device: { type: 'string', enum: ['mobile', 'desktop'], default: 'mobile' }
+      device: { type: 'string', enum: ['mobile', 'desktop'], default: 'mobile' },
     },
-    required: ['url']
+    required: ['url'],
   },
-  handler: async ({ url, categories = ['performance', 'accessibility', 'seo'], device = 'mobile' }) => {
+  handler: async ({
+    url,
+    categories = ['performance', 'accessibility', 'seo'],
+    device = 'mobile',
+  }) => {
     try {
       const normalizedUrl = url.startsWith('http') ? url : `https://${url}`;
 
@@ -195,7 +228,7 @@ const lighthouse_report = {
         return {
           success: true,
           note: 'Lighthouse CLI available',
-          command: `lighthouse ${normalizedUrl} --output=json --output-path=./lighthouse-report.json ${categories.map(c => `--only-categories=${c}`).join(' ')}`
+          command: `lighthouse ${normalizedUrl} --output=json --output-path=./lighthouse-report.json ${categories.map(c => `--only-categories=${c}`).join(' ')}`,
         };
       }
 
@@ -207,43 +240,43 @@ const lighthouse_report = {
         audit: {
           url: normalizedUrl,
           device,
-          categories
+          categories,
         },
         alternatives: {
           pageSpeedInsights: psiUrl,
           webPageTest: `https://www.webpagetest.org/?url=${encodeURIComponent(normalizedUrl)}`,
-          gtmetrix: 'https://gtmetrix.com/'
+          gtmetrix: 'https://gtmetrix.com/',
         },
         tips: {
           performance: [
             'Optimize images (use WebP, lazy loading)',
             'Minimize JavaScript and CSS',
             'Enable compression (gzip/brotli)',
-            'Use a CDN'
+            'Use a CDN',
           ],
           accessibility: [
             'Add alt text to images',
             'Ensure sufficient color contrast',
             'Use semantic HTML',
-            'Add ARIA labels where needed'
+            'Add ARIA labels where needed',
           ],
           seo: [
             'Add meta title and description',
             'Use heading hierarchy (h1, h2, etc.)',
             'Create a sitemap.xml',
-            'Ensure mobile-friendly design'
-          ]
+            'Ensure mobile-friendly design',
+          ],
         },
         installation: {
           npm: 'npm install -g lighthouse',
-          usage: 'lighthouse https://example.com --view'
+          usage: 'lighthouse https://example.com --view',
         },
-        message: `🚀 Open PageSpeed Insights: ${psiUrl}`
+        message: `🚀 Open PageSpeed Insights: ${psiUrl}`,
       };
     } catch (error) {
       return { success: false, error: error.message };
     }
-  }
+  },
 };
 
 /**
@@ -260,36 +293,105 @@ const submit_to_directories = {
       category: {
         type: 'string',
         enum: ['saas', 'mobile-app', 'developer-tool', 'ai-tool', 'productivity'],
-        description: 'Product category'
+        description: 'Product category',
       },
-      stage: { type: 'string', enum: ['pre-launch', 'launched', 'established'], default: 'launched' }
+      stage: {
+        type: 'string',
+        enum: ['pre-launch', 'launched', 'established'],
+        default: 'launched',
+      },
     },
-    required: ['productName', 'productUrl']
+    required: ['productName', 'productUrl'],
   },
   handler: async ({ productName, productUrl, category = 'saas', stage = 'launched' }) => {
     try {
       const directories = {
         'high-priority': [
-          { name: 'Product Hunt', url: 'https://www.producthunt.com/posts/new', note: 'Best for launch day', category: 'all' },
-          { name: 'Hacker News', url: 'https://news.ycombinator.com/submit', note: 'Show HN post', category: 'developer-tool' },
-          { name: 'Reddit', url: 'https://reddit.com', note: 'Find relevant subreddits', category: 'all' }
+          {
+            name: 'Product Hunt',
+            url: 'https://www.producthunt.com/posts/new',
+            note: 'Best for launch day',
+            category: 'all',
+          },
+          {
+            name: 'Hacker News',
+            url: 'https://news.ycombinator.com/submit',
+            note: 'Show HN post',
+            category: 'developer-tool',
+          },
+          {
+            name: 'Reddit',
+            url: 'https://reddit.com',
+            note: 'Find relevant subreddits',
+            category: 'all',
+          },
         ],
-        'directories': [
-          { name: 'BetaList', url: 'https://betalist.com/submit', note: 'For pre-launch', category: 'all' },
-          { name: 'AlternativeTo', url: 'https://alternativeto.net/add-application', note: 'Good for discoverability', category: 'all' },
-          { name: 'G2', url: 'https://www.g2.com/products/new', note: 'B2B SaaS reviews', category: 'saas' },
-          { name: 'Capterra', url: 'https://www.capterra.com/vendors/sign-up', note: 'Software directory', category: 'saas' },
-          { name: 'SaaSHub', url: 'https://www.saashub.com/submit', note: 'SaaS discovery', category: 'saas' }
+        directories: [
+          {
+            name: 'BetaList',
+            url: 'https://betalist.com/submit',
+            note: 'For pre-launch',
+            category: 'all',
+          },
+          {
+            name: 'AlternativeTo',
+            url: 'https://alternativeto.net/add-application',
+            note: 'Good for discoverability',
+            category: 'all',
+          },
+          {
+            name: 'G2',
+            url: 'https://www.g2.com/products/new',
+            note: 'B2B SaaS reviews',
+            category: 'saas',
+          },
+          {
+            name: 'Capterra',
+            url: 'https://www.capterra.com/vendors/sign-up',
+            note: 'Software directory',
+            category: 'saas',
+          },
+          {
+            name: 'SaaSHub',
+            url: 'https://www.saashub.com/submit',
+            note: 'SaaS discovery',
+            category: 'saas',
+          },
         ],
         'ai-specific': [
-          { name: 'There\'s An AI For That', url: 'https://theresanaiforthat.com/submit', note: 'AI tools', category: 'ai-tool' },
-          { name: 'AI Valley', url: 'https://aivalley.ai/submit-tool', note: 'AI directory', category: 'ai-tool' },
-          { name: 'Future Tools', url: 'https://www.futuretools.io/submit-a-tool', note: 'AI tools', category: 'ai-tool' }
+          {
+            name: "There's An AI For That",
+            url: 'https://theresanaiforthat.com/submit',
+            note: 'AI tools',
+            category: 'ai-tool',
+          },
+          {
+            name: 'AI Valley',
+            url: 'https://aivalley.ai/submit-tool',
+            note: 'AI directory',
+            category: 'ai-tool',
+          },
+          {
+            name: 'Future Tools',
+            url: 'https://www.futuretools.io/submit-a-tool',
+            note: 'AI tools',
+            category: 'ai-tool',
+          },
         ],
-        'developer': [
-          { name: 'DevHunt', url: 'https://devhunt.org', note: 'Dev tools', category: 'developer-tool' },
-          { name: 'GitHub Awesome Lists', url: 'https://github.com/topics/awesome', note: 'Find relevant lists', category: 'developer-tool' }
-        ]
+        developer: [
+          {
+            name: 'DevHunt',
+            url: 'https://devhunt.org',
+            note: 'Dev tools',
+            category: 'developer-tool',
+          },
+          {
+            name: 'GitHub Awesome Lists',
+            url: 'https://github.com/topics/awesome',
+            note: 'Find relevant lists',
+            category: 'developer-tool',
+          },
+        ],
       };
 
       // Filter relevant directories
@@ -309,24 +411,27 @@ const submit_to_directories = {
           '✅ Landing page is polished',
           '✅ Have screenshots/demo video ready',
           '✅ Prepare product description (short and long)',
-          '✅ Create a compelling tagline'
+          '✅ Create a compelling tagline',
         ],
         assets: [
           '📷 Logo (multiple sizes)',
           '🖼️ Screenshots (3-5)',
           '🎬 Demo video (optional but recommended)',
           '📝 Product description',
-          '🏷️ Tagline (< 60 chars)'
+          '🏷️ Tagline (< 60 chars)',
         ],
-        timing: stage === 'pre-launch' ? [
-          'Submit to BetaList 2-4 weeks before launch',
-          'Schedule Product Hunt launch for Tuesday-Thursday',
-          'Build an audience before launch'
-        ] : [
-          'Can submit immediately',
-          'Space out submissions over 2-4 weeks',
-          'Track which directories drive traffic'
-        ]
+        timing:
+          stage === 'pre-launch'
+            ? [
+                'Submit to BetaList 2-4 weeks before launch',
+                'Schedule Product Hunt launch for Tuesday-Thursday',
+                'Build an audience before launch',
+              ]
+            : [
+                'Can submit immediately',
+                'Space out submissions over 2-4 weeks',
+                'Track which directories drive traffic',
+              ],
       };
 
       return {
@@ -340,14 +445,14 @@ const submit_to_directories = {
           'Launch at 12:01 AM PST',
           'Prepare a "maker comment" with your story',
           'Engage with comments throughout the day',
-          'Don\'t ask for upvotes (against rules)'
+          "Don't ask for upvotes (against rules)",
         ],
-        message: `📋 Found ${relevant.length} relevant directories for ${productName}`
+        message: `📋 Found ${relevant.length} relevant directories for ${productName}`,
       };
     } catch (error) {
       return { success: false, error: error.message };
     }
-  }
+  },
 };
 
 /**
@@ -363,10 +468,10 @@ const social_preview = {
       platforms: {
         type: 'array',
         items: { type: 'string' },
-        description: 'Platforms: twitter, facebook, linkedin, slack'
-      }
+        description: 'Platforms: twitter, facebook, linkedin, slack',
+      },
     },
-    required: ['url']
+    required: ['url'],
   },
   handler: async ({ url, platforms = ['twitter', 'facebook', 'linkedin'] }) => {
     try {
@@ -376,22 +481,22 @@ const social_preview = {
         twitter: {
           name: 'Twitter Card Validator',
           url: 'https://cards-dev.twitter.com/validator',
-          note: 'Requires Twitter login'
+          note: 'Requires Twitter login',
         },
         facebook: {
           name: 'Facebook Sharing Debugger',
           url: `https://developers.facebook.com/tools/debug/?q=${encodeURIComponent(normalizedUrl)}`,
-          note: 'Shows OG tag preview'
+          note: 'Shows OG tag preview',
         },
         linkedin: {
           name: 'LinkedIn Post Inspector',
           url: `https://www.linkedin.com/post-inspector/inspect/${encodeURIComponent(normalizedUrl)}`,
-          note: 'Preview LinkedIn shares'
+          note: 'Preview LinkedIn shares',
         },
         slack: {
           name: 'Slack unfurling',
-          note: 'Paste URL in Slack to preview'
-        }
+          note: 'Paste URL in Slack to preview',
+        },
       };
 
       const selectedValidators = platforms.map(p => validators[p]).filter(Boolean);
@@ -402,7 +507,7 @@ const social_preview = {
         { tag: 'og:image', description: 'Preview image (1200x630 recommended)' },
         { tag: 'og:url', description: 'Canonical URL' },
         { tag: 'twitter:card', description: 'Twitter card type (summary_large_image)' },
-        { tag: 'twitter:image', description: 'Twitter-specific image (optional)' }
+        { tag: 'twitter:image', description: 'Twitter-specific image (optional)' },
       ];
 
       return {
@@ -427,14 +532,14 @@ const social_preview = {
           'Use 1200x630 pixels for OG images',
           'Keep titles under 60 characters',
           'Keep descriptions under 160 characters',
-          'Test on all platforms before launching'
+          'Test on all platforms before launching',
         ],
-        message: `🔗 Test social previews with ${selectedValidators.length} validators`
+        message: `🔗 Test social previews with ${selectedValidators.length} validators`,
       };
     } catch (error) {
       return { success: false, error: error.message };
     }
-  }
+  },
 };
 
 /**
@@ -449,9 +554,9 @@ const uptime_monitor = {
       url: { type: 'string', description: 'URL to monitor' },
       name: { type: 'string', description: 'Monitor name' },
       checkInterval: { type: 'integer', description: 'Check interval in minutes', default: 5 },
-      alertEmail: { type: 'string', description: 'Email for alerts' }
+      alertEmail: { type: 'string', description: 'Email for alerts' },
     },
-    required: ['url']
+    required: ['url'],
   },
   handler: async ({ url, name, checkInterval = 5, alertEmail }) => {
     try {
@@ -472,7 +577,7 @@ const uptime_monitor = {
         checkInterval,
         alertEmail,
         createdAt: new Date().toISOString(),
-        status: 'pending'
+        status: 'pending',
       };
 
       monitors.push(newMonitor);
@@ -483,26 +588,26 @@ const uptime_monitor = {
           name: 'UptimeRobot',
           url: 'https://uptimerobot.com',
           free: '50 monitors, 5-min checks',
-          setup: 'Create account → Add Monitor → HTTP(s) → Enter URL'
+          setup: 'Create account → Add Monitor → HTTP(s) → Enter URL',
         },
         {
           name: 'Freshping',
           url: 'https://www.freshworks.com/website-monitoring/',
           free: '50 monitors, 1-min checks',
-          setup: 'Create account → Add Check → Enter URL'
+          setup: 'Create account → Add Check → Enter URL',
         },
         {
           name: 'Hetrix Tools',
           url: 'https://hetrixtools.com',
           free: '15 monitors, 1-min checks',
-          setup: 'Create account → Uptime Monitors → Add'
+          setup: 'Create account → Uptime Monitors → Add',
         },
         {
           name: 'Better Uptime',
           url: 'https://betteruptime.com',
           free: '10 monitors, status page',
-          setup: 'Create account → Monitors → Create Monitor'
-        }
+          setup: 'Create account → Monitors → Create Monitor',
+        },
       ];
 
       return {
@@ -512,18 +617,22 @@ const uptime_monitor = {
         freeServices,
         statusPageOptions: [
           { name: 'Instatus', url: 'https://instatus.com', note: 'Beautiful free status pages' },
-          { name: 'Cachet', url: 'https://cachethq.io', note: 'Self-hosted open source' }
+          { name: 'Cachet', url: 'https://cachethq.io', note: 'Self-hosted open source' },
         ],
         selfHostedOptions: [
-          { name: 'Uptime Kuma', url: 'https://github.com/louislam/uptime-kuma', note: 'Popular self-hosted' },
-          { name: 'Gatus', url: 'https://github.com/TwiN/gatus', note: 'Lightweight Go-based' }
+          {
+            name: 'Uptime Kuma',
+            url: 'https://github.com/louislam/uptime-kuma',
+            note: 'Popular self-hosted',
+          },
+          { name: 'Gatus', url: 'https://github.com/TwiN/gatus', note: 'Lightweight Go-based' },
         ],
-        message: '📡 Monitor config saved. Set up with a free service like UptimeRobot.'
+        message: '📡 Monitor config saved. Set up with a free service like UptimeRobot.',
       };
     } catch (error) {
       return { success: false, error: error.message };
     }
-  }
+  },
 };
 
 module.exports = {
@@ -531,5 +640,5 @@ module.exports = {
   lighthouse_report,
   submit_to_directories,
   social_preview,
-  uptime_monitor
+  uptime_monitor,
 };

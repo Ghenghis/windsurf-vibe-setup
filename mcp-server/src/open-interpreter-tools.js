@@ -1,7 +1,7 @@
 /**
  * Open Interpreter Integration Tools
  * Windsurf Vibe Setup v4.2.0
- * 
+ *
  * Provides full desktop automation and code execution capabilities
  * using Open Interpreter with local LLMs.
  */
@@ -24,33 +24,34 @@ const openInterpreterTools = [
   // ═══════════════════════════════════════════════════════════════════════════
   {
     name: 'interpreter_start',
-    description: 'Start an Open Interpreter session with local LLM. Enables full desktop automation.',
+    description:
+      'Start an Open Interpreter session with local LLM. Enables full desktop automation.',
     inputSchema: {
       type: 'object',
       properties: {
         model: {
           type: 'string',
           description: 'Model to use (e.g., ollama/qwen2.5-coder:32b)',
-          default: 'ollama/qwen2.5-coder:32b'
+          default: 'ollama/qwen2.5-coder:32b',
         },
         profile: {
           type: 'string',
           description: 'Profile name (default, vibe-coder, safe)',
-          default: 'vibe-coder'
+          default: 'vibe-coder',
         },
         safe_mode: {
           type: 'string',
           enum: ['off', 'ask', 'auto'],
           description: 'Safety mode for code execution',
-          default: 'ask'
+          default: 'ask',
         },
         context_window: {
           type: 'number',
           description: 'Context window size',
-          default: 32768
-        }
-      }
-    }
+          default: 32768,
+        },
+      },
+    },
   },
 
   {
@@ -62,10 +63,10 @@ const openInterpreterTools = [
         save_history: {
           type: 'boolean',
           description: 'Save session history before stopping',
-          default: true
-        }
-      }
-    }
+          default: true,
+        },
+      },
+    },
   },
 
   {
@@ -73,8 +74,8 @@ const openInterpreterTools = [
     description: 'Get current Open Interpreter session status.',
     inputSchema: {
       type: 'object',
-      properties: {}
-    }
+      properties: {},
+    },
   },
 
   // ═══════════════════════════════════════════════════════════════════════════
@@ -88,22 +89,22 @@ const openInterpreterTools = [
       properties: {
         code: {
           type: 'string',
-          description: 'Code or command to execute'
+          description: 'Code or command to execute',
         },
         language: {
           type: 'string',
           enum: ['python', 'javascript', 'shell', 'powershell', 'auto'],
           description: 'Programming language',
-          default: 'auto'
+          default: 'auto',
         },
         timeout: {
           type: 'number',
           description: 'Execution timeout in milliseconds',
-          default: 60000
-        }
+          default: 60000,
+        },
       },
-      required: ['code']
-    }
+      required: ['code'],
+    },
   },
 
   {
@@ -114,20 +115,20 @@ const openInterpreterTools = [
       properties: {
         message: {
           type: 'string',
-          description: 'Natural language instruction'
+          description: 'Natural language instruction',
         },
         context: {
           type: 'string',
-          description: 'Additional context for the task'
+          description: 'Additional context for the task',
         },
         auto_run: {
           type: 'boolean',
           description: 'Automatically run generated code',
-          default: false
-        }
+          default: false,
+        },
       },
-      required: ['message']
-    }
+      required: ['message'],
+    },
   },
 
   // ═══════════════════════════════════════════════════════════════════════════
@@ -141,24 +142,34 @@ const openInterpreterTools = [
       properties: {
         action: {
           type: 'string',
-          enum: ['click', 'double_click', 'right_click', 'type', 'hotkey', 
-                 'screenshot', 'move', 'scroll', 'open', 'close'],
-          description: 'Action to perform'
+          enum: [
+            'click',
+            'double_click',
+            'right_click',
+            'type',
+            'hotkey',
+            'screenshot',
+            'move',
+            'scroll',
+            'open',
+            'close',
+          ],
+          description: 'Action to perform',
         },
         x: { type: 'number', description: 'X coordinate for click/move' },
         y: { type: 'number', description: 'Y coordinate for click/move' },
         text: { type: 'string', description: 'Text to type' },
-        keys: { 
-          type: 'array', 
+        keys: {
+          type: 'array',
           items: { type: 'string' },
-          description: 'Keys for hotkey (e.g., ["ctrl", "s"])'
+          description: 'Keys for hotkey (e.g., ["ctrl", "s"])',
         },
         application: { type: 'string', description: 'Application name to open/close' },
         direction: { type: 'string', enum: ['up', 'down'], description: 'Scroll direction' },
-        amount: { type: 'number', description: 'Scroll amount', default: 3 }
+        amount: { type: 'number', description: 'Scroll amount', default: 3 },
       },
-      required: ['action']
-    }
+      required: ['action'],
+    },
   },
 
   {
@@ -170,11 +181,11 @@ const openInterpreterTools = [
         action: {
           type: 'string',
           enum: ['screenshot', 'find_element', 'analyze', 'ocr'],
-          description: 'Vision action to perform'
+          description: 'Vision action to perform',
         },
         prompt: {
           type: 'string',
-          description: 'What to look for or analyze'
+          description: 'What to look for or analyze',
         },
         region: {
           type: 'object',
@@ -182,13 +193,13 @@ const openInterpreterTools = [
             x: { type: 'number' },
             y: { type: 'number' },
             width: { type: 'number' },
-            height: { type: 'number' }
+            height: { type: 'number' },
           },
-          description: 'Screen region to capture'
-        }
+          description: 'Screen region to capture',
+        },
       },
-      required: ['action']
-    }
+      required: ['action'],
+    },
   },
 
   // ═══════════════════════════════════════════════════════════════════════════
@@ -202,21 +213,21 @@ const openInterpreterTools = [
       properties: {
         enabled: {
           type: 'boolean',
-          description: 'Enable/disable safe mode'
+          description: 'Enable/disable safe mode',
         },
         allowed_operations: {
           type: 'array',
           items: { type: 'string' },
-          description: 'Allowed operations (read, write, execute, network)'
+          description: 'Allowed operations (read, write, execute, network)',
         },
         blocked_paths: {
           type: 'array',
           items: { type: 'string' },
-          description: 'Paths to block access to'
-        }
+          description: 'Paths to block access to',
+        },
       },
-      required: ['enabled']
-    }
+      required: ['enabled'],
+    },
   },
 
   {
@@ -228,19 +239,19 @@ const openInterpreterTools = [
         action: {
           type: 'string',
           enum: ['list', 'get', 'set', 'create', 'delete'],
-          description: 'Profile management action'
+          description: 'Profile management action',
         },
         name: {
           type: 'string',
-          description: 'Profile name'
+          description: 'Profile name',
         },
         config: {
           type: 'object',
-          description: 'Profile configuration (for create action)'
-        }
+          description: 'Profile configuration (for create action)',
+        },
       },
-      required: ['action']
-    }
+      required: ['action'],
+    },
   },
 
   // ═══════════════════════════════════════════════════════════════════════════
@@ -255,21 +266,21 @@ const openInterpreterTools = [
         action: {
           type: 'string',
           enum: ['list', 'get', 'clear', 'export'],
-          description: 'History action'
+          description: 'History action',
         },
         session_id: {
           type: 'string',
-          description: 'Specific session ID'
+          description: 'Specific session ID',
         },
         format: {
           type: 'string',
           enum: ['json', 'markdown', 'text'],
-          default: 'markdown'
-        }
+          default: 'markdown',
+        },
       },
-      required: ['action']
-    }
-  }
+      required: ['action'],
+    },
+  },
 ];
 
 /**
@@ -279,8 +290,10 @@ const handlers = {
   async interpreter_start({ model, profile, safe_mode, context_window }) {
     const args = [
       '--local',
-      '--model', model || 'ollama/qwen2.5-coder:32b',
-      '--context-window', String(context_window || 32768)
+      '--model',
+      model || 'ollama/qwen2.5-coder:32b',
+      '--context-window',
+      String(context_window || 32768),
     ];
 
     if (safe_mode && safe_mode !== 'off') {
@@ -293,16 +306,16 @@ const handlers = {
     } catch {
       return {
         success: false,
-        error: 'Open Interpreter not installed. Run: pip install open-interpreter'
+        error: 'Open Interpreter not installed. Run: pip install open-interpreter',
       };
     }
 
     currentProfile = profile || 'vibe-coder';
-    
+
     return {
       success: true,
       message: `Open Interpreter session started`,
-      config: { model, profile: currentProfile, safe_mode, context_window }
+      config: { model, profile: currentProfile, safe_mode, context_window },
     };
   },
 
@@ -313,8 +326,12 @@ const handlers = {
     }
 
     if (save_history && sessionHistory.length > 0) {
-      const historyPath = path.join(process.env.HOME || process.env.USERPROFILE, 
-                                    '.interpreter', 'history', `session-${Date.now()}.json`);
+      const historyPath = path.join(
+        process.env.HOME || process.env.USERPROFILE,
+        '.interpreter',
+        'history',
+        `session-${Date.now()}.json`
+      );
       fs.mkdirSync(path.dirname(historyPath), { recursive: true });
       fs.writeFileSync(historyPath, JSON.stringify(sessionHistory, null, 2));
     }
@@ -328,15 +345,14 @@ const handlers = {
       running: interpreterProcess !== null,
       profile: currentProfile,
       historyLength: sessionHistory.length,
-      lastActivity: sessionHistory.length > 0 
-        ? sessionHistory[sessionHistory.length - 1].timestamp 
-        : null
+      lastActivity:
+        sessionHistory.length > 0 ? sessionHistory[sessionHistory.length - 1].timestamp : null,
     };
   },
 
   async interpreter_run({ code, language, timeout }) {
     const startTime = Date.now();
-    
+
     // Build the command based on language
     let cmd;
     switch (language || 'auto') {
@@ -357,14 +373,14 @@ const handlers = {
 
     try {
       const result = await execPromise(cmd, { timeout: timeout || 60000 });
-      
+
       const entry = {
         type: 'run',
         code,
         language,
         result,
         timestamp: new Date().toISOString(),
-        duration: Date.now() - startTime
+        duration: Date.now() - startTime,
       };
       sessionHistory.push(entry);
 
@@ -372,13 +388,13 @@ const handlers = {
         success: true,
         output: result.stdout,
         stderr: result.stderr,
-        duration: entry.duration
+        duration: entry.duration,
       };
     } catch (error) {
       return {
         success: false,
         error: error.message,
-        stderr: error.stderr
+        stderr: error.stderr,
       };
     }
   },
@@ -388,7 +404,7 @@ const handlers = {
       type: 'chat',
       message,
       context,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
 
     // Execute via interpreter CLI
@@ -404,16 +420,16 @@ const handlers = {
       const result = await execPromise(`interpreter ${args.join(' ')}`);
       entry.response = result.stdout;
       sessionHistory.push(entry);
-      
+
       return {
         success: true,
         response: result.stdout,
-        codeExecuted: auto_run
+        codeExecuted: auto_run,
       };
     } catch (error) {
       return {
         success: false,
-        error: error.message
+        error: error.message,
       };
     }
   },
@@ -510,20 +526,23 @@ print(text)
     const config = {
       safe_mode: enabled ? 'ask' : 'off',
       allowed_operations: allowed_operations || ['read', 'compute'],
-      blocked_paths: blocked_paths || ['C:\\Windows\\System32', '/etc']
+      blocked_paths: blocked_paths || ['C:\\Windows\\System32', '/etc'],
     };
 
     return {
       success: true,
       message: `Safe mode ${enabled ? 'enabled' : 'disabled'}`,
-      config
+      config,
     };
   },
 
   async interpreter_profiles({ action, name, config }) {
-    const profilesDir = path.join(process.env.HOME || process.env.USERPROFILE, 
-                                   '.interpreter', 'profiles');
-    
+    const profilesDir = path.join(
+      process.env.HOME || process.env.USERPROFILE,
+      '.interpreter',
+      'profiles'
+    );
+
     switch (action) {
       case 'list':
         try {
@@ -558,8 +577,11 @@ print(text)
   },
 
   async interpreter_history({ action, session_id, format }) {
-    const historyDir = path.join(process.env.HOME || process.env.USERPROFILE,
-                                  '.interpreter', 'history');
+    const historyDir = path.join(
+      process.env.HOME || process.env.USERPROFILE,
+      '.interpreter',
+      'history'
+    );
 
     switch (action) {
       case 'list':
@@ -582,14 +604,17 @@ print(text)
         return { success: true, message: 'History cleared' };
       case 'export':
         if (format === 'markdown') {
-          const md = sessionHistory.map(h => 
-            `## ${h.type} - ${h.timestamp}\n\`\`\`\n${h.code || h.message}\n\`\`\`\n${h.result?.stdout || h.response || ''}`
-          ).join('\n\n');
+          const md = sessionHistory
+            .map(
+              h =>
+                `## ${h.type} - ${h.timestamp}\n\`\`\`\n${h.code || h.message}\n\`\`\`\n${h.result?.stdout || h.response || ''}`
+            )
+            .join('\n\n');
           return { content: md };
         }
         return { content: JSON.stringify(sessionHistory, null, 2) };
     }
-  }
+  },
 };
 
 // Helper function
@@ -608,10 +633,11 @@ function execPromise(cmd, options = {}) {
 module.exports = {
   openInterpreterTools,
   handlers,
-  registerTools: (server) => {
+  registerTools: server => {
     openInterpreterTools.forEach(tool => {
-      server.tool(tool.name, tool.description, tool.inputSchema, 
-        async (params) => handlers[tool.name](params));
+      server.tool(tool.name, tool.description, tool.inputSchema, async params =>
+        handlers[tool.name](params)
+      );
     });
-  }
+  },
 };

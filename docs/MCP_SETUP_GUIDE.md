@@ -43,6 +43,7 @@ Copy-Item .\examples\mcp_config.json "$env:USERPROFILE\.codeium\windsurf\"
 ### Step 2: Edit with Your API Keys
 
 Open the file in a text editor:
+
 ```powershell
 notepad "$env:USERPROFILE\.codeium\windsurf\mcp_config.json"
 ```
@@ -57,11 +58,12 @@ Close and reopen Windsurf for MCP servers to load.
 
 ### 🤖 Autopilot Server (Our Custom Server!)
 
-| Server | Purpose | API Key Needed? |
-|--------|---------|-----------------|
-| **windsurf-autopilot** | Zero-code setup, diagnosis, repair, project creation | No |
+| Server                 | Purpose                                              | API Key Needed? |
+| ---------------------- | ---------------------------------------------------- | --------------- |
+| **windsurf-autopilot** | Zero-code setup, diagnosis, repair, project creation | No              |
 
 **Tools provided:**
+
 - `get_status` — Check system readiness
 - `diagnose_environment` — Find issues automatically
 - `auto_fix` — Repair problems without commands
@@ -71,25 +73,25 @@ Close and reopen Windsurf for MCP servers to load.
 
 ### Essential Servers (Recommended)
 
-| Server | Purpose | API Key Needed? |
-|--------|---------|-----------------|
-| **filesystem** | Read/write local files | No |
-| **git** | Git operations | No |
-| **memory** | Persistent AI memory | No |
-| **fetch** | HTTP requests | No |
-| **context7** | Library documentation | No |
+| Server         | Purpose                | API Key Needed? |
+| -------------- | ---------------------- | --------------- |
+| **filesystem** | Read/write local files | No              |
+| **git**        | Git operations         | No              |
+| **memory**     | Persistent AI memory   | No              |
+| **fetch**      | HTTP requests          | No              |
+| **context7**   | Library documentation  | No              |
 
 ### Extended Servers (Optional)
 
-| Server | Purpose | API Key Needed? |
-|--------|---------|-----------------|
-| **github** | GitHub API access | Yes (PAT) |
-| **docker** | Container management | No |
-| **brave-search** | Web search | Yes |
-| **puppeteer** | Browser automation | No |
-| **playwright** | Browser testing | No |
-| **postgresql** | Database queries | Connection string |
-| **sqlite** | Local database | No |
+| Server           | Purpose              | API Key Needed?   |
+| ---------------- | -------------------- | ----------------- |
+| **github**       | GitHub API access    | Yes (PAT)         |
+| **docker**       | Container management | No                |
+| **brave-search** | Web search           | Yes               |
+| **puppeteer**    | Browser automation   | No                |
+| **playwright**   | Browser testing      | No                |
+| **postgresql**   | Database queries     | Connection string |
+| **sqlite**       | Local database       | No                |
 
 ---
 
@@ -100,6 +102,7 @@ Close and reopen Windsurf for MCP servers to load.
 **Purpose**: Lets AI read and write files in specific directories.
 
 **Config**:
+
 ```json
 "filesystem": {
   "command": "npx",
@@ -115,6 +118,7 @@ Close and reopen Windsurf for MCP servers to load.
 **⚠️ Security Warning**: Only grant access to directories you trust AI with!
 
 **Don't include**:
+
 - Home directory (`~` or `C:/Users/YourName`)
 - System folders (`C:/Windows`, `/etc`)
 - Credential folders (`.ssh`, `.aws`)
@@ -126,13 +130,16 @@ Close and reopen Windsurf for MCP servers to load.
 **Purpose**: Manage repos, issues, PRs, and Actions.
 
 **Requirements**:
+
 1. Create a Personal Access Token (PAT):
+
    - Go to: https://github.com/settings/tokens
    - Click "Generate new token (classic)"
    - Select scopes: `repo`, `read:org`, `read:user`
    - Copy the token
 
 2. **Config**:
+
 ```json
 "github": {
   "command": "npx",
@@ -144,6 +151,7 @@ Close and reopen Windsurf for MCP servers to load.
 ```
 
 **Better: Use Environment Variable**:
+
 ```json
 "env": {
   "GITHUB_PERSONAL_ACCESS_TOKEN": "${GITHUB_PAT}"
@@ -151,6 +159,7 @@ Close and reopen Windsurf for MCP servers to load.
 ```
 
 Then set in PowerShell:
+
 ```powershell
 [System.Environment]::SetEnvironmentVariable('GITHUB_PAT', 'ghp_xxxx', 'User')
 ```
@@ -162,6 +171,7 @@ Then set in PowerShell:
 **Purpose**: Fetches up-to-date library documentation.
 
 **Config**:
+
 ```json
 "context7": {
   "command": "npx",
@@ -170,6 +180,7 @@ Then set in PowerShell:
 ```
 
 **Usage**: Add `use context7` to your prompts:
+
 ```
 use context7 - How do I use React hooks?
 ```
@@ -181,6 +192,7 @@ use context7 - How do I use React hooks?
 **Purpose**: Persistent knowledge graph AI can reference.
 
 **Config**:
+
 ```json
 "memory": {
   "command": "npx",
@@ -189,6 +201,7 @@ use context7 - How do I use React hooks?
 ```
 
 **Usage Examples**:
+
 ```
 Remember that my project uses Python 3.11
 What do you remember about my project?
@@ -201,6 +214,7 @@ What do you remember about my project?
 **Purpose**: Manage containers without leaving Windsurf.
 
 **Config**:
+
 ```json
 "docker": {
   "command": "npx",
@@ -217,6 +231,7 @@ What do you remember about my project?
 **Purpose**: Web search directly from AI.
 
 **Requirements**:
+
 1. Get API key: https://brave.com/search/api/
 2. Add to config:
 
@@ -235,6 +250,7 @@ What do you remember about my project?
 ### Database Servers
 
 #### PostgreSQL
+
 ```json
 "postgresql": {
   "command": "npx",
@@ -251,6 +267,7 @@ What do you remember about my project?
 ```
 
 #### SQLite
+
 ```json
 "sqlite": {
   "command": "npx",
@@ -273,11 +290,7 @@ Here's a full `mcp_config.json` with common servers:
   "mcpServers": {
     "filesystem": {
       "command": "npx",
-      "args": [
-        "-y",
-        "@modelcontextprotocol/server-filesystem",
-        "C:/Users/Admin/Projects"
-      ]
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "C:/Users/Admin/Projects"]
     },
     "git": {
       "command": "npx",
@@ -317,6 +330,7 @@ Here's a full `mcp_config.json` with common servers:
 ### 1. Check Windsurf Logs
 
 After restarting Windsurf, check if servers loaded:
+
 ```powershell
 # View recent logs
 Get-Content "$env:USERPROFILE\.codeium\windsurf\logs\mcp*.log" -Tail 50
@@ -325,11 +339,13 @@ Get-Content "$env:USERPROFILE\.codeium\windsurf\logs\mcp*.log" -Tail 50
 ### 2. Test in Cascade
 
 Open Cascade (Ctrl+L) and try:
+
 ```
 What MCP tools do you have available?
 ```
 
 Or test specific servers:
+
 ```
 # GitHub
 List my GitHub repositories
@@ -348,11 +364,13 @@ Remember that today is project setup day
 ### "MCP server failed to start"
 
 **Causes**:
+
 1. **npx not found**: Install Node.js
 2. **Invalid JSON**: Check config syntax
 3. **Missing API key**: Add required environment variables
 
 **Debug**:
+
 ```powershell
 # Test if npx works
 npx --version
@@ -367,6 +385,7 @@ npx -y @modelcontextprotocol/server-git
 **Cause**: Server didn't load properly.
 
 **Fix**:
+
 1. Check JSON syntax
 2. Restart Windsurf completely
 3. Check logs for errors
@@ -376,6 +395,7 @@ npx -y @modelcontextprotocol/server-git
 **Cause**: Path doesn't exist or can't be accessed.
 
 **Fix**:
+
 ```powershell
 # Verify path exists
 Test-Path "C:/Users/Admin/Projects"

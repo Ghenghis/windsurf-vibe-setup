@@ -38,7 +38,7 @@ async function decideNextStep({ projectPath, currentError, goal, context }) {
     recommendedActions: [],
     autoExecutable: [],
     needsUserInput: false,
-    confidence: 0
+    confidence: 0,
   };
 
   // Analyze project state
@@ -47,7 +47,9 @@ async function decideNextStep({ projectPath, currentError, goal, context }) {
     const hasNodeModules = fs.existsSync(path.join(projectPath, 'node_modules'));
     const hasGit = fs.existsSync(path.join(projectPath, '.git'));
     const hasPythonReqs = fs.existsSync(path.join(projectPath, 'requirements.txt'));
-    const hasVenv = fs.existsSync(path.join(projectPath, 'venv')) || fs.existsSync(path.join(projectPath, '.venv'));
+    const hasVenv =
+      fs.existsSync(path.join(projectPath, 'venv')) ||
+      fs.existsSync(path.join(projectPath, '.venv'));
 
     // Check for missing dependencies
     if (hasPackageJson && !hasNodeModules) {
@@ -56,9 +58,12 @@ async function decideNextStep({ projectPath, currentError, goal, context }) {
         action: 'install_packages',
         reason: 'Dependencies not installed',
         command: 'npm install',
-        priority: 1
+        priority: 1,
       });
-      decision.autoExecutable.push({ tool: 'execute_command', args: { command: 'npm install', cwd: projectPath } });
+      decision.autoExecutable.push({
+        tool: 'execute_command',
+        args: { command: 'npm install', cwd: projectPath },
+      });
     }
 
     if (hasPythonReqs && !hasVenv) {
@@ -67,7 +72,7 @@ async function decideNextStep({ projectPath, currentError, goal, context }) {
         action: 'create_venv',
         reason: 'No virtual environment',
         command: 'python -m venv venv',
-        priority: 2
+        priority: 2,
       });
     }
 
@@ -77,7 +82,7 @@ async function decideNextStep({ projectPath, currentError, goal, context }) {
         action: 'git_init',
         reason: 'Version control not set up',
         command: 'git init',
-        priority: 3
+        priority: 3,
       });
     }
   }
@@ -92,11 +97,11 @@ async function decideNextStep({ projectPath, currentError, goal, context }) {
         action: 'fix_error',
         reason: errorAnalysis.cause,
         command: errorAnalysis.autoFixCommand,
-        priority: 0
+        priority: 0,
       });
       decision.autoExecutable.push({
         tool: 'execute_command',
-        args: { command: errorAnalysis.autoFixCommand, cwd: projectPath }
+        args: { command: errorAnalysis.autoFixCommand, cwd: projectPath },
       });
     }
   }
@@ -110,7 +115,7 @@ async function decideNextStep({ projectPath, currentError, goal, context }) {
         action: 'start_server',
         reason: 'Start development server',
         command: 'npm run dev',
-        priority: 1
+        priority: 1,
       });
     }
 
@@ -119,7 +124,7 @@ async function decideNextStep({ projectPath, currentError, goal, context }) {
         action: 'run_tests',
         reason: 'Execute test suite',
         command: 'npm test',
-        priority: 1
+        priority: 1,
       });
     }
 
@@ -128,7 +133,7 @@ async function decideNextStep({ projectPath, currentError, goal, context }) {
         action: 'build_project',
         reason: 'Build for production',
         command: 'npm run build',
-        priority: 1
+        priority: 1,
       });
     }
 
@@ -137,7 +142,7 @@ async function decideNextStep({ projectPath, currentError, goal, context }) {
         action: 'lint_fix',
         reason: 'Fix code quality issues',
         command: 'npm run lint -- --fix',
-        priority: 1
+        priority: 1,
       });
     }
   }
@@ -159,14 +164,54 @@ function analyzeErrorPattern(error) {
   const errorLower = error.toLowerCase();
 
   const patterns = [
-    { pattern: /module not found|cannot find module/i, type: 'missing_module', cause: 'Missing dependency', autoFixCommand: 'npm install' },
-    { pattern: /enoent|no such file/i, type: 'file_not_found', cause: 'File not found', autoFixCommand: null },
-    { pattern: /permission denied|eacces/i, type: 'permission', cause: 'Permission denied', autoFixCommand: null },
-    { pattern: /syntax error/i, type: 'syntax', cause: 'Syntax error in code', autoFixCommand: null },
-    { pattern: /port.*in use|eaddrinuse/i, type: 'port_conflict', cause: 'Port already in use', autoFixCommand: null },
-    { pattern: /npm err/i, type: 'npm_error', cause: 'npm package error', autoFixCommand: 'npm cache clean --force && npm install' },
-    { pattern: /typescript|ts\d+/i, type: 'typescript', cause: 'TypeScript error', autoFixCommand: 'npx tsc --noEmit' },
-    { pattern: /eslint|lint/i, type: 'lint', cause: 'Linting error', autoFixCommand: 'npx eslint . --fix' }
+    {
+      pattern: /module not found|cannot find module/i,
+      type: 'missing_module',
+      cause: 'Missing dependency',
+      autoFixCommand: 'npm install',
+    },
+    {
+      pattern: /enoent|no such file/i,
+      type: 'file_not_found',
+      cause: 'File not found',
+      autoFixCommand: null,
+    },
+    {
+      pattern: /permission denied|eacces/i,
+      type: 'permission',
+      cause: 'Permission denied',
+      autoFixCommand: null,
+    },
+    {
+      pattern: /syntax error/i,
+      type: 'syntax',
+      cause: 'Syntax error in code',
+      autoFixCommand: null,
+    },
+    {
+      pattern: /port.*in use|eaddrinuse/i,
+      type: 'port_conflict',
+      cause: 'Port already in use',
+      autoFixCommand: null,
+    },
+    {
+      pattern: /npm err/i,
+      type: 'npm_error',
+      cause: 'npm package error',
+      autoFixCommand: 'npm cache clean --force && npm install',
+    },
+    {
+      pattern: /typescript|ts\d+/i,
+      type: 'typescript',
+      cause: 'TypeScript error',
+      autoFixCommand: 'npx tsc --noEmit',
+    },
+    {
+      pattern: /eslint|lint/i,
+      type: 'lint',
+      cause: 'Linting error',
+      autoFixCommand: 'npx eslint . --fix',
+    },
   ];
 
   for (const { pattern, type, cause, autoFixCommand } of patterns) {
@@ -186,7 +231,7 @@ async function findSolution({ problem, projectPath, errorMessage }) {
     found: false,
     solutions: [],
     bestSolution: null,
-    commands: []
+    commands: [],
   };
 
   const problemLower = problem?.toLowerCase() || '';
@@ -197,44 +242,47 @@ async function findSolution({ problem, projectPath, errorMessage }) {
     {
       keywords: ['install', 'dependency', 'module', 'package'],
       title: 'Install Dependencies',
-      steps: ['Run npm install to install all dependencies', 'Check package.json for correct versions'],
-      commands: ['npm install']
+      steps: [
+        'Run npm install to install all dependencies',
+        'Check package.json for correct versions',
+      ],
+      commands: ['npm install'],
     },
     {
       keywords: ['build', 'compile', 'typescript'],
       title: 'Build Project',
       steps: ['Run the build command', 'Check for TypeScript errors first'],
-      commands: ['npm run build']
+      commands: ['npm run build'],
     },
     {
       keywords: ['test', 'failing', 'jest', 'vitest'],
       title: 'Fix Tests',
       steps: ['Run tests to see failures', 'Check test file syntax', 'Verify mocks are correct'],
-      commands: ['npm test -- --verbose']
+      commands: ['npm test -- --verbose'],
     },
     {
       keywords: ['lint', 'eslint', 'format', 'prettier'],
       title: 'Fix Code Style',
       steps: ['Run linter with fix flag', 'Run formatter'],
-      commands: ['npx eslint . --fix', 'npx prettier --write .']
+      commands: ['npx eslint . --fix', 'npx prettier --write .'],
     },
     {
       keywords: ['git', 'commit', 'push', 'merge'],
       title: 'Git Operations',
       steps: ['Check git status', 'Stage changes', 'Commit with message', 'Push to remote'],
-      commands: ['git status', 'git add -A', 'git commit -m "Update"', 'git push']
+      commands: ['git status', 'git add -A', 'git commit -m "Update"', 'git push'],
     },
     {
       keywords: ['docker', 'container', 'image'],
       title: 'Docker Operations',
       steps: ['Check Docker is running', 'Build image', 'Run container'],
-      commands: ['docker ps', 'docker build -t app .', 'docker run -p 3000:3000 app']
+      commands: ['docker ps', 'docker build -t app .', 'docker run -p 3000:3000 app'],
     },
     {
       keywords: ['server', 'start', 'run', 'dev'],
       title: 'Start Development Server',
       steps: ['Install dependencies first', 'Run dev server'],
-      commands: ['npm install', 'npm run dev']
+      commands: ['npm install', 'npm run dev'],
     },
     {
       keywords: ['port', 'address', 'in use', 'eaddrinuse'],
@@ -242,26 +290,26 @@ async function findSolution({ problem, projectPath, errorMessage }) {
       steps: ['Find process using port', 'Kill process or use different port'],
       commands: IS_WINDOWS
         ? ['netstat -ano | findstr :3000', 'taskkill /PID <pid> /F']
-        : ['lsof -i :3000', 'kill -9 <pid>']
+        : ['lsof -i :3000', 'kill -9 <pid>'],
     },
     {
       keywords: ['environment', 'env', 'variable', 'config'],
       title: 'Environment Setup',
       steps: ['Copy .env.example to .env', 'Fill in required values'],
-      commands: ['cp .env.example .env']
+      commands: ['cp .env.example .env'],
     },
     {
       keywords: ['database', 'migrate', 'prisma', 'sql'],
       title: 'Database Setup',
       steps: ['Run migrations', 'Seed database if needed'],
-      commands: ['npx prisma migrate dev', 'npx prisma db seed']
-    }
+      commands: ['npx prisma migrate dev', 'npx prisma db seed'],
+    },
   ];
 
   // Find matching solutions
   for (const solution of solutionDb) {
-    const matches = solution.keywords.some(kw =>
-      problemLower.includes(kw) || errorLower.includes(kw)
+    const matches = solution.keywords.some(
+      kw => problemLower.includes(kw) || errorLower.includes(kw)
     );
 
     if (matches) {
@@ -308,7 +356,7 @@ export default ${name};
 `,
 
     // Express Route
-    'express-route': (name) => `import { Router, Request, Response } from 'express';
+    'express-route': name => `import { Router, Request, Response } from 'express';
 
 const router = Router();
 
@@ -345,7 +393,7 @@ export default router;
 `,
 
     // FastAPI Route
-    'fastapi-route': (name) => `from fastapi import APIRouter, HTTPException
+    'fastapi-route': name => `from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 from typing import List, Optional
 
@@ -386,16 +434,26 @@ ${fields.map(f => `  ${f.name}: ${f.type};`).join('\n') || '  id: string;\n  nam
 }
 
 export interface ${name}CreateInput {
-${fields.filter(f => f.name !== 'id').map(f => `  ${f.name}: ${f.type};`).join('\n') || '  name: string;'}
+${
+  fields
+    .filter(f => f.name !== 'id')
+    .map(f => `  ${f.name}: ${f.type};`)
+    .join('\n') || '  name: string;'
+}
 }
 
 export interface ${name}UpdateInput {
-${fields.filter(f => f.name !== 'id').map(f => `  ${f.name}?: ${f.type};`).join('\n') || '  name?: string;'}
+${
+  fields
+    .filter(f => f.name !== 'id')
+    .map(f => `  ${f.name}?: ${f.type};`)
+    .join('\n') || '  name?: string;'
+}
 }
 `,
 
     // React Hook
-    'react-hook': (name) => `import { useState, useEffect, useCallback } from 'react';
+    'react-hook': name => `import { useState, useEffect, useCallback } from 'react';
 
 interface Use${name}Options {
   initialValue?: any;
@@ -436,7 +494,7 @@ export function use${name}(options: Use${name}Options = {}): Use${name}Return {
 `,
 
     // Utility Function
-    'utility': (name) => `/**
+    utility: name => `/**
  * ${name} utility function
  * @description Add description here
  */
@@ -456,8 +514,9 @@ export async function ${name.charAt(0).toLowerCase() + name.slice(1)}Async(input
 `,
 
     // Test File
-    'test': (name, testFramework = 'jest') => testFramework === 'vitest'
-      ? `import { describe, it, expect, beforeEach, vi } from 'vitest';
+    test: (name, testFramework = 'jest') =>
+      testFramework === 'vitest'
+        ? `import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { ${name} } from './${name}';
 
 describe('${name}', () => {
@@ -479,7 +538,7 @@ describe('${name}', () => {
   });
 });
 `
-      : `import { ${name} } from './${name}';
+        : `import { ${name} } from './${name}';
 
 describe('${name}', () => {
   beforeEach(() => {
@@ -502,7 +561,7 @@ describe('${name}', () => {
 `,
 
     // Dockerfile
-    'dockerfile': (name) => `# Build stage
+    dockerfile: name => `# Build stage
 FROM node:20-alpine AS builder
 WORKDIR /app
 COPY package*.json ./
@@ -521,7 +580,7 @@ CMD ["node", "src/index.js"]
 `,
 
     // Docker Compose
-    'docker-compose': (name) => `version: '3.8'
+    'docker-compose': name => `version: '3.8'
 
 services:
   ${name.toLowerCase()}:
@@ -550,7 +609,7 @@ volumes:
 `,
 
     // GitHub Actions CI
-    'github-actions': (name) => `name: CI
+    'github-actions': name => `name: CI
 
 on:
   push:
@@ -593,7 +652,7 @@ jobs:
       
       - name: Deploy
         run: echo "Add deployment steps here"
-`
+`,
   };
 
   // Parse description to extract name and type
@@ -612,7 +671,10 @@ jobs:
     templateKey = 'react-component';
   } else if (descLower.includes('route') && descLower.includes('express')) {
     templateKey = 'express-route';
-  } else if (descLower.includes('route') && (descLower.includes('fastapi') || descLower.includes('python'))) {
+  } else if (
+    descLower.includes('route') &&
+    (descLower.includes('fastapi') || descLower.includes('python'))
+  ) {
     templateKey = 'fastapi-route';
   } else if (descLower.includes('interface') || descLower.includes('type')) {
     templateKey = 'typescript-interface';
@@ -624,7 +686,11 @@ jobs:
     templateKey = 'dockerfile';
   } else if (descLower.includes('docker-compose') || descLower.includes('compose')) {
     templateKey = 'docker-compose';
-  } else if (descLower.includes('github') || descLower.includes('ci') || descLower.includes('workflow')) {
+  } else if (
+    descLower.includes('github') ||
+    descLower.includes('ci') ||
+    descLower.includes('workflow')
+  ) {
     templateKey = 'github-actions';
   }
 
@@ -688,7 +754,9 @@ async function generateTests({ filePath, projectPath, testFramework = 'jest' }) 
   }
 
   // Arrow functions assigned to const
-  const arrowMatches = content.matchAll(/const\s+(\w+)\s*=\s*(?:async\s*)?\([^)]*\)\s*(?::\s*\w+)?\s*=>/g);
+  const arrowMatches = content.matchAll(
+    /const\s+(\w+)\s*=\s*(?:async\s*)?\([^)]*\)\s*(?::\s*\w+)?\s*=>/g
+  );
   for (const match of arrowMatches) {
     functions.push(match[1]);
   }
@@ -705,9 +773,13 @@ async function generateTests({ filePath, projectPath, testFramework = 'jest' }) 
   const testFileName = `${fileName}.test${fileExt}`;
   const testFilePath = path.join(testDir, testFileName);
 
-  const importStatement = exports.length > 0
-    ? `import ${exports.find(e => e.isDefault)?.name ? exports.find(e => e.isDefault).name + ', ' : ''}{ ${exports.filter(e => !e.isDefault).map(e => e.name).join(', ')} } from '../${fileName}';`
-    : `import * as ${fileName} from '../${fileName}';`;
+  const importStatement =
+    exports.length > 0
+      ? `import ${exports.find(e => e.isDefault)?.name ? exports.find(e => e.isDefault).name + ', ' : ''}{ ${exports
+          .filter(e => !e.isDefault)
+          .map(e => e.name)
+          .join(', ')} } from '../${fileName}';`
+      : `import * as ${fileName} from '../${fileName}';`;
 
   let testContent;
   if (testFramework === 'vitest') {
@@ -719,7 +791,9 @@ describe('${fileName}', () => {
     vi.clearAllMocks();
   });
 
-${exports.map(exp => `  describe('${exp.name}', () => {
+${exports
+  .map(
+    exp => `  describe('${exp.name}', () => {
     it('should be defined', () => {
       expect(${exp.name}).toBeDefined();
     });
@@ -737,7 +811,9 @@ ${exports.map(exp => `  describe('${exp.name}', () => {
       // TODO: Add error handling tests
     });
   });
-`).join('\n')}
+`
+  )
+  .join('\n')}
 });
 `;
   } else {
@@ -748,7 +824,9 @@ describe('${fileName}', () => {
     jest.clearAllMocks();
   });
 
-${exports.map(exp => `  describe('${exp.name}', () => {
+${exports
+  .map(
+    exp => `  describe('${exp.name}', () => {
     it('should be defined', () => {
       expect(${exp.name}).toBeDefined();
     });
@@ -766,7 +844,9 @@ ${exports.map(exp => `  describe('${exp.name}', () => {
       // TODO: Add error handling tests
     });
   });
-`).join('\n')}
+`
+  )
+  .join('\n')}
 });
 `;
   }
@@ -778,7 +858,7 @@ ${exports.map(exp => `  describe('${exp.name}', () => {
     testFile: testFilePath,
     testedExports: exports.map(e => e.name),
     testedFunctions: functions,
-    framework: testFramework
+    framework: testFramework,
   };
 }
 
@@ -815,7 +895,7 @@ async function dbQuery({ query, database = 'sqlite', connectionString, projectPa
         input: query,
         cwd: projectPath,
         encoding: 'utf8',
-        timeout: 30000
+        timeout: 30000,
       });
       results.success = true;
       results.rows = result ? [result] : [];
@@ -832,7 +912,7 @@ async function dbQuery({ query, database = 'sqlite', connectionString, projectPa
       try {
         const result = execSync(`sqlite3 "${dbPath}" "${query}"`, {
           encoding: 'utf8',
-          timeout: 10000
+          timeout: 10000,
         });
         results.success = true;
         results.rows = result.split('\n').filter(l => l);
@@ -861,7 +941,7 @@ async function dbMigrate({ projectPath, name = 'migration' }) {
       const result = execSync(`npx prisma migrate dev --name ${name}`, {
         cwd: projectPath,
         encoding: 'utf8',
-        timeout: 60000
+        timeout: 60000,
       });
       return { success: true, output: result, tool: 'prisma' };
     } catch (e) {
@@ -875,7 +955,7 @@ async function dbMigrate({ projectPath, name = 'migration' }) {
       const result = execSync('npx knex migrate:latest', {
         cwd: projectPath,
         encoding: 'utf8',
-        timeout: 60000
+        timeout: 60000,
       });
       return { success: true, output: result, tool: 'knex' };
     } catch (e) {
@@ -889,7 +969,7 @@ async function dbMigrate({ projectPath, name = 'migration' }) {
       const result = execSync('python manage.py migrate', {
         cwd: projectPath,
         encoding: 'utf8',
-        timeout: 60000
+        timeout: 60000,
       });
       return { success: true, output: result, tool: 'django' };
     } catch (e) {
@@ -909,13 +989,15 @@ async function dbSeed({ projectPath }) {
   }
 
   // Prisma seed
-  if (fs.existsSync(path.join(projectPath, 'prisma', 'seed.ts')) ||
-      fs.existsSync(path.join(projectPath, 'prisma', 'seed.js'))) {
+  if (
+    fs.existsSync(path.join(projectPath, 'prisma', 'seed.ts')) ||
+    fs.existsSync(path.join(projectPath, 'prisma', 'seed.js'))
+  ) {
     try {
       const result = execSync('npx prisma db seed', {
         cwd: projectPath,
         encoding: 'utf8',
-        timeout: 60000
+        timeout: 60000,
       });
       return { success: true, output: result, tool: 'prisma' };
     } catch (e) {
@@ -929,7 +1011,7 @@ async function dbSeed({ projectPath }) {
       const result = execSync('npx knex seed:run', {
         cwd: projectPath,
         encoding: 'utf8',
-        timeout: 60000
+        timeout: 60000,
       });
       return { success: true, output: result, tool: 'knex' };
     } catch (e) {
@@ -1045,7 +1127,7 @@ async function manageEnv({ projectPath, action, key, value }) {
       success: missing.length === 0,
       required: requiredVars,
       present: actualVars,
-      missing
+      missing,
     };
   }
 
@@ -1076,7 +1158,17 @@ async function backupProject({ projectPath, backupDir }) {
   const backupPath = path.join(targetDir, backupName);
 
   // Create backup excluding node_modules, .git, etc.
-  const excludes = ['node_modules', '.git', '__pycache__', 'venv', '.venv', 'dist', 'build', '.next', 'coverage'];
+  const excludes = [
+    'node_modules',
+    '.git',
+    '__pycache__',
+    'venv',
+    '.venv',
+    'dist',
+    'build',
+    '.next',
+    'coverage',
+  ];
 
   try {
     fs.mkdirSync(backupPath, { recursive: true });
@@ -1123,7 +1215,7 @@ async function backupProject({ projectPath, backupDir }) {
       backupPath,
       size: totalSize,
       sizeFormatted: `${(totalSize / 1024 / 1024).toFixed(2)} MB`,
-      timestamp
+      timestamp,
     };
   } catch (e) {
     return { success: false, error: e.message };
@@ -1171,7 +1263,7 @@ async function restoreBackup({ backupPath, targetPath, overwrite = false }) {
     return {
       success: true,
       restoredTo: targetPath,
-      message: 'Backup restored successfully'
+      message: 'Backup restored successfully',
     };
   } catch (e) {
     return { success: false, error: e.message };
@@ -1214,7 +1306,7 @@ async function listBackups({ projectName, backupDir }) {
       name: entry.name,
       path: backupPath,
       created: stats.mtime,
-      timestamp: timestampMatch ? timestampMatch[1] : 'unknown'
+      timestamp: timestampMatch ? timestampMatch[1] : 'unknown',
     });
   }
 
@@ -1244,7 +1336,7 @@ async function startProgress({ taskId, taskName, totalSteps, description }) {
     status: 'running',
     startedAt: new Date().toISOString(),
     steps: [],
-    logs: []
+    logs: [],
   };
 
   progressTasks.set(task.id, task);
@@ -1269,14 +1361,14 @@ async function updateProgress({ taskId, stepName, stepNumber, status, log }) {
     task.steps.push({
       name: stepName,
       completedAt: new Date().toISOString(),
-      status: status || 'completed'
+      status: status || 'completed',
     });
   }
 
   if (log) {
     task.logs.push({
       message: log,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
   }
 
@@ -1293,7 +1385,7 @@ async function updateProgress({ taskId, stepName, stepNumber, status, log }) {
     currentStep: task.currentStep,
     totalSteps: task.totalSteps,
     percentage,
-    status: task.status
+    status: task.status,
   };
 }
 
@@ -1370,5 +1462,5 @@ module.exports = {
   startProgress,
   updateProgress,
   getProgress,
-  completeProgress
+  completeProgress,
 };

@@ -1,0 +1,143 @@
+{
+  "folders": [
+    {
+      "path": "./mcp-ecosystem",
+      "name": "🔌 MCP Servers",
+    },
+    {
+      "path": "./ml-models",
+      "name": "🧠 ML/AI",
+    },
+    {
+      "path": "./game-servers",
+      "name": "🎮 Game Servers",
+    },
+    {
+      "path": "./agent-frameworks",
+      "name": "🤖 Agents",
+    },
+    {
+      "path": "./web-projects",
+      "name": "🌐 Web Apps",
+    },
+    {
+      "path": "./utilities",
+      "name": "🛠️ Utilities",
+    },
+  ],
+  "settings": {
+    "files.exclude": {
+      "**/__pycache__": true,
+      "**/node_modules": true,
+      "**/.git": false,
+      "**/runs": true,
+      "**/weights": true,
+      "**/checkpoints": true,
+      "**/*.pyc": true,
+      "**/.ipynb_checkpoints": true,
+    },
+    "search.exclude": {
+      "**/data": true,
+      "**/datasets": true,
+      "**/*.safetensors": true,
+      "**/*.pt": true,
+      "**/*.pth": true,
+      "**/node_modules": true,
+      "**/.venv": true,
+    },
+    "files.watcherExclude": {
+      "**/node_modules/**": true,
+      "**/.venv/**": true,
+      "**/venv/**": true,
+      "**/wandb/**": true,
+      "**/checkpoints/**": true,
+      "**/models/**": true,
+      "**/__pycache__/**": true,
+    },
+    "editor.formatOnSave": true,
+    "editor.tabSize": 2,
+    "editor.insertSpaces": true,
+    "git.autofetch": true,
+    "git.enableSmartCommit": true,
+  },
+  "extensions": {
+    "recommendations": [
+      "esbenp.prettier-vscode",
+      "ms-python.python",
+      "ms-python.black-formatter",
+      "ms-python.isort",
+      "ms-vscode.powershell",
+      "dbaeumer.vscode-eslint",
+      "Gruntfuggly.todo-tree",
+      "usernamehw.errorlens",
+      "eamodio.gitlens",
+      "ms-azuretools.vscode-docker",
+      "GitHub.copilot",
+    ],
+  },
+  "tasks": {
+    "version": "2.0.0",
+    "tasks": [
+      {
+        "label": "Run Benchmark",
+        "type": "shell",
+        "command": "pwsh",
+        "args": [
+          "-ExecutionPolicy",
+          "Bypass",
+          "-File",
+          "${workspaceFolder}/scripts/testing/Run-WindsurfBenchmark.ps1",
+          "-ExportHtml",
+        ],
+        "group": "test",
+        "presentation": {
+          "echo": true,
+          "reveal": "always",
+          "focus": false,
+          "panel": "shared",
+        },
+      },
+      {
+        "label": "Validate JSON",
+        "type": "shell",
+        "command": "node",
+        "args": ["${workspaceFolder}/scripts/validate-json.js"],
+        "group": "test",
+      },
+      {
+        "label": "Lint All",
+        "type": "shell",
+        "command": "npm",
+        "args": ["run", "lint"],
+        "group": "build",
+      },
+    ],
+  },
+  "launch": {
+    "version": "0.2.0",
+    "configurations": [
+      {
+        "name": "Python: Current File",
+        "type": "python",
+        "request": "launch",
+        "program": "${file}",
+        "console": "integratedTerminal",
+        "justMyCode": true,
+      },
+      {
+        "name": "Node: Current File",
+        "type": "node",
+        "request": "launch",
+        "program": "${file}",
+        "console": "integratedTerminal",
+      },
+      {
+        "name": "PowerShell: Current Script",
+        "type": "PowerShell",
+        "request": "launch",
+        "script": "${file}",
+        "cwd": "${workspaceFolder}",
+      },
+    ],
+  },
+}

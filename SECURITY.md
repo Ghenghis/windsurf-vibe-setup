@@ -28,12 +28,12 @@ We take security seriously. If you discover a security vulnerability, please fol
 
 ### Response Timeline
 
-| Action | Timeframe |
-|--------|-----------|
-| Initial Response | 48 hours |
-| Vulnerability Assessment | 7 days |
-| Fix Development | 14-30 days |
-| Public Disclosure | After fix released |
+| Action                   | Timeframe          |
+| ------------------------ | ------------------ |
+| Initial Response         | 48 hours           |
+| Vulnerability Assessment | 7 days             |
+| Fix Development          | 14-30 days         |
+| Public Disclosure        | After fix released |
 
 ## Security Best Practices
 
@@ -42,6 +42,7 @@ We take security seriously. If you discover a security vulnerability, please fol
 This project includes security-focused configurations:
 
 #### Command Deny List
+
 ```json
 "windsurf.cascadeCommandsDenyList": [
     "rm -rf /",
@@ -62,6 +63,7 @@ This project includes security-focused configurations:
 ```
 
 #### Safe Command Allow List
+
 ```json
 "windsurf.cascadeCommandsAllowList": [
     "git",
@@ -83,6 +85,7 @@ This project includes security-focused configurations:
 ### File Exclusions
 
 Sensitive files are excluded from indexing:
+
 - `.env` files
 - Credential files
 - Private keys

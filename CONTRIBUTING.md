@@ -1,6 +1,6 @@
-# Contributing to Windsurf Vibe Setup
+# Contributing to VIBE System
 
-Thank you for your interest in contributing to Windsurf Vibe Setup! This document provides guidelines and instructions for contributing.
+Thank you for your interest in contributing to the VIBE (Visual Intelligence Builder Environment) system! This project contains 50 intelligent modules that self-evolve through machine learning.
 
 ## Table of Contents
 
@@ -36,13 +36,12 @@ Thank you for your interest in contributing to Windsurf Vibe Setup! This documen
 
 ### Prerequisites
 
-```powershell
+```bash
 # Required software
-- Windsurf IDE (latest version)
-- PowerShell 7.0+
-- Node.js 20.x+
-- Python 3.11+
-- Git 2.40+
+- Node.js 18.x+ (for module execution)
+- Git 2.0+ (version control)
+- 8GB+ RAM (recommended)
+- Optional: GPU for ML acceleration
 ```
 
 ### Fork and Clone
@@ -59,15 +58,18 @@ git remote add upstream https://github.com/Ghenghis/windsurf-vibe-setup.git
 
 ### Install Dependencies
 
-```powershell
-# Install Node.js dependencies
+```bash
+# Install core dependencies
 npm install
 
-# Install Python dependencies
-pip install -r requirements.txt
+# Install ML dependencies (optional)
+npm install @xenova/transformers @huggingface/hub sqlite3
 
-# Install PowerShell modules
-Install-Module -Name PSScriptAnalyzer -Force -Scope CurrentUser
+# Initialize the system
+npm run init
+
+# Generate documentation
+npm run docs:generate
 ```
 
 ---
@@ -76,12 +78,12 @@ Install-Module -Name PSScriptAnalyzer -Force -Scope CurrentUser
 
 ### Branch Naming Convention
 
-| Type | Format | Example |
-|------|--------|---------|
-| Feature | `feature/description` | `feature/add-gpu-support` |
-| Bug Fix | `fix/description` | `fix/search-performance` |
-| Documentation | `docs/description` | `docs/update-readme` |
-| Refactor | `refactor/description` | `refactor/benchmark-script` |
+| Type          | Format                 | Example                     |
+| ------------- | ---------------------- | --------------------------- |
+| Feature       | `feature/description`  | `feature/add-gpu-support`   |
+| Bug Fix       | `fix/description`      | `fix/search-performance`    |
+| Documentation | `docs/description`     | `docs/update-readme`        |
+| Refactor      | `refactor/description` | `refactor/benchmark-script` |
 
 ### Creating a Branch
 
@@ -113,6 +115,7 @@ git checkout -b feature/your-feature-name
 ```
 
 **Types:**
+
 - `feat`: New feature
 - `fix`: Bug fix
 - `docs`: Documentation
@@ -123,6 +126,7 @@ git checkout -b feature/your-feature-name
 - `chore`: Maintenance tasks
 
 **Examples:**
+
 ```
 feat(config): add GPU acceleration settings
 
@@ -144,46 +148,55 @@ for microsecond accuracy.
 
 ## Coding Standards
 
-### PowerShell
+### Module Structure
 
-```powershell
-# Use approved verbs
-Get-Something, Set-Something, New-Something
+All VIBE modules follow this structure:
 
-# Use PascalCase for functions
-function Get-BenchmarkResults { }
+```javascript
+/**
+ * Module Name - Category
+ * Description of what this module does
+ */
 
-# Use descriptive parameter names
-param(
-    [Parameter(Mandatory = $true)]
-    [string]$ConfigPath,
+const { EventEmitter } = require('events');
 
-    [Parameter(Mandatory = $false)]
-    [int]$TimeoutSeconds = 30
-)
+class ModuleName extends EventEmitter {
+  constructor(options = {}) {
+    super();
 
-# Add comment-based help
-<#
-.SYNOPSIS
-    Brief description
-.DESCRIPTION
-    Detailed description
-.PARAMETER ConfigPath
-    Path to configuration file
-.EXAMPLE
-    Get-BenchmarkResults -ConfigPath ".\config.json"
-#>
+    this.config = {
+      // Configuration with defaults
+      ...options,
+    };
+
+    this.state = {
+      // Module state
+    };
+  }
+
+  async initialize() {
+    // Initialization logic
+    this.emit('initialized');
+  }
+
+  async shutdown() {
+    // Cleanup logic
+    this.emit('shutdown');
+  }
+}
+
+module.exports = ModuleName;
 ```
 
 ### JavaScript/TypeScript
 
 ```javascript
 // Use const for immutable, let for mutable
-const CONFIG = { };
+const CONFIG = {};
 let counter = 0;
 
 // Use arrow functions for callbacks
-items.map((item) => item.value);
+items.map(item => item.value);
 
 // Use template literals
 const message = `Hello, ${name}!`;
@@ -194,7 +207,7 @@ const message = `Hello, ${name}!`;
  * @param {Object[]} results - Array of test results
  * @returns {Object} Aggregated metrics
  */
-function calculateMetrics(results) { }
+function calculateMetrics(results) {}
 ```
 
 ### Python
@@ -235,41 +248,49 @@ fp = Path("./config.json")         # Bad
 
 ### Before Submitting
 
-1. **Run Benchmark Suite**
-   ```powershell
-   .\scripts\testing\Run-WindsurfBenchmark.ps1 -RunCount 3
+1. **Validate Documentation**
+
+   ```bash
+   # Ensure docs are 1:1 with code
+   npm run docs:validate
    ```
 
 2. **Run Linting**
-   ```powershell
-   # PowerShell
-   Invoke-ScriptAnalyzer -Path . -Recurse
 
-   # JavaScript
-   npx eslint .
+   ```bash
+   # JavaScript linting
+   npm run lint
 
-   # Python
-   python -m flake8 .
-   python -m black --check .
+   # Format code
+   npm run format
    ```
 
-3. **Validate JSON**
-   ```powershell
-   Get-ChildItem -Recurse -Filter *.json | ForEach-Object {
-       $content = Get-Content $_.FullName -Raw
-       $null = $content | ConvertFrom-Json
-       Write-Host "[OK] $($_.Name)"
-   }
+3. **Test Your Module**
+
+   ```bash
+   # Run tests
+   npm test
+
+   # Check system status
+   npm run vibe:status
    ```
 
-### Performance Requirements
+4. **Regenerate Documentation**
+   ```bash
+   # Update docs to match code
+   npm run docs:generate
+   ```
 
-| Metric | Requirement |
-|--------|-------------|
-| Autocomplete | < 200ms average |
-| File Search | < 500ms average |
-| Format on Save | < 500ms average |
-| No Regressions | Performance must not degrade |
+### Module Requirements
+
+| Aspect           | Requirement                           |
+| ---------------- | ------------------------------------- |
+| Event-Driven     | Must use EventEmitter                 |
+| Local-First      | No cloud dependencies                 |
+| Self-Documenting | JSDoc comments required               |
+| Error Handling   | Try-catch for async operations        |
+| Configuration    | Accept options in constructor         |
+| Lifecycle        | Implement initialize() and shutdown() |
 
 ---
 
@@ -287,6 +308,7 @@ fp = Path("./config.json")         # Bad
 
 ```markdown
 ## Checklist
+
 - [ ] I have read CONTRIBUTING.md
 - [ ] My code follows the coding standards
 - [ ] I have tested my changes
@@ -314,6 +336,7 @@ fp = Path("./config.json")         # Bad
 ### Bug Reports
 
 Use the bug report template and include:
+
 - Clear description
 - Steps to reproduce
 - Expected vs actual behavior
@@ -323,6 +346,7 @@ Use the bug report template and include:
 ### Feature Requests
 
 Use the feature request template and include:
+
 - Problem statement
 - Proposed solution
 - Alternative approaches
@@ -331,6 +355,7 @@ Use the feature request template and include:
 ### Good First Issues
 
 Look for issues labeled `good first issue` if you're new to the project. These are typically:
+
 - Well-documented
 - Limited in scope
 - Good learning opportunities
@@ -340,6 +365,7 @@ Look for issues labeled `good first issue` if you're new to the project. These a
 ## Recognition
 
 Contributors are recognized in:
+
 - GitHub contributors list
 - Release notes for significant contributions
 - Project README for major features

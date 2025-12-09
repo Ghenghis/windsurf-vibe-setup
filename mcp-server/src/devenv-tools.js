@@ -9,7 +9,6 @@ const fs = require('fs');
 const path = require('path');
 
 const devenvTools = {
-
   // Generate VS Code devcontainer configuration
   gen_devcontainer: {
     name: 'gen_devcontainer',
@@ -20,15 +19,23 @@ const devenvTools = {
         path: { type: 'string', description: 'Project path' },
         name: { type: 'string', description: 'Container name' },
         image: { type: 'string', description: 'Base Docker image' },
-        features: { type: 'array', items: { type: 'string' }, description: 'Dev container features' },
+        features: {
+          type: 'array',
+          items: { type: 'string' },
+          description: 'Dev container features',
+        },
         extensions: { type: 'array', items: { type: 'string' }, description: 'VS Code extensions' },
         ports: { type: 'array', items: { type: 'number' }, description: 'Ports to forward' },
         postCreateCommand: { type: 'string', description: 'Post-create command' },
-        services: { type: 'array', items: { type: 'string' }, description: 'Services (postgres, redis)' }
+        services: {
+          type: 'array',
+          items: { type: 'string' },
+          description: 'Services (postgres, redis)',
+        },
       },
-      required: ['path']
+      required: ['path'],
     },
-    handler: async (args) => {
+    handler: async args => {
       const projectPath = args.path;
       const name = args.name || path.basename(projectPath);
       const features = args.features || ['node'];
@@ -68,12 +75,12 @@ const devenvTools = {
         customizations: {
           vscode: {
             extensions: ['dbaeumer.vscode-eslint', 'esbenp.prettier-vscode', ...extensions],
-            settings: { 'editor.formatOnSave': true }
-          }
+            settings: { 'editor.formatOnSave': true },
+          },
         },
         forwardPorts: ports,
         postCreateCommand,
-        remoteUser: 'vscode'
+        remoteUser: 'vscode',
       };
 
       // Add features
@@ -105,16 +112,19 @@ const devenvTools = {
         delete devcontainer.image;
       }
 
-      fs.writeFileSync(path.join(devcontainerDir, 'devcontainer.json'), JSON.stringify(devcontainer, null, 2));
+      fs.writeFileSync(
+        path.join(devcontainerDir, 'devcontainer.json'),
+        JSON.stringify(devcontainer, null, 2)
+      );
 
       return {
         success: true,
         path: devcontainerDir,
         detectedType,
         files: fs.readdirSync(devcontainerDir),
-        message: `Generated devcontainer for ${detectedType} project`
+        message: `Generated devcontainer for ${detectedType} project`,
       };
-    }
+    },
   },
 
   // Generate GitHub Codespaces configuration
@@ -125,13 +135,17 @@ const devenvTools = {
       type: 'object',
       properties: {
         path: { type: 'string', description: 'Project path' },
-        machine: { type: 'string', enum: ['basicLinux32gb', 'standardLinux32gb', 'premiumLinux'], description: 'Machine type' },
+        machine: {
+          type: 'string',
+          enum: ['basicLinux32gb', 'standardLinux32gb', 'premiumLinux'],
+          description: 'Machine type',
+        },
         prebuild: { type: 'boolean', description: 'Enable prebuilds' },
-        secrets: { type: 'array', items: { type: 'string' }, description: 'Required secrets' }
+        secrets: { type: 'array', items: { type: 'string' }, description: 'Required secrets' },
       },
-      required: ['path']
+      required: ['path'],
     },
-    handler: async (args) => {
+    handler: async args => {
       const projectPath = args.path;
       const machine = args.machine || 'standardLinux32gb';
       const prebuild = args.prebuild !== false;
@@ -151,7 +165,7 @@ const devenvTools = {
       devcontainer.hostRequirements = {
         cpus: machine.includes('premium') ? 4 : 2,
         memory: '8gb',
-        storage: '32gb'
+        storage: '32gb',
       };
 
       if (!devcontainer.customizations) {
@@ -164,7 +178,10 @@ const devenvTools = {
         devcontainer.customizations.vscode.extensions = [];
       }
 
-      devcontainer.customizations.vscode.extensions.push('GitHub.copilot', 'GitHub.vscode-pull-request-github');
+      devcontainer.customizations.vscode.extensions.push(
+        'GitHub.copilot',
+        'GitHub.vscode-pull-request-github'
+      );
 
       if (secrets.length > 0) {
         devcontainer.secrets = {};
@@ -203,9 +220,9 @@ jobs:
         machine,
         prebuild,
         secrets: secrets.length,
-        message: `GitHub Codespaces config generated. Machine: ${machine}`
+        message: `GitHub Codespaces config generated. Machine: ${machine}`,
       };
-    }
+    },
   },
 
   // Generate Gitpod configuration
@@ -219,11 +236,11 @@ jobs:
         tasks: { type: 'array', description: 'Startup tasks' },
         ports: { type: 'array', description: 'Port configurations' },
         vscode: { type: 'array', items: { type: 'string' }, description: 'VS Code extensions' },
-        image: { type: 'string', description: 'Custom Docker image' }
+        image: { type: 'string', description: 'Custom Docker image' },
       },
-      required: ['path']
+      required: ['path'],
     },
-    handler: async (args) => {
+    handler: async args => {
       const projectPath = args.path;
       const image = args.image;
       const vscodeExts = args.vscode || [];
@@ -237,7 +254,13 @@ jobs:
           tasks = [{ name: 'Install & Start', init: 'npm install', command: 'npm run dev' }];
           ports = ports || [{ port: 3000, onOpen: 'open-preview' }];
         } else if (fs.existsSync(path.join(projectPath, 'requirements.txt'))) {
-          tasks = [{ name: 'Install & Start', init: 'pip install -r requirements.txt', command: 'python app.py' }];
+          tasks = [
+            {
+              name: 'Install & Start',
+              init: 'pip install -r requirements.txt',
+              command: 'python app.py',
+            },
+          ];
           ports = ports || [{ port: 5000, onOpen: 'open-preview' }];
         } else {
           tasks = [{ name: 'Ready', command: 'echo "Workspace ready"' }];
@@ -292,10 +315,10 @@ jobs:
         ports: ports?.length || 0,
         extensions: vscodeExts.length,
         content: gitpodYml,
-        message: 'Generated .gitpod.yml configuration'
+        message: 'Generated .gitpod.yml configuration',
       };
-    }
-  }
+    },
+  },
 };
 
 // Helper function for docker-compose

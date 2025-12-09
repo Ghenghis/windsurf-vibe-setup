@@ -25,12 +25,14 @@ class MultiAgentOrchestrator {
    * Initialize the orchestrator and verify agent availability
    */
   async initialize() {
-    console.log(`🚀 Initializing Multi-Agent Orchestrator with ${Object.keys(this.agents).length} agents...`);
-    
+    console.log(
+      `🚀 Initializing Multi-Agent Orchestrator with ${Object.keys(this.agents).length} agents...`
+    );
+
     // Verify model availability
     const availableModels = await this.checkAvailableModels();
     console.log(`📦 Available models: ${availableModels.join(', ')}`);
-    
+
     this.emit('initialized', { agentCount: Object.keys(this.agents).length });
     return this;
   }
@@ -56,13 +58,13 @@ class MultiAgentOrchestrator {
    */
   async routeTask(task) {
     const { type, description, requirements } = task;
-    
+
     // Analyze task and determine required agents
     const selectedAgents = this.selectAgentsForTask(task);
-    
+
     console.log(`📋 Task "${description}" routed to ${selectedAgents.length} agent(s):`);
     selectedAgents.forEach(a => console.log(`   → ${a.name} (${a.id})`));
-    
+
     return selectedAgents;
   }
 
@@ -72,23 +74,23 @@ class MultiAgentOrchestrator {
   selectAgentsForTask(task) {
     const { type, keywords = [], complexity = 'medium' } = task;
     const selected = [];
-    
+
     // Map task types to agent categories
     const categoryMapping = {
       'create-project': ['architecture', 'coding', 'devops'],
       'code-generation': ['coding'],
-      'testing': ['testing'],
-      'deployment': ['devops'],
+      testing: ['testing'],
+      deployment: ['devops'],
       'security-audit': ['security'],
-      'documentation': ['documentation'],
-      'performance': ['performance'],
+      documentation: ['documentation'],
+      performance: ['performance'],
       'code-review': ['quality', 'security'],
       'ml-pipeline': ['data'],
-      'full-stack': ['architecture', 'coding', 'testing', 'devops', 'documentation']
+      'full-stack': ['architecture', 'coding', 'testing', 'devops', 'documentation'],
     };
 
     const categories = categoryMapping[type] || ['coding'];
-    
+
     categories.forEach(category => {
       const categoryAgents = getAgentsByCategory(category);
       // Select top agents from each category based on task keywords
@@ -103,15 +105,17 @@ class MultiAgentOrchestrator {
    * Match agents to task keywords for optimal selection
    */
   matchAgentsToKeywords(agents, keywords) {
-    return agents.map(agent => {
-      const score = keywords.reduce((acc, keyword) => {
-        const capMatch = agent.capabilities?.some(c => 
-          c.toLowerCase().includes(keyword.toLowerCase())
-        );
-        return acc + (capMatch ? 1 : 0);
-      }, 0);
-      return { ...agent, matchScore: score };
-    }).sort((a, b) => b.matchScore - a.matchScore);
+    return agents
+      .map(agent => {
+        const score = keywords.reduce((acc, keyword) => {
+          const capMatch = agent.capabilities?.some(c =>
+            c.toLowerCase().includes(keyword.toLowerCase())
+          );
+          return acc + (capMatch ? 1 : 0);
+        }, 0);
+        return { ...agent, matchScore: score };
+      })
+      .sort((a, b) => b.matchScore - a.matchScore);
   }
 
   /**
@@ -120,24 +124,24 @@ class MultiAgentOrchestrator {
   async executeTask(task) {
     const taskId = `task_${Date.now()}`;
     const agents = await this.routeTask(task);
-    
+
     this.emit('taskStarted', { taskId, task, agents: agents.map(a => a.id) });
-    
+
     try {
       // Execute in parallel or sequence based on dependencies
       const results = await this.executeAgentPipeline(agents, task);
-      
+
       const completedTask = {
         taskId,
         task,
         results,
         completedAt: new Date().toISOString(),
-        status: 'completed'
+        status: 'completed',
       };
-      
+
       this.completedTasks.push(completedTask);
       this.emit('taskCompleted', completedTask);
-      
+
       return completedTask;
     } catch (error) {
       this.emit('taskFailed', { taskId, error: error.message });
@@ -151,11 +155,11 @@ class MultiAgentOrchestrator {
   async executeAgentPipeline(agents, task) {
     const results = [];
     let context = { task, previousResults: [] };
-    
+
     for (const agent of agents) {
       console.log(`🤖 Agent ${agent.name} starting...`);
       this.activeAgents.set(agent.id, { agent, startTime: Date.now() });
-      
+
       try {
         const result = await this.runAgent(agent, context);
         results.push({ agentId: agent.id, result, status: 'success' });
@@ -168,7 +172,7 @@ class MultiAgentOrchestrator {
         this.activeAgents.delete(agent.id);
       }
     }
-    
+
     return results;
   }
 
@@ -177,15 +181,15 @@ class MultiAgentOrchestrator {
    */
   async runAgent(agent, context) {
     const prompt = this.buildAgentPrompt(agent, context);
-    
+
     // Call the local LLM
     const response = await this.callModel(agent.model || this.defaultModel, prompt);
-    
+
     return {
       agentId: agent.id,
       agentName: agent.name,
       response,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
   }
 
@@ -199,9 +203,11 @@ Capabilities: ${agent.capabilities?.join(', ')}
 
 Task: ${context.task.description}
 
-${context.previousResults.length > 0 ? 
-  `Previous agent outputs:\n${JSON.stringify(context.previousResults, null, 2)}` : 
-  ''}
+${
+  context.previousResults.length > 0
+    ? `Previous agent outputs:\n${JSON.stringify(context.previousResults, null, 2)}`
+    : ''
+}
 
 Provide your expert response:`;
   }
@@ -218,10 +224,10 @@ Provide your expert response:`;
           model,
           prompt,
           stream: false,
-          options: { temperature: 0.7, top_p: 0.9 }
-        })
+          options: { temperature: 0.7, top_p: 0.9 },
+        }),
       });
-      
+
       if (response.ok) {
         const data = await response.json();
         return data.response;
@@ -239,37 +245,61 @@ Provide your expert response:`;
   async createDevelopmentCrew(projectType) {
     const crews = {
       'full-stack-web': [
-        'arch-system', 'arch-api', 'arch-database',
-        'code-react', 'code-node', 'code-typescript',
-        'test-unit', 'test-e2e', 'test-api',
-        'sec-audit', 'sec-sast',
-        'devops-docker', 'devops-ci',
-        'doc-readme', 'doc-api',
-        'quality-code-review', 'quality-linting'
+        'arch-system',
+        'arch-api',
+        'arch-database',
+        'code-react',
+        'code-node',
+        'code-typescript',
+        'test-unit',
+        'test-e2e',
+        'test-api',
+        'sec-audit',
+        'sec-sast',
+        'devops-docker',
+        'devops-ci',
+        'doc-readme',
+        'doc-api',
+        'quality-code-review',
+        'quality-linting',
       ],
       'ml-pipeline': [
-        'arch-ml', 'arch-data',
-        'ml-data-engineer', 'ml-data-scientist', 'ml-mlops',
-        'ml-vector-db', 'ml-llm-ops',
-        'devops-docker', 'devops-k8s',
-        'doc-architecture'
+        'arch-ml',
+        'arch-data',
+        'ml-data-engineer',
+        'ml-data-scientist',
+        'ml-mlops',
+        'ml-vector-db',
+        'ml-llm-ops',
+        'devops-docker',
+        'devops-k8s',
+        'doc-architecture',
       ],
       'api-service': [
-        'arch-api', 'arch-database',
-        'code-node', 'code-typescript',
-        'test-unit', 'test-api', 'test-performance',
-        'sec-audit', 'sec-auth',
-        'devops-docker', 'devops-ci',
-        'doc-api', 'doc-readme'
+        'arch-api',
+        'arch-database',
+        'code-node',
+        'code-typescript',
+        'test-unit',
+        'test-api',
+        'test-performance',
+        'sec-audit',
+        'sec-auth',
+        'devops-docker',
+        'devops-ci',
+        'doc-api',
+        'doc-readme',
       ],
       'mobile-app': [
         'arch-mobile',
-        'code-mobile-rn', 'code-typescript',
-        'test-unit', 'test-e2e',
+        'code-mobile-rn',
+        'code-typescript',
+        'test-unit',
+        'test-e2e',
         'sec-audit',
         'devops-ci',
-        'doc-readme'
-      ]
+        'doc-readme',
+      ],
     };
 
     const agentIds = crews[projectType] || crews['full-stack-web'];
@@ -301,7 +331,7 @@ Provide your expert response:`;
       queuedTasks: this.taskQueue.length,
       completedTasks: this.completedTasks.length,
       modelProvider: this.modelProvider,
-      defaultModel: this.defaultModel
+      defaultModel: this.defaultModel,
     };
   }
 
@@ -323,5 +353,5 @@ const orchestrator = new MultiAgentOrchestrator();
 module.exports = {
   MultiAgentOrchestrator,
   orchestrator,
-  createOrchestrator: (options) => new MultiAgentOrchestrator(options)
+  createOrchestrator: options => new MultiAgentOrchestrator(options),
 };

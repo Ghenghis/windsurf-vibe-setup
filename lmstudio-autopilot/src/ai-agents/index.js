@@ -6,7 +6,14 @@
  * ============================================================================
  */
 
-const { AGENT_CATEGORIES, AGENT_REGISTRY, AGENT_COUNT, getAgentsByCategory, getAgentById, getAllAgents } = require('./agent-registry');
+const {
+  AGENT_CATEGORIES,
+  AGENT_REGISTRY,
+  AGENT_COUNT,
+  getAgentsByCategory,
+  getAgentById,
+  getAllAgents,
+} = require('./agent-registry');
 const { MultiAgentOrchestrator, orchestrator, createOrchestrator } = require('./orchestrator');
 
 module.exports = {
@@ -17,16 +24,16 @@ module.exports = {
   getAgentsByCategory,
   getAgentById,
   getAllAgents,
-  
+
   // Orchestrator exports
   MultiAgentOrchestrator,
   orchestrator,
   createOrchestrator,
-  
+
   // Convenience method
   initializeAgents: async (options = {}) => {
     const orch = createOrchestrator(options);
     await orch.initialize();
     return orch;
-  }
+  },
 };

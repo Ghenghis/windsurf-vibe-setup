@@ -10,7 +10,6 @@ const path = require('path');
 const { execSync } = require('child_process');
 
 const healthTools = {
-
   // Health check for the autopilot system
   autopilot_health: {
     name: 'autopilot_health',
@@ -18,16 +17,16 @@ const healthTools = {
     inputSchema: {
       type: 'object',
       properties: {
-        verbose: { type: 'boolean', description: 'Show detailed output' }
-      }
+        verbose: { type: 'boolean', description: 'Show detailed output' },
+      },
     },
-    handler: async (args) => {
+    handler: async args => {
       const verbose = args.verbose || false;
       const results = {
         timestamp: new Date().toISOString(),
         status: 'healthy',
         checks: [],
-        issues: []
+        issues: [],
       };
 
       // Check 1: Node.js version
@@ -37,7 +36,7 @@ const healthTools = {
         name: 'Node.js Version',
         status: nodeMajor >= 18 ? 'pass' : 'fail',
         value: nodeVersion,
-        required: '>=18.0.0'
+        required: '>=18.0.0',
       });
       if (nodeMajor < 18) {
         results.issues.push('Node.js version is below 18.0.0');
@@ -60,7 +59,7 @@ const healthTools = {
         'team-tools.js',
         'cloud-tools.js',
         'model-tools.js',
-        'agent-tools.js'
+        'agent-tools.js',
       ];
 
       let modulesPassing = 0;
@@ -73,7 +72,7 @@ const healthTools = {
         if (verbose) {
           results.checks.push({
             name: `Module: ${mod}`,
-            status: exists ? 'pass' : 'fail'
+            status: exists ? 'pass' : 'fail',
           });
         }
         if (!exists) {
@@ -84,20 +83,21 @@ const healthTools = {
       results.checks.push({
         name: 'Required Modules',
         status: modulesPassing === modules.length ? 'pass' : 'fail',
-        value: `${modulesPassing}/${modules.length} loaded`
+        value: `${modulesPassing}/${modules.length} loaded`,
       });
 
       // Check 3: Data directories
-      const dataDir = process.platform === 'win32'
-        ? path.join(process.env.APPDATA || '', 'WindsurfAutopilot')
-        : path.join(process.env.HOME || '', '.windsurf-autopilot');
+      const dataDir =
+        process.platform === 'win32'
+          ? path.join(process.env.APPDATA || '', 'WindsurfAutopilot')
+          : path.join(process.env.HOME || '', '.windsurf-autopilot');
 
       const dataDirExists = fs.existsSync(dataDir);
       results.checks.push({
         name: 'Data Directory',
         status: dataDirExists ? 'pass' : 'warn',
         value: dataDir,
-        note: dataDirExists ? 'Exists' : 'Will be created on first use'
+        note: dataDirExists ? 'Exists' : 'Will be created on first use',
       });
 
       // Check 4: Git availability
@@ -107,14 +107,14 @@ const healthTools = {
         results.checks.push({
           name: 'Git',
           status: 'pass',
-          value: gitVersion
+          value: gitVersion,
         });
       } catch {
         results.checks.push({
           name: 'Git',
           status: 'warn',
           value: 'Not found',
-          note: 'Git operations will fail'
+          note: 'Git operations will fail',
         });
       }
 
@@ -125,14 +125,14 @@ const healthTools = {
         results.checks.push({
           name: 'npm',
           status: 'pass',
-          value: npmVersion
+          value: npmVersion,
         });
       } catch {
         results.checks.push({
           name: 'npm',
           status: 'warn',
           value: 'Not found',
-          note: 'Package operations may fail'
+          note: 'Package operations may fail',
         });
       }
 
@@ -143,7 +143,7 @@ const healthTools = {
       results.checks.push({
         name: 'Memory Usage',
         status: heapUsedMB < 500 ? 'pass' : 'warn',
-        value: `${heapUsedMB}MB / ${heapTotalMB}MB`
+        value: `${heapUsedMB}MB / ${heapTotalMB}MB`,
       });
 
       // Summary
@@ -155,7 +155,7 @@ const healthTools = {
         passed: passCount,
         warnings: warnCount,
         failed: failCount,
-        total: results.checks.length
+        total: results.checks.length,
       };
 
       if (failCount > 0) {
@@ -165,7 +165,7 @@ const healthTools = {
       }
 
       return results;
-    }
+    },
   },
 
   // Get tool statistics
@@ -174,7 +174,7 @@ const healthTools = {
     description: 'Get statistics about available tools',
     inputSchema: {
       type: 'object',
-      properties: {}
+      properties: {},
     },
     handler: async () => {
       const toolCounts = {
@@ -184,7 +184,7 @@ const healthTools = {
         'Learning (v2.3-2.4)': 11,
         'Ultimate (v2.5)': 40,
         'Data & Persistence (v2.6)': 21,
-        'Enterprise (v3.0)': 25
+        'Enterprise (v3.0)': 25,
       };
 
       const total = Object.values(toolCounts).reduce((a, b) => a + b, 0);
@@ -204,12 +204,12 @@ const healthTools = {
           testing: '100%',
           documentation: '100%',
           database: '100%',
-          aiFeatures: '100%'
+          aiFeatures: '100%',
         },
-        autopilotLevel: '95%'
+        autopilotLevel: '95%',
       };
-    }
-  }
+    },
+  },
 };
 
 module.exports = healthTools;

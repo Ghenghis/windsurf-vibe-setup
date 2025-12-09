@@ -8,9 +8,10 @@ const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
 
-const MODEL_DIR = process.platform === 'win32'
-  ? path.join(process.env.APPDATA || '', 'WindsurfAutopilot', 'models')
-  : path.join(process.env.HOME || '', '.windsurf-autopilot', 'models');
+const MODEL_DIR =
+  process.platform === 'win32'
+    ? path.join(process.env.APPDATA || '', 'WindsurfAutopilot', 'models')
+    : path.join(process.env.HOME || '', '.windsurf-autopilot', 'models');
 
 if (!fs.existsSync(MODEL_DIR)) {
   fs.mkdirSync(MODEL_DIR, { recursive: true });
@@ -38,15 +39,19 @@ const modelTools = {
       type: 'object',
       properties: {
         name: { type: 'string', description: 'Model name' },
-        type: { type: 'string', enum: ['ollama', 'lmstudio', 'openai', 'anthropic', 'custom'], description: 'Model type' },
+        type: {
+          type: 'string',
+          enum: ['ollama', 'lmstudio', 'openai', 'anthropic', 'custom'],
+          description: 'Model type',
+        },
         endpoint: { type: 'string', description: 'API endpoint URL' },
         apiKey: { type: 'string', description: 'API key if required' },
         modelId: { type: 'string', description: 'Specific model ID (e.g., gpt-4, claude-3)' },
-        config: { type: 'object', description: 'Additional configuration' }
+        config: { type: 'object', description: 'Additional configuration' },
       },
-      required: ['name', 'type']
+      required: ['name', 'type'],
     },
-    handler: async (args) => {
+    handler: async args => {
       try {
         const model = {
           id: crypto.randomUUID().substring(0, 8),
@@ -58,7 +63,7 @@ const modelTools = {
           config: args.config || {},
           addedAt: new Date().toISOString(),
           lastUsed: null,
-          requestCount: 0
+          requestCount: 0,
         };
 
         // Store API key securely (simulated)
@@ -78,12 +83,12 @@ const modelTools = {
           name: model.name,
           type: model.type,
           endpoint: model.endpoint,
-          message: `Model "${model.name}" added successfully`
+          message: `Model "${model.name}" added successfully`,
         };
       } catch (error) {
         return { success: false, error: error.message };
       }
-    }
+    },
   },
 
   switch_model: {
@@ -92,18 +97,18 @@ const modelTools = {
     inputSchema: {
       type: 'object',
       properties: {
-        modelId: { type: 'string', description: 'Model ID or name to switch to' }
+        modelId: { type: 'string', description: 'Model ID or name to switch to' },
       },
-      required: ['modelId']
+      required: ['modelId'],
     },
-    handler: async (args) => {
+    handler: async args => {
       const model = modelRegistry.find(m => m.id === args.modelId || m.name === args.modelId);
 
       if (!model) {
         return {
           success: false,
           error: `Model not found: ${args.modelId}`,
-          availableModels: modelRegistry.map(m => ({ id: m.id, name: m.name, type: m.type }))
+          availableModels: modelRegistry.map(m => ({ id: m.id, name: m.name, type: m.type })),
         };
       }
 
@@ -115,9 +120,9 @@ const modelTools = {
         activeModel: model.name,
         modelId: model.id,
         type: model.type,
-        message: `Switched to model "${model.name}"`
+        message: `Switched to model "${model.name}"`,
       };
-    }
+    },
   },
 
   model_benchmark: {
@@ -128,10 +133,10 @@ const modelTools = {
       properties: {
         modelId: { type: 'string', description: 'Model to benchmark (or all)' },
         testType: { type: 'string', enum: ['speed', 'quality', 'cost', 'all'], default: 'all' },
-        iterations: { type: 'number', default: 5 }
-      }
+        iterations: { type: 'number', default: 5 },
+      },
     },
-    handler: async (args) => {
+    handler: async args => {
       const modelsToTest = args.modelId
         ? modelRegistry.filter(m => m.id === args.modelId || m.name === args.modelId)
         : modelRegistry;
@@ -148,8 +153,8 @@ const modelTools = {
         benchmarks: {
           speed: { avgLatency: Math.random() * 2000 + 500, unit: 'ms' },
           quality: { score: Math.random() * 30 + 70, unit: '%' },
-          cost: { perRequest: model.type === 'ollama' ? 0 : Math.random() * 0.01, unit: 'USD' }
-        }
+          cost: { perRequest: model.type === 'ollama' ? 0 : Math.random() * 0.01, unit: 'USD' },
+        },
       }));
 
       return {
@@ -157,9 +162,11 @@ const modelTools = {
         testedModels: results.length,
         iterations: args.iterations || 5,
         results,
-        recommendation: results.sort((a, b) => b.benchmarks.quality.score - a.benchmarks.quality.score)[0]?.name
+        recommendation: results.sort(
+          (a, b) => b.benchmarks.quality.score - a.benchmarks.quality.score
+        )[0]?.name,
       };
-    }
+    },
   },
 
   fine_tune: {
@@ -171,11 +178,11 @@ const modelTools = {
         modelId: { type: 'string', description: 'Base model to fine-tune' },
         datasetPath: { type: 'string', description: 'Path to training data' },
         outputName: { type: 'string', description: 'Name for fine-tuned model' },
-        config: { type: 'object', description: 'Training configuration' }
+        config: { type: 'object', description: 'Training configuration' },
       },
-      required: ['modelId', 'datasetPath']
+      required: ['modelId', 'datasetPath'],
     },
-    handler: async (args) => {
+    handler: async args => {
       const model = modelRegistry.find(m => m.id === args.modelId || m.name === args.modelId);
 
       if (!model) {
@@ -186,7 +193,7 @@ const modelTools = {
         return {
           success: false,
           error: 'Fine-tuning only supported for Ollama and OpenAI models',
-          supportedTypes: ['ollama', 'openai']
+          supportedTypes: ['ollama', 'openai'],
         };
       }
 
@@ -198,9 +205,9 @@ const modelTools = {
         outputName: args.outputName || `${model.name}-finetuned`,
         estimatedTime: '2-4 hours',
         message: 'Fine-tuning job queued. This is a simulated response.',
-        note: 'In production, this would submit to the model provider API'
+        note: 'In production, this would submit to the model provider API',
       };
-    }
+    },
   },
 
   list_models: {
@@ -219,25 +226,45 @@ const modelTools = {
           endpoint: m.endpoint,
           isActive: m.id === activeModel,
           requestCount: m.requestCount,
-          lastUsed: m.lastUsed
-        }))
+          lastUsed: m.lastUsed,
+        })),
       };
-    }
+    },
   },
 
   getToolDefinitions: function () {
     return [
-      { name: this.add_model.name, description: this.add_model.description, inputSchema: this.add_model.inputSchema },
-      { name: this.switch_model.name, description: this.switch_model.description, inputSchema: this.switch_model.inputSchema },
-      { name: this.model_benchmark.name, description: this.model_benchmark.description, inputSchema: this.model_benchmark.inputSchema },
-      { name: this.fine_tune.name, description: this.fine_tune.description, inputSchema: this.fine_tune.inputSchema },
-      { name: this.list_models.name, description: this.list_models.description, inputSchema: this.list_models.inputSchema }
+      {
+        name: this.add_model.name,
+        description: this.add_model.description,
+        inputSchema: this.add_model.inputSchema,
+      },
+      {
+        name: this.switch_model.name,
+        description: this.switch_model.description,
+        inputSchema: this.switch_model.inputSchema,
+      },
+      {
+        name: this.model_benchmark.name,
+        description: this.model_benchmark.description,
+        inputSchema: this.model_benchmark.inputSchema,
+      },
+      {
+        name: this.fine_tune.name,
+        description: this.fine_tune.description,
+        inputSchema: this.fine_tune.inputSchema,
+      },
+      {
+        name: this.list_models.name,
+        description: this.list_models.description,
+        inputSchema: this.list_models.inputSchema,
+      },
     ];
   },
 
   getHandler: function (toolName) {
     return this[toolName]?.handler;
-  }
+  },
 };
 
 function getDefaultEndpoint(type) {
@@ -246,7 +273,7 @@ function getDefaultEndpoint(type) {
     lmstudio: 'http://localhost:1234/v1',
     openai: 'https://api.openai.com/v1',
     anthropic: 'https://api.anthropic.com/v1',
-    custom: ''
+    custom: '',
   };
   return endpoints[type] || '';
 }
